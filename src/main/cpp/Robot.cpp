@@ -10,12 +10,17 @@
 #include <fmt/core.h>
 #include <frc/smartdashboard/SmartDashboard.h>
 
-SwerveModule *swerveModule;
+SwerveDrive *swerveDrive;
 
-void Robot::RobotInit() {
+void Robot::RobotInit()
+{
   m_chooser.SetDefaultOption(kAutoNameDefault, kAutoNameDefault);
   m_chooser.AddOption(kAutoNameCustom, kAutoNameCustom);
   frc::SmartDashboard::PutData("Auto Modes", &m_chooser);
+
+  swerveDrive = new SwerveDrive(&driveFL, &swerveFL, &FLMagEnc, FL_WHEEL_OFFSET, &driveFR, &swerveFR, &FRMagEnc,
+                                FR_WHEEL_OFFSET, &driveBR, &swerveBR, &BRMagEnc, BR_WHEEL_OFFSET, &driveBL,
+                                &swerveBL, &BLMagEnc, BL_WHEEL_OFFSET, &_pigeon, STARTING_DRIVE_HEADING);
 }
 
 /**
@@ -39,36 +44,44 @@ void Robot::RobotPeriodic() {}
  * if-else structure below with additional strings. If using the SendableChooser
  * make sure to add them to the chooser code above as well.
  */
-void Robot::AutonomousInit() {
+void Robot::AutonomousInit()
+{
   m_autoSelected = m_chooser.GetSelected();
   // m_autoSelected = SmartDashboard::GetString("Auto Selector",
   //     kAutoNameDefault);
   fmt::print("Auto selected: {}\n", m_autoSelected);
 
-  if (m_autoSelected == kAutoNameCustom) {
+  if (m_autoSelected == kAutoNameCustom)
+  {
     // Custom Auto goes here
-  } else {
+  }
+  else
+  {
     // Default Auto goes here
   }
 }
 
-void Robot::AutonomousPeriodic() {
-  if (m_autoSelected == kAutoNameCustom) {
+void Robot::AutonomousPeriodic()
+{
+  if (m_autoSelected == kAutoNameCustom)
+  {
     // Custom Auto goes here
-  } else {
+  }
+  else
+  {
     // Default Auto goes here
   }
 }
 
-void Robot::TeleopInit() {
-  swerveModule = new SwerveModule(&driveFL, &swerveFL, &FLMagEnc, 0.0);
-}
+void Robot::TeleopInit()
+{}
 
-void Robot::TeleopPeriodic() {
-  SmartDashboard::PutNumber("Module Heading", swerveModule->GetModuleHeading());
-  SmartDashboard::PutNumber("Drive Encoder", swerveModule->GetDriveEncoder());
-  SmartDashboard::PutNumber("Drive Encoder Meters", swerveModule->GetDriveEncoderMeters());
-  SmartDashboard::PutNumber("Drive Velocity", swerveModule->GetDriveVelocity());
+void Robot::TeleopPeriodic()
+{
+  SmartDashboard::PutNumber("FL Module Heading", swerveDrive->FLModule->GetModuleHeading());
+  SmartDashboard::PutNumber("FL Drive Encoder", swerveDrive->FLModule->GetDriveEncoder());
+  SmartDashboard::PutNumber("FL Drive Encoder Meters", swerveDrive->FLModule->GetDriveEncoderMeters());
+  SmartDashboard::PutNumber("FL Drive Velocity", swerveDrive->FLModule->GetDriveVelocity());
 
   // Find controller input
   double joy_lStick_Y, joy_lStick_X, joy_rStick_X;
@@ -94,6 +107,8 @@ void Robot::TeleopPeriodic() {
   double FWD_Drive_Speed = joy_lStick_Y * MAX_DRIVE_SPEED;
   double STRAFE_Drive_Speed = joy_lStick_X * MAX_DRIVE_SPEED;
   double Turn_Speed = joy_rStick_X * MAX_SPIN_SPEED;
+
+  swerveDrive->DriveSwervePercent(FWD_Drive_Speed, STRAFE_Drive_Speed, Turn_Speed);
 }
 
 void Robot::DisabledInit() {}
@@ -109,7 +124,8 @@ void Robot::SimulationInit() {}
 void Robot::SimulationPeriodic() {}
 
 #ifndef RUNNING_FRC_TESTS
-int main() {
+int main()
+{
   return frc::StartRobot<Robot>();
 }
 #endif

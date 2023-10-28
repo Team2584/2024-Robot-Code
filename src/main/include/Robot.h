@@ -11,9 +11,11 @@
 #include <frc/smartdashboard/SmartDashboard.h>
 
 #include <frc/XboxController.h>
-
 #include <frc/DutyCycleEncoder.h>
+
 #include <frc/controller/PIDController.h>
+
+#include <frc/kinematics/SwerveDriveKinematics.h>
 
 #include <ctre/phoenix6/TalonFX.hpp>
 #include <ctre/phoenix6/Pigeon2.hpp>

@@ -29,8 +29,43 @@ class SwerveModule
         double GetDriveEncoder();
         double GetDriveEncoderMeters();
         double GetDriveVelocity();
-        double GetSpinEncoderRadians(); // curently unused
+        double GetSpinEncoderRadians(); // TODO make this function work
         void ResetEncoders(); 
         void StopSwerveModule();
         void DriveSwerveModulePercent(double driveSpeed, double targetAngle);
+};
+
+
+/**
+ * This class has functions to control all the autonomous and drive control functionality of a swerve drive
+ */
+class SwerveDrive
+{
+    private:
+        ctre::phoenix6::hardware::Pigeon2 *pigeonIMU;
+        Translation2d frontLeftWheelPos, frontRightWheelPos, backLeftWheelPos, backRightWheelPos; /* Location of each wheel in relation to the center of the robot */    // TODO Make sure these are used
+
+   public:
+        SwerveModule *FLModule, *FRModule, *BRModule, *BLModule;
+        double pigeonInitial = 0; /* the inital rotation value of the Pigeon IMU */    // TODO delete in future once we can rely on odometry class
+
+        SwerveDrive(ctre::phoenix6::hardware::TalonFX *_FLDriveMotor,
+            rev::CANSparkMax *_FLSpinMotor, frc::DutyCycleEncoder *_FLMagEncoder,
+            double _FLEncoderOffset, ctre::phoenix6::hardware::TalonFX *_FRDriveMotor,
+            rev::CANSparkMax *_FRSpinMotor, frc::DutyCycleEncoder *_FRMagEncoder,
+            double _FREncoderOffset, ctre::phoenix6::hardware::TalonFX *_BRDriveMotor,
+            rev::CANSparkMax *_BRSpinMotor, frc::DutyCycleEncoder *_BRMagEncoder,
+            double _BREncoderOffset, ctre::phoenix6::hardware::TalonFX *_BLDriveMotor,
+            rev::CANSparkMax *_BLSpinMotor, frc::DutyCycleEncoder *_BLMagEncoder,
+            double _BLEncoderOffset, ctre::phoenix6::hardware::Pigeon2 *_pigeonIMU, 
+            double initialHeading);
+
+        double VelocityToPercent(double velocity);
+        double PercentToVelocity(double percent);
+        double AngularVelocityToPercent(double velocity);
+        double AngularPercentToVelocity(double percent);
+        double GetIMUHeading();
+        void DriveSwervePercentNonFieldOriented(double STRAFE_Drive_Speed, double FWD_Drive_Speed, double Turn_Speed);
+        void DriveSwervePercent(double STRAFE_Drive_Speed, double FWD_Drive_Speed, double Turn_Speed);
+        void DriveSwerveMetersAndRadians(double STRAFE_Drive_Speed, double FWD_Drive_Speed, double Turn_Speed);
 };
