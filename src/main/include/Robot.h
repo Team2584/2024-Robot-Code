@@ -6,8 +6,8 @@
 
 #include <string>
 
-#include "PID.h"
-#include "Math.h"
+#include "Tools/PID.h"
+#include "Tools/Math.h"
 
 #include <frc/TimedRobot.h>
 #include <frc/smartdashboard/SendableChooser.h>
