@@ -19,7 +19,9 @@
 SwerveModule::SwerveModule(ctre::phoenix6::hardware::TalonFX *driveMotor_,
                            rev::CANSparkMax *spinMotor_, frc::DutyCycleEncoder *magEncoder_,
                            double encoderOffset_)
-    : spinPIDController{WHEEL_SPIN_KP, WHEEL_SPIN_KI, WHEEL_SPIN_KD}
+    : spinPIDController{WHEEL_SPIN_KP, WHEEL_SPIN_KI, WHEEL_SPIN_KD, WHEEL_SPIN_KI_MAX, 
+                        WHEEL_SPIN_MIN_SPEED, WHEEL_SPIN_MAX_SPEED, 
+                        WHEEL_SPIN_TOLERANCE, WHEEL_SPIN_VELOCITY_TOLERANCE}
 {
     // Instantiates all variables needed for class
     driveMotor = driveMotor_;
@@ -27,9 +29,6 @@ SwerveModule::SwerveModule(ctre::phoenix6::hardware::TalonFX *driveMotor_,
     magEncoder = magEncoder_;
     encoderOffset = encoderOffset_;
     spinRelativeEncoder = new rev::SparkMaxRelativeEncoder(spinMotor->GetEncoder());
-
-    // Sets allowable error for the wheel's spin
-    spinPIDController.SetTolerance(-1 * WHEEL_SPIN_ERROR, WHEEL_SPIN_ERROR);
 
     ResetEncoders();
 }
@@ -54,7 +53,7 @@ double SwerveModule::GetModuleHeading()
 }
 
 /**
- *  Returns Talon Drive Encoder
+ *  Returns Talon Drive Encoder value
  */
 double SwerveModule::GetDriveEncoder()
 {
@@ -203,12 +202,17 @@ void SwerveModule::DriveSwerveModulePercent(double driveSpeed, double targetAngl
     // PID to spin the wheel, makes the wheel move slower as it reaches the target
     // (error divided by 90 because that is the furthest the wheel will possibly have to move)
     double spinMotorSpeed = spinPIDController.Calculate(0, error / 90.0);
-    spinMotorSpeed = std::clamp(spinMotorSpeed, -1 * WHEEL_SPIN_MAX_SPEED, WHEEL_SPIN_MAX_SPEED);
-
+    
     // Move motors  at speeds and directions determined earlier
     spinMotor->Set(spinMotorSpeed * spinDirection);
     driveMotor->Set(driveSpeed * driveDirection);
 }
+
+
+
+
+
+
 
 /*
   ____                               ____       _
@@ -327,6 +331,10 @@ double SwerveDrive::GetIMUHeading()
     return pigeon_angle;
 }
 
+void SwerveDrive::ResetIMU()
+{
+    pigeonInitial = fmod(pigeonIMU->GetYaw().GetValueAsDouble(), 360);
+}
 
 /**
  * Drives the swerve "robot oriented" meaning the FWD drive speed will move the robot in the direction of the front of the robot

@@ -12,7 +12,7 @@ class SwerveModule
         ctre::phoenix6::hardware::TalonFX *driveMotor; /* The motor responsible for actually driving the wheel*/
         rev::CANSparkMax *spinMotor; /* The motor responsible for "spinning" the wheel left to right to change direction*/
         rev::SparkMaxRelativeEncoder *spinRelativeEncoder; /* The relative encoder built into the spinMotor */
-        PIDController spinPIDController; /* The PID Controller for the spinMotor, works using degrees */
+        PID spinPIDController; /* The PID Controller for the spinMotor, works using degrees */
         double encoderOffset;       /* Offset in magnetic encoder from 0 facing the front of the robot */
         double driveEncoderInitial; /* Used to computer the change in encoder tics, aka motor rotation */
         double spinEncoderInitialHeading; /* Initial Heading of Relative Spin Encoder used for zeroing*/
@@ -65,6 +65,7 @@ class SwerveDrive
         double AngularVelocityToPercent(double velocity);
         double AngularPercentToVelocity(double percent);
         double GetIMUHeading();
+        void ResetIMU(); //TODO Delete
         void DriveSwervePercentNonFieldOriented(double STRAFE_Drive_Speed, double FWD_Drive_Speed, double Turn_Speed);
         void DriveSwervePercent(double STRAFE_Drive_Speed, double FWD_Drive_Speed, double Turn_Speed);
         void DriveSwerveMetersAndRadians(double STRAFE_Drive_Speed, double FWD_Drive_Speed, double Turn_Speed);

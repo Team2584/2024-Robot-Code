@@ -78,37 +78,39 @@ void Robot::TeleopInit()
 
 void Robot::TeleopPeriodic()
 {
-  SmartDashboard::PutNumber("FL Module Heading", swerveDrive->FLModule->GetModuleHeading());
   SmartDashboard::PutNumber("FL Drive Encoder", swerveDrive->FLModule->GetDriveEncoder());
   SmartDashboard::PutNumber("FL Drive Encoder Meters", swerveDrive->FLModule->GetDriveEncoderMeters());
-  SmartDashboard::PutNumber("FL Drive Velocity", swerveDrive->FLModule->GetDriveVelocity());
+  SmartDashboard::PutNumber("Pigeon IMU Heading", swerveDrive->GetIMUHeading());
 
   // Find controller input
-  double joy_lStick_Y, joy_lStick_X, joy_rStick_X;
-  joy_lStick_Y = xbox_Drive->GetLeftY();
-  joy_lStick_X = xbox_Drive->GetLeftX();
-  joy_rStick_X = xbox_Drive->GetRightX();
-  joy_lStick_Y *= -1;
+  double leftJoystickX, leftJoystickY, rightJoystickX;
+  leftJoystickY = xbox_Drive->GetLeftY();
+  leftJoystickX = xbox_Drive->GetLeftX();
+  rightJoystickX = xbox_Drive->GetRightX();
+  leftJoystickY *= -1;
 
   // Remove ghost movement by making sure joystick is moved a certain amount
-  double joy_lStick_distance = sqrt(pow(joy_lStick_X, 2.0) + pow(joy_lStick_Y, 2.0));
+  double leftJoystickDistance = sqrt(pow(leftJoystickX, 2.0) + pow(leftJoystickY, 2.0));
 
-  if (joy_lStick_distance < CONTROLLER_DEADBAND)
+  if (leftJoystickDistance < CONTROLLER_DEADBAND)
   {
-    joy_lStick_X = 0;
-    joy_lStick_Y = 0;
+    leftJoystickX = 0;
+    leftJoystickY = 0;
   }
 
-  if (abs(joy_rStick_X) < CONTROLLER_DEADBAND)
+  if (abs(rightJoystickX) < CONTROLLER_DEADBAND)
   {
-    joy_rStick_X = 0;
+    rightJoystickX = 0;
   }
 
-  double FWD_Drive_Speed = joy_lStick_Y * MAX_DRIVE_SPEED;
-  double STRAFE_Drive_Speed = joy_lStick_X * MAX_DRIVE_SPEED;
-  double Turn_Speed = joy_rStick_X * MAX_SPIN_SPEED;
+  double FwdDriveSpeed = leftJoystickY * MAX_DRIVE_SPEED;
+  double StrafeDriveSpeed = leftJoystickX * MAX_DRIVE_SPEED;
+  double TurnSpeed = rightJoystickX * MAX_SPIN_SPEED;
 
-  swerveDrive->DriveSwervePercent(FWD_Drive_Speed, STRAFE_Drive_Speed, Turn_Speed);
+  swerveDrive->DriveSwervePercent(StrafeDriveSpeed, FwdDriveSpeed, TurnSpeed);
+
+  if (xbox_Drive->GetAButtonPressed())
+    swerveDrive->ResetIMU();
 }
 
 void Robot::DisabledInit() {}
