@@ -43,7 +43,7 @@ class SwerveDrive
 {
     private:
         ctre::phoenix6::hardware::Pigeon2 *pigeonIMU;
-        Translation2d frontLeftWheelPos, frontRightWheelPos, backLeftWheelPos, backRightWheelPos; /* Location of each wheel in relation to the center of the robot */    // TODO Make sure these are used
+        Translation2d frontLeftWheelPos, frontRightWheelPos, backLeftWheelPos, backRightWheelPos; /* Location of each wheel in relation to the center of the robot */ // TODO make sure this is used
 
    public:
         SwerveModule *FLModule, *FRModule, *BRModule, *BLModule;
@@ -60,12 +60,11 @@ class SwerveDrive
             double _BLEncoderOffset, ctre::phoenix6::hardware::Pigeon2 *_pigeonIMU, 
             double initialHeading);
 
+        double GetIMUHeading();
         double VelocityToPercent(double velocity);
         double PercentToVelocity(double percent);
         double AngularVelocityToPercent(double velocity);
         double AngularPercentToVelocity(double percent);
-        double GetIMUHeading();
-        void ResetIMU(); //TODO Delete
         void DriveSwervePercentNonFieldOriented(double STRAFE_Drive_Speed, double FWD_Drive_Speed, double Turn_Speed);
         void DriveSwervePercent(double STRAFE_Drive_Speed, double FWD_Drive_Speed, double Turn_Speed);
         void DriveSwerveMetersAndRadians(double STRAFE_Drive_Speed, double FWD_Drive_Speed, double Turn_Speed);

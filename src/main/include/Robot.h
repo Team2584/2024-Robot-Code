@@ -16,7 +16,9 @@
 #include <frc/XboxController.h>
 #include <frc/DutyCycleEncoder.h>
 
-#include <frc/kinematics/SwerveDriveKinematics.h>
+#include <frc/geometry/Transform2d.h>
+#include <frc/geometry/Rotation2d.h>
+#include <frc/geometry/Pose2d.h>
 
 #include <ctre/phoenix6/TalonFX.hpp>
 #include <ctre/phoenix6/Pigeon2.hpp>

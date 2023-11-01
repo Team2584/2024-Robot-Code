@@ -10,11 +10,20 @@ public:
     /**
      * Constructor for an acceleration limited PID Controller
      *
+     * @param P The kP constant
+     * @param I The kI constant
+     * @param D The kD constant
+     * @param maximumIntegral The maximum impact your I result can have on the system
+     * @param minimumSpeed The minimum magnitude of the value returned
+     * @param maximumSpeed The maximum magnitude of the value returned
+     * @param positionTolerance The allowable error in the PID loop before finished
+     * @param velocityTolerance The maxmimum velocity that can be experienced when PID loop is considered finished
      * @param maximumNegativeAcceleration the maximum acceleration the PID loop can output in the negative direction (MUST BE A NEGATIVE NUMBER)
      * @param maximumPositiveAcceleration the maximum acceleration the PID loop can output in the positive direction (MUST BE A POSITIVE NUMBER)
      */
-    AccelerationLimitedPID(double maximumNegativeAcceleration, double maximumPositiveAcceleration)
-    : slewRateLimiter{maximumPositiveAcceleration, maximumNegativeAcceleration}
+    AccelerationLimitedPID(double P, double I, double D, double maximumIntegral, double minimumSpeed, double maximumSpeed, double positionTolerance, double velocityTolerance, double maximumNegativeAcceleration, double maximumPositiveAcceleration)
+    :         PID(P, I, D, maximumIntegral, minimumSpeed, maximumSpeed, positionTolerance, velocityTolerance),
+                slewRateLimiter{maximumPositiveAcceleration, maximumNegativeAcceleration}
     {
         lastSpeed = 0;
     }
@@ -33,6 +42,9 @@ public:
         return lastSpeed;
     }
 
+    /* 
+     * This function returns true when the error of the pid loop is below the tolerance, i.e. it has reached the goal.
+     */
     bool PIDFinished()
     {
         // Checks if the basic PID loop is finished, i.e. the controller is within position tolerance
@@ -44,4 +56,4 @@ public:
         // Returns true if both controllers are finished
         return basePIDFinished && accelerationLimitedPIDFinished;
     }
-}
+};

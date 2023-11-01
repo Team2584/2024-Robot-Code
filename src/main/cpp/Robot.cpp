@@ -110,10 +110,6 @@ void Robot::TeleopPeriodic()
 
   // Drive the robot
   swerveDrive->DriveSwervePercent(StrafeDriveSpeed, FwdDriveSpeed, TurnSpeed);
-
-  // Reset the "forward" direction of the robot if the A button is pressed
-  if (xbox_Drive->GetAButtonPressed())
-    swerveDrive->ResetIMU();
 }
 
 void Robot::DisabledInit() {}

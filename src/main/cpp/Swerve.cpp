@@ -253,6 +253,30 @@ SwerveDrive::SwerveDrive(ctre::phoenix6::hardware::TalonFX *_FLDriveMotor,
 }
 
 /**
+ * Returns the absolute heading of the swerve drive according the the IMU (gyroscope).
+ *
+ * @return The Swerve Drive's heading in degrees with 0.0 being the front of the robot increasing clockwise.
+ */
+double SwerveDrive::GetIMUHeading()
+{
+    // Turns the degree returned into a number 0-360
+    double pigeon_angle = fmod(pigeonIMU->GetYaw().GetValueAsDouble(), 360);
+    // Zeroes the pigeon so that forward is 0
+    pigeon_angle -= pigeonInitial;
+    if (pigeon_angle < 0)
+        pigeon_angle += 360;
+
+    // Reverses the angle so that positive is clockwise
+    pigeon_angle = 360 - pigeon_angle;
+
+    // Fixes weird issues with the number 360
+    if (pigeon_angle == 360)
+        pigeon_angle = 0;
+
+    return pigeon_angle;
+}
+
+/**
  * Converts a meters per second speed to a percent power argument for the falcon motors.
  */
 double SwerveDrive::VelocityToPercent(double velocity)
@@ -305,35 +329,6 @@ double SwerveDrive::AngularPercentToVelocity(double percent)
         return std::max(1.92 * percent - 0.0329, 0.0);
     else
         return std::min(1.92 * percent + 0.0329, 0.0);
-}
-
-/**
- * Returns the absolute heading of the swerve drive according the the IMU (gyroscope).
- *
- * @return The Swerve Drive's heading in degrees with 0.0 being the front of the robot increasing clockwise.
- */
-double SwerveDrive::GetIMUHeading()
-{
-    // Turns the degree returned into a number 0-360
-    double pigeon_angle = fmod(pigeonIMU->GetYaw().GetValueAsDouble(), 360);
-    // Zeroes the pigeon so that forward is 0
-    pigeon_angle -= pigeonInitial;
-    if (pigeon_angle < 0)
-        pigeon_angle += 360;
-
-    // Reverses the angle so that positive is clockwise
-    pigeon_angle = 360 - pigeon_angle;
-
-    // Fixes weird issues with the number 360
-    if (pigeon_angle == 360)
-        pigeon_angle = 0;
-
-    return pigeon_angle;
-}
-
-void SwerveDrive::ResetIMU()
-{
-    pigeonInitial = fmod(pigeonIMU->GetYaw().GetValueAsDouble(), 360);
 }
 
 /**
