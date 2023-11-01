@@ -3,7 +3,7 @@
 
 /**
  *  The Signum Function returns the sign of a double
- *  EX: 1 if num is positive, -1 if negative, 0 if zero
+ *  Ex: 1 if num is positive, -1 if negative, 0 if zero
  */
 inline int sgn(double num)
 {

@@ -103,12 +103,15 @@ void Robot::TeleopPeriodic()
     rightJoystickX = 0;
   }
 
+  // Scale control values to max speed
   double FwdDriveSpeed = leftJoystickY * MAX_DRIVE_SPEED;
   double StrafeDriveSpeed = leftJoystickX * MAX_DRIVE_SPEED;
   double TurnSpeed = rightJoystickX * MAX_SPIN_SPEED;
 
+  // Drive the robot
   swerveDrive->DriveSwervePercent(StrafeDriveSpeed, FwdDriveSpeed, TurnSpeed);
 
+  // Reset the "forward" direction of the robot if the A button is pressed
   if (xbox_Drive->GetAButtonPressed())
     swerveDrive->ResetIMU();
 }

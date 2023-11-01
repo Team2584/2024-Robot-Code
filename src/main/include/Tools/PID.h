@@ -1,14 +1,17 @@
-#include <frc/controller/PIDController.h>
 #include "Math.h"
+#include <frc/controller/PIDController.h>
 
 /**
  * A PID loop allows motors to efficiently reach a certain point known as the setpoint.
+ * This class mainly functions as a wrapper for the wpi pid controller adding minimal functionality.
+ * Hopefully, however, it will make it easier to maintain the same code base if WPIlib changes in the future.
  */
 class PID
 {
-private:
+protected:
     frc::PIDController pidController; /* the basic WPIlib PID Controller */
     double maxSpeed, minSpeed;        /* maximum and mininimum magnitude of values returned by the PID controller */
+    double posTolerance, velTolerance; /* maximum position and velocity error that is still considered finished */
 
 public:
     /**
@@ -30,6 +33,8 @@ public:
         pidController.SetTolerance(positionTolerance, velocityTolerance);
         maxSpeed = maximumSpeed;
         minSpeed = minimumSpeed;
+        posTolerance = positionTolerance;
+        velTolerance = velocityTolerance;
     }
 
     /**
@@ -45,12 +50,16 @@ public:
         PID(P, I, D, 1, 0, 1, 0, 0);
     }
 
+    /* 
+     * If you do not call the Calculate function every loop, this function can be called to restart the PID Controller.
+     */
     void ResetPIDLoop()
     {
         pidController.Reset();
     }
 
-    /* This function calculates the intended speed of a motor to reach a setpoint.
+    /* 
+     * This function calculates the intended speed of a motor to reach a setpoint.
      * It is expected to be called once per 20ms loop.
      */
     double Calculate(double measurement, double setPoint)
@@ -65,6 +74,9 @@ public:
         return intendedSpeed;
     }
 
+    /* 
+     * This function returns true when the error of the pid loop is below the tolerance, i.e. it has reached the goal.
+     */
     bool PIDFinished()
     {
         return pidController.AtSetpoint();
