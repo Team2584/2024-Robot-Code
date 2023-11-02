@@ -81,6 +81,16 @@ void Robot::TeleopPeriodic()
   SmartDashboard::PutNumber("FL Drive Encoder", swerveDrive->FLModule->GetDriveEncoder());
   SmartDashboard::PutNumber("FL Drive Encoder Meters", swerveDrive->FLModule->GetDriveEncoderMeters());
   SmartDashboard::PutNumber("Pigeon IMU Heading", swerveDrive->GetIMUHeading());
+  SmartDashboard::PutNumber("Odometry X Position", swerveDrive->GetOdometryPose().X().value());
+  SmartDashboard::PutNumber("Odometry Y Position", swerveDrive->GetOdometryPose().Y().value());
+  SmartDashboard::PutNumber("Odometry Heading", swerveDrive->GetOdometryPose().Rotation().Degrees().value());
+
+
+  /* UPDATES */
+
+  swerveDrive->Update();
+
+  /* DRIVER INPUT AND CONTROL */
 
   // Find controller input
   double leftJoystickX, leftJoystickY, rightJoystickX;
