@@ -20,7 +20,7 @@ void Robot::RobotInit()
 
   swerveDrive = new SwerveDrive(&driveFL, &swerveFL, &FLMagEnc, &driveFR, &swerveFR, &FRMagEnc,
                                 &driveBR, &swerveBR, &BRMagEnc, &driveBL,
-                                &swerveBL, &BLMagEnc, &_pigeon, STARTING_DRIVE_HEADING);
+                                &swerveBL, &BLMagEnc, &_pigeon);
 }
 
 /**

@@ -28,8 +28,8 @@ class SwerveModule
         double GetModuleHeading();
         double GetDriveEncoder();
         double GetDriveEncoderMeters();
-        double GetDriveVelocity();
         double GetSpinEncoderRadians(); // TODO make this function work
+        SwerveModulePosition GetSwerveModulePosition();
         void ResetEncoders(); 
         void StopSwerveModule();
         void DriveSwerveModulePercent(double driveSpeed, double targetAngle);
@@ -37,30 +37,36 @@ class SwerveModule
 
 
 /**
- * This class has functions to control all the autonomous and drive control functionality of a swerve drive
+ * This class has functions to control all the drive control functionality of a swerve drive
  */
 class SwerveDrive
 {
     private:
         ctre::phoenix6::hardware::Pigeon2 *pigeonIMU;
-        Translation2d frontLeftWheelPos, frontRightWheelPos, backLeftWheelPos, backRightWheelPos; /* Location of each wheel in relation to the center of the robot */ // TODO make sure this is used
+        Translation2d FLWheelPos, FRWheelPos, BLWheelPos, BRWheelPos; /* Location of each wheel in relation to the center of the robot */ 
+        wpi::array<Translation2d, 4> wheelPositionsArray; /* Array of all wheel positions */
+        SwerveDriveKinematics<4> kinematics; /* A WPI struct which contains all wheels of a swerve drive*/
+        SwerveDriveOdometry<4> odometry; /* An odometry class which returns the position of the robot using wheel encoder ticks*/
 
    public:
         SwerveModule *FLModule, *FRModule, *BRModule, *BLModule;
-        double pigeonInitial = 0; /* the inital rotation value of the Pigeon IMU */    // TODO delete in future once we can rely on odometry class
 
-        SwerveDrive(ctre::phoenix6::hardware::TalonFX *_FLDriveMotor,
-            rev::CANSparkMax *_FLSpinMotor, frc::DutyCycleEncoder *_FLMagEncoder,
-            ctre::phoenix6::hardware::TalonFX *_FRDriveMotor,
-            rev::CANSparkMax *_FRSpinMotor, frc::DutyCycleEncoder *_FRMagEncoder,
-            ctre::phoenix6::hardware::TalonFX *_BRDriveMotor,
-            rev::CANSparkMax *_BRSpinMotor, frc::DutyCycleEncoder *_BRMagEncoder,
-            ctre::phoenix6::hardware::TalonFX *_BLDriveMotor,
-            rev::CANSparkMax *_BLSpinMotor, frc::DutyCycleEncoder *_BLMagEncoder,
-            ctre::phoenix6::hardware::Pigeon2 *_pigeonIMU, 
-            double initialHeading);
+        SwerveDrive(ctre::phoenix6::hardware::TalonFX *FLDriveMotor,
+            rev::CANSparkMax *FLSpinMotor, frc::DutyCycleEncoder *FLMagEncoder,
+            ctre::phoenix6::hardware::TalonFX *FRDriveMotor,
+            rev::CANSparkMax *FRSpinMotor, frc::DutyCycleEncoder *FRMagEncoder,
+            ctre::phoenix6::hardware::TalonFX *BRDriveMotor,
+            rev::CANSparkMax *BRSpinMotor, frc::DutyCycleEncoder *BRMagEncoder,
+            ctre::phoenix6::hardware::TalonFX *BLDriveMotor,
+            rev::CANSparkMax *BLSpinMotor, frc::DutyCycleEncoder *BLMagEncoder,
+            ctre::phoenix6::hardware::Pigeon2 *_pigeonIMU);
 
         double GetIMUHeading();
+        wpi::array<SwerveModulePosition, 4> GetSwerveModulePositions();
+        void ResetOdometry();
+        void ResetOdometry(Pose2d position);
+        Pose2d GetOdometryPose();
+        void Update();
         double VelocityToPercent(double velocity);
         double PercentToVelocity(double percent);
         double AngularVelocityToPercent(double velocity);

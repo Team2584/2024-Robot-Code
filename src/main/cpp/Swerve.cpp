@@ -72,15 +72,6 @@ double SwerveModule::GetDriveEncoderMeters()
 }
 
 /**
- *  Converts Talon Drive Encoder Reading to Meters per Second
- */
-double SwerveModule::GetDriveVelocity()
-{
-    auto &rotorPosSignal = driveMotor->GetVelocity();
-    return rotorPosSignal.GetValue().value() / 2048 / 6.54 * 0.10322 * M_PI * 10;
-}
-
-/**
  *  INCOMPLETE DO NOT USE UNDER ANY CIRCUMSTANCE, USE GetModuleHeading() INSTEAD!
  *  Also this hasn't been updated from the talon swerve drive as it is an uneccessary functino
  *  This function was intended to use the relative encoder as a backup if the absolute mag encoder broke
@@ -88,6 +79,17 @@ double SwerveModule::GetDriveVelocity()
 double SwerveModule::GetSpinEncoderRadians()
 {
     return spinRelativeEncoder->GetPosition();
+}
+
+/**
+ *  Returns the current position and rotation of the swerve module, in a WPI struct
+ */
+SwerveModulePosition SwerveModule::GetSwerveModulePosition()
+{
+  SwerveModulePosition position = SwerveModulePosition();
+  position.distance = units::length::meter_t{GetDriveEncoderMeters()};
+  position.angle = Rotation2d(units::degree_t{GetModuleHeading()});
+  return position;
 }
 
 /**
@@ -228,28 +230,29 @@ void SwerveModule::DriveSwerveModulePercent(double driveSpeed, double targetAngl
  * Just know there are 8 motors and 4 mag encoders on a Swerve Drive
  * There is also a Pigeon IMU which includes an accelerometer and gyroscope.
  */
-SwerveDrive::SwerveDrive(ctre::phoenix6::hardware::TalonFX *_FLDriveMotor,
-                         rev::CANSparkMax *_FLSpinMotor, frc::DutyCycleEncoder *_FLMagEncoder,
-                         ctre::phoenix6::hardware::TalonFX *_FRDriveMotor,
-                         rev::CANSparkMax *_FRSpinMotor, frc::DutyCycleEncoder *_FRMagEncoder,
-                         ctre::phoenix6::hardware::TalonFX *_BRDriveMotor,
-                         rev::CANSparkMax *_BRSpinMotor, frc::DutyCycleEncoder *_BRMagEncoder,
-                         ctre::phoenix6::hardware::TalonFX *_BLDriveMotor,
-                         rev::CANSparkMax *_BLSpinMotor, frc::DutyCycleEncoder *_BLMagEncoder,
-                         ctre::phoenix6::hardware::Pigeon2 *_pigeonIMU,
-                         double initialHeading)
-    : frontLeftWheelPos{DRIVE_LENGTH / 2, DRIVE_WIDTH / 2},
-      frontRightWheelPos{DRIVE_LENGTH / 2, -DRIVE_WIDTH / 2},
-      backLeftWheelPos{-DRIVE_LENGTH / 2, DRIVE_WIDTH / 2},
-      backRightWheelPos{-DRIVE_LENGTH / 2, DRIVE_WIDTH / 2}
+SwerveDrive::SwerveDrive(ctre::phoenix6::hardware::TalonFX *FLDriveMotor,
+                         rev::CANSparkMax *FLSpinMotor, frc::DutyCycleEncoder *FLMagEncoder,
+                         ctre::phoenix6::hardware::TalonFX *FRDriveMotor,
+                         rev::CANSparkMax *FRSpinMotor, frc::DutyCycleEncoder *FRMagEncoder,
+                         ctre::phoenix6::hardware::TalonFX *BRDriveMotor,
+                         rev::CANSparkMax *BRSpinMotor, frc::DutyCycleEncoder *BRMagEncoder,
+                         ctre::phoenix6::hardware::TalonFX *BLDriveMotor,
+                         rev::CANSparkMax *BLSpinMotor, frc::DutyCycleEncoder *BLMagEncoder,
+                         ctre::phoenix6::hardware::Pigeon2 *_pigeonIMU)
+    : FLWheelPos{DRIVE_LENGTH / 2, DRIVE_WIDTH / 2},
+      FRWheelPos{DRIVE_LENGTH / 2, -DRIVE_WIDTH / 2},
+      BLWheelPos{-DRIVE_LENGTH / 2, DRIVE_WIDTH / 2},
+      BRWheelPos{-DRIVE_LENGTH / 2, DRIVE_WIDTH / 2},
+      wheelPositionsArray{FLWheelPos, FRWheelPos, BLWheelPos, BRWheelPos},
+      kinematics{wheelPositionsArray},
+      odometry{kinematics, Rotation2d(0_deg), GetSwerveModulePositions()}
 {
-    FLModule = new SwerveModule(_FLDriveMotor, _FLSpinMotor, _FLMagEncoder, FL_WHEEL_OFFSET);
-    FRModule = new SwerveModule(_FRDriveMotor, _FRSpinMotor, _FRMagEncoder, FR_WHEEL_OFFSET);
-    BLModule = new SwerveModule(_BLDriveMotor, _BLSpinMotor, _BLMagEncoder, BL_WHEEL_OFFSET);
-    BRModule = new SwerveModule(_BRDriveMotor, _BRSpinMotor, _BRMagEncoder, BR_WHEEL_OFFSET);
+    FLModule = new SwerveModule(FLDriveMotor, FLSpinMotor, FLMagEncoder, FL_WHEEL_OFFSET);
+    FRModule = new SwerveModule(FRDriveMotor, FRSpinMotor, FRMagEncoder, FR_WHEEL_OFFSET);
+    BLModule = new SwerveModule(BLDriveMotor, BLSpinMotor, BLMagEncoder, BL_WHEEL_OFFSET);
+    BRModule = new SwerveModule(BRDriveMotor, BRSpinMotor, BRMagEncoder, BR_WHEEL_OFFSET);
 
     pigeonIMU = _pigeonIMU;
-    pigeonInitial = initialHeading;
 }
 
 /**
@@ -261,10 +264,6 @@ double SwerveDrive::GetIMUHeading()
 {
     // Turns the degree returned into a number 0-360
     double pigeon_angle = fmod(pigeonIMU->GetYaw().GetValueAsDouble(), 360);
-    // Zeroes the pigeon so that forward is 0
-    pigeon_angle -= pigeonInitial;
-    if (pigeon_angle < 0)
-        pigeon_angle += 360;
 
     // Reverses the angle so that positive is clockwise
     pigeon_angle = 360 - pigeon_angle;
@@ -274,6 +273,55 @@ double SwerveDrive::GetIMUHeading()
         pigeon_angle = 0;
 
     return pigeon_angle;
+}
+
+/**
+ * Returns the current position of each swerve module as an array
+ */
+wpi::array<SwerveModulePosition, 4> SwerveDrive::GetSwerveModulePositions()
+{
+    wpi::array<SwerveModulePosition, 4> positions = {FLModule->GetSwerveModulePosition(),
+                                                FRModule->GetSwerveModulePosition(),
+                                                BLModule->GetSwerveModulePosition(),
+                                                BRModule->GetSwerveModulePosition()};
+    return positions;
+}
+
+/**
+ * Resets Odometry to (0,0) facing away from the driver
+ */
+void SwerveDrive::ResetOdometry()
+{
+  ResetOdometry(Pose2d(0_m, 0_m, Rotation2d(0_rad)));
+}
+
+/**
+ * Resets Odometry to a given position
+ */
+void SwerveDrive::ResetOdometry(Pose2d position)
+{
+  odometry.ResetPosition(Rotation2d(units::degree_t{GetIMUHeading()}),
+      GetSwerveModulePositions(),
+      frc::Pose2d(Pose2d(position.Y(), position.X(), position.Rotation())));
+}
+
+/**
+ * Finds the Pose of the robot using odometry 
+ * The math is complicated and WPI does it for me so I don't completely understand it, but if you have questions you can check their documentation
+ */
+Pose2d SwerveDrive::GetOdometryPose()
+{
+  Pose2d pose = odometry.GetPose();
+  return Pose2d(pose.Y(), pose.X(), pose.Rotation());
+}
+
+/**
+ * Updates the odometry reading based on change in each swerve module's positions.
+ * Must be called every periodic loop for accuracy (once every 20ms or less)
+ */
+void SwerveDrive::Update()
+{
+  odometry.Update(units::degree_t{GetIMUHeading()}, GetSwerveModulePositions());
 }
 
 /**
@@ -409,7 +457,7 @@ void SwerveDrive::DriveSwervePercentNonFieldOriented(double STRAFE_Drive_Speed, 
 void SwerveDrive::DriveSwervePercent(double STRAFE_Drive_Speed, double FWD_Drive_Speed, double Turn_Speed)
 {
   // Converts our field oriented speeds to robot oriented, by using trig with the current robot angle.
-  double angle = GetIMUHeading() * M_PI / 180;
+  double angle = GetOdometryPose().Rotation().Radians().value();
   double oldFwd = FWD_Drive_Speed;
   FWD_Drive_Speed = FWD_Drive_Speed * cos(angle) + STRAFE_Drive_Speed * sin(angle);
   STRAFE_Drive_Speed = -1 * oldFwd * sin(angle) + STRAFE_Drive_Speed * cos(angle);
