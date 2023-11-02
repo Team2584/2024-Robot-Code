@@ -51,13 +51,13 @@ class SwerveDrive
 
         SwerveDrive(ctre::phoenix6::hardware::TalonFX *_FLDriveMotor,
             rev::CANSparkMax *_FLSpinMotor, frc::DutyCycleEncoder *_FLMagEncoder,
-            double _FLEncoderOffset, ctre::phoenix6::hardware::TalonFX *_FRDriveMotor,
+            ctre::phoenix6::hardware::TalonFX *_FRDriveMotor,
             rev::CANSparkMax *_FRSpinMotor, frc::DutyCycleEncoder *_FRMagEncoder,
-            double _FREncoderOffset, ctre::phoenix6::hardware::TalonFX *_BRDriveMotor,
+            ctre::phoenix6::hardware::TalonFX *_BRDriveMotor,
             rev::CANSparkMax *_BRSpinMotor, frc::DutyCycleEncoder *_BRMagEncoder,
-            double _BREncoderOffset, ctre::phoenix6::hardware::TalonFX *_BLDriveMotor,
+            ctre::phoenix6::hardware::TalonFX *_BLDriveMotor,
             rev::CANSparkMax *_BLSpinMotor, frc::DutyCycleEncoder *_BLMagEncoder,
-            double _BLEncoderOffset, ctre::phoenix6::hardware::Pigeon2 *_pigeonIMU, 
+            ctre::phoenix6::hardware::Pigeon2 *_pigeonIMU, 
             double initialHeading);
 
         double GetIMUHeading();

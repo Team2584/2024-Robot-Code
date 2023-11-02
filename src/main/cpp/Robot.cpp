@@ -18,9 +18,9 @@ void Robot::RobotInit()
   m_chooser.AddOption(kAutoNameCustom, kAutoNameCustom);
   frc::SmartDashboard::PutData("Auto Modes", &m_chooser);
 
-  swerveDrive = new SwerveDrive(&driveFL, &swerveFL, &FLMagEnc, FL_WHEEL_OFFSET, &driveFR, &swerveFR, &FRMagEnc,
-                                FR_WHEEL_OFFSET, &driveBR, &swerveBR, &BRMagEnc, BR_WHEEL_OFFSET, &driveBL,
-                                &swerveBL, &BLMagEnc, BL_WHEEL_OFFSET, &_pigeon, STARTING_DRIVE_HEADING);
+  swerveDrive = new SwerveDrive(&driveFL, &swerveFL, &FLMagEnc, &driveFR, &swerveFR, &FRMagEnc,
+                                &driveBR, &swerveBR, &BRMagEnc, &driveBL,
+                                &swerveBL, &BLMagEnc, &_pigeon, STARTING_DRIVE_HEADING);
 }
 
 /**

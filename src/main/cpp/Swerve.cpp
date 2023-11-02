@@ -230,23 +230,23 @@ void SwerveModule::DriveSwerveModulePercent(double driveSpeed, double targetAngl
  */
 SwerveDrive::SwerveDrive(ctre::phoenix6::hardware::TalonFX *_FLDriveMotor,
                          rev::CANSparkMax *_FLSpinMotor, frc::DutyCycleEncoder *_FLMagEncoder,
-                         double _FLEncoderOffset, ctre::phoenix6::hardware::TalonFX *_FRDriveMotor,
+                         ctre::phoenix6::hardware::TalonFX *_FRDriveMotor,
                          rev::CANSparkMax *_FRSpinMotor, frc::DutyCycleEncoder *_FRMagEncoder,
-                         double _FREncoderOffset, ctre::phoenix6::hardware::TalonFX *_BRDriveMotor,
+                         ctre::phoenix6::hardware::TalonFX *_BRDriveMotor,
                          rev::CANSparkMax *_BRSpinMotor, frc::DutyCycleEncoder *_BRMagEncoder,
-                         double _BREncoderOffset, ctre::phoenix6::hardware::TalonFX *_BLDriveMotor,
+                         ctre::phoenix6::hardware::TalonFX *_BLDriveMotor,
                          rev::CANSparkMax *_BLSpinMotor, frc::DutyCycleEncoder *_BLMagEncoder,
-                         double _BLEncoderOffset, ctre::phoenix6::hardware::Pigeon2 *_pigeonIMU,
+                         ctre::phoenix6::hardware::Pigeon2 *_pigeonIMU,
                          double initialHeading)
     : frontLeftWheelPos{DRIVE_LENGTH / 2, DRIVE_WIDTH / 2},
       frontRightWheelPos{DRIVE_LENGTH / 2, -DRIVE_WIDTH / 2},
       backLeftWheelPos{-DRIVE_LENGTH / 2, DRIVE_WIDTH / 2},
       backRightWheelPos{-DRIVE_LENGTH / 2, DRIVE_WIDTH / 2}
 {
-    FLModule = new SwerveModule(_FLDriveMotor, _FLSpinMotor, _FLMagEncoder, _FLEncoderOffset);
-    FRModule = new SwerveModule(_FRDriveMotor, _FRSpinMotor, _FRMagEncoder, _FREncoderOffset);
-    BLModule = new SwerveModule(_BLDriveMotor, _BLSpinMotor, _BLMagEncoder, _BLEncoderOffset);
-    BRModule = new SwerveModule(_BRDriveMotor, _BRSpinMotor, _BRMagEncoder, _BREncoderOffset);
+    FLModule = new SwerveModule(_FLDriveMotor, _FLSpinMotor, _FLMagEncoder, FL_WHEEL_OFFSET);
+    FRModule = new SwerveModule(_FRDriveMotor, _FRSpinMotor, _FRMagEncoder, FR_WHEEL_OFFSET);
+    BLModule = new SwerveModule(_BLDriveMotor, _BLSpinMotor, _BLMagEncoder, BL_WHEEL_OFFSET);
+    BRModule = new SwerveModule(_BRDriveMotor, _BRSpinMotor, _BRMagEncoder, BR_WHEEL_OFFSET);
 
     pigeonIMU = _pigeonIMU;
     pigeonInitial = initialHeading;
