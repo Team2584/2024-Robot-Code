@@ -16,21 +16,28 @@
  * @param spinMotor_ A pointer to a Talon FX Spin Motor (the one that makes the wheel rotate to change direction)
  * @param magEncoder_ A pointer to the absolute encoder used to track rotation of the swerve module wheels
  */
-SwerveModule::SwerveModule(ctre::phoenix6::hardware::TalonFX *driveMotor_,
-                           rev::CANSparkMax *spinMotor_, frc::DutyCycleEncoder *magEncoder_,
+SwerveModule::SwerveModule(int driveMotorPort, int spinMotorPort, int magneticEncoderPort,
                            double encoderOffset_)
-    : spinPIDController{WHEEL_SPIN_KP, WHEEL_SPIN_KI, WHEEL_SPIN_KD, WHEEL_SPIN_KI_MAX, 
-                        WHEEL_SPIN_MIN_SPEED, WHEEL_SPIN_MAX_SPEED, 
+    : driveMotor{driveMotorPort},
+      spinMotor{spinMotorPort, rev::CANSparkMax::MotorType::kBrushless},
+      spinRelativeEncoder{spinMotor.GetEncoder()},
+      magEncoder{magneticEncoderPort},
+      spinPIDController{WHEEL_SPIN_KP, WHEEL_SPIN_KI, WHEEL_SPIN_KD, WHEEL_SPIN_KI_MAX,
+                        WHEEL_SPIN_MIN_SPEED, WHEEL_SPIN_MAX_SPEED,
                         WHEEL_SPIN_TOLERANCE, WHEEL_SPIN_VELOCITY_TOLERANCE}
 {
     // Instantiates all variables needed for class
-    driveMotor = driveMotor_;
-    spinMotor = spinMotor_;
-    magEncoder = magEncoder_;
     encoderOffset = encoderOffset_;
-    spinRelativeEncoder = new rev::SparkMaxRelativeEncoder(spinMotor->GetEncoder());
 
     ResetEncoders();
+}
+
+/*
+* Return the mag encoder's current value (NOT CORRECTED TO MAKE 0 DEGREES FORWARD)
+*/
+double SwerveModule::GetMagEncoderValue()
+{
+    return magEncoder.GetAbsolutePosition();
 }
 
 /**
@@ -40,7 +47,7 @@ SwerveModule::SwerveModule(ctre::phoenix6::hardware::TalonFX *driveMotor_,
  */
 double SwerveModule::GetModuleHeading()
 {
-    double encoderReading = magEncoder->GetAbsolutePosition();
+    double encoderReading = GetMagEncoderValue();
     // subtract the encoder offset to make 0 degrees forward
     encoderReading -= encoderOffset;
     if (encoderReading < 0)
@@ -58,7 +65,7 @@ double SwerveModule::GetModuleHeading()
 double SwerveModule::GetDriveEncoder()
 {
     // acquire a refreshed TalonFX rotor position signal
-    auto &rotorPosSignal = driveMotor->GetRotorPosition();
+    auto &rotorPosSignal = driveMotor.GetRotorPosition();
     return rotorPosSignal.GetValue().value();
 }
 
@@ -78,7 +85,7 @@ double SwerveModule::GetDriveEncoderMeters()
  */
 double SwerveModule::GetSpinEncoderRadians()
 {
-    return spinRelativeEncoder->GetPosition();
+    return spinRelativeEncoder.GetPosition();
 }
 
 /**
@@ -86,10 +93,10 @@ double SwerveModule::GetSpinEncoderRadians()
  */
 SwerveModulePosition SwerveModule::GetSwerveModulePosition()
 {
-  SwerveModulePosition position = SwerveModulePosition();
-  position.distance = units::length::meter_t{GetDriveEncoderMeters()};
-  position.angle = Rotation2d(units::degree_t{GetModuleHeading()});
-  return position;
+    SwerveModulePosition position = SwerveModulePosition();
+    position.distance = units::length::meter_t{GetDriveEncoderMeters()};
+    position.angle = Rotation2d(units::degree_t{GetModuleHeading()});
+    return position;
 }
 
 /**
@@ -106,8 +113,8 @@ void SwerveModule::ResetEncoders()
  */
 void SwerveModule::StopSwerveModule()
 {
-    spinMotor->Set(0);
-    driveMotor->Set(0);
+    spinMotor.Set(0);
+    driveMotor.Set(0);
 }
 
 /**
@@ -204,17 +211,11 @@ void SwerveModule::DriveSwerveModulePercent(double driveSpeed, double targetAngl
     // PID to spin the wheel, makes the wheel move slower as it reaches the target
     // (error divided by 90 because that is the furthest the wheel will possibly have to move)
     double spinMotorSpeed = spinPIDController.Calculate(0, error / 90.0);
-    
+
     // Move motors  at speeds and directions determined earlier
-    spinMotor->Set(spinMotorSpeed * spinDirection);
-    driveMotor->Set(driveSpeed * driveDirection);
+    spinMotor.Set(spinMotorSpeed * spinDirection);
+    driveMotor.Set(driveSpeed * driveDirection);
 }
-
-
-
-
-
-
 
 /*
   ____                               ____       _
@@ -230,30 +231,20 @@ void SwerveModule::DriveSwerveModulePercent(double driveSpeed, double targetAngl
  * Just know there are 8 motors and 4 mag encoders on a Swerve Drive
  * There is also a Pigeon IMU which includes an accelerometer and gyroscope.
  */
-SwerveDrive::SwerveDrive(ctre::phoenix6::hardware::TalonFX *FLDriveMotor,
-                         rev::CANSparkMax *FLSpinMotor, frc::DutyCycleEncoder *FLMagEncoder,
-                         ctre::phoenix6::hardware::TalonFX *FRDriveMotor,
-                         rev::CANSparkMax *FRSpinMotor, frc::DutyCycleEncoder *FRMagEncoder,
-                         ctre::phoenix6::hardware::TalonFX *BRDriveMotor,
-                         rev::CANSparkMax *BRSpinMotor, frc::DutyCycleEncoder *BRMagEncoder,
-                         ctre::phoenix6::hardware::TalonFX *BLDriveMotor,
-                         rev::CANSparkMax *BLSpinMotor, frc::DutyCycleEncoder *BLMagEncoder,
-                         ctre::phoenix6::hardware::Pigeon2 *_pigeonIMU)
-    : FLWheelPos{DRIVE_LENGTH / 2, DRIVE_WIDTH / 2},
+SwerveDrive::SwerveDrive()
+    : FLModule{FL_DRIVE_MOTOR_PORT, FL_SPIN__MOTOR_PORT, FL_MAGNETIC_ENCODER_PORT, FL_WHEEL_OFFSET},
+      FRModule{FR_DRIVE_MOTOR_PORT, FR_SPIN__MOTOR_PORT, FR_MAGNETIC_ENCODER_PORT, FR_WHEEL_OFFSET},
+      BLModule{BL_DRIVE_MOTOR_PORT, BL_SPIN__MOTOR_PORT, BL_MAGNETIC_ENCODER_PORT, BL_WHEEL_OFFSET},
+      BRModule{BR_DRIVE_MOTOR_PORT, BR_SPIN__MOTOR_PORT, BR_MAGNETIC_ENCODER_PORT, BR_WHEEL_OFFSET},
+      pigeonIMU{PIGEON_IMU_PORT},
+      FLWheelPos{DRIVE_LENGTH / 2, DRIVE_WIDTH / 2},
       FRWheelPos{DRIVE_LENGTH / 2, -DRIVE_WIDTH / 2},
       BLWheelPos{-DRIVE_LENGTH / 2, DRIVE_WIDTH / 2},
       BRWheelPos{-DRIVE_LENGTH / 2, DRIVE_WIDTH / 2},
-      wheelPositionsArray{FLWheelPos, FRWheelPos, BLWheelPos, BRWheelPos},
-      kinematics{wheelPositionsArray}
+      wheelTranslationArray{FLWheelPos, FRWheelPos, BLWheelPos, BRWheelPos},
+      kinematics{wheelTranslationArray},
+      odometry{kinematics, Rotation2d(0_deg), GetSwerveModulePositions()}
 {
-    FLModule = new SwerveModule(FLDriveMotor, FLSpinMotor, FLMagEncoder, FL_WHEEL_OFFSET);
-    FRModule = new SwerveModule(FRDriveMotor, FRSpinMotor, FRMagEncoder, FR_WHEEL_OFFSET);
-    BLModule = new SwerveModule(BLDriveMotor, BLSpinMotor, BLMagEncoder, BL_WHEEL_OFFSET);
-    BRModule = new SwerveModule(BRDriveMotor, BRSpinMotor, BRMagEncoder, BR_WHEEL_OFFSET);
-
-    odometry = new SwerveDriveOdometry(kinematics, Rotation2d(0_deg), GetSwerveModulePositions());
-
-    pigeonIMU = _pigeonIMU;
 }
 
 /**
@@ -264,7 +255,7 @@ SwerveDrive::SwerveDrive(ctre::phoenix6::hardware::TalonFX *FLDriveMotor,
 double SwerveDrive::GetIMUHeading()
 {
     // Turns the degree returned into a number 0-360
-    double pigeon_angle = fmod(pigeonIMU->GetYaw().GetValueAsDouble(), 360);
+    double pigeon_angle = fmod(pigeonIMU.GetYaw().GetValueAsDouble(), 360);
 
     // Reverses the angle so that positive is clockwise
     pigeon_angle = 360 - pigeon_angle;
@@ -281,10 +272,10 @@ double SwerveDrive::GetIMUHeading()
  */
 wpi::array<SwerveModulePosition, 4> SwerveDrive::GetSwerveModulePositions()
 {
-    wpi::array<SwerveModulePosition, 4> positions = {FLModule->GetSwerveModulePosition(),
-                                                FRModule->GetSwerveModulePosition(),
-                                                BLModule->GetSwerveModulePosition(),
-                                                BRModule->GetSwerveModulePosition()};
+    wpi::array<SwerveModulePosition, 4> positions = {FLModule.GetSwerveModulePosition(),
+                                                     FRModule.GetSwerveModulePosition(),
+                                                     BLModule.GetSwerveModulePosition(),
+                                                     BRModule.GetSwerveModulePosition()};
     return positions;
 }
 
@@ -293,7 +284,7 @@ wpi::array<SwerveModulePosition, 4> SwerveDrive::GetSwerveModulePositions()
  */
 void SwerveDrive::ResetOdometry()
 {
-  ResetOdometry(Pose2d(0_m, 0_m, Rotation2d(0_rad)));
+    ResetOdometry(Pose2d(0_m, 0_m, Rotation2d(0_rad)));
 }
 
 /**
@@ -301,19 +292,19 @@ void SwerveDrive::ResetOdometry()
  */
 void SwerveDrive::ResetOdometry(Pose2d position)
 {
-  odometry->ResetPosition(Rotation2d(units::degree_t{GetIMUHeading()}),
-      GetSwerveModulePositions(),
-      frc::Pose2d(Pose2d(position.Y(), position.X(), position.Rotation())));
+    odometry.ResetPosition(Rotation2d(units::degree_t{GetIMUHeading()}),
+                            GetSwerveModulePositions(),
+                            frc::Pose2d(Pose2d(position.Y(), position.X(), position.Rotation())));
 }
 
 /**
- * Finds the Pose of the robot using odometry 
+ * Finds the Pose of the robot using odometry
  * The math is complicated and WPI does it for me so I don't completely understand it, but if you have questions you can check their documentation
  */
 Pose2d SwerveDrive::GetOdometryPose()
 {
-  Pose2d pose = odometry->GetPose();
-  return Pose2d(pose.Y(), pose.X(), pose.Rotation());
+    Pose2d pose = odometry.GetPose();
+    return Pose2d(pose.Y(), pose.X(), pose.Rotation());
 }
 
 /**
@@ -322,7 +313,7 @@ Pose2d SwerveDrive::GetOdometryPose()
  */
 void SwerveDrive::Update()
 {
-  odometry->Update(units::degree_t{GetIMUHeading()}, GetSwerveModulePositions());
+    odometry.Update(units::degree_t{GetIMUHeading()}, GetSwerveModulePositions());
 }
 
 /**
@@ -344,7 +335,7 @@ double SwerveDrive::VelocityToPercent(double velocity)
  * Converts a percent power argument for the falcon motors to a meters per second speed.
  */
 double SwerveDrive::PercentToVelocity(double percent)
-{   
+{
     // The Reverse of the Equation Above
     if (percent > 0)
         return std::max(4.38 * percent - 0.0562, 0.0) * 2 * M_PI;
@@ -390,62 +381,62 @@ double SwerveDrive::AngularPercentToVelocity(double percent)
 void SwerveDrive::DriveSwervePercentNonFieldOriented(double STRAFE_Drive_Speed, double FWD_Drive_Speed, double Turn_Speed)
 {
 
-  // If there is no drive input, don't drive the robot and just end the function
-  if (FWD_Drive_Speed == 0 && STRAFE_Drive_Speed == 0 && Turn_Speed == 0)
-  {
-    FLModule->StopSwerveModule();
-    FRModule->StopSwerveModule();
-    BLModule->StopSwerveModule();
-    BRModule->StopSwerveModule();
+    // If there is no drive input, don't drive the robot and just end the function
+    if (FWD_Drive_Speed == 0 && STRAFE_Drive_Speed == 0 && Turn_Speed == 0)
+    {
+        FLModule.StopSwerveModule();
+        FRModule.StopSwerveModule();
+        BLModule.StopSwerveModule();
+        BRModule.StopSwerveModule();
 
-    return;
-  }
+        return;
+    }
 
-  // Determine wheel speeds / wheel target positions
-  // Equations explained at:
-  // https://www.chiefdelphi.com/t/paper-4-wheel-independent-drive-independent-steering-swerve/107383
-  // After clicking above link press the top download to see how the equations work
-  double driveRadius = sqrt(pow(DRIVE_LENGTH.value(), 2) + pow(DRIVE_WIDTH.value(), 2));
+    // Determine wheel speeds / wheel target positions
+    // Equations explained at:
+    // https://www.chiefdelphi.com/t/paper-4-wheel-independent-drive-independent-steering-swerve/107383
+    // After clicking above link press the top download to see how the equations work
+    double driveRadius = sqrt(pow(DRIVE_LENGTH.value(), 2) + pow(DRIVE_WIDTH.value(), 2));
 
-  double A = STRAFE_Drive_Speed - Turn_Speed * (DRIVE_LENGTH.value() / driveRadius);
-  double B = STRAFE_Drive_Speed + Turn_Speed * (DRIVE_LENGTH.value() / driveRadius);
-  double C = FWD_Drive_Speed - Turn_Speed * (DRIVE_WIDTH.value() / driveRadius);
-  double D = FWD_Drive_Speed + Turn_Speed * (DRIVE_WIDTH.value() / driveRadius);
+    double A = STRAFE_Drive_Speed - Turn_Speed * (DRIVE_LENGTH.value() / driveRadius);
+    double B = STRAFE_Drive_Speed + Turn_Speed * (DRIVE_LENGTH.value() / driveRadius);
+    double C = FWD_Drive_Speed - Turn_Speed * (DRIVE_WIDTH.value() / driveRadius);
+    double D = FWD_Drive_Speed + Turn_Speed * (DRIVE_WIDTH.value() / driveRadius);
 
-  double FR_Target_Angle = atan2(B, C) * 180 / M_PI;
-  double FL_Target_Angle = atan2(B, D) * 180 / M_PI;
-  double BL_Target_Angle = atan2(A, D) * 180 / M_PI;
-  double BR_Target_Angle = atan2(A, C) * 180 / M_PI;
+    double FR_Target_Angle = atan2(B, C) * 180 / M_PI;
+    double FL_Target_Angle = atan2(B, D) * 180 / M_PI;
+    double BL_Target_Angle = atan2(A, D) * 180 / M_PI;
+    double BR_Target_Angle = atan2(A, C) * 180 / M_PI;
 
-  double FR_Drive_Speed = sqrt(pow(B, 2) + pow(C, 2));
-  double FL_Drive_Speed = sqrt(pow(B, 2) + pow(D, 2));
-  double BL_Drive_Speed = sqrt(pow(A, 2) + pow(D, 2));
-  double BR_Drive_Speed = sqrt(pow(A, 2) + pow(C, 2));
+    double FR_Drive_Speed = sqrt(pow(B, 2) + pow(C, 2));
+    double FL_Drive_Speed = sqrt(pow(B, 2) + pow(D, 2));
+    double BL_Drive_Speed = sqrt(pow(A, 2) + pow(D, 2));
+    double BR_Drive_Speed = sqrt(pow(A, 2) + pow(C, 2));
 
-  // If Turn Speed and Drive Speed are both high, the equations above will output a number greater than 1.
-  // Below we must scale down all of the drive speeds to make sure we do not tell the motor to go faster
-  // than it's max value.
-  double max = FR_Drive_Speed;
-  if (FL_Drive_Speed > max)
-    max = FL_Drive_Speed;
-  if (BL_Drive_Speed > max)
-    max = BL_Drive_Speed;
-  if (BR_Drive_Speed > max)
-    max = BR_Drive_Speed;
+    // If Turn Speed and Drive Speed are both high, the equations above will output a number greater than 1.
+    // Below we must scale down all of the drive speeds to make sure we do not tell the motor to go faster
+    // than it's max value.
+    double max = FR_Drive_Speed;
+    if (FL_Drive_Speed > max)
+        max = FL_Drive_Speed;
+    if (BL_Drive_Speed > max)
+        max = BL_Drive_Speed;
+    if (BR_Drive_Speed > max)
+        max = BR_Drive_Speed;
 
-  if (max > 1)
-  {
-    FL_Drive_Speed /= max;
-    FR_Drive_Speed /= max;
-    BL_Drive_Speed /= max;
-    BR_Drive_Speed /= max;
-  }
+    if (max > 1)
+    {
+        FL_Drive_Speed /= max;
+        FR_Drive_Speed /= max;
+        BL_Drive_Speed /= max;
+        BR_Drive_Speed /= max;
+    }
 
-  // Make all the motors move
-  FLModule->DriveSwerveModulePercent(FL_Drive_Speed, FL_Target_Angle);
-  FRModule->DriveSwerveModulePercent(FR_Drive_Speed, FR_Target_Angle);
-  BLModule->DriveSwerveModulePercent(BL_Drive_Speed, BL_Target_Angle);
-  BRModule->DriveSwerveModulePercent(BR_Drive_Speed, BR_Target_Angle);
+    // Make all the motors move
+    FLModule.DriveSwerveModulePercent(FL_Drive_Speed, FL_Target_Angle);
+    FRModule.DriveSwerveModulePercent(FR_Drive_Speed, FR_Target_Angle);
+    BLModule.DriveSwerveModulePercent(BL_Drive_Speed, BL_Target_Angle);
+    BRModule.DriveSwerveModulePercent(BR_Drive_Speed, BR_Target_Angle);
 }
 
 /**
@@ -457,13 +448,13 @@ void SwerveDrive::DriveSwervePercentNonFieldOriented(double STRAFE_Drive_Speed, 
  */
 void SwerveDrive::DriveSwervePercent(double STRAFE_Drive_Speed, double FWD_Drive_Speed, double Turn_Speed)
 {
-  // Converts our field oriented speeds to robot oriented, by using trig with the current robot angle.
-  double angle = GetOdometryPose().Rotation().Radians().value();
-  double oldFwd = FWD_Drive_Speed;
-  FWD_Drive_Speed = FWD_Drive_Speed * cos(angle) + STRAFE_Drive_Speed * sin(angle);
-  STRAFE_Drive_Speed = -1 * oldFwd * sin(angle) + STRAFE_Drive_Speed * cos(angle);
+    // Converts our field oriented speeds to robot oriented, by using trig with the current robot angle.
+    double angle = GetOdometryPose().Rotation().Radians().value();
+    double oldFwd = FWD_Drive_Speed;
+    FWD_Drive_Speed = FWD_Drive_Speed * cos(angle) + STRAFE_Drive_Speed * sin(angle);
+    STRAFE_Drive_Speed = -1 * oldFwd * sin(angle) + STRAFE_Drive_Speed * cos(angle);
 
-  DriveSwervePercentNonFieldOriented(STRAFE_Drive_Speed, FWD_Drive_Speed, Turn_Speed);
+    DriveSwervePercentNonFieldOriented(STRAFE_Drive_Speed, FWD_Drive_Speed, Turn_Speed);
 }
 
 /**
@@ -475,5 +466,5 @@ void SwerveDrive::DriveSwervePercent(double STRAFE_Drive_Speed, double FWD_Drive
  */
 void SwerveDrive::DriveSwerveMetersAndRadians(double STRAFE_Drive_Speed, double FWD_Drive_Speed, double Turn_Speed)
 {
-  DriveSwervePercent(VelocityToPercent(STRAFE_Drive_Speed), VelocityToPercent(FWD_Drive_Speed), AngularVelocityToPercent(Turn_Speed));
+    DriveSwervePercent(VelocityToPercent(STRAFE_Drive_Speed), VelocityToPercent(FWD_Drive_Speed), AngularVelocityToPercent(Turn_Speed));
 }

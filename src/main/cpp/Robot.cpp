@@ -2,7 +2,7 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-#include "Setup.h"
+#include "Robot.h"
 #include "Constants/DriverConstants.h"
 
 #include "Swerve.h"
@@ -11,6 +11,8 @@
 #include <frc/smartdashboard/SmartDashboard.h>
 
 SwerveDrive *swerveDrive;
+XboxController *xbox_Drive;
+XboxController *xbox_Drive2;
 
 void Robot::RobotInit()
 {
@@ -18,9 +20,9 @@ void Robot::RobotInit()
   m_chooser.AddOption(kAutoNameCustom, kAutoNameCustom);
   frc::SmartDashboard::PutData("Auto Modes", &m_chooser);
 
-  swerveDrive = new SwerveDrive(&driveFL, &swerveFL, &FLMagEnc, &driveFR, &swerveFR, &FRMagEnc,
-                                &driveBR, &swerveBR, &BRMagEnc, &driveBL,
-                                &swerveBL, &BLMagEnc, &_pigeon);
+  swerveDrive = new SwerveDrive();
+  xbox_Drive = new XboxController(0);
+  xbox_Drive2 = new XboxController(1);
 }
 
 /**
@@ -78,8 +80,8 @@ void Robot::TeleopInit()
 
 void Robot::TeleopPeriodic()
 {
-  SmartDashboard::PutNumber("FL Drive Encoder", swerveDrive->FLModule->GetDriveEncoder());
-  SmartDashboard::PutNumber("FL Drive Encoder Meters", swerveDrive->FLModule->GetDriveEncoderMeters());
+  SmartDashboard::PutNumber("FL Drive Encoder", swerveDrive->FLModule.GetDriveEncoder());
+  SmartDashboard::PutNumber("FL Drive Encoder Meters", swerveDrive->FLModule.GetDriveEncoderMeters());
   SmartDashboard::PutNumber("Pigeon IMU Heading", swerveDrive->GetIMUHeading());
   SmartDashboard::PutNumber("Odometry X Position", swerveDrive->GetOdometryPose().X().value());
   SmartDashboard::PutNumber("Odometry Y Position", swerveDrive->GetOdometryPose().Y().value());

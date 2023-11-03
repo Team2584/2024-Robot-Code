@@ -9,9 +9,10 @@ class SwerveModule
 {
     private:
         // Instance Variables for each swerve module
-        ctre::phoenix6::hardware::TalonFX *driveMotor; /* The motor responsible for actually driving the wheel*/
-        rev::CANSparkMax *spinMotor; /* The motor responsible for "spinning" the wheel left to right to change direction*/
-        rev::SparkMaxRelativeEncoder *spinRelativeEncoder; /* The relative encoder built into the spinMotor */
+        ctre::phoenix6::hardware::TalonFX driveMotor; /* The motor responsible for actually driving the wheel*/
+        rev::CANSparkMax spinMotor; /* The motor responsible for "spinning" the wheel left to right to change direction*/
+        rev::SparkMaxRelativeEncoder spinRelativeEncoder; /* The relative encoder built into the spinMotor */
+        frc::DutyCycleEncoder magEncoder; /* The magnetic absolute encoder tracking swerve heading. */
         PID spinPIDController; /* The PID Controller for the spinMotor, works using degrees */
         double encoderOffset;       /* Offset in magnetic encoder from 0 facing the front of the robot */
         double driveEncoderInitial; /* Used to computer the change in encoder tics, aka motor rotation */
@@ -19,12 +20,10 @@ class SwerveModule
         double spinEncoderInitialValue; /* Initial Value of Relative Spin Encoder used for zeroing*/
 
     public:
-        frc::DutyCycleEncoder *magEncoder;
-
-        SwerveModule(ctre::phoenix6::hardware::TalonFX *driveMotor_,
-                    rev::CANSparkMax *spinMotor_, frc::DutyCycleEncoder *magEncoder_,
+        SwerveModule(int driveMotorPort, int spinMotorPort, int magneticEncoderPort,
                     double encoderOffset_);
 
+        double GetMagEncoderValue();
         double GetModuleHeading();
         double GetDriveEncoder();
         double GetDriveEncoderMeters();
@@ -41,25 +40,17 @@ class SwerveModule
  */
 class SwerveDrive
 {
-    private:
-        ctre::phoenix6::hardware::Pigeon2 *pigeonIMU;
+    public:
+        SwerveModule FLModule, FRModule, BLModule, BRModule; /* The four swerve modules at each corner of the robot */
+    protected:
+        ctre::phoenix6::hardware::Pigeon2 pigeonIMU;
         Translation2d FLWheelPos, FRWheelPos, BLWheelPos, BRWheelPos; /* Location of each wheel in relation to the center of the robot */ 
-        wpi::array<Translation2d, 4> wheelPositionsArray; /* Array of all wheel positions */
+        wpi::array<Translation2d, 4> wheelTranslationArray; /* Array of all wheel positions */
         SwerveDriveKinematics<4> kinematics; /* A WPI struct which contains all wheels of a swerve drive*/
-        SwerveDriveOdometry<4> *odometry; /* An odometry class which returns the position of the robot using wheel encoder ticks*/
+        SwerveDriveOdometry<4> odometry; /* An odometry class which returns the position of the robot using wheel encoder ticks*/
 
    public:
-        SwerveModule *FLModule, *FRModule, *BRModule, *BLModule; /* The four swerve modules at each corner of the robot */
-
-        SwerveDrive(ctre::phoenix6::hardware::TalonFX *FLDriveMotor,
-            rev::CANSparkMax *FLSpinMotor, frc::DutyCycleEncoder *FLMagEncoder,
-            ctre::phoenix6::hardware::TalonFX *FRDriveMotor,
-            rev::CANSparkMax *FRSpinMotor, frc::DutyCycleEncoder *FRMagEncoder,
-            ctre::phoenix6::hardware::TalonFX *BRDriveMotor,
-            rev::CANSparkMax *BRSpinMotor, frc::DutyCycleEncoder *BRMagEncoder,
-            ctre::phoenix6::hardware::TalonFX *BLDriveMotor,
-            rev::CANSparkMax *BLSpinMotor, frc::DutyCycleEncoder *BLMagEncoder,
-            ctre::phoenix6::hardware::Pigeon2 *_pigeonIMU);
+        SwerveDrive();
 
         double GetIMUHeading();
         wpi::array<SwerveModulePosition, 4> GetSwerveModulePositions();

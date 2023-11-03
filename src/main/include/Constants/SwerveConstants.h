@@ -7,6 +7,21 @@
                                                                                                                      
 */
 
+// Ports for different motors and sensors
+#define FL_DRIVE_MOTOR_PORT 1
+#define FL_SPIN__MOTOR_PORT 11
+#define FR_DRIVE_MOTOR_PORT 2
+#define FR_SPIN__MOTOR_PORT 12
+#define BL_DRIVE_MOTOR_PORT 3
+#define BL_SPIN__MOTOR_PORT 13
+#define BR_DRIVE_MOTOR_PORT 4
+#define BR_SPIN__MOTOR_PORT 14
+#define FL_MAGNETIC_ENCODER_PORT 8
+#define FR_MAGNETIC_ENCODER_PORT 6
+#define BL_MAGNETIC_ENCODER_PORT 9
+#define BR_MAGNETIC_ENCODER_PORT 7
+#define PIGEON_IMU_PORT 6
+
 // Find offsets with bevel gears on the right side of the drive train
 #define FL_WHEEL_OFFSET 0.474
 #define FR_WHEEL_OFFSET 0.426 
@@ -31,6 +46,23 @@
 #define WHEEL_SPIN_VELOCITY_TOLERANCE 0.5 // In percent power
 #define WHEEL_SPIN_MIN_SPEED 0 // In percent power
 #define WHEEL_SPIN_MAX_SPEED 1.0 // In percent power
+
+/*
+ __     ___     _                ____                _              _       
+ \ \   / (_)___(_) ___  _ __    / ___|___  _ __  ___| |_ __ _ _ __ | |_ ___ 
+  \ \ / /| / __| |/ _ \| '_ \  | |   / _ \| '_ \/ __| __/ _` | '_ \| __/ __|
+   \ V / | \__ \ | (_) | | | | | |__| (_) | | | \__ \ || (_| | | | | |_\__ \
+    \_/  |_|___/_|\___/|_| |_|  \____\___/|_| |_|___/\__\__,_|_| |_|\__|___/
+                                                                            
+*/
+
+#define CAMERA_ONE_NAME "photonvision"
+#define CAMERA_ONE_X 0.0_m // Distance in meters from camera to center of robot left/right, right positive
+#define CAMERA_ONE_Y 0.0_m // Distance in meters from camera to center of robot forward/backward, forward positive
+#define CAMERA_ONE_Z 0.0_m // Camera's distance from ground in meters
+#define CAMERA_ONE_X_ROTATION 0_deg // Camera's Rotation around robot's X axis (tilted up/down)
+#define CAMERA_ONE_Y_ROTATION 0_deg // Camera's Rotation around robot's Y axis (rotated clockwise/counterclocwise)
+#define CAMERA_ONE_Z_ROTATION 0_deg // Camera's Rotation around robot's Z axis (tilted left/right)
 
 /*
      _         _                                                 ____                _              _       

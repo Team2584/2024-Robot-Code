@@ -32,7 +32,10 @@
 #include "rev/CANSparkMax.h"
 #include "rev/AbsoluteEncoder.h"
 
+#include <photonlib/PhotonCamera.h>
+
 using namespace frc;
+using namespace std;
 
 class Robot : public frc::TimedRobot {
  public:
