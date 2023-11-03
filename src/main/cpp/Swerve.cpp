@@ -14,7 +14,7 @@
  *
  * @param driveMotor_ A pointer to a Talon FX Drive Motor (the one that makes the robot move)
  * @param spinMotor_ A pointer to a Talon FX Spin Motor (the one that makes the wheel rotate to change direction)
- * @param magEncoder_ A pointer to the absolute encoder used to track rotation of the swerve module wheels
+ * @param magEncoder_ A pointer to the absolute encoder used to track the rotation of the swerve module wheels
  */
 SwerveModule::SwerveModule(int driveMotorPort, int spinMotorPort, int magneticEncoderPort,
                            double encoderOffset_)
@@ -43,7 +43,7 @@ double SwerveModule::GetMagEncoderValue()
 /**
  * Finds the absolute heading of the swerve drive wheel relative to the robot.
  *
- * @return The Swerve Drive wheel's heading in degrees with 0.0 being the front of the robot increasing clockwise.
+ * @return The Swerve Drive wheel's heading in degrees, with 0.0 being the front of the robot increasing clockwise.
  */
 double SwerveModule::GetModuleHeading()
 {
@@ -64,7 +64,7 @@ double SwerveModule::GetModuleHeading()
  */
 double SwerveModule::GetDriveEncoder()
 {
-    // acquire a refreshed TalonFX rotor position signal
+    // Acquire a refreshed TalonFX rotor position signal
     auto &rotorPosSignal = driveMotor.GetRotorPosition();
     return rotorPosSignal.GetValue().value();
 }
@@ -79,8 +79,8 @@ double SwerveModule::GetDriveEncoderMeters()
 }
 
 /**
- *  INCOMPLETE DO NOT USE UNDER ANY CIRCUMSTANCE, USE GetModuleHeading() INSTEAD!
- *  Also this hasn't been updated from the talon swerve drive as it is an uneccessary functino
+ *  INCOMPLETE DO NOT USE UNDER ANY CIRCUMSTANCE; USE GetModuleHeading() INSTEAD!
+ *  Also, this hasn't been updated from the talon swerve drive, as it is an unnecessary function
  *  This function was intended to use the relative encoder as a backup if the absolute mag encoder broke
  */
 double SwerveModule::GetSpinEncoderRadians()
@@ -143,11 +143,11 @@ void SwerveModule::DriveSwerveModulePercent(double driveSpeed, double targetAngl
     }
 
     // The below logic determines the most efficient way for the wheel to move to reach the desired angle
-    // This could mean moving towards it clockwise, counterclockwise, or moving towards the opposite of the angle
+    // This could mean moving toward it clockwise, counterclockwise, or moving towards the opposite of the angle
     // and driving in the opposite direction
     if (wheelAngle < targetAngle)
     {
-        // if target and wheelangle are less than 90 degrees apart we should spin directly towards the target angle
+        // if target and wheelangle are less than 90 degrees apart, we should spin directly towards the target angle
         if (targetAngle - wheelAngle <= 90)
         {
             error = targetAngle - wheelAngle;
