@@ -53,7 +53,7 @@ double SwerveModule::GetModuleHeading()
 }
 
 /**
- *  Returns Talon Drive Encoder value
+ *  Returns Talon Drive Encoder Rotations
  */
 double SwerveModule::GetDriveEncoder()
 {
@@ -68,7 +68,7 @@ double SwerveModule::GetDriveEncoder()
 double SwerveModule::GetDriveEncoderMeters()
 {
     // 2048 is the resolution of the drive encoder, meaning the number added to the drive encoder for each rotation
-    return (GetDriveEncoder() - driveEncoderInitial) / 2048 / DRIVE_MOTOR_GEAR_RATIO; // * DRIVE_MOTOR_CIRCUMFERENCE; IMPORTANT PLEASE ADD BACK
+    return (GetDriveEncoder() - driveEncoderInitial) / DRIVE_MOTOR_GEAR_RATIO * DRIVE_MOTOR_CIRCUMFERENCE;
 }
 
 /**
@@ -244,13 +244,14 @@ SwerveDrive::SwerveDrive(ctre::phoenix6::hardware::TalonFX *FLDriveMotor,
       BLWheelPos{-DRIVE_LENGTH / 2, DRIVE_WIDTH / 2},
       BRWheelPos{-DRIVE_LENGTH / 2, DRIVE_WIDTH / 2},
       wheelPositionsArray{FLWheelPos, FRWheelPos, BLWheelPos, BRWheelPos},
-      kinematics{wheelPositionsArray},
-      odometry{kinematics, Rotation2d(0_deg), GetSwerveModulePositions()}
+      kinematics{wheelPositionsArray}
 {
     FLModule = new SwerveModule(FLDriveMotor, FLSpinMotor, FLMagEncoder, FL_WHEEL_OFFSET);
     FRModule = new SwerveModule(FRDriveMotor, FRSpinMotor, FRMagEncoder, FR_WHEEL_OFFSET);
     BLModule = new SwerveModule(BLDriveMotor, BLSpinMotor, BLMagEncoder, BL_WHEEL_OFFSET);
     BRModule = new SwerveModule(BRDriveMotor, BRSpinMotor, BRMagEncoder, BR_WHEEL_OFFSET);
+
+    odometry = new SwerveDriveOdometry(kinematics, Rotation2d(0_deg), GetSwerveModulePositions());
 
     pigeonIMU = _pigeonIMU;
 }
@@ -300,7 +301,7 @@ void SwerveDrive::ResetOdometry()
  */
 void SwerveDrive::ResetOdometry(Pose2d position)
 {
-  odometry.ResetPosition(Rotation2d(units::degree_t{GetIMUHeading()}),
+  odometry->ResetPosition(Rotation2d(units::degree_t{GetIMUHeading()}),
       GetSwerveModulePositions(),
       frc::Pose2d(Pose2d(position.Y(), position.X(), position.Rotation())));
 }
@@ -311,7 +312,7 @@ void SwerveDrive::ResetOdometry(Pose2d position)
  */
 Pose2d SwerveDrive::GetOdometryPose()
 {
-  Pose2d pose = odometry.GetPose();
+  Pose2d pose = odometry->GetPose();
   return Pose2d(pose.Y(), pose.X(), pose.Rotation());
 }
 
@@ -321,7 +322,7 @@ Pose2d SwerveDrive::GetOdometryPose()
  */
 void SwerveDrive::Update()
 {
-  odometry.Update(units::degree_t{GetIMUHeading()}, GetSwerveModulePositions());
+  odometry->Update(units::degree_t{GetIMUHeading()}, GetSwerveModulePositions());
 }
 
 /**

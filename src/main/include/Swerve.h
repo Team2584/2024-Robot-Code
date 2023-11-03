@@ -46,10 +46,10 @@ class SwerveDrive
         Translation2d FLWheelPos, FRWheelPos, BLWheelPos, BRWheelPos; /* Location of each wheel in relation to the center of the robot */ 
         wpi::array<Translation2d, 4> wheelPositionsArray; /* Array of all wheel positions */
         SwerveDriveKinematics<4> kinematics; /* A WPI struct which contains all wheels of a swerve drive*/
-        SwerveDriveOdometry<4> odometry; /* An odometry class which returns the position of the robot using wheel encoder ticks*/
+        SwerveDriveOdometry<4> *odometry; /* An odometry class which returns the position of the robot using wheel encoder ticks*/
 
    public:
-        SwerveModule *FLModule, *FRModule, *BRModule, *BLModule;
+        SwerveModule *FLModule, *FRModule, *BRModule, *BLModule; /* The four swerve modules at each corner of the robot */
 
         SwerveDrive(ctre::phoenix6::hardware::TalonFX *FLDriveMotor,
             rev::CANSparkMax *FLSpinMotor, frc::DutyCycleEncoder *FLMagEncoder,
