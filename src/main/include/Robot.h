@@ -33,6 +33,7 @@
 #include "rev/AbsoluteEncoder.h"
 
 #include <photonlib/PhotonCamera.h>
+#include <photonlib/PhotonPoseEstimator.h>
 
 using namespace frc;
 using namespace std;

@@ -53,6 +53,7 @@ class SwerveDrive
         SwerveDrive();
 
         double GetIMUHeading();
+        void ResetHeading();
         wpi::array<SwerveModulePosition, 4> GetSwerveModulePositions();
         void ResetOdometry();
         void ResetOdometry(Pose2d position);

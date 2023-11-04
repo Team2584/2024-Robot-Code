@@ -227,9 +227,7 @@ void SwerveModule::DriveSwerveModulePercent(double driveSpeed, double targetAngl
 */
 
 /**
- * Instantiates a swerve drive in a stupid way with too many instance variables that aren't really imporant.
- * Just know there are 8 motors and 4 mag encoders on a Swerve Drive
- * There is also a Pigeon IMU which includes an accelerometer and gyroscope.
+ * Instantiates a swerve drive
  */
 SwerveDrive::SwerveDrive()
     : FLModule{FL_DRIVE_MOTOR_PORT, FL_SPIN__MOTOR_PORT, FL_MAGNETIC_ENCODER_PORT, FL_WHEEL_OFFSET},
@@ -265,6 +263,15 @@ double SwerveDrive::GetIMUHeading()
         pigeon_angle = 0;
 
     return pigeon_angle;
+}
+
+/**
+ * Resets Robot heading to facing away from the driver
+ */
+void SwerveDrive::ResetHeading()
+{
+    Pose2d currentPose = GetOdometryPose();
+    ResetOdometry(Pose2d(currentPose.X(), currentPose.Y(), Rotation2d(0_deg)));
 }
 
 /**
