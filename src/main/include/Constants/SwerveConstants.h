@@ -56,6 +56,12 @@
                                                                             
 */
 
+// List of april tag's IDs and their position on the field in comparison to origin
+const std::vector<frc::AprilTag> fieldTagLayout = {
+    {0, Pose3d(3_m, 3_m, 3_m, Rotation3d())},
+    {1, Pose3d(5_m, 5_m, 5_m, Rotation3d())}};
+const AprilTagFieldLayout aprilTags = AprilTagFieldLayout(fieldTagLayout, 54_ft, 27_ft); // frc field is 54 ft by 27 ft
+
 #define CAMERA_ONE_NAME "photonvision"
 #define CAMERA_ONE_X 0.0_m // Distance in meters from camera to center of robot left/right, right positive
 #define CAMERA_ONE_Y 0.0_m // Distance in meters from camera to center of robot forward/backward, forward positive

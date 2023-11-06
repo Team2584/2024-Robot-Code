@@ -5,10 +5,9 @@
  */
 PhotonTagSwerve::PhotonTagSwerve()
     : SwerveDrive(),
-      tagOdometry{kinematics, Rotation2d(0_deg), GetSwerveModulePositions()},
-      camera{CAMERA_ONE_NAME},
+      tagOdometry{kinematics, Rotation2d(units::degree_t{GetIMUHeading()}), GetSwerveModulePositions(), Pose2d()},
       robotToCam{frc::Translation3d{CAMERA_ONE_X, CAMERA_ONE_Y, CAMERA_ONE_Z}, frc::Rotation3d{CAMERA_ONE_X_ROTATION, CAMERA_ONE_Y_ROTATION, CAMERA_ONE_Z_ROTATION}},
-      poseEstimator{}
+      poseEstimator{aprilTags, photonlib::CLOSEST_TO_REFERENCE_POSE, photonlib::PhotonCamera(CAMERA_ONE_NAME), robotToCam}
 {
 }
 
@@ -36,6 +35,7 @@ void PhotonTagSwerve::ResetTagOdometry()
  */
 void PhotonTagSwerve::ResetTagOdometry(Pose2d position)
 {
+    prevEstimatedPose = Pose3d(position);
     tagOdometry.ResetPosition(Rotation2d(units::degree_t{GetIMUHeading()}),
                               GetSwerveModulePositions(),
                               frc::Pose2d(Pose2d(position.Y(), position.X(), position.Rotation())));
@@ -46,11 +46,29 @@ void PhotonTagSwerve::ResetTagOdometry(Pose2d position)
  */
 Pose2d PhotonTagSwerve::GetTagOdometryPose()
 {
-    Pose2d pose = tagOdometry.GetPose();
+    Pose2d pose = tagOdometry.GetEstimatedPosition();
     return Pose2d(pose.Y(), pose.X(), pose.Rotation());
+}
+
+void PhotonTagSwerve::UpdateTagOdometry()
+{
+    // Update encoder counts of odometry
+    tagOdometry.Update(units::degree_t{GetIMUHeading()}, GetSwerveModulePositions());
+
+    // Add april tag data
+    poseEstimator.SetReferencePose(prevEstimatedPose);
+    units::millisecond_t currentTime = frc::Timer::GetFPGATimestamp();
+    optional<photonlib::EstimatedRobotPose> possibleResult = poseEstimator.Update();
+    if (possibleResult.has_value()) 
+    {
+        photonlib::EstimatedRobotPose result = possibleResult.value();
+        tagOdometry.AddVisionMeasurement(result.estimatedPose.ToPose2d(), currentTime - result.timestamp);
+        prevEstimatedPose = result.estimatedPose;
+    } 
 }
 
 void PhotonTagSwerve::Update()
 {
     SwerveDrive::Update();
+    UpdateTagOdometry();
 }

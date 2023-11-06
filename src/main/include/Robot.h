@@ -24,6 +24,11 @@
 #include <frc/kinematics/SwerveDriveKinematics.h>
 #include <frc/kinematics/SwerveDriveOdometry.h>
 
+#include <frc/estimator/SwerveDrivePoseEstimator.h>
+
+#include <frc/apriltag/AprilTag.h>
+#include <frc/apriltag/AprilTagFieldLayout.h>
+
 #include <wpi/array.h>
 
 #include <ctre/phoenix6/TalonFX.hpp>
