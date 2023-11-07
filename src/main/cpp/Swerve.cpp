@@ -238,7 +238,7 @@ SwerveDrive::SwerveDrive()
       FLWheelPos{DRIVE_LENGTH / 2, DRIVE_WIDTH / 2},
       FRWheelPos{DRIVE_LENGTH / 2, -DRIVE_WIDTH / 2},
       BLWheelPos{-DRIVE_LENGTH / 2, DRIVE_WIDTH / 2},
-      BRWheelPos{-DRIVE_LENGTH / 2, DRIVE_WIDTH / 2},
+      BRWheelPos{-DRIVE_LENGTH / 2, -DRIVE_WIDTH / 2},
       wheelTranslationArray{FLWheelPos, FRWheelPos, BLWheelPos, BRWheelPos},
       kinematics{wheelTranslationArray},
       odometry{kinematics, Rotation2d(0_deg), GetSwerveModulePositions()}
@@ -248,20 +248,12 @@ SwerveDrive::SwerveDrive()
 /**
  * Returns the absolute heading of the swerve drive according the the IMU (gyroscope).
  *
- * @return The Swerve Drive's heading in degrees with 0.0 being the front of the robot increasing clockwise.
+ * @return The Swerve Drive's heading in degrees with 0.0 being the front of the robot increasing counterclockwise.
  */
 double SwerveDrive::GetIMUHeading()
 {
     // Turns the degree returned into a number 0-360
     double pigeon_angle = fmod(pigeonIMU.GetYaw().GetValueAsDouble(), 360);
-
-    // Reverses the angle so that positive is clockwise
-    pigeon_angle = 360 - pigeon_angle;
-
-    // Fixes weird issues with the number 360
-    if (pigeon_angle == 360)
-        pigeon_angle = 0;
-
     return pigeon_angle;
 }
 
@@ -300,18 +292,15 @@ void SwerveDrive::ResetOdometry()
 void SwerveDrive::ResetOdometry(Pose2d position)
 {
     odometry.ResetPosition(Rotation2d(units::degree_t{GetIMUHeading()}),
-                            GetSwerveModulePositions(),
-                            frc::Pose2d(Pose2d(position.Y(), position.X(), position.Rotation())));
+                            GetSwerveModulePositions(), position);
 }
 
 /**
  * Finds the Pose of the robot using odometry
- * The math is complicated and WPI does it for me so I don't completely understand it, but if you have questions you can check their documentation
  */
 Pose2d SwerveDrive::GetOdometryPose()
 {
-    Pose2d pose = odometry.GetPose();
-    return Pose2d(pose.Y(), pose.X(), pose.Rotation());
+    return odometry.GetPose();
 }
 
 /**
@@ -381,11 +370,11 @@ double SwerveDrive::AngularPercentToVelocity(double percent)
 /**
  * Drives the swerve "robot oriented" meaning the FWD drive speed will move the robot in the direction of the front of the robot
  *
- * @param STRAFE_Drive_Speed The speed the robot should move left and right, positive being right, in percentage (0 - 1.0)
  * @param FWD_Drive_Speed The speed the robot should move forward and back, positive being forward, in percentage (0 - 1.0)
+ * @param STRAFE_Drive_Speed The speed the robot should move left and right, positive being right, in percentage (0 - 1.0)
  * @param Turn_Speed The speed the robot should turn left and right, positive being clockwise, in percentage (0 - 1.0)
  */
-void SwerveDrive::DriveSwervePercentNonFieldOriented(double STRAFE_Drive_Speed, double FWD_Drive_Speed, double Turn_Speed)
+void SwerveDrive::DriveSwervePercentNonFieldOriented(double FWD_Drive_Speed, double STRAFE_Drive_Speed, double Turn_Speed)
 {
 
     // If there is no drive input, don't drive the robot and just end the function
@@ -448,12 +437,11 @@ void SwerveDrive::DriveSwervePercentNonFieldOriented(double STRAFE_Drive_Speed, 
 
 /**
  * Drives the swerve drive, field oriented (in relation to the driver's pov) with an x y and spin.
- *
- * @param STRAFE_Drive_Speed The speed the robot should move left and right, positive being right, in percentage (0 - 1.0)
  * @param FWD_Drive_Speed The speed the robot should move forward and back, positive being forward, in percentage (0 - 1.0)
+ * @param STRAFE_Drive_Speed The speed the robot should move left and right, positive being right, in percentage (0 - 1.0)
  * @param Turn_Speed The speed the robot should turn left and right, positive being clockwise, in percentage (0 - 1.0)
  */
-void SwerveDrive::DriveSwervePercent(double STRAFE_Drive_Speed, double FWD_Drive_Speed, double Turn_Speed)
+void SwerveDrive::DriveSwervePercent(double FWD_Drive_Speed, double STRAFE_Drive_Speed, double Turn_Speed)
 {
     // Converts our field oriented speeds to robot oriented, by using trig with the current robot angle.
     double angle = GetOdometryPose().Rotation().Radians().value();
@@ -461,17 +449,17 @@ void SwerveDrive::DriveSwervePercent(double STRAFE_Drive_Speed, double FWD_Drive
     FWD_Drive_Speed = FWD_Drive_Speed * cos(angle) + STRAFE_Drive_Speed * sin(angle);
     STRAFE_Drive_Speed = -1 * oldFwd * sin(angle) + STRAFE_Drive_Speed * cos(angle);
 
-    DriveSwervePercentNonFieldOriented(STRAFE_Drive_Speed, FWD_Drive_Speed, Turn_Speed);
+    DriveSwervePercentNonFieldOriented(FWD_Drive_Speed, STRAFE_Drive_Speed, Turn_Speed);
 }
 
 /**
  * Drives the swerve drive, field oriented (in relation to the driver's pov) with an x y and spin.
  *
- * @param STRAFE_Drive_Speed The speed the robot should move left and right, positive being right, in meters per second
  * @param FWD_Drive_Speed The speed the robot should move forward and back, positive being forward, in meters per second
+ * @param STRAFE_Drive_Speed The speed the robot should move left and right, positive being right, in meters per second
  * @param Turn_Speed The speed the robot should turn left and right, positive being clockwise, in radians per second
  */
-void SwerveDrive::DriveSwerveMetersAndRadians(double STRAFE_Drive_Speed, double FWD_Drive_Speed, double Turn_Speed)
+void SwerveDrive::DriveSwerveMetersAndRadians(double FWD_Drive_Speed, double STRAFE_Drive_Speed, double Turn_Speed)
 {
-    DriveSwervePercent(VelocityToPercent(STRAFE_Drive_Speed), VelocityToPercent(FWD_Drive_Speed), AngularVelocityToPercent(Turn_Speed));
+    DriveSwervePercent(VelocityToPercent(FWD_Drive_Speed), VelocityToPercent(STRAFE_Drive_Speed), AngularVelocityToPercent(Turn_Speed));
 }

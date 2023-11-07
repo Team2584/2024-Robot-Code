@@ -121,7 +121,7 @@ void Robot::TeleopPeriodic()
   double TurnSpeed = rightJoystickX * MAX_SPIN_SPEED;
 
   // Drive the robot
-  swerveDrive->DriveSwervePercent(StrafeDriveSpeed, FwdDriveSpeed, TurnSpeed);
+  swerveDrive->DriveSwervePercent(FwdDriveSpeed, StrafeDriveSpeed, TurnSpeed);
 }
 
 void Robot::DisabledInit() {}

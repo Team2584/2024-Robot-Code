@@ -50,6 +50,9 @@ Pose2d PhotonTagSwerve::GetTagOdometryPose()
     return Pose2d(pose.Y(), pose.X(), pose.Rotation());
 }
 
+/*
+ * Updates the Position estimation of the tag-based odometry using visino data and encoder counts
+ */
 void PhotonTagSwerve::UpdateTagOdometry()
 {
     // Update encoder counts of odometry
@@ -67,6 +70,9 @@ void PhotonTagSwerve::UpdateTagOdometry()
     } 
 }
 
+/*
+ * Update all methods of odometry
+ */
 void PhotonTagSwerve::Update()
 {
     SwerveDrive::Update();
