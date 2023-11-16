@@ -7,6 +7,7 @@ PhotonTagSwerve::PhotonTagSwerve()
     : SwerveDrive(),
       tagOdometry{kinematics, Rotation2d(units::degree_t{GetIMUHeading()}), GetSwerveModulePositions(), Pose2d()},
       robotToCam{frc::Translation3d{CAMERA_ONE_X, CAMERA_ONE_Y, CAMERA_ONE_Z}, frc::Rotation3d{CAMERA_ONE_X_ROTATION, CAMERA_ONE_Y_ROTATION, CAMERA_ONE_Z_ROTATION}},
+      camera{CAMERA_ONE_NAME},
       poseEstimator{aprilTags, photonlib::CLOSEST_TO_REFERENCE_POSE, photonlib::PhotonCamera(CAMERA_ONE_NAME), robotToCam}
 {
 }
@@ -41,6 +42,25 @@ void PhotonTagSwerve::ResetTagOdometry(Pose2d position)
                               frc::Pose2d(Pose2d(position.Y(), position.X(), position.Rotation())));
 }
 
+/*
+ * Returns true if there is a tag in the current view of the camera
+ */
+bool PhotonTagSwerve::TagInView()
+{
+    optional<photonlib::EstimatedRobotPose> possibleResult = poseEstimator.Update();
+    return possibleResult.has_value();
+}
+
+/**
+ * Returns the position of the most recent tag seen in relation to the robot
+ */
+Transform3d PhotonTagSwerve::GetTagReading()
+{
+    photonlib::PhotonPipelineResult result = camera.GetLatestResult();
+    return result.GetBestTarget().GetBestCameraToTarget();
+}
+
+
 /**
  * Finds the Pose of the robot using april tag data and odometry
  */
@@ -50,6 +70,9 @@ Pose2d PhotonTagSwerve::GetTagOdometryPose()
     return Pose2d(pose.Y(), pose.X(), pose.Rotation());
 }
 
+/*
+ * Updates the Position estimation of the tag-based odometry using visino data and encoder counts
+ */
 void PhotonTagSwerve::UpdateTagOdometry()
 {
     // Update encoder counts of odometry
@@ -67,6 +90,9 @@ void PhotonTagSwerve::UpdateTagOdometry()
     } 
 }
 
+/*
+ * Update all methods of odometry
+ */
 void PhotonTagSwerve::Update()
 {
     SwerveDrive::Update();
