@@ -95,7 +95,7 @@ SwerveModulePosition SwerveModule::GetSwerveModulePosition()
 {
     SwerveModulePosition position = SwerveModulePosition();
     position.distance = units::length::meter_t{GetDriveEncoderMeters()};
-    position.angle = Rotation2d(units::degree_t{-1 * GetModuleHeading()}); // Multiplied by -1 to reverse direction to counterclockwise positive TODO Fix This
+    position.angle = Rotation2d(units::degree_t{-1 * GetModuleHeading()}); // Multiplied by -1 to reverse direction to counterclockwise positive
     return position;
 }
 

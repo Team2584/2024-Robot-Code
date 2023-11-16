@@ -82,12 +82,10 @@ void Robot::TeleopInit()
 
 void Robot::TeleopPeriodic()
 {
-  SmartDashboard::PutNumber("FL Drive Encoder", swerveDrive->FLModule.GetDriveEncoder());
-  SmartDashboard::PutNumber("FL Drive Encoder Meters", swerveDrive->FLModule.GetDriveEncoderMeters());
-  SmartDashboard::PutNumber("Pigeon IMU Heading", swerveDrive->GetIMUHeading());
   SmartDashboard::PutNumber("Odometry X Position", swerveDrive->GetOdometryPose().X().value());
   SmartDashboard::PutNumber("Odometry Y Position", swerveDrive->GetOdometryPose().Y().value());
   SmartDashboard::PutNumber("Odometry Heading", swerveDrive->GetOdometryPose().Rotation().Degrees().value());
+
   SmartDashboard::PutNumber("FL Module Heading", swerveDrive->FLModule.GetModuleHeading());
   SmartDashboard::PutNumber("FR Module Heading", swerveDrive->FRModule.GetModuleHeading());
   SmartDashboard::PutNumber("BL Module Heading", swerveDrive->BLModule.GetModuleHeading());
