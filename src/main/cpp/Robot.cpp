@@ -76,7 +76,9 @@ void Robot::AutonomousPeriodic()
 }
 
 void Robot::TeleopInit()
-{}
+{
+  swerveDrive->ResetOdometry();
+}
 
 void Robot::TeleopPeriodic()
 {
@@ -86,6 +88,10 @@ void Robot::TeleopPeriodic()
   SmartDashboard::PutNumber("Odometry X Position", swerveDrive->GetOdometryPose().X().value());
   SmartDashboard::PutNumber("Odometry Y Position", swerveDrive->GetOdometryPose().Y().value());
   SmartDashboard::PutNumber("Odometry Heading", swerveDrive->GetOdometryPose().Rotation().Degrees().value());
+  SmartDashboard::PutNumber("FL Module Heading", swerveDrive->FLModule.GetModuleHeading());
+  SmartDashboard::PutNumber("FR Module Heading", swerveDrive->FRModule.GetModuleHeading());
+  SmartDashboard::PutNumber("BL Module Heading", swerveDrive->BLModule.GetModuleHeading());
+  SmartDashboard::PutNumber("BR Module Heading", swerveDrive->BRModule.GetModuleHeading());
 
 
   /* UPDATES */

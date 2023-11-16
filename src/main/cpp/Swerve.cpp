@@ -210,7 +210,7 @@ void SwerveModule::DriveSwerveModulePercent(double driveSpeed, double targetAngl
 
     // PID to spin the wheel, makes the wheel move slower as it reaches the target
     // (error divided by 90 because that is the furthest the wheel will possibly have to move)
-    double spinMotorSpeed = spinPIDController.Calculate(0, error / 90.0);
+    double spinMotorSpeed = spinPIDController.Calculate(0, error);
 
     // Move motors  at speeds and directions determined earlier
     spinMotor.Set(spinMotorSpeed * spinDirection);
@@ -446,8 +446,11 @@ void SwerveDrive::DriveSwervePercent(double FWD_Drive_Speed, double STRAFE_Drive
     // Converts our field oriented speeds to robot oriented, by using trig with the current robot angle.
     double angle = GetOdometryPose().Rotation().Radians().value();
     double oldFwd = FWD_Drive_Speed;
-    FWD_Drive_Speed = FWD_Drive_Speed * cos(angle) + STRAFE_Drive_Speed * sin(angle);
-    STRAFE_Drive_Speed = -1 * oldFwd * sin(angle) + STRAFE_Drive_Speed * cos(angle);
+    SmartDashboard::PutNumber("old Fwd", oldFwd);
+    SmartDashboard::PutNumber("adjusted forward", FWD_Drive_Speed * cos(angle));
+    // You can understand these two lines by searching "rotation matrix"
+    FWD_Drive_Speed = FWD_Drive_Speed * cos(angle) - STRAFE_Drive_Speed * sin(angle);
+    STRAFE_Drive_Speed = oldFwd * sin(angle) + STRAFE_Drive_Speed * cos(angle);
 
     DriveSwervePercentNonFieldOriented(FWD_Drive_Speed, STRAFE_Drive_Speed, Turn_Speed);
 }
