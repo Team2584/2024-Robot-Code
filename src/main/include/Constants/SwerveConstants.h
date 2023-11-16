@@ -38,7 +38,7 @@
 #define SPIN_MOTOR_GEAR_RATIO 15.43
 
 // Swerve Module Wheel Spin PID Values
-#define WHEEL_SPIN_KP 0.015
+#define WHEEL_SPIN_KP 0.013
 #define WHEEL_SPIN_KI 0
 #define WHEEL_SPIN_KI_MAX 0 // In percent power
 #define WHEEL_SPIN_KD 0

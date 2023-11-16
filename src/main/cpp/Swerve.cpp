@@ -95,7 +95,7 @@ SwerveModulePosition SwerveModule::GetSwerveModulePosition()
 {
     SwerveModulePosition position = SwerveModulePosition();
     position.distance = units::length::meter_t{GetDriveEncoderMeters()};
-    position.angle = Rotation2d(units::degree_t{GetModuleHeading()});
+    position.angle = Rotation2d(units::degree_t{-1 * GetModuleHeading()}); // Multiplied by -1 to reverse direction to counterclockwise positive TODO Fix This
     return position;
 }
 
@@ -446,8 +446,6 @@ void SwerveDrive::DriveSwervePercent(double FWD_Drive_Speed, double STRAFE_Drive
     // Converts our field oriented speeds to robot oriented, by using trig with the current robot angle.
     double angle = GetOdometryPose().Rotation().Radians().value();
     double oldFwd = FWD_Drive_Speed;
-    SmartDashboard::PutNumber("old Fwd", oldFwd);
-    SmartDashboard::PutNumber("adjusted forward", FWD_Drive_Speed * cos(angle));
     // You can understand these two lines by searching "rotation matrix"
     FWD_Drive_Speed = FWD_Drive_Speed * cos(angle) - STRAFE_Drive_Speed * sin(angle);
     STRAFE_Drive_Speed = oldFwd * sin(angle) + STRAFE_Drive_Speed * cos(angle);
