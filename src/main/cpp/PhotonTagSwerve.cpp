@@ -47,8 +47,8 @@ void PhotonTagSwerve::ResetTagOdometry(Pose2d position)
  */
 bool PhotonTagSwerve::TagInView()
 {
-    optional<photonlib::EstimatedRobotPose> possibleResult = poseEstimator.Update();
-    return possibleResult.has_value();
+    photonlib::PhotonPipelineResult result = camera.GetLatestResult();
+    return result.HasTargets();
 }
 
 /**
@@ -57,7 +57,10 @@ bool PhotonTagSwerve::TagInView()
 Transform3d PhotonTagSwerve::GetTagReading()
 {
     photonlib::PhotonPipelineResult result = camera.GetLatestResult();
-    return result.GetBestTarget().GetBestCameraToTarget();
+    if (result.HasTargets())
+        return result.GetBestTarget().GetBestCameraToTarget();
+    else
+        return Transform3d();
 }
 
 

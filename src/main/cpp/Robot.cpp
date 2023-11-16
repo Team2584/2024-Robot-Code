@@ -5,12 +5,12 @@
 #include "Robot.h"
 #include "Constants/DriverConstants.h"
 
-#include "Swerve.h"
+#include "PhotonTagSwerve.h"
 
 #include <fmt/core.h>
 #include <frc/smartdashboard/SmartDashboard.h>
 
-SwerveDrive *swerveDrive;
+PhotonTagSwerve *swerveDrive;
 XboxController *xbox_Drive;
 XboxController *xbox_Drive2;
 
@@ -20,7 +20,7 @@ void Robot::RobotInit()
   m_chooser.AddOption(kAutoNameCustom, kAutoNameCustom);
   frc::SmartDashboard::PutData("Auto Modes", &m_chooser);
 
-  swerveDrive = new SwerveDrive();
+  swerveDrive = new PhotonTagSwerve();
   xbox_Drive = new XboxController(0);
   xbox_Drive2 = new XboxController(1);
 }
@@ -91,6 +91,10 @@ void Robot::TeleopPeriodic()
   SmartDashboard::PutNumber("BL Module Heading", swerveDrive->BLModule.GetModuleHeading());
   SmartDashboard::PutNumber("BR Module Heading", swerveDrive->BRModule.GetModuleHeading());
 
+  SmartDashboard::PutBoolean("Tag in View", swerveDrive->TagInView());
+  SmartDashboard::PutNumber("Tag X", swerveDrive->GetTagReading().X().value());
+  SmartDashboard::PutNumber("Tag Y", swerveDrive->GetTagReading().Y().value());
+  SmartDashboard::PutNumber("Tag Z", swerveDrive->GetTagReading().Z().value());
 
   /* UPDATES */
 
