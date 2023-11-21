@@ -91,7 +91,6 @@ void PhotonTagSwerve::UpdateTagOdometry()
 
     // Add april tag data
     poseEstimator.SetReferencePose(prevEstimatedPose);
-    units::millisecond_t currentTime = frc::Timer::GetFPGATimestamp();
     optional<photonlib::EstimatedRobotPose> possibleResult = poseEstimator.Update();
     if (possibleResult.has_value()) 
     {

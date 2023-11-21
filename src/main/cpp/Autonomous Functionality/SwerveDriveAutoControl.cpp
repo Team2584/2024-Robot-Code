@@ -1,0 +1,16 @@
+#include "Autonomous Functionality/SwerveDriveAutoControl.h"
+
+SwerveDriveAutonomousController::SwerveDriveAutonomousController(SwerveDrive *swerveDrive_) 
+    : xPIDController{ODOMETRY_TRANSLATION_KP, ODOMETRY_TRANSLATION_KI, ODOMETRY_TRANSLATION_KD, ODOMETRY_TRANSLATION_KI_MAX, 
+                     ODOMETRY_TRANSLATION_MIN_SPEED, ODOMETRY_TRANSLATION_MAX_SPEED, ODOMETRY_TRANSLATION_TOLERANCE, ODOMETRY_TRANSLATION_VELOCITY_TOLERANCE},
+      yPIDController{ODOMETRY_TRANSLATION_KP, ODOMETRY_TRANSLATION_KI, ODOMETRY_TRANSLATION_KD, ODOMETRY_TRANSLATION_KI_MAX, 
+                     ODOMETRY_TRANSLATION_MIN_SPEED, ODOMETRY_TRANSLATION_MAX_SPEED, ODOMETRY_TRANSLATION_TOLERANCE, ODOMETRY_TRANSLATION_VELOCITY_TOLERANCE}.
+      rotationPIDController{}
+{
+    swerveDrive = swerveDrive_;
+}
+
+bool SwerveDriveAutonomousController::DriveToPose(OdometryType odometryType, Pose2d target)
+{
+    return true;
+}

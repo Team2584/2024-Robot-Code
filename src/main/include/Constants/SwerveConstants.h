@@ -1,3 +1,6 @@
+#ifndef SWERVE_CONSTANTS_H // Ensures that this header file is only compiled once
+#define SWERVE_CONSTANTS_H
+
 /*
    ____                           _    ____                _              _       
   / ___| ___ _ __   ___ _ __ __ _| |  / ___|___  _ __  ___| |_ __ _ _ __ | |_ ___ 
@@ -83,6 +86,13 @@ const AprilTagFieldLayout aprilTags = AprilTagFieldLayout(fieldTagLayout, 54_ft,
 
 */
 
+enum OdometryType
+{
+    PureOdometry = 0,
+    TagBased = 1
+};
+
+
 /* Pure Odometry-Based Drive to Pose PID Values */
 // Translational PID in the x and y direction
 #define ODOMETRY_TRANSLATION_KP 1.1
@@ -94,3 +104,5 @@ const AprilTagFieldLayout aprilTags = AprilTagFieldLayout(fieldTagLayout, 54_ft,
 #define ODOMETRY_TRANSLATION_MIN_SPEED 0 // In percent power
 #define ODOMETRY_TRANSLATION_MAX_SPEED 0.4 // In percent power
 // Rotational PID to correct robot heading
+
+#endif // SWERVE_CONSTANTS_H

@@ -1,4 +1,4 @@
-#ifndef MATH_H
+#ifndef MATH_H // Ensures that this header file is only compiled once
 #define MATH_H
 
 /**

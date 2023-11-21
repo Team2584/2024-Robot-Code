@@ -6,6 +6,7 @@
 #include "Constants/DriverConstants.h"
 
 #include "PhotonTagSwerve.h"
+#include "Autonomous Functionality/SwerveDriveAutoControl.h"
 
 #include <fmt/core.h>
 #include <frc/smartdashboard/SmartDashboard.h>
