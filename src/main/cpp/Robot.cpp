@@ -92,9 +92,9 @@ void Robot::TeleopPeriodic()
   SmartDashboard::PutNumber("BR Module Heading", swerveDrive->BRModule.GetModuleHeading());
 
   SmartDashboard::PutBoolean("Tag in View", swerveDrive->TagInView());
-  SmartDashboard::PutNumber("Tag X", swerveDrive->GetTagReading().X().value());
-  SmartDashboard::PutNumber("Tag Y", swerveDrive->GetTagReading().Y().value());
-  SmartDashboard::PutNumber("Tag Z", swerveDrive->GetTagReading().Z().value());
+  SmartDashboard::PutNumber("Tag Odometry X", swerveDrive->GetTagOdometryPose().X().value());
+  SmartDashboard::PutNumber("Tag Odometry Y", swerveDrive->GetTagOdometryPose().Y().value());
+  SmartDashboard::PutNumber("Tag Odometry Heading", swerveDrive->GetTagOdometryPose().Rotation().Degrees().value());
 
   /* UPDATES */
 

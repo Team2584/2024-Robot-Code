@@ -10,6 +10,7 @@ PhotonTagSwerve::PhotonTagSwerve()
       camera{CAMERA_ONE_NAME},
       poseEstimator{aprilTags, photonlib::CLOSEST_TO_REFERENCE_POSE, photonlib::PhotonCamera(CAMERA_ONE_NAME), robotToCam}
 {
+    tagOdometry.SetVisionMeasurementStdDevs(wpi::array(APRILTAG_CONFIDENCE_X, APRILTAG_CONFIDENCE_Y, APRILTAG_CONFIDENCE_ROTATION));
 }
 
 /**
@@ -40,6 +41,13 @@ void PhotonTagSwerve::ResetTagOdometry(Pose2d position)
     tagOdometry.ResetPosition(Rotation2d(units::degree_t{GetIMUHeading()}),
                               GetSwerveModulePositions(),
                               frc::Pose2d(Pose2d(position.Y(), position.X(), position.Rotation())));
+}
+
+void PhotonTagSwerve::AddVisionMeasurement(Pose2d measurement, units::second_t timeStamp)
+{
+    //Remove Rotation from vision measurement because IMU is very accurate
+    measurement = Pose2d(measurement.X(), measurement.Y(), Rotation2d(units::degree_t{GetIMUHeading()}));
+    tagOdometry.AddVisionMeasurement(measurement, timeStamp);
 }
 
 /*
@@ -88,7 +96,7 @@ void PhotonTagSwerve::UpdateTagOdometry()
     if (possibleResult.has_value()) 
     {
         photonlib::EstimatedRobotPose result = possibleResult.value();
-        tagOdometry.AddVisionMeasurement(result.estimatedPose.ToPose2d(), currentTime - result.timestamp);
+        AddVisionMeasurement(result.estimatedPose.ToPose2d(), result.timestamp);
         prevEstimatedPose = result.estimatedPose;
     } 
 }

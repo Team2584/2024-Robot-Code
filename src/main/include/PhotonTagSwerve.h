@@ -18,6 +18,7 @@ public:
     void ResetHeading();
     void ResetTagOdometry();
     void ResetTagOdometry(Pose2d position);
+    void AddVisionMeasurement(Pose2d measurement, units::second_t timeStamp);
     bool TagInView();
     Transform3d GetTagReading();
     Pose2d GetTagOdometryPose();
