@@ -10,6 +10,7 @@ PhotonTagSwerve::PhotonTagSwerve()
       camera{CAMERA_ONE_NAME},
       poseEstimator{aprilTags, photonlib::CLOSEST_TO_REFERENCE_POSE, photonlib::PhotonCamera(CAMERA_ONE_NAME), robotToCam}
 {
+    tagOdometry.SetVisionMeasurementStdDevs(wpi::array(APRILTAG_CONFIDENCE_X, APRILTAG_CONFIDENCE_Y, APRILTAG_CONFIDENCE_ROTATION));
 }
 
 /**
@@ -42,13 +43,20 @@ void PhotonTagSwerve::ResetTagOdometry(Pose2d position)
                               frc::Pose2d(Pose2d(position.Y(), position.X(), position.Rotation())));
 }
 
+void PhotonTagSwerve::AddVisionMeasurement(Pose2d measurement, units::second_t timeStamp)
+{
+    //Remove Rotation from vision measurement because IMU is very accurate
+    measurement = Pose2d(measurement.X(), measurement.Y(), Rotation2d(units::degree_t{GetIMUHeading()}));
+    tagOdometry.AddVisionMeasurement(measurement, timeStamp);
+}
+
 /*
  * Returns true if there is a tag in the current view of the camera
  */
 bool PhotonTagSwerve::TagInView()
 {
-    optional<photonlib::EstimatedRobotPose> possibleResult = poseEstimator.Update();
-    return possibleResult.has_value();
+    photonlib::PhotonPipelineResult result = camera.GetLatestResult();
+    return result.HasTargets();
 }
 
 /**
@@ -57,7 +65,10 @@ bool PhotonTagSwerve::TagInView()
 Transform3d PhotonTagSwerve::GetTagReading()
 {
     photonlib::PhotonPipelineResult result = camera.GetLatestResult();
-    return result.GetBestTarget().GetBestCameraToTarget();
+    if (result.HasTargets())
+        return result.GetBestTarget().GetBestCameraToTarget();
+    else
+        return Transform3d();
 }
 
 
@@ -85,7 +96,7 @@ void PhotonTagSwerve::UpdateTagOdometry()
     if (possibleResult.has_value()) 
     {
         photonlib::EstimatedRobotPose result = possibleResult.value();
-        tagOdometry.AddVisionMeasurement(result.estimatedPose.ToPose2d(), currentTime - result.timestamp);
+        AddVisionMeasurement(result.estimatedPose.ToPose2d(), result.timestamp);
         prevEstimatedPose = result.estimatedPose;
     } 
 }

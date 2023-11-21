@@ -70,6 +70,10 @@ const AprilTagFieldLayout aprilTags = AprilTagFieldLayout(fieldTagLayout, 54_ft,
 #define CAMERA_ONE_Y_ROTATION 0_deg // Camera's Rotation around robot's Y axis (rotated clockwise/counterclocwise)
 #define CAMERA_ONE_Z_ROTATION 0_deg // Camera's Rotation around robot's Z axis (tilted left/right)
 
+#define APRILTAG_CONFIDENCE_X 0.1
+#define APRILTAG_CONFIDENCE_Y 0.1
+#define APRILTAG_CONFIDENCE_ROTATION 10000000000.0
+
 /*
      _         _                                                 ____                _              _       
     / \  _   _| |_ ___  _ __   ___  _ __ ___   ___  _   _ ___   / ___|___  _ __  ___| |_ __ _ _ __ | |_ ___ 
