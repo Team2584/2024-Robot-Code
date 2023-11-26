@@ -1,5 +1,5 @@
 #include "Robot.h"
-#include "Swerve.h"
+#include "PhotonTagSwerve.h"
 #include "Constants/SwerveConstants.h"
 
 /**
@@ -8,11 +8,13 @@
 class SwerveDriveAutonomousController
 {
 private:
-    SwerveDrive *swerveDrive;
+    SwerveDrive *baseSwerveDrive = NULL; /* A reference to our base swerve drive template. */
+    PhotonTagSwerve *photonTagSwerve = NULL; /* A reference to our photonlib swerve drive template. */
     PID xPIDController, yPIDController, rotationPIDController; /* PID Controllers to move in various directions */
 
 public:
-    SwerveDriveAutonomousController(SwerveDrive *swerveDrive_);
+    SwerveDriveAutonomousController(SwerveDrive *swerveDrive);
+    SwerveDriveAutonomousController(PhotonTagSwerve *swerveDrive);
 
     bool DriveToPose(OdometryType odometryType, Pose2d target);
 };

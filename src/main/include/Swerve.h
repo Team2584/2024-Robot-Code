@@ -1,8 +1,8 @@
-#include "Robot.h"
-#include "Constants/SwerveConstants.h"
-
 #ifndef SWERVE_H // Ensures that this header file is only compiled once
 #define SWERVE_H
+
+#include "Robot.h"
+#include "Constants/SwerveConstants.h"
 
 /**
  * A Swerve Drive has 4 Swerve Modules, each of which is defined as an object of the class SwerveModule

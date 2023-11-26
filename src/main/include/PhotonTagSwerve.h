@@ -1,3 +1,6 @@
+#ifndef PHOTON_SWERVE_H // Ensures that this header file is only compiled once
+#define PHOTON_SWERVE_H
+
 #include "Swerve.h"
 
 /**
@@ -25,3 +28,5 @@ public:
     void UpdateTagOdometry();
     void Update();
 };
+
+#endif // PHOTON_SWERVE_H
