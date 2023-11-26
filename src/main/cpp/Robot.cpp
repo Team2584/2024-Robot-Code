@@ -107,7 +107,8 @@ void Robot::TeleopPeriodic()
   leftJoystickY = xbox_Drive->GetLeftY();
   leftJoystickX = xbox_Drive->GetLeftX();
   rightJoystickX = xbox_Drive->GetRightX();
-  leftJoystickY *= -1;
+  leftJoystickY *= -1;  
+  rightJoystickX *= -1;
 
   // Remove ghost movement by making sure joystick is moved a certain amount
   double leftJoystickDistance = sqrt(pow(leftJoystickX, 2.0) + pow(leftJoystickY, 2.0));
