@@ -39,8 +39,7 @@ void PhotonTagSwerve::ResetTagOdometry(Pose2d position)
 {
     prevEstimatedPose = Pose3d(position);
     tagOdometry.ResetPosition(Rotation2d(units::degree_t{GetIMUHeading()}),
-                              GetSwerveModulePositions(),
-                              frc::Pose2d(Pose2d(position.Y(), position.X(), position.Rotation())));
+                              GetSwerveModulePositions(), position);
 }
 
 void PhotonTagSwerve::AddVisionMeasurement(Pose2d measurement, units::second_t timeStamp)
@@ -77,8 +76,7 @@ Transform3d PhotonTagSwerve::GetTagReading()
  */
 Pose2d PhotonTagSwerve::GetTagOdometryPose()
 {
-    Pose2d pose = tagOdometry.GetEstimatedPosition();
-    return Pose2d(pose.Y(), pose.X(), pose.Rotation());
+    return tagOdometry.GetEstimatedPosition();
 }
 
 /*

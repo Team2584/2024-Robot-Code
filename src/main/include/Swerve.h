@@ -1,6 +1,9 @@
 #include "Robot.h"
 #include "Constants/SwerveConstants.h"
 
+#ifndef SWERVE_H // Ensures that this header file is only compiled once
+#define SWERVE_H
+
 /**
  * A Swerve Drive has 4 Swerve Modules, each of which is defined as an object of the class SwerveModule
  * In general, this class has functions allowing us to control each swerve module individually.
@@ -67,3 +70,5 @@ class SwerveDrive
         void DriveSwervePercent(double STRAFE_Drive_Speed, double FWD_Drive_Speed, double Turn_Speed);
         void DriveSwerveMetersAndRadians(double STRAFE_Drive_Speed, double FWD_Drive_Speed, double Turn_Speed);
 };
+
+#endif // SWERVE_H

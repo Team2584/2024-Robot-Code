@@ -15,6 +15,8 @@ PhotonTagSwerve *swerveDrive;
 XboxController *xbox_Drive;
 XboxController *xbox_Drive2;
 
+SwerveDriveAutonomousController *swerveAutoController;
+
 void Robot::RobotInit()
 {
   m_chooser.SetDefaultOption(kAutoNameDefault, kAutoNameDefault);
@@ -24,6 +26,7 @@ void Robot::RobotInit()
   swerveDrive = new PhotonTagSwerve();
   xbox_Drive = new XboxController(0);
   xbox_Drive2 = new XboxController(1);
+  swerveAutoController = new SwerveDriveAutonomousController(swerveDrive);
 }
 
 /**
@@ -79,24 +82,28 @@ void Robot::AutonomousPeriodic()
 void Robot::TeleopInit()
 {
   swerveDrive->ResetOdometry();
+  swerveDrive->ResetTagOdometry();
 }
 
 void Robot::TeleopPeriodic()
 {
+  
   SmartDashboard::PutNumber("Odometry X Position", swerveDrive->GetOdometryPose().X().value());
   SmartDashboard::PutNumber("Odometry Y Position", swerveDrive->GetOdometryPose().Y().value());
   SmartDashboard::PutNumber("Odometry Heading", swerveDrive->GetOdometryPose().Rotation().Degrees().value());
 
+  
   SmartDashboard::PutNumber("FL Module Heading", swerveDrive->FLModule.GetModuleHeading());
   SmartDashboard::PutNumber("FR Module Heading", swerveDrive->FRModule.GetModuleHeading());
   SmartDashboard::PutNumber("BL Module Heading", swerveDrive->BLModule.GetModuleHeading());
   SmartDashboard::PutNumber("BR Module Heading", swerveDrive->BRModule.GetModuleHeading());
-
+  
+  
   SmartDashboard::PutBoolean("Tag in View", swerveDrive->TagInView());
   SmartDashboard::PutNumber("Tag Odometry X", swerveDrive->GetTagOdometryPose().X().value());
   SmartDashboard::PutNumber("Tag Odometry Y", swerveDrive->GetTagOdometryPose().Y().value());
   SmartDashboard::PutNumber("Tag Odometry Heading", swerveDrive->GetTagOdometryPose().Rotation().Degrees().value());
-
+  
   /* UPDATES */
 
   swerveDrive->Update();
@@ -131,6 +138,10 @@ void Robot::TeleopPeriodic()
 
   // Drive the robot
   swerveDrive->DriveSwervePercent(FwdDriveSpeed, StrafeDriveSpeed, TurnSpeed);
+
+  // Drive to 0,0 for testing
+  if (xbox_Drive->GetAButton())
+    swerveAutoController->DriveToPose(OdometryType::PureOdometry, Pose2d(0_m,0_m,Rotation2d()));
 }
 
 void Robot::DisabledInit() {}
