@@ -39,14 +39,11 @@ void PhotonTagSwerve::ResetTagOdometry(Pose2d position)
 {
     prevEstimatedPose = Pose3d(position);
     tagOdometry.ResetPosition(Rotation2d(units::degree_t{GetIMUHeading()}),
-                              GetSwerveModulePositions(),
-                              frc::Pose2d(Pose2d(position.Y(), position.X(), position.Rotation())));
+                              GetSwerveModulePositions(), position);
 }
 
 void PhotonTagSwerve::AddVisionMeasurement(Pose2d measurement, units::second_t timeStamp)
 {
-    //Remove Rotation from vision measurement because IMU is very accurate
-    measurement = Pose2d(measurement.X(), measurement.Y(), Rotation2d(units::degree_t{GetIMUHeading()}));
     tagOdometry.AddVisionMeasurement(measurement, timeStamp);
 }
 
@@ -77,8 +74,7 @@ Transform3d PhotonTagSwerve::GetTagReading()
  */
 Pose2d PhotonTagSwerve::GetTagOdometryPose()
 {
-    Pose2d pose = tagOdometry.GetEstimatedPosition();
-    return Pose2d(pose.Y(), pose.X(), pose.Rotation());
+    return tagOdometry.GetEstimatedPosition();
 }
 
 /*
@@ -91,7 +87,6 @@ void PhotonTagSwerve::UpdateTagOdometry()
 
     // Add april tag data
     poseEstimator.SetReferencePose(prevEstimatedPose);
-    units::millisecond_t currentTime = frc::Timer::GetFPGATimestamp();
     optional<photonlib::EstimatedRobotPose> possibleResult = poseEstimator.Update();
     if (possibleResult.has_value()) 
     {
