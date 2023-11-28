@@ -61,21 +61,21 @@
 
 // List of april tag's IDs and their position on the field in comparison to origin
 const std::vector<frc::AprilTag> fieldTagLayout = {
-    {0, Pose3d(3_m, 3_m, 3_m, Rotation3d())},
+    {0, Pose3d(1_m, 0_m, 1.15_m, Rotation3d(0_deg, 0_deg, 180_deg))},
     {1, Pose3d(5_m, 5_m, 5_m, Rotation3d())}};
 const AprilTagFieldLayout aprilTags = AprilTagFieldLayout(fieldTagLayout, 54_ft, 27_ft); // frc field is 54 ft by 27 ft
 
 #define CAMERA_ONE_NAME "photonvision"
-#define CAMERA_ONE_X 16_in // Distance in meters from camera to center of robot left/right, right positive
-#define CAMERA_ONE_Y -0.6_ft // Distance in meters from camera to center of robot forward/backward, forward positive
-#define CAMERA_ONE_Z 3.0_ft // Camera's distance from ground in meters
+#define CAMERA_ONE_X 16_in // Distance in meters from camera to center of robot forward/backward, forward positive
+#define CAMERA_ONE_Y -0.6_in // Distance in meters from camera to center of robot left/right, left positive
+#define CAMERA_ONE_Z 37_in // Camera's distance from ground in meters
 #define CAMERA_ONE_X_ROTATION 0_deg // Camera's Rotation around robot's X axis (tilted up/down)
 #define CAMERA_ONE_Y_ROTATION 0_deg // Camera's Rotation around robot's Y axis (rotated clockwise/counterclocwise)
 #define CAMERA_ONE_Z_ROTATION 0_deg // Camera's Rotation around robot's Z axis (tilted left/right)
 
-#define APRILTAG_CONFIDENCE_X 0.1
-#define APRILTAG_CONFIDENCE_Y 0.1
-#define APRILTAG_CONFIDENCE_ROTATION 10000000000.0
+#define APRILTAG_CONFIDENCE_X 0.5
+#define APRILTAG_CONFIDENCE_Y 0.5
+#define APRILTAG_CONFIDENCE_ROTATION 10
 
 /*
      _         _                                                 ____                _              _       

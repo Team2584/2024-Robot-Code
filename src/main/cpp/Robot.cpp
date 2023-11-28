@@ -141,7 +141,7 @@ void Robot::TeleopPeriodic()
 
   // Drive to 0,0 for testing
   if (xbox_Drive->GetAButton())
-    swerveAutoController->DriveToPose(OdometryType::PureOdometry, Pose2d(0_m,0_m,Rotation2d()));
+    swerveAutoController->DriveToPose(OdometryType::TagBased, Pose2d(-1_m,0_m,Rotation2d()));
 }
 
 void Robot::DisabledInit() {}

@@ -78,6 +78,6 @@ bool SwerveDriveAutonomousController::DriveToPose(OdometryType odometryType, Pos
       return true;
 
     // Drive swerve at desired speeds
-    baseSwerveDrive->DriveSwervePercent(0, 0, -rotationSpeed);// -ySpeed, rotationSpeed);
+    baseSwerveDrive->DriveSwervePercent(xSpeed, -ySpeed, -rotationSpeed);
     return false;
 }

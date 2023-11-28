@@ -44,8 +44,6 @@ void PhotonTagSwerve::ResetTagOdometry(Pose2d position)
 
 void PhotonTagSwerve::AddVisionMeasurement(Pose2d measurement, units::second_t timeStamp)
 {
-    //Remove Rotation from vision measurement because IMU is very accurate
-    measurement = Pose2d(measurement.X(), measurement.Y(), Rotation2d(units::degree_t{GetIMUHeading()}));
     tagOdometry.AddVisionMeasurement(measurement, timeStamp);
 }
 
