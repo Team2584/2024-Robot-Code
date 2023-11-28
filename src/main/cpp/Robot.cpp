@@ -102,13 +102,11 @@ void Robot::TeleopPeriodic()
 
   /* DRIVER INPUT AND CONTROL */
 
-  // Find controller input
+  // Find controller input (*-1 converts values to fwd/left/counterclockwise positive)
   double leftJoystickX, leftJoystickY, rightJoystickX;
-  leftJoystickY = xbox_Drive->GetLeftY();
-  leftJoystickX = xbox_Drive->GetLeftX();
-  rightJoystickX = xbox_Drive->GetRightX();
-  leftJoystickY *= -1;  
-  rightJoystickX *= -1;
+  leftJoystickY = xbox_Drive->GetLeftY() * -1;
+  leftJoystickX = xbox_Drive->GetLeftX() * -1;
+  rightJoystickX = xbox_Drive->GetRightX() * -1;
 
   // Remove ghost movement by making sure joystick is moved a certain amount
   double leftJoystickDistance = sqrt(pow(leftJoystickX, 2.0) + pow(leftJoystickY, 2.0));
@@ -125,12 +123,12 @@ void Robot::TeleopPeriodic()
   }
 
   // Scale control values to max speed
-  double FwdDriveSpeed = leftJoystickY * MAX_DRIVE_SPEED;
-  double StrafeDriveSpeed = leftJoystickX * MAX_DRIVE_SPEED;
-  double TurnSpeed = rightJoystickX * MAX_SPIN_SPEED;
+  double fwdDriveSpeed = leftJoystickY * MAX_DRIVE_SPEED;
+  double strafeDriveSpeed = leftJoystickX * MAX_DRIVE_SPEED;
+  double turnSpeed = rightJoystickX * MAX_SPIN_SPEED;
 
   // Drive the robot
-  swerveDrive->DriveSwervePercent(FwdDriveSpeed, StrafeDriveSpeed, TurnSpeed);
+  swerveDrive->DriveSwervePercent(fwdDriveSpeed, strafeDriveSpeed, turnSpeed);
 }
 
 void Robot::DisabledInit() {}
