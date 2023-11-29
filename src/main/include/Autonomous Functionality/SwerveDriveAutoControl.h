@@ -22,11 +22,12 @@ public:
 
 private:
     void CalculatePIDToPose(PoseEstimationType poseEstimationType, Pose2d target, double speeds[3], bool PIDsComplete[3]);
+    void ResetPIDLoop();
 
 public:
-    void ResetPIDLoop();
     void BeginDriveToPose(PoseEstimationType poseEstimationType);
     bool DriveToPose(Pose2d target);
+    void ResetTrajectoryQueue();
     void LoadTrajectory(string trajectoryString);
     void BeginNextTrajectory(PoseEstimationType poseEstimationType);
     bool FollowTrajectory();

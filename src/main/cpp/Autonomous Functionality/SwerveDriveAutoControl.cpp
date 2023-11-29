@@ -131,6 +131,17 @@ bool SwerveDriveAutonomousController::DriveToPose(Pose2d target)
     return false;
 }
 
+/*
+ * Reset the Trajectory Queue
+ */
+void SwerveDriveAutonomousController::ResetTrajectoryQueue()
+{
+    while (trajectoryQueue.empty() == false)
+    {
+        trajectoryQueue.pop();
+    }
+}
+
 /**
  * Loads a trajectory into memory allowing it to be run in an autonomous
  * Run in auton Init
