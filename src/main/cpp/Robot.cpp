@@ -135,12 +135,17 @@ void Robot::TeleopPeriodic()
   double strafeDriveSpeed = leftJoystickX * MAX_DRIVE_SPEED;
   double turnSpeed = rightJoystickX * MAX_SPIN_SPEED;
 
+  SmartDashboard::PutNumber("FWD Drive", fwdDriveSpeed);
+  SmartDashboard::PutNumber("Strafe Drive", strafeDriveSpeed);
+  SmartDashboard::PutNumber("Turn Drive", turnSpeed);
+
+
   // Drive the robot
   swerveDrive->DriveSwervePercent(fwdDriveSpeed, strafeDriveSpeed, turnSpeed);
 
   // Drive to 0,0 for testing
   if (xbox_Drive->GetAButton())
-    swerveAutoController->DriveToPose(OdometryType::TagBased, Pose2d(-1_m,0_m,Rotation2d()));
+    swerveAutoController->DriveToPose(OdometryType::TagBased, Pose2d(-0.5_m,0_m,Rotation2d()));
 }
 
 void Robot::DisabledInit() {}

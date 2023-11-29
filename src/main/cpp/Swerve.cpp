@@ -447,10 +447,10 @@ void SwerveDrive::DriveSwervePercentNonFieldOriented(double FwdDriveSpeed, doubl
 void SwerveDrive::DriveSwervePercent(double FwdDriveSpeed, double StrafeDriveSpeed, double TurnSpeed)
 {
     // Converts our field oriented speeds to robot oriented, by using trig (rotation matrix) with the current robot angle.
-    double angle = GetOdometryPose().Rotation().Radians().value();
+    double angle = -1 * GetOdometryPose().Rotation().Radians().value(); // Angle * -1 because rotation matrices rotate clockwise
     double oldFwd = FwdDriveSpeed;
-    FwdDriveSpeed = -FwdDriveSpeed * cos(-angle) + StrafeDriveSpeed * sin(-angle);
-    StrafeDriveSpeed = - oldFwd * sin(-angle) - StrafeDriveSpeed * cos(-angle);
+    FwdDriveSpeed = FwdDriveSpeed * cos(angle) - StrafeDriveSpeed * sin(angle);
+    StrafeDriveSpeed = oldFwd * sin(angle) + StrafeDriveSpeed * cos(angle);
 
     DriveSwervePercentNonFieldOriented(FwdDriveSpeed, StrafeDriveSpeed, TurnSpeed);
 }
