@@ -374,6 +374,10 @@ double SwerveDrive::AngularPercentToVelocity(double percent)
  */
 void SwerveDrive::DriveSwervePercentNonFieldOriented(double FwdDriveSpeed, double StrafeDriveSpeed, double TurnSpeed)
 {
+    // Reverse strafe and turn directions because this function's equations work with right/clockwise positive
+    StrafeDriveSpeed *= -1;
+    TurnSpeed *= -1;
+
 
     // If there is no drive input, don't drive the robot and just end the function
     if (FwdDriveSpeed == 0 && StrafeDriveSpeed == 0 && TurnSpeed == 0)
@@ -445,8 +449,8 @@ void SwerveDrive::DriveSwervePercent(double FwdDriveSpeed, double StrafeDriveSpe
     // Converts our field oriented speeds to robot oriented, by using trig (rotation matrix) with the current robot angle.
     double angle = GetOdometryPose().Rotation().Radians().value();
     double oldFwd = FwdDriveSpeed;
-    FwdDriveSpeed = FwdDriveSpeed * cos(angle) - StrafeDriveSpeed * sin(angle);
-    StrafeDriveSpeed = oldFwd * sin(angle) + StrafeDriveSpeed * cos(angle);
+    FwdDriveSpeed = -FwdDriveSpeed * cos(-angle) + StrafeDriveSpeed * sin(-angle);
+    StrafeDriveSpeed = - oldFwd * sin(-angle) - StrafeDriveSpeed * cos(-angle);
 
     DriveSwervePercentNonFieldOriented(FwdDriveSpeed, StrafeDriveSpeed, TurnSpeed);
 }
