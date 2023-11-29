@@ -11,7 +11,6 @@ class PID
 protected:
     frc::PIDController pidController; /* the basic WPIlib PID Controller */
     double maxSpeed, minSpeed;        /* maximum and mininimum magnitude of values returned by the PID controller */
-    double posTolerance, velTolerance; /* maximum position and velocity error that is still considered finished */
 
 public:
     /**
@@ -33,8 +32,6 @@ public:
         pidController.SetTolerance(positionTolerance, velocityTolerance);
         maxSpeed = maximumSpeed;
         minSpeed = minimumSpeed;
-        posTolerance = positionTolerance;
-        velTolerance = velocityTolerance;
     }
 
     /**
@@ -70,6 +67,10 @@ public:
         // Ensure the intended speed is above the minimum speed
         if (fabs(intendedSpeed) < minSpeed)
             intendedSpeed = minSpeed * sgn(intendedSpeed);
+
+        // If done, stop driving the motor
+        if (PIDFinished())
+            intendedSpeed = 0;
 
         return intendedSpeed;
     }
