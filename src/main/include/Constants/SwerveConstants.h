@@ -75,7 +75,7 @@ const AprilTagFieldLayout aprilTags = AprilTagFieldLayout(fieldTagLayout, 54_ft,
 
 #define APRILTAG_CONFIDENCE_X 0.5
 #define APRILTAG_CONFIDENCE_Y 0.5
-#define APRILTAG_CONFIDENCE_ROTATION 5
+#define APRILTAG_CONFIDENCE_ROTATION 5.0
 
 /*
      _         _                                                 ____                _              _       
