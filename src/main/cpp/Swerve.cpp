@@ -43,7 +43,7 @@ double SwerveModule::GetMagEncoderValue()
 /**
  * Finds the absolute heading of the swerve drive wheel relative to the robot.
  *
- * @return The Swerve Drive wheel's heading in degrees, with 0.0 being the front of the robot increasing clockwise.
+ * @return The Swerve Drive wheel's heading in degrees, with 0.0 being the front of the robot increasing counterclockwise.
  */
 double SwerveModule::GetModuleHeading()
 {
@@ -52,8 +52,6 @@ double SwerveModule::GetModuleHeading()
     encoderReading -= encoderOffset;
     if (encoderReading < 0)
         encoderReading += 1;
-    // Flip the degrees to make clockwise positive
-    encoderReading = 1 - encoderReading;
     // Convert from 0-1 to degrees
     encoderReading *= 360;
     return encoderReading;
@@ -95,7 +93,7 @@ SwerveModulePosition SwerveModule::GetSwerveModulePosition()
 {
     SwerveModulePosition position = SwerveModulePosition();
     position.distance = units::length::meter_t{GetDriveEncoderMeters()};
-    position.angle = Rotation2d(units::degree_t{-1 * GetModuleHeading()}); // Multiplied by -1 to reverse direction to counterclockwise positive
+    position.angle = Rotation2d(units::degree_t{GetModuleHeading()});
     return position;
 }
 
@@ -136,7 +134,7 @@ void SwerveModule::DriveSwerveModulePercent(double driveSpeed, double targetAngl
     // If the drive should spin forward(1) or backward(-1) to move in the correct direction
     int driveDirection = 0;
 
-    // Corrects spin angle to make it positive
+    // Corrects target angle to make it positive
     if (targetAngle < 0)
     {
         targetAngle += 360;
@@ -213,7 +211,7 @@ void SwerveModule::DriveSwerveModulePercent(double driveSpeed, double targetAngl
     double spinMotorSpeed = spinPIDController.Calculate(0, error);
 
     // Move motors  at speeds and directions determined earlier
-    spinMotor.Set(spinMotorSpeed * spinDirection);
+    spinMotor.Set(spinMotorSpeed * spinDirection * -1); // multiplied by -1 because postive speed to the motor is clockwise rather than counterclockwise
     driveMotor.Set(driveSpeed * driveDirection);
 }
 
@@ -370,15 +368,19 @@ double SwerveDrive::AngularPercentToVelocity(double percent)
 /**
  * Drives the swerve "robot oriented" meaning the FWD drive speed will move the robot in the direction of the front of the robot
  *
- * @param FWD_Drive_Speed The speed the robot should move forward and back, positive being forward, in percentage (0 - 1.0)
- * @param STRAFE_Drive_Speed The speed the robot should move left and right, positive being right, in percentage (0 - 1.0)
- * @param Turn_Speed The speed the robot should turn left and right, positive being clockwise, in percentage (0 - 1.0)
+ * @param FwdDriveSpeed The speed the robot should move forward and back, positive being forward, in percentage (0 - 1.0)
+ * @param StrafeDriveSpeed The speed the robot should move left and right, positive being left, in percentage (0 - 1.0)
+ * @param TurnSpeed The speed the robot should turn left and right, positive being counterclockwise, in percentage (0 - 1.0)
  */
-void SwerveDrive::DriveSwervePercentNonFieldOriented(double FWD_Drive_Speed, double STRAFE_Drive_Speed, double Turn_Speed)
+void SwerveDrive::DriveSwervePercentNonFieldOriented(double FwdDriveSpeed, double StrafeDriveSpeed, double TurnSpeed)
 {
+    // Reverse strafe and turn directions because this function's equations work with right/clockwise positive
+    StrafeDriveSpeed *= -1;
+    TurnSpeed *= -1;
+
 
     // If there is no drive input, don't drive the robot and just end the function
-    if (FWD_Drive_Speed == 0 && STRAFE_Drive_Speed == 0 && Turn_Speed == 0)
+    if (FwdDriveSpeed == 0 && StrafeDriveSpeed == 0 && TurnSpeed == 0)
     {
         FLModule.StopSwerveModule();
         FRModule.StopSwerveModule();
@@ -394,73 +396,73 @@ void SwerveDrive::DriveSwervePercentNonFieldOriented(double FWD_Drive_Speed, dou
     // After clicking above link press the top download to see how the equations work
     double driveRadius = sqrt(pow(DRIVE_LENGTH.value(), 2) + pow(DRIVE_WIDTH.value(), 2));
 
-    double A = STRAFE_Drive_Speed - Turn_Speed * (DRIVE_LENGTH.value() / driveRadius);
-    double B = STRAFE_Drive_Speed + Turn_Speed * (DRIVE_LENGTH.value() / driveRadius);
-    double C = FWD_Drive_Speed - Turn_Speed * (DRIVE_WIDTH.value() / driveRadius);
-    double D = FWD_Drive_Speed + Turn_Speed * (DRIVE_WIDTH.value() / driveRadius);
+    double A = StrafeDriveSpeed - TurnSpeed * (DRIVE_LENGTH.value() / driveRadius);
+    double B = StrafeDriveSpeed + TurnSpeed * (DRIVE_LENGTH.value() / driveRadius);
+    double C = FwdDriveSpeed - TurnSpeed * (DRIVE_WIDTH.value() / driveRadius);
+    double D = FwdDriveSpeed + TurnSpeed * (DRIVE_WIDTH.value() / driveRadius);
 
-    double FR_Target_Angle = atan2(B, C) * 180 / M_PI;
-    double FL_Target_Angle = atan2(B, D) * 180 / M_PI;
-    double BL_Target_Angle = atan2(A, D) * 180 / M_PI;
-    double BR_Target_Angle = atan2(A, C) * 180 / M_PI;
+    // Multiplied by -1 to convert from clockwise positive to counterclowise positive
+    double FRTargetAngle = -1 * atan2(B, C) * 180 / M_PI;
+    double FLTargetAngle = -1 * atan2(B, D) * 180 / M_PI;
+    double BLTargetAngle = -1 * atan2(A, D) * 180 / M_PI;
+    double BRTargetAngle = -1 * atan2(A, C) * 180 / M_PI;
 
-    double FR_Drive_Speed = sqrt(pow(B, 2) + pow(C, 2));
-    double FL_Drive_Speed = sqrt(pow(B, 2) + pow(D, 2));
-    double BL_Drive_Speed = sqrt(pow(A, 2) + pow(D, 2));
-    double BR_Drive_Speed = sqrt(pow(A, 2) + pow(C, 2));
+    double FRDriveSpeed = sqrt(pow(B, 2) + pow(C, 2));
+    double FLDriveSpeed = sqrt(pow(B, 2) + pow(D, 2));
+    double BLDriveSpeed = sqrt(pow(A, 2) + pow(D, 2));
+    double BRDriveSpeed = sqrt(pow(A, 2) + pow(C, 2));
 
     // If Turn Speed and Drive Speed are both high, the equations above will output a number greater than 1.
     // Below we must scale down all of the drive speeds to make sure we do not tell the motor to go faster
     // than it's max value.
-    double max = FR_Drive_Speed;
-    if (FL_Drive_Speed > max)
-        max = FL_Drive_Speed;
-    if (BL_Drive_Speed > max)
-        max = BL_Drive_Speed;
-    if (BR_Drive_Speed > max)
-        max = BR_Drive_Speed;
+    double max = FRDriveSpeed;
+    if (FLDriveSpeed > max)
+        max = FLDriveSpeed;
+    if (BLDriveSpeed > max)
+        max = BLDriveSpeed;
+    if (BRDriveSpeed > max)
+        max = BRDriveSpeed;
 
     if (max > 1)
     {
-        FL_Drive_Speed /= max;
-        FR_Drive_Speed /= max;
-        BL_Drive_Speed /= max;
-        BR_Drive_Speed /= max;
+        FLDriveSpeed /= max;
+        FRDriveSpeed /= max;
+        BLDriveSpeed /= max;
+        BRDriveSpeed /= max;
     }
 
     // Make all the motors move
-    FLModule.DriveSwerveModulePercent(FL_Drive_Speed, FL_Target_Angle);
-    FRModule.DriveSwerveModulePercent(FR_Drive_Speed, FR_Target_Angle);
-    BLModule.DriveSwerveModulePercent(BL_Drive_Speed, BL_Target_Angle);
-    BRModule.DriveSwerveModulePercent(BR_Drive_Speed, BR_Target_Angle);
+    FLModule.DriveSwerveModulePercent(FLDriveSpeed, FLTargetAngle);
+    FRModule.DriveSwerveModulePercent(FRDriveSpeed, FRTargetAngle);
+    BLModule.DriveSwerveModulePercent(BLDriveSpeed, BLTargetAngle);
+    BRModule.DriveSwerveModulePercent(BRDriveSpeed, BRTargetAngle);
 }
 
 /**
  * Drives the swerve drive, field oriented (in relation to the driver's pov) with an x y and spin.
- * @param FWD_Drive_Speed The speed the robot should move forward and back, positive being forward, in percentage (0 - 1.0)
- * @param STRAFE_Drive_Speed The speed the robot should move left and right, positive being right, in percentage (0 - 1.0)
- * @param Turn_Speed The speed the robot should turn left and right, positive being clockwise, in percentage (0 - 1.0)
+ * @param FwdDriveSpeed The speed the robot should move forward and back, positive being forward, in percentage (0 - 1.0)
+ * @param StrafeDriveSpeed The speed the robot should move left and right, positive being right, in percentage (0 - 1.0)
+ * @param TurnSpeed The speed the robot should turn left and right, positive being counterclockwise, in percentage (0 - 1.0)
  */
-void SwerveDrive::DriveSwervePercent(double FWD_Drive_Speed, double STRAFE_Drive_Speed, double Turn_Speed)
+void SwerveDrive::DriveSwervePercent(double FwdDriveSpeed, double StrafeDriveSpeed, double TurnSpeed)
 {
-    // Converts our field oriented speeds to robot oriented, by using trig with the current robot angle.
+    // Converts our field oriented speeds to robot oriented, by using trig (rotation matrix) with the current robot angle.
     double angle = GetOdometryPose().Rotation().Radians().value();
-    double oldFwd = FWD_Drive_Speed;
-    // You can understand these two lines by searching "rotation matrix"
-    FWD_Drive_Speed = FWD_Drive_Speed * cos(angle) - STRAFE_Drive_Speed * sin(angle);
-    STRAFE_Drive_Speed = oldFwd * sin(angle) + STRAFE_Drive_Speed * cos(angle);
+    double oldFwd = FwdDriveSpeed;
+    FwdDriveSpeed = -FwdDriveSpeed * cos(-angle) + StrafeDriveSpeed * sin(-angle);
+    StrafeDriveSpeed = - oldFwd * sin(-angle) - StrafeDriveSpeed * cos(-angle);
 
-    DriveSwervePercentNonFieldOriented(FWD_Drive_Speed, STRAFE_Drive_Speed, Turn_Speed);
+    DriveSwervePercentNonFieldOriented(FwdDriveSpeed, StrafeDriveSpeed, TurnSpeed);
 }
 
 /**
  * Drives the swerve drive, field oriented (in relation to the driver's pov) with an x y and spin.
  *
- * @param FWD_Drive_Speed The speed the robot should move forward and back, positive being forward, in meters per second
- * @param STRAFE_Drive_Speed The speed the robot should move left and right, positive being right, in meters per second
- * @param Turn_Speed The speed the robot should turn left and right, positive being clockwise, in radians per second
+ * @param FwdDriveSpeed The speed the robot should move forward and back, positive being forward, in meters per second
+ * @param StrafeDriveSpeed The speed the robot should move left and right, positive being left, in meters per second
+ * @param TurnSpeed The speed the robot should turn left and right, positive being counterclockwise, in radians per second
  */
-void SwerveDrive::DriveSwerveMetersAndRadians(double FWD_Drive_Speed, double STRAFE_Drive_Speed, double Turn_Speed)
+void SwerveDrive::DriveSwerveMetersAndRadians(double FwdDriveSpeed, double StrafeDriveSpeed, double TurnSpeed)
 {
-    DriveSwervePercent(VelocityToPercent(FWD_Drive_Speed), VelocityToPercent(STRAFE_Drive_Speed), AngularVelocityToPercent(Turn_Speed));
+    DriveSwervePercent(VelocityToPercent(FwdDriveSpeed), VelocityToPercent(StrafeDriveSpeed), AngularVelocityToPercent(TurnSpeed));
 }
