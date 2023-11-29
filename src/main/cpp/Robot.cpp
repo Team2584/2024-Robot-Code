@@ -87,26 +87,25 @@ void Robot::TeleopInit()
 
 void Robot::TeleopPeriodic()
 {
-  
-  SmartDashboard::PutNumber("Odometry X Position", swerveDrive->GetOdometryPose().X().value());
-  SmartDashboard::PutNumber("Odometry Y Position", swerveDrive->GetOdometryPose().Y().value());
-  SmartDashboard::PutNumber("Odometry Heading", swerveDrive->GetOdometryPose().Rotation().Degrees().value());
+  /* UPDATES */
 
-  
+  swerveDrive->Update();
+
+  /* DEBUGGING INFO */
+
   SmartDashboard::PutNumber("FL Module Heading", swerveDrive->FLModule.GetModuleHeading());
   SmartDashboard::PutNumber("FR Module Heading", swerveDrive->FRModule.GetModuleHeading());
   SmartDashboard::PutNumber("BL Module Heading", swerveDrive->BLModule.GetModuleHeading());
   SmartDashboard::PutNumber("BR Module Heading", swerveDrive->BRModule.GetModuleHeading());
-  
+
+  SmartDashboard::PutNumber("Odometry X Position", swerveDrive->GetOdometryPose().X().value());
+  SmartDashboard::PutNumber("Odometry Y Position", swerveDrive->GetOdometryPose().Y().value());
+  SmartDashboard::PutNumber("Odometry Heading", swerveDrive->GetOdometryPose().Rotation().Degrees().value());
   
   SmartDashboard::PutBoolean("Tag in View", swerveDrive->TagInView());
   SmartDashboard::PutNumber("Tag Odometry X", swerveDrive->GetTagOdometryPose().X().value());
   SmartDashboard::PutNumber("Tag Odometry Y", swerveDrive->GetTagOdometryPose().Y().value());
   SmartDashboard::PutNumber("Tag Odometry Heading", swerveDrive->GetTagOdometryPose().Rotation().Degrees().value());
-  
-  /* UPDATES */
-
-  swerveDrive->Update();
 
   /* DRIVER INPUT AND CONTROL */
 
@@ -144,8 +143,10 @@ void Robot::TeleopPeriodic()
   swerveDrive->DriveSwervePercent(fwdDriveSpeed, strafeDriveSpeed, turnSpeed);
 
   // Drive to 0,0 for testing
+  if (xbox_Drive->GetAButtonPressed())
+    swerveAutoController->BeginDriveToPose(PoseEstimationType::TagBased);
   if (xbox_Drive->GetAButton())
-    swerveAutoController->DriveToPose(OdometryType::TagBased, Pose2d(-0.5_m,0_m,Rotation2d()));
+    swerveAutoController->DriveToPose(Pose2d(-0.5_m,0_m,Rotation2d()));
 }
 
 void Robot::DisabledInit() {}

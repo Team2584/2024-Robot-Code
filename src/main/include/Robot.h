@@ -5,6 +5,7 @@
 #pragma once
 
 #include <string>
+#include <queue>
 
 #include "Tools/PID.h"
 #include "Tools/Math.h"
@@ -34,11 +35,14 @@
 #include <ctre/phoenix6/TalonFX.hpp>
 #include <ctre/phoenix6/Pigeon2.hpp>
 
-#include "rev/CANSparkMax.h"
-#include "rev/AbsoluteEncoder.h"
+#include <rev/CANSparkMax.h>
+#include <rev/AbsoluteEncoder.h>
 
 #include <photonlib/PhotonCamera.h>
 #include <photonlib/PhotonPoseEstimator.h>
+
+#include <pathplanner/lib/path/PathPlannerPath.h>
+#include <pathplanner/lib/path/PathPlannerTrajectory.h>
 
 using namespace frc;
 using namespace std;

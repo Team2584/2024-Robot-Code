@@ -86,31 +86,51 @@ const AprilTagFieldLayout aprilTags = AprilTagFieldLayout(fieldTagLayout, 54_ft,
 
 */
 
-enum OdometryType
+enum PoseEstimationType
 {
     PureOdometry = 0,
     TagBased = 1
 };
 
 
-/* Pure Odometry-Based Drive to Pose PID Values */
+/* Drive to Pose PID Values */
 // Translational PID in the x and y direction
-#define ODOMETRY_TRANSLATION_KP 0.5
-#define ODOMETRY_TRANSLATION_KI 0
-#define ODOMETRY_TRANSLATION_KI_MAX 0 // In percent power
-#define ODOMETRY_TRANSLATION_KD 0
-#define ODOMETRY_TRANSLATION_TOLERANCE 0.02 // In meters
-#define ODOMETRY_TRANSLATION_VELOCITY_TOLERANCE 0.5 // In percent power
-#define ODOMETRY_TRANSLATION_MIN_SPEED 0 // In percent power
-#define ODOMETRY_TRANSLATION_MAX_SPEED 0.2 // In percent power
+#define DTP_TRANSLATION_KP 0.5
+#define DTP_TRANSLATION_KI 0
+#define DTP_TRANSLATION_KI_MAX 0 // In percent power
+#define DTP_TRANSLATION_KD 0
+#define DTP_TRANSLATION_TOLERANCE 0.02 // In meters
+#define DTP_TRANSLATION_VELOCITY_TOLERANCE 0.5 // In percent power
+#define DTP_TRANSLATION_MIN_SPEED 0 // In percent power
+#define DTP_TRANSLATION_MAX_SPEED 0.2 // In percent power
 // Rotational PID to correct robot heading
-#define ODOMETRY_ROTATION_KP 0.8
-#define ODOMETRY_ROTATION_KI 0
-#define ODOMETRY_ROTATION_KI_MAX 0 // In percent power
-#define ODOMETRY_ROTATION_KD 0
-#define ODOMETRY_ROTATION_TOLERANCE 0.07 // In radians
-#define ODOMETRY_ROTATION_VELOCITY_TOLERANCE 0.5 // In percent power
-#define ODOMETRY_ROTATION_MIN_SPEED 0 // In percent power
-#define ODOMETRY_ROTATION_MAX_SPEED 0.2 // In percent power
+#define DTP_ROTATION_KP 0.8
+#define DTP_ROTATION_KI 0
+#define DTP_ROTATION_KI_MAX 0 // In percent power
+#define DTP_ROTATION_KD 0
+#define DTP_ROTATION_TOLERANCE 0.07 // In radians
+#define DTP_ROTATION_VELOCITY_TOLERANCE 0.5 // In percent power
+#define DTP_ROTATION_MIN_SPEED 0 // In percent powerw
+#define DTP_ROTATION_MAX_SPEED 0.2 // In percent power
+
+/* Trajectory following PID Values */
+// Translational PID in the x and y direction
+#define TRAJECTORY_TRANSLATION_KP 0.5 
+#define TRAJECTORY_TRANSLATION_KI 0
+#define TRAJECTORY_TRANSLATION_KI_MAX 0 // In percent power
+#define TRAJECTORY_TRANSLATION_KD 0
+#define TRAJECTORY_TRANSLATION_TOLERANCE 0.02 // In meters
+#define TRAJECTORY_TRANSLATION_VELOCITY_TOLERANCE 0.5 // In meters per second
+#define TRAJECTORY_TRANSLATION_MIN_SPEED 0 // In meters per second
+#define TRAJECTORY_TRANSLATION_MAX_SPEED 0.2 // In meters per second
+// Rotational PID to correct robot heading
+#define TRAJECTORY_ROTATION_KP 0.8
+#define TRAJECTORY_ROTATION_KI 0
+#define TRAJECTORY_ROTATION_KI_MAX 0 // In percent power
+#define TRAJECTORY_ROTATION_KD 0
+#define TRAJECTORY_ROTATION_TOLERANCE 0.07 // In radians
+#define TRAJECTORY_ROTATION_VELOCITY_TOLERANCE 0.5 // In radians per second
+#define TRAJECTORY_ROTATION_MIN_SPEED 0 // In radians per second
+#define TRAJECTORY_ROTATION_MAX_SPEED 0.2 // In radians per second
 
 #endif // SWERVE_CONSTANTS_H
