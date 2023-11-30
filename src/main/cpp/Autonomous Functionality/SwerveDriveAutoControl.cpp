@@ -197,23 +197,26 @@ bool SwerveDriveAutonomousController::FollowTrajectory()
 {
     /* Find current state of robot in trajectory (i.e. where the robot should be)*/
 
-    pathplanner::PathPlannerTrajectory::State currentState; /* current position estimated for the robot in an ideal world*/
     units::second_t currentTime = trajectoryTimer.Get(); /* current time in the trajectory */
-
-    // If trajectory is finished, our state is the final state. Otherwise, it is the state at the current time.
-    if (currentTrajectory.getTotalTime() < currentTime)
-        currentState = currentTrajectory.getEndState();
-    else
-        currentState = currentTrajectory.sample(currentTime);
+    pathplanner::PathPlannerTrajectory::State currentState  = currentTrajectory.sample(currentTime); /* current position estimated for the robot in an ideal world*/
+    Rotation2d currentHeading = Rotation2d(currentState.heading.Radians() * -1); /* Reverse the clockwise positive heading given by pathplanner */
+    bool trajectoryFinished = currentTrajectory.getTotalTime() < currentTime; /* If the trajectory would be finished in the ideal world */
 
     /* Set Feed Forward Speeds*/
 
     units::meters_per_second_t xFeedForward, yFeedForward; /* the current velocity estimated for the robot in an ideal world*/
     units::radians_per_second_t rotationFeedForward; /* the current rotational velocity estimated for the robot in an ideal world*/
 
-    xFeedForward = currentState.velocity * currentState.position.Angle().Sin();
-    yFeedForward = -1 * currentState.velocity * currentState.position.Angle().Cos();
+    xFeedForward = currentState.velocity * currentHeading.Cos();
+    yFeedForward = -1 * currentState.velocity * currentHeading.Sin(); 
     rotationFeedForward = currentState.headingAngularVelocity;
+
+    if (trajectoryFinished)
+    {
+        xFeedForward = units::meters_per_second_t{0};
+        yFeedForward = units::meters_per_second_t{0};
+        rotationFeedForward = units::radians_per_second_t{0};
+    }
 
     SmartDashboard::PutNumber("Trajectory FF X", xFeedForward.value());
     SmartDashboard::PutNumber("Trajectory FF Y", yFeedForward.value());
@@ -222,28 +225,41 @@ bool SwerveDriveAutonomousController::FollowTrajectory()
     /* Set PID Speeds */
 
     double PIDSpeeds[3] = {0, 0, 0};
-    bool PIDFinished[3] = {false, false, false};
+    bool PIDLoopsFinished[3] = {false, false, false};
  
-    Pose2d targetPose = Pose2d(currentState.position, currentState.heading);
-    CalculatePIDToPose(currentPoseEstimationType, targetPose, PIDSpeeds, PIDFinished);
+    
+    Pose2d targetPose;
+    if (trajectoryFinished)
+        targetPose = currentTrajectory.getEndState().getTargetHolonomicPose();
+    else
+        targetPose = Pose2d(currentState.position, currentHeading);
+        
+    CalculatePIDToPose(currentPoseEstimationType, targetPose, PIDSpeeds, PIDLoopsFinished);
+
+    bool PIDFinished = PIDLoopsFinished[0] && PIDLoopsFinished[1] && PIDLoopsFinished[2];
+
+    SmartDashboard::PutNumber("Current State X", currentState.position.X().value());
+    SmartDashboard::PutNumber("Current State Y", currentState.position.Y().value());
+    SmartDashboard::PutNumber("Current State Angle", currentHeading.Degrees().value());
+    SmartDashboard::PutBoolean("Trajectory Finished", trajectoryFinished);
 
     SmartDashboard::PutNumber("Trajectory PID X", PIDSpeeds[0]);
     SmartDashboard::PutNumber("Trajectory PID Y", PIDSpeeds[1]);
     SmartDashboard::PutNumber("Trajectory PID Rotation", PIDSpeeds[2]);
 
-    SmartDashboard::PutBoolean("Trajectory X Done", PIDFinished[0]);
-    SmartDashboard::PutBoolean("Trajectory Y Done", PIDFinished[1]);
-    SmartDashboard::PutBoolean("Trajectory Rotation Done", PIDFinished[2]);
+    SmartDashboard::PutBoolean("Trajectory X Done", PIDLoopsFinished[0]);
+    SmartDashboard::PutBoolean("Trajectory Y Done", PIDLoopsFinished[1]);
+    SmartDashboard::PutBoolean("Trajectory Rotation Done", PIDLoopsFinished[2]);
     
     /* Drive the Swerve */
 
     // If the trajectory and all PID loops are finished, stop driving the swerve.
-    if (currentTrajectory.getTotalTime() < currentTime && PIDFinished[0] && PIDFinished[1] && PIDFinished[2])
+    if (trajectoryFinished && PIDFinished)
     {
         baseSwerveDrive->DriveSwervePercent(0, 0, 0);
         return true;
     }
 
-    baseSwerveDrive->DriveSwerveMetersAndRadians(xFeedForward.value() + PIDSpeeds[0], yFeedForward.value() + PIDSpeeds[1], rotationFeedForward.value() + PIDSpeeds[2]);
+    //baseSwerveDrive->DriveSwerveMetersAndRadians(xFeedForward.value() + PIDSpeeds[0], yFeedForward.value() + PIDSpeeds[1], rotationFeedForward.value() + PIDSpeeds[2]);
     return false;
 }

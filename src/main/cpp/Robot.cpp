@@ -81,8 +81,8 @@ void Robot::AutonomousPeriodic()
 
 void Robot::TeleopInit()
 {
-  swerveDrive->ResetOdometry();
-  swerveDrive->ResetTagOdometry();
+  swerveDrive->ResetOdometry(Pose2d(0_m, 0_m, Rotation2d(180_deg)));
+  swerveDrive->ResetTagOdometry(Pose2d(0_m, 0_m, Rotation2d(180_deg)));
 }
 
 void Robot::TeleopPeriodic()
