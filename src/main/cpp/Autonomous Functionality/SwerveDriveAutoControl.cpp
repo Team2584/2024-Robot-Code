@@ -15,6 +15,7 @@ SwerveDriveAutonomousController::SwerveDriveAutonomousController(SwerveDrive *sw
 {
     baseSwerveDrive = swerveDrive;
     currentPoseEstimationType = PoseEstimationType::PureOdometry;
+    rotationPIDController.EnableContinuousInput(-M_PI, M_PI);
 }
 
 /**

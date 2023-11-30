@@ -70,6 +70,18 @@ public:
         ResetPIDLoop();
     }
 
+    /**
+     * Enables continuous input. Rather then using the max and min input range as constraints, 
+     * it considers them to be the same point and automatically calculates the shortest route to the setpoint.
+     * 
+     * @param minimumInput the minimum value the PID loop can reach
+     * @param maximumInput the maximum value the PID loop can reach
+     */
+    void EnableContinuousInput(double minimumInput, double maximumInput)
+    {
+        pidController.EnableContinuousInput(minimumInput, maximumInput);
+    }
+
     /* 
      * If you do not call the Calculate function every loop, this function can be called to restart the PID Controller.
      */

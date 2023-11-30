@@ -146,7 +146,7 @@ void Robot::TeleopPeriodic()
   if (xbox_Drive->GetAButtonPressed())
     swerveAutoController->BeginDriveToPose(PoseEstimationType::TagBased);
   if (xbox_Drive->GetAButton())
-    swerveAutoController->DriveToPose(Pose2d(-0.5_m,0_m,Rotation2d()));
+    swerveAutoController->DriveToPose(Pose2d(-0.5_m,0_m,Rotation2d(90_deg)));
 
   // Follow spline for testing
   if (xbox_Drive->GetBButtonPressed())
