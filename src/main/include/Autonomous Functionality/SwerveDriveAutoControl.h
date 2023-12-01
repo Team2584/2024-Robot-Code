@@ -1,5 +1,5 @@
 #include "Robot.h"
-#include "PhotonTagSwerve.h"
+#include "AprilTagBasedSwerve.h"
 #include "Constants/SwerveConstants.h"
 
 /**
@@ -9,7 +9,7 @@ class SwerveDriveAutonomousController
 {
 private:
     SwerveDrive *baseSwerveDrive = NULL; /* A reference to our base swerve drive template. */
-    PhotonTagSwerve *photonTagSwerve = NULL; /* A reference to our photonlib swerve drive template. */
+    AprilTagSwerve *photonTagSwerve = NULL; /* A reference to our photonlib swerve drive template. */
     PoseEstimationType currentPoseEstimationType; /* The current pose estimation method being used */
     PID xPIDController, yPIDController, rotationPIDController; /* PID Controllers to move in various directions */
     queue<pathplanner::PathPlannerTrajectory> trajectoryQueue; /* Queue of trajectories initialized and prepared to run */
@@ -18,7 +18,7 @@ private:
 
 public:
     SwerveDriveAutonomousController(SwerveDrive *swerveDrive);
-    SwerveDriveAutonomousController(PhotonTagSwerve *swerveDrive);
+    SwerveDriveAutonomousController(AprilTagSwerve *swerveDrive);
 
 private:
     void CalculatePIDToPose(PoseEstimationType poseEstimationType, Pose2d target, double speeds[3], bool PIDsComplete[3]);

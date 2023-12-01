@@ -23,7 +23,7 @@ SwerveDriveAutonomousController::SwerveDriveAutonomousController(SwerveDrive *sw
  * 
  * @param swerveDrive A photon tag swerve drive template
  */
-SwerveDriveAutonomousController::SwerveDriveAutonomousController(PhotonTagSwerve *swerveDrive) : SwerveDriveAutonomousController((SwerveDrive*) swerveDrive)  // TODO write comment
+SwerveDriveAutonomousController::SwerveDriveAutonomousController(AprilTagSwerve *swerveDrive) : SwerveDriveAutonomousController((SwerveDrive*) swerveDrive)  // TODO write comment
 {
     photonTagSwerve = swerveDrive;
 }

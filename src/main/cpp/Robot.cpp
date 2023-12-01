@@ -5,13 +5,13 @@
 #include "Robot.h"
 #include "Constants/TeleopConstants.h"
 
-#include "PhotonTagSwerve.h"
+#include "AprilTagBasedSwerve.h"
 #include "Autonomous Functionality/SwerveDriveAutoControl.h"
 
 #include <fmt/core.h>
 #include <frc/smartdashboard/SmartDashboard.h>
 
-PhotonTagSwerve *swerveDrive;
+AprilTagSwerve *swerveDrive;
 XboxController *xbox_Drive;
 XboxController *xbox_Drive2;
 
@@ -23,7 +23,7 @@ void Robot::RobotInit()
   m_chooser.AddOption(kAutoNameCustom, kAutoNameCustom);
   frc::SmartDashboard::PutData("Auto Modes", &m_chooser);
 
-  swerveDrive = new PhotonTagSwerve();
+  swerveDrive = new AprilTagSwerve();
   xbox_Drive = new XboxController(0);
   xbox_Drive2 = new XboxController(1);
   swerveAutoController = new SwerveDriveAutonomousController(swerveDrive);
