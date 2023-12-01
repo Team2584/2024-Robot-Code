@@ -144,20 +144,20 @@ void Robot::TeleopPeriodic()
 
   // Drive to 0,0 for testing
   if (xbox_Drive->GetAButtonPressed())
-    swerveAutoController->BeginDriveToPose(PoseEstimationType::TagBased);
+    swerveAutoController->BeginDriveToPose();
   if (xbox_Drive->GetAButton())
-    swerveAutoController->DriveToPose(Pose2d(-0.5_m,0_m,Rotation2d(90_deg)));
+    swerveAutoController->DriveToPose(Pose2d(-0.5_m,0_m,Rotation2d(90_deg)), PoseEstimationType::TagBased);
 
   // Follow spline for testing
   if (xbox_Drive->GetBButtonPressed())
   {
     swerveAutoController->ResetTrajectoryQueue();
     swerveAutoController->LoadTrajectory("Test");
-    swerveAutoController->BeginNextTrajectory(PoseEstimationType::PureOdometry);
+    swerveAutoController->BeginNextTrajectory();
   }
   if (xbox_Drive->GetBButton())
   {
-    swerveAutoController->FollowTrajectory();
+    swerveAutoController->FollowTrajectory(PoseEstimationType::PureOdometry);
   }
 }
 

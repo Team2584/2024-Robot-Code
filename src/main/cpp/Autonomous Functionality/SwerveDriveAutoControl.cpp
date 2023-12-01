@@ -14,7 +14,6 @@ SwerveDriveAutonomousController::SwerveDriveAutonomousController(SwerveDrive *sw
                      DTP_ROTATION_MIN_SPEED, DTP_ROTATION_MAX_SPEED, DTP_ROTATION_TOLERANCE, DTP_ROTATION_VELOCITY_TOLERANCE}
 {
     baseSwerveDrive = swerveDrive;
-    currentPoseEstimationType = PoseEstimationType::PureOdometry;
     rotationPIDController.EnableContinuousInput(-M_PI, M_PI);
 }
 
@@ -81,10 +80,8 @@ void SwerveDriveAutonomousController::ResetPIDLoop()
  * 
  * @param poseEstimationType The type of data we use to estimate our position on the field
  */
-void SwerveDriveAutonomousController::BeginDriveToPose(PoseEstimationType poseEstimationType)
+void SwerveDriveAutonomousController::BeginDriveToPose()
 {
-    currentPoseEstimationType = poseEstimationType;
-
     // Ensure our PID constants are set for Driving to Pose
     xPIDController.ChangeConstants(DTP_TRANSLATION_KP, DTP_TRANSLATION_KI, DTP_TRANSLATION_KD, DTP_TRANSLATION_KI_MAX, 
                      DTP_TRANSLATION_MIN_SPEED, DTP_TRANSLATION_MAX_SPEED, DTP_TRANSLATION_TOLERANCE, DTP_TRANSLATION_VELOCITY_TOLERANCE);
@@ -103,12 +100,12 @@ void SwerveDriveAutonomousController::BeginDriveToPose(PoseEstimationType poseEs
  * 
  * @return returns true when pose has been reached
  */
-bool SwerveDriveAutonomousController::DriveToPose(Pose2d target)
+bool SwerveDriveAutonomousController::DriveToPose(Pose2d target, PoseEstimationType poseEstimationType)
 {
     double speeds[3] = {0, 0, 0};
     bool PIDFinished[3] = {false, false, false};
  
-    CalculatePIDToPose(currentPoseEstimationType, target, speeds, PIDFinished);
+    CalculatePIDToPose(poseEstimationType, target, speeds, PIDFinished);
 
     // Debugging info
     SmartDashboard::PutNumber("Pose X Speed", speeds[0]);
@@ -158,10 +155,8 @@ void SwerveDriveAutonomousController::LoadTrajectory(string trajectoryString)
 /**
  * Iterates to next trajectory in queue of trajectories and prepare for trajectory to start
  */
-void SwerveDriveAutonomousController::BeginNextTrajectory(PoseEstimationType poseEstimationType)
+void SwerveDriveAutonomousController::BeginNextTrajectory()
 {
-    currentPoseEstimationType = poseEstimationType;
-
     // initializes current trajectory as next trajectory in the queue
     if (trajectoryQueue.size() > 0)
     {
@@ -194,7 +189,7 @@ void SwerveDriveAutonomousController::BeginNextTrajectory(PoseEstimationType pos
  * 
  * @return returns true when pose has been reached
  */
-bool SwerveDriveAutonomousController::FollowTrajectory()
+bool SwerveDriveAutonomousController::FollowTrajectory(PoseEstimationType poseEstimationType)
 {
     /* Find current state of robot in trajectory (i.e. where the robot should be)*/
 
@@ -235,7 +230,7 @@ bool SwerveDriveAutonomousController::FollowTrajectory()
     else
         targetPose = Pose2d(currentState.position, currentHeading);
         
-    CalculatePIDToPose(currentPoseEstimationType, targetPose, PIDSpeeds, PIDLoopsFinished);
+    CalculatePIDToPose(poseEstimationType, targetPose, PIDSpeeds, PIDLoopsFinished);
 
     bool PIDFinished = PIDLoopsFinished[0] && PIDLoopsFinished[1] && PIDLoopsFinished[2];
 
@@ -261,6 +256,6 @@ bool SwerveDriveAutonomousController::FollowTrajectory()
         return true;
     }
 
-    //baseSwerveDrive->DriveSwerveMetersAndRadians(xFeedForward.value() + PIDSpeeds[0], yFeedForward.value() + PIDSpeeds[1], rotationFeedForward.value() + PIDSpeeds[2]);
+    baseSwerveDrive->DriveSwerveMetersAndRadians(xFeedForward.value() + PIDSpeeds[0], yFeedForward.value() + PIDSpeeds[1], rotationFeedForward.value() + PIDSpeeds[2]);
     return false;
 }
