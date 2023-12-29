@@ -149,7 +149,7 @@ void SwerveDriveAutonomousController::ResetTrajectoryQueue()
 void SwerveDriveAutonomousController::LoadTrajectory(string trajectoryString)
 {
     shared_ptr<pathplanner::PathPlannerPath> path = pathplanner::PathPlannerPath::fromPathFile(trajectoryString);
-    trajectoryQueue.push(pathplanner::PathPlannerTrajectory(path, ChassisSpeeds())); // Blank 
+    trajectoryQueue.push(pathplanner::PathPlannerTrajectory(path, ChassisSpeeds(), path.get()->getPreviewStartingHolonomicPose().Rotation())); // Blank 
 }
 
 /**
