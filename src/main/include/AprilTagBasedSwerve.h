@@ -6,7 +6,7 @@
 /**
  * This class inherits from the base SwerveDrive class, but adds the functionality of calculating odometry using the photonvision library, a camera, and april tags
  */
-class PhotonTagSwerve : public SwerveDrive
+class AprilTagSwerve : public SwerveDrive
 {
 private:
     SwerveDrivePoseEstimator<4> tagOdometry; /* An odometry class which returns the position of the robot using wheel encoder ticks*/
@@ -16,7 +16,7 @@ private:
     Pose3d prevEstimatedPose; /* The previous pose of the robot */
 
 public:
-    PhotonTagSwerve();
+    AprilTagSwerve();
 
     void ResetHeading();
     void ResetTagOdometry();

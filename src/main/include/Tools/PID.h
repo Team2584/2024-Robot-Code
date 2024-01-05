@@ -47,6 +47,41 @@ public:
         PID(P, I, D, 1, 0, 1, 0, 0);
     }
 
+    /**
+     * Reinstantiate PID Controller
+     *
+     * @param P The kP constant
+     * @param I The kI constant
+     * @param D The kD constant
+     * @param maximumIntegral The maximum impact your I result can have on the system
+     * @param minimumSpeed The minimum magnitude of the value returned
+     * @param maximumSpeed The maximum magnitude of the value returned
+     * @param positionTolerance The allowable error in the PID loop before finished
+     * @param velocityTolerance The maxmimum velocity that can be experienced when PID loop is considered finished
+     */
+    void ChangeConstants(double P, double I, double D, double maximumIntegral, double minimumSpeed, double maximumSpeed, double positionTolerance, double velocityTolerance)
+    {
+        pidController.SetPID(P, I, D);
+        pidController.SetIntegratorRange(-1 * maximumIntegral, maximumIntegral);
+        pidController.SetTolerance(positionTolerance, velocityTolerance);
+        maxSpeed = maximumSpeed;
+        minSpeed = minimumSpeed;
+        
+        ResetPIDLoop();
+    }
+
+    /**
+     * Enables continuous input. Rather then using the max and min input range as constraints, 
+     * it considers them to be the same point and automatically calculates the shortest route to the setpoint.
+     * 
+     * @param minimumInput the minimum value the PID loop can reach
+     * @param maximumInput the maximum value the PID loop can reach
+     */
+    void EnableContinuousInput(double minimumInput, double maximumInput)
+    {
+        pidController.EnableContinuousInput(minimumInput, maximumInput);
+    }
+
     /* 
      * If you do not call the Calculate function every loop, this function can be called to restart the PID Controller.
      */

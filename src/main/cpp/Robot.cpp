@@ -3,15 +3,15 @@
 // the WPILib BSD license file in the root directory of this project.
 
 #include "Robot.h"
-#include "Constants/DriverConstants.h"
+#include "Constants/TeleopConstants.h"
 
-#include "PhotonTagSwerve.h"
+#include "AprilTagBasedSwerve.h"
 #include "Autonomous Functionality/SwerveDriveAutoControl.h"
 
 #include <fmt/core.h>
 #include <frc/smartdashboard/SmartDashboard.h>
 
-PhotonTagSwerve *swerveDrive;
+AprilTagSwerve *swerveDrive;
 XboxController *xbox_Drive;
 XboxController *xbox_Drive2;
 
@@ -23,7 +23,7 @@ void Robot::RobotInit()
   m_chooser.AddOption(kAutoNameCustom, kAutoNameCustom);
   frc::SmartDashboard::PutData("Auto Modes", &m_chooser);
 
-  swerveDrive = new PhotonTagSwerve();
+  swerveDrive = new AprilTagSwerve();
   xbox_Drive = new XboxController(0);
   xbox_Drive2 = new XboxController(1);
   swerveAutoController = new SwerveDriveAutonomousController(swerveDrive);
@@ -81,32 +81,31 @@ void Robot::AutonomousPeriodic()
 
 void Robot::TeleopInit()
 {
-  swerveDrive->ResetOdometry();
-  swerveDrive->ResetTagOdometry();
+  swerveDrive->ResetOdometry(Pose2d(0_m, 0_m, Rotation2d(180_deg)));
+  swerveDrive->ResetTagOdometry(Pose2d(0_m, 0_m, Rotation2d(180_deg)));
 }
 
 void Robot::TeleopPeriodic()
 {
-  
-  SmartDashboard::PutNumber("Odometry X Position", swerveDrive->GetOdometryPose().X().value());
-  SmartDashboard::PutNumber("Odometry Y Position", swerveDrive->GetOdometryPose().Y().value());
-  SmartDashboard::PutNumber("Odometry Heading", swerveDrive->GetOdometryPose().Rotation().Degrees().value());
+  /* UPDATES */
 
-  
+  swerveDrive->Update();
+
+  /* DEBUGGING INFO */
+
   SmartDashboard::PutNumber("FL Module Heading", swerveDrive->FLModule.GetModuleHeading());
   SmartDashboard::PutNumber("FR Module Heading", swerveDrive->FRModule.GetModuleHeading());
   SmartDashboard::PutNumber("BL Module Heading", swerveDrive->BLModule.GetModuleHeading());
   SmartDashboard::PutNumber("BR Module Heading", swerveDrive->BRModule.GetModuleHeading());
-  
+
+  SmartDashboard::PutNumber("Odometry X Position", swerveDrive->GetOdometryPose().X().value());
+  SmartDashboard::PutNumber("Odometry Y Position", swerveDrive->GetOdometryPose().Y().value());
+  SmartDashboard::PutNumber("Odometry Heading", swerveDrive->GetOdometryPose().Rotation().Degrees().value());
   
   SmartDashboard::PutBoolean("Tag in View", swerveDrive->TagInView());
   SmartDashboard::PutNumber("Tag Odometry X", swerveDrive->GetTagOdometryPose().X().value());
   SmartDashboard::PutNumber("Tag Odometry Y", swerveDrive->GetTagOdometryPose().Y().value());
   SmartDashboard::PutNumber("Tag Odometry Heading", swerveDrive->GetTagOdometryPose().Rotation().Degrees().value());
-  
-  /* UPDATES */
-
-  swerveDrive->Update();
 
   /* DRIVER INPUT AND CONTROL */
 
@@ -144,8 +143,22 @@ void Robot::TeleopPeriodic()
   swerveDrive->DriveSwervePercent(fwdDriveSpeed, strafeDriveSpeed, turnSpeed);
 
   // Drive to 0,0 for testing
+  if (xbox_Drive->GetAButtonPressed())
+    swerveAutoController->BeginDriveToPose();
   if (xbox_Drive->GetAButton())
-    swerveAutoController->DriveToPose(OdometryType::TagBased, Pose2d(-0.5_m,0_m,Rotation2d()));
+    swerveAutoController->DriveToPose(Pose2d(-0.5_m,0_m,Rotation2d(90_deg)), PoseEstimationType::TagBased);
+
+  // Follow spline for testing
+  if (xbox_Drive->GetBButtonPressed())
+  {
+    swerveAutoController->ResetTrajectoryQueue();
+    swerveAutoController->LoadTrajectory("Test");
+    swerveAutoController->BeginNextTrajectory();
+  }
+  if (xbox_Drive->GetBButton())
+  {
+    swerveAutoController->FollowTrajectory(PoseEstimationType::PureOdometry);
+  }
 }
 
 void Robot::DisabledInit() {}
