@@ -20,7 +20,7 @@ SwerveModule::SwerveModule(int driveMotorPort, int spinMotorPort, int magneticEn
                            double encoderOffset_)
     : driveMotor{driveMotorPort},
       spinMotor{spinMotorPort, rev::CANSparkMax::MotorType::kBrushless},
-      spinRelativeEncoder{spinMotor.GetEncoder()},
+      spinRelativeEncoder{spinMotor.GetAlternateEncoder(rev::SparkMaxAlternateEncoder::Type::kQuadrature, 24)},
       magEncoder{magneticEncoderPort},
       spinPIDController{WHEEL_SPIN_KP, WHEEL_SPIN_KI, WHEEL_SPIN_KD, WHEEL_SPIN_KI_MAX,
                         WHEEL_SPIN_MIN_SPEED, WHEEL_SPIN_MAX_SPEED,

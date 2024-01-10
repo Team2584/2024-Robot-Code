@@ -14,7 +14,7 @@ class SwerveModule
         // Instance Variables for each swerve module
         ctre::phoenix6::hardware::TalonFX driveMotor; /* The motor responsible for actually driving the wheel*/
         rev::CANSparkMax spinMotor; /* The motor responsible for "spinning" the wheel left to right to change direction*/
-        rev::SparkMaxRelativeEncoder spinRelativeEncoder; /* The relative encoder built into the spinMotor */
+        rev::SparkMaxAlternateEncoder spinRelativeEncoder; /* The relative encoder built into the spinMotor */
         frc::DutyCycleEncoder magEncoder; /* The magnetic absolute encoder tracking swerve heading. */
         PID spinPIDController; /* The PID Controller for the spinMotor, works using degrees */
         double encoderOffset;       /* Offset in magnetic encoder from 0 facing the front of the robot */
