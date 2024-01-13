@@ -10,6 +10,8 @@
 #include "Tools/PID.h"
 #include "Tools/Math.h"
 
+#include <fmt/core.h>
+
 #include <frc/TimedRobot.h>
 #include <frc/smartdashboard/SendableChooser.h>
 #include <frc/smartdashboard/SmartDashboard.h>

@@ -8,8 +8,7 @@
 #include "AprilTagBasedSwerve.h"
 #include "Autonomous Functionality/SwerveDriveAutoControl.h"
 
-#include <fmt/core.h>
-#include <frc/smartdashboard/SmartDashboard.h>
+#include "Intake.h"
 
 AprilTagSwerve swerveDrive{};
 XboxController xboxController{0};
