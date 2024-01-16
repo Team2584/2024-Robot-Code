@@ -23,51 +23,51 @@ void Intake::OuttakeRing()
 }
 
 double Intake::GetWristEncoderReading()
+{
+  double reading = magEncoder->GetPosition();
+  return reading;
+}
+
+void Intake::MoveWristPercent(double percent)
+{
+  wristMotor.Set(percent);
+}
+
+bool Intake::PIDWrist(double point)
+{
+  double error = GetWristEncoderReading() - point;
+
+  SmartDashboard::PutNumber("Wrist Error", error);
+
+  if (fabs(error) < ALLOWABLE_ERROR_WRIST)
   {
-    double reading = magEncoder->GetPosition();
-    return reading;
+    MoveWristPercent(0);
+    return true;
   }
 
-  void Intake::MoveWristPercent(double percent)
-  {
-    wristMotor.Set(percent);
+  double intendedI = std::clamp(WRISTKI * runningWristIntegral, -1 * WRISTKIMAX, WRISTKIMAX);
+
+  double lastWristSpeed = std::clamp(WRISTKP * error + intendedI, -1 * WRISTMAX_SPEED, WRISTMAX_SPEED);
+
+  SmartDashboard::PutNumber("intended Velocity", lastWristSpeed);
+  SmartDashboard::PutNumber("intended I", intendedI);
+  SmartDashboard::PutNumber("final speed", lastWristSpeed);
+
+  if (lastWristSpeed < -0.2){
+    lastWristSpeed = -0.2;
   }
 
-  bool Intake::PIDWrist(double point)
-  {
-    double error = GetWristEncoderReading() - point;
+  MoveWristPercent(lastWristSpeed + WRISTFF);
+  return false;
+}
 
-    SmartDashboard::PutNumber("Wrist Error", error);
+bool Intake::PIDWristDown()
+{
+  return PIDWrist(WRIST_LOW);
+}
 
-    if (fabs(error) < ALLOWABLE_ERROR_WRIST)
-    {
-      MoveWristPercent(0);
-      return true;
-    }
-
-    double intendedI = std::clamp(WRISTKI * runningWristIntegral, -1 * WRISTKIMAX, WRISTKIMAX);
-
-    double lastWristSpeed = std::clamp(WRISTKP * error + intendedI, -1 * WRISTMAX_SPEED, WRISTMAX_SPEED);
-
-    SmartDashboard::PutNumber("intended Velocity", lastWristSpeed);
-    SmartDashboard::PutNumber("intended I", intendedI);
-    SmartDashboard::PutNumber("final speed", lastWristSpeed);
-
-    if (lastWristSpeed < -0.2){
-      lastWristSpeed = -0.2;
-    }
-
-    MoveWristPercent(lastWristSpeed + WRISTFF);
-    return false;
-  }
-
-  bool Intake::PIDWristDown()
-  {
-    return PIDWrist(WRIST_LOW);
-  }
-
-  bool Intake::PIDWristUp()
-  {
-    return PIDWrist(WRIST_HIGH);
-  }
+bool Intake::PIDWristUp()
+{
+  return PIDWrist(WRIST_HIGH);
+}
 
