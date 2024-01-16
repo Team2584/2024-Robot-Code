@@ -14,11 +14,11 @@ REV Samples: https://github.com/REVrobotics/SPARK-MAX-Examples
 PhotonVision (Apriltags): https://docs.photonvision.org/en/latest/
 
 ## How to find your way around the code
-The file main/cpp/Robot.cpp contains the skeleton of what the robot does in autonomous and teleop.
-Other files in main/cpp control specific subsystems on the robot.
-The Include folder contains class headers laying out the functions of each subsystem.
-The file Include/Robot.h includes all of the library files used by the code base.
-The Include/Constants folder contains all of the usefuel numbers that must be changed to tune the robot.
+- The file main/cpp/Robot.cpp contains the skeleton of what the robot does in autonomous and teleop.
+- Other files in main/cpp control specific subsystems on the robot.
+- The Include folder contains class headers laying out the functions of each subsystem.
+- The file Include/Robot.h includes all of the library files used by the code base.
+- The Include/Constants folder contains all of the usefuel numbers that must be changed to tune the robot.
 
 ## Standards in the code base
 1. Robot-oriented coordinates are measured with positive X facing away, Y facing left, and Z facing upwards. The origin centered on the chassis (x/y) and is on the ground (z). 
