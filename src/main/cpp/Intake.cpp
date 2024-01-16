@@ -1,15 +1,10 @@
 #include "Intake.h"
 
 Intake::Intake()
-<<<<<<< Updated upstream
-    : intakeMotor{INTAKE_MOTOR_PORT, rev::CANSparkMax::MotorType::kBrushless}
-{
-=======
     : intakeMotor{INTAKE_MOTOR_PORT, rev::CANSparkMax::MotorType::kBrushless}, wristMotor{WRIST_MOTOR_PORT, rev::CANSparkMax::MotorType::kBrushless}
 {
     magEncoder = new rev::SparkAbsoluteEncoder(wristMotor.GetAbsoluteEncoder(rev::SparkAbsoluteEncoder::Type::kDutyCycle));
     wristMotor.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
->>>>>>> Stashed changes
 }
 
 void Intake::SetIntakeMotorSpeed(double percent)
@@ -19,19 +14,11 @@ void Intake::SetIntakeMotorSpeed(double percent)
 
 void Intake::IntakeRing()
 {
-<<<<<<< Updated upstream
     SetIntakeMotorSpeed(0.5);
-=======
-    SetIntakeMotorSpeed(1);
->>>>>>> Stashed changes
 }
 
 void Intake::OuttakeRing()
 {
-<<<<<<< Updated upstream
-    SetIntakeMotorSpeed(-0.5);
-}
-=======
     SetIntakeMotorSpeed(-1);
 }
 
@@ -84,4 +71,3 @@ double Intake::GetWristEncoderReading()
     return PIDWrist(WRIST_HIGH);
   }
 
->>>>>>> Stashed changes

@@ -10,8 +10,6 @@
 
 #include "Intake.h"
 
-#include "Intake.h"
-
 AprilTagSwerve swerveDrive{};
 XboxController xboxController{0};
 XboxController xboxController2{1};
