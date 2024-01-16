@@ -2,16 +2,16 @@
 
 ## Important Resources
 
-This year's main github: https://github.com/Team2584/2024-Robot-Code
-This year's vision github: https://github.com/Team2584/2024-vision
+- This year's main github: https://github.com/Team2584/2024-Robot-Code
+- This year's vision github: https://github.com/Team2584/2024-vision
 
-Installing WPILib 2024 (Required): https://docs.wpilib.org/en/stable/docs/zero-to-robot/step-2/wpilib-setup.html
-Installing FRC Game Tools ( (Not Required): https://docs.wpilib.org/en/stable/docs/zero-to-robot/step-2/frc-game-tools.html
+- Installing WPILib 2024 (Required): https://docs.wpilib.org/en/stable/docs/zero-to-robot/step-2/wpilib-setup.html
+- Installing FRC Game Tools ( (Not Required): https://docs.wpilib.org/en/stable/docs/zero-to-robot/step-2/frc-game-tools.html
 
-FIRST Documentation: https://docs.wpilib.org/en/stable/index.html
-REV Documentation: https://codedocs.revrobotics.com/cpp/index.html
-REV Samples: https://github.com/REVrobotics/SPARK-MAX-Examples
-PhotonVision (Apriltags): https://docs.photonvision.org/en/latest/
+- FIRST Documentation: https://docs.wpilib.org/en/stable/index.html
+- REV Documentation: https://codedocs.revrobotics.com/cpp/index.html
+- REV Samples: https://github.com/REVrobotics/SPARK-MAX-Examples
+- PhotonVision (Apriltags): https://docs.photonvision.org/en/latest/
 
 ## How to find your way around the code
 - The file main/cpp/Robot.cpp contains the skeleton of what the robot does in autonomous and teleop.
