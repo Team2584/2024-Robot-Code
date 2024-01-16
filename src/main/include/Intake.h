@@ -7,6 +7,7 @@ public:
 
     rev::CANSparkMax intakeMotor;
     rev::CANSparkMax wristMotor;
+    rev::CANSparkMax fixedIntakeMotor;
     rev::SparkAbsoluteEncoder *magEncoder;
 
     double runningWristIntegral = 0;

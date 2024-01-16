@@ -1,5 +1,6 @@
 // Ports for different motors and sensors (Spark MAX CAN ID - Check using REV firmware utility)
 #define INTAKE_MOTOR_PORT 7 //????
+#define FIXED_INTAKE_MOTOR_PORT 5
 #define WRIST_MOTOR_PORT 21
 
 //Intake motor speeds, percent
