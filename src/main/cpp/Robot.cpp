@@ -10,9 +10,12 @@
 
 #include "Intake.h"
 
+#include "Intake.h"
+
 AprilTagSwerve swerveDrive{};
 XboxController xboxController{0};
 XboxController xboxController2{1};
+Intake overbumper{};
 
 SwerveDriveAutonomousController swerveAutoController{&swerveDrive};
 
@@ -87,10 +90,10 @@ void Robot::TeleopPeriodic()
 
   /* DEBUGGING INFO */
 
-  SmartDashboard::PutNumber("FL Module Heading", swerveDrive.FLModule.GetModuleHeading());
-  SmartDashboard::PutNumber("FR Module Heading", swerveDrive.FRModule.GetModuleHeading());
-  SmartDashboard::PutNumber("BL Module Heading", swerveDrive.BLModule.GetModuleHeading());
-  SmartDashboard::PutNumber("BR Module Heading", swerveDrive.BRModule.GetModuleHeading());
+  SmartDashboard::PutNumber("FL Module Heading", swerveDrive.FLModule.GetMagEncoderValue());
+  SmartDashboard::PutNumber("FR Module Heading", swerveDrive.FRModule.GetMagEncoderValue());
+  SmartDashboard::PutNumber("BL Module Heading", swerveDrive.BLModule.GetMagEncoderValue());
+  SmartDashboard::PutNumber("BR Module Heading", swerveDrive.BRModule.GetMagEncoderValue());
 
   SmartDashboard::PutNumber("Odometry X Position", swerveDrive.GetOdometryPose().X().value());
   SmartDashboard::PutNumber("Odometry Y Position", swerveDrive.GetOdometryPose().Y().value());
@@ -153,6 +156,22 @@ void Robot::TeleopPeriodic()
   {
     swerveAutoController.FollowTrajectory(PoseEstimationType::PureOdometry);
   }
+
+  if(xboxController.GetRightBumper()){
+    overbumper.IntakeRing();
+    overbumper.PIDWristDown();
+  }
+  else if(xboxController.GetLeftBumper()){
+    overbumper.OuttakeRing();
+    overbumper.PIDWristDown();
+  }
+  else {
+    overbumper.SetIntakeMotorSpeed(0);
+    overbumper.PIDWristUp();
+  }
+
+  SmartDashboard::PutNumber("Wrist Pos", overbumper.GetWristEncoderReading());
+
 }
 
 void Robot::DisabledInit() {}
