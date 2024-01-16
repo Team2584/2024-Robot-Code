@@ -14,12 +14,12 @@ void Intake::SetIntakeMotorSpeed(double percent)
 
 void Intake::IntakeRing()
 {
-    SetIntakeMotorSpeed(0.5);
+    SetIntakeMotorSpeed(INTAKE_SPEED_IN);
 }
 
 void Intake::OuttakeRing()
 {
-    SetIntakeMotorSpeed(-1);
+    SetIntakeMotorSpeed(INTAKE_SPEED_OUT*-1);
 }
 
 double Intake::GetWristEncoderReading()
@@ -49,12 +49,11 @@ double Intake::GetWristEncoderReading()
 
     double lastWristSpeed = std::clamp(WRISTKP * error + intendedI, -1 * WRISTMAX_SPEED, WRISTMAX_SPEED);
 
-    SmartDashboard::PutNumber("intended Velocity", lastWristSpeed);
-    SmartDashboard::PutNumber("intended I", intendedI);
-    SmartDashboard::PutNumber("final speed", lastWristSpeed);
+    SmartDashboard::PutNumber("Wrist Speed", lastWristSpeed);
+    SmartDashboard::PutNumber("Wrist Intended I", intendedI);
 
-    if (lastWristSpeed < -0.2){
-      lastWristSpeed = -0.2;
+    if (lastWristSpeed < WRIST_SPEED_LOW_THRESHHOLD){
+      lastWristSpeed = WRIST_SPEED_LOW_THRESHHOLD;
     }
 
     MoveWristPercent(lastWristSpeed + WRISTFF);
