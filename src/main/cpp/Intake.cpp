@@ -1,7 +1,9 @@
 #include "Intake.h"
 
 Intake::Intake()
-  : intakeMotor{INTAKE_MOTOR_PORT, rev::CANSparkMax::MotorType::kBrushless}, wristMotor{WRIST_MOTOR_PORT, rev::CANSparkMax::MotorType::kBrushless}
+  : intakeMotor{INTAKE_MOTOR_PORT, rev::CANSparkMax::MotorType::kBrushless}, 
+  wristMotor{WRIST_MOTOR_PORT, rev::CANSparkMax::MotorType::kBrushless},
+  fixedIntakeMotor{FIXED_INTAKE_MOTOR_PORT, rev::CANSparkMax::MotorType::kBrushless}
 {
   magEncoder = new rev::SparkAbsoluteEncoder(wristMotor.GetAbsoluteEncoder(rev::SparkAbsoluteEncoder::Type::kDutyCycle));
   wristMotor.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
@@ -10,6 +12,7 @@ Intake::Intake()
 void Intake::SetIntakeMotorSpeed(double percent)
 {
   intakeMotor.Set(percent);
+  fixedIntakeMotor.Set(percent);
 }
 
 void Intake::IntakeRing()
