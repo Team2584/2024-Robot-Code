@@ -2,17 +2,17 @@
 
 Intake::Intake()
   : intakeMotor{INTAKE_MOTOR_PORT, rev::CANSparkMax::MotorType::kBrushless}, 
-  wristMotor{WRIST_MOTOR_PORT, rev::CANSparkMax::MotorType::kBrushless},
-  fixedIntakeMotor{FIXED_INTAKE_MOTOR_PORT, rev::CANSparkMax::MotorType::kBrushless}
+    wristMotor{WRIST_MOTOR_PORT, rev::CANSparkMax::MotorType::kBrushless},
+    fixedIntakeMotor{FIXED_INTAKE_MOTOR_PORT, rev::CANSparkMax::MotorType::kBrushless}
 {
   magEncoder = new rev::SparkAbsoluteEncoder(wristMotor.GetAbsoluteEncoder(rev::SparkAbsoluteEncoder::Type::kDutyCycle));
-  wristMotor.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
+  wristMotor.SetIdleMode(rev::CANSparkMax::IdleMode::kCoast);
 }
 
 void Intake::SetIntakeMotorSpeed(double percent)
 {
   intakeMotor.Set(percent);
-  fixedIntakeMotor.Set(percent);
+  fixedIntakeMotor.Set(percent*50);
 }
 
 void Intake::IntakeRing()
@@ -38,6 +38,11 @@ void Intake::MoveWristPercent(double percent)
 
 bool Intake::PIDWrist(double point)
 {
+
+  //double pos = (GetWristEncoderReading() < 0.1 ? 0.995 : GetWristEncoderReading());
+  //double pos = GetWristEncoderReading();
+  //double error = pos - point;
+
   double error = GetWristEncoderReading() - point;
 
   SmartDashboard::PutNumber("Wrist Error", error);

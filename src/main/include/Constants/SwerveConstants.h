@@ -20,16 +20,16 @@
 #define BR_DRIVE_MOTOR_PORT 4
 #define BR_SPIN__MOTOR_PORT 14
 #define FL_MAGNETIC_ENCODER_PORT 8
-#define FR_MAGNETIC_ENCODER_PORT 6
-#define BL_MAGNETIC_ENCODER_PORT 9
-#define BR_MAGNETIC_ENCODER_PORT 7
+#define FR_MAGNETIC_ENCODER_PORT 9
+#define BL_MAGNETIC_ENCODER_PORT 7
+#define BR_MAGNETIC_ENCODER_PORT 6
 #define PIGEON_IMU_PORT 6
 
 // Find offsets with bevel gears on the right side of the drive train
-#define FL_WHEEL_OFFSET 0.1254
-#define FR_WHEEL_OFFSET 0.5940
-#define BR_WHEEL_OFFSET 0.3600
-#define BL_WHEEL_OFFSET 0.0156
+#define FL_WHEEL_OFFSET 0.2614
+#define FR_WHEEL_OFFSET 0.1128
+#define BR_WHEEL_OFFSET 0.7232
+#define BL_WHEEL_OFFSET 0.9995
 
 // Assuming a rectangular drive train (input distance between center of wheels)
 #define DRIVE_LENGTH 0.5906_m 
@@ -41,7 +41,7 @@
 #define SPIN_MOTOR_GEAR_RATIO 15.43
 
 // Swerve Module Wheel Spin PID Values
-#define WHEEL_SPIN_KP 0.013
+#define WHEEL_SPIN_KP 0.007
 #define WHEEL_SPIN_KI 0
 #define WHEEL_SPIN_KI_MAX 0 // In percent power
 #define WHEEL_SPIN_KD 0

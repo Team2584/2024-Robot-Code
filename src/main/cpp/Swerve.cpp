@@ -18,8 +18,9 @@
  */
 SwerveModule::SwerveModule(int driveMotorPort, int spinMotorPort, int magneticEncoderPort,
                            double encoderOffset_)
-    : driveMotor{driveMotorPort},
+    : driveMotor{driveMotorPort, rev::CANSparkMax::MotorType::kBrushless},
       spinMotor{spinMotorPort, rev::CANSparkMax::MotorType::kBrushless},
+      driveRelativeEncoder{driveMotor.GetAlternateEncoder(rev::SparkMaxAlternateEncoder::Type::kQuadrature, 24)},
       spinRelativeEncoder{spinMotor.GetAlternateEncoder(rev::SparkMaxAlternateEncoder::Type::kQuadrature, 24)},
       magEncoder{magneticEncoderPort},
       spinPIDController{WHEEL_SPIN_KP, WHEEL_SPIN_KI, WHEEL_SPIN_KD, WHEEL_SPIN_KI_MAX,
@@ -62,9 +63,7 @@ double SwerveModule::GetModuleHeading()
  */
 double SwerveModule::GetDriveEncoder()
 {
-    // Acquire a refreshed TalonFX rotor position signal
-    auto &rotorPosSignal = driveMotor.GetRotorPosition();
-    return rotorPosSignal.GetValue().value();
+    return driveRelativeEncoder.GetPosition();    
 }
 
 /**

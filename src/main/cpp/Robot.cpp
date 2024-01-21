@@ -9,11 +9,13 @@
 #include "Autonomous Functionality/SwerveDriveAutoControl.h"
 
 #include "Intake.h"
+#include "FlyWheel.h"
 
 AprilTagSwerve swerveDrive{};
 XboxController xboxController{0};
 XboxController xboxController2{1};
 Intake overbumper{};
+Flywheel flywheel{};
 
 SwerveDriveAutonomousController swerveAutoController{&swerveDrive};
 
@@ -170,6 +172,12 @@ void Robot::TeleopPeriodic()
 
   SmartDashboard::PutNumber("Wrist Pos", overbumper.GetWristEncoderReading());
 
+  if(xboxController.GetXButtonPressed()){
+    flywheel.FlywheelRing();
+  }
+  else if (xboxController.GetYButtonPressed()){
+    flywheel.SetFlywheelMotorSpeed(0);
+  }
 }
 
 void Robot::DisabledInit() {}

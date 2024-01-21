@@ -38,6 +38,7 @@
 #include <ctre/phoenix6/Pigeon2.hpp>
 
 #include <rev/CANSparkBase.h>
+#include <rev/CANSparkFlex.h>
 #include <rev/CANSparkMax.h>
 #include <rev/AbsoluteEncoder.h>
 
