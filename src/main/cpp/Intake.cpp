@@ -78,3 +78,8 @@ bool Intake::PIDWristUp()
   return PIDWrist(WRIST_HIGH);
 }
 
+//If feed/index motor becomes seperate from intake chain remove this
+rev::CANSparkMax* Intake::GetFeedMotor(){
+  return &fixedIntakeMotor;
+}
+

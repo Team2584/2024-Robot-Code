@@ -17,7 +17,6 @@ private:
 
 public:
     AprilTagSwerve();
-
     void ResetHeading();
     void ResetTagOdometry();
     void ResetTagOdometry(Pose2d position);

@@ -15,7 +15,7 @@ AprilTagSwerve swerveDrive{};
 XboxController xboxController{0};
 XboxController xboxController2{1};
 Intake overbumper{};
-Flywheel flywheel{};
+FlywheelSystem flywheel{overbumper.GetFeedMotor()};
 
 SwerveDriveAutonomousController swerveAutoController{&swerveDrive};
 

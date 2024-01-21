@@ -29,4 +29,7 @@ public:
 
     bool PIDWristUp();
 
+    //If feed/index motor becomes seperate from intake chain remove this
+    rev::CANSparkMax* GetFeedMotor();
+
 };

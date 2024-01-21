@@ -10,6 +10,12 @@
 #include "Tools/PID.h"
 #include "Tools/Math.h"
 
+#include <numbers>
+
+#include <units/angle.h>
+#include <units/time.h>
+#include <units/voltage.h>
+
 #include <fmt/core.h>
 
 #include <frc/TimedRobot.h>
@@ -41,6 +47,11 @@
 #include <rev/CANSparkFlex.h>
 #include <rev/CANSparkMax.h>
 #include <rev/AbsoluteEncoder.h>
+
+#include <frc/controller/SimpleMotorFeedforward.h>
+#include <frc/controller/PIDController.h>
+#include <frc2/command/PIDSubsystem.h>
+#include <units/angle.h>
 
 #include <photonlib/PhotonCamera.h>
 #include <photonlib/PhotonPoseEstimator.h>
