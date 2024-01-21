@@ -12,10 +12,6 @@
 
 #include <numbers>
 
-#include <units/angle.h>
-#include <units/time.h>
-#include <units/voltage.h>
-
 #include <fmt/core.h>
 
 #include <frc/TimedRobot.h>
@@ -50,8 +46,9 @@
 
 #include <frc/controller/SimpleMotorFeedforward.h>
 #include <frc/controller/PIDController.h>
-#include <frc2/command/PIDSubsystem.h>
 #include <units/angle.h>
+#include <units/time.h>
+#include <units/voltage.h>
 
 #include <photonlib/PhotonCamera.h>
 #include <photonlib/PhotonPoseEstimator.h>

@@ -173,11 +173,15 @@ void Robot::TeleopPeriodic()
   SmartDashboard::PutNumber("Wrist Pos", overbumper.GetWristEncoderReading());
 
   if(xboxController.GetXButtonPressed()){
-    flywheel.FlywheelRing();
+    flywheel.SimpleFlywheelRing();
   }
   else if (xboxController.GetYButtonPressed()){
-    flywheel.SetFlywheelMotorSpeed(0);
+    flywheel.SetFlywheelVelocity(2000);
   }
+  else if (xboxController.GetStartButtonPressed()){
+    flywheel.SimpleSetFlywheelMotor(0);
+  }
+
 }
 
 void Robot::DisabledInit() {}
