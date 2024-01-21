@@ -166,6 +166,7 @@ void Robot::TeleopPeriodic()
     overbumper.PIDWristDown();
   }
   else {
+    if(!flywheel.CurrentlyFeeding){overbumper.SetIntakeMotorSpeed(0);} //REMOVE THE IF WHEN INDEXER IS ON SEPERATE MOTOR
     overbumper.SetIntakeMotorSpeed(0);
     overbumper.PIDWristUp();
   }
@@ -177,6 +178,9 @@ void Robot::TeleopPeriodic()
   }
   else if (xboxController.GetYButtonPressed()){
     flywheel.SetFlywheelVelocity(2000);
+  }
+  else if (xboxController.GetBackButton()){
+    flywheel.FlywheelRing();
   }
   else if (xboxController.GetStartButtonPressed()){
     flywheel.SimpleSetFlywheelMotor(0);

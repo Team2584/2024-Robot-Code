@@ -42,4 +42,6 @@ class FlywheelSystem
         bool SetFlywheelVelocity(double velocity);
         
         bool SetFlywheelVelocity(double bottomVelocity, double topVelocity);
+
+        void FlywheelRing();
 };

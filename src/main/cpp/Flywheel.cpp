@@ -32,6 +32,19 @@ bool FlywheelSystem::SetFlywheelVelocity(double bottomVelocity, double topVeloci
   return (TopFlywheel.AtSetpoint() && BottomFlywheel.AtSetpoint());
 }
 
+void FlywheelSystem::FlywheelRing(){
+  if ((TopFlywheel.AtSetpoint() && BottomFlywheel.AtSetpoint())){
+    FeedMotor->Set(kFeederSpeed);
+    CurrentlyFeeding = true;
+  }
+  else {
+    CurrentlyFeeding = false;
+  }
+}
+
+
+
+
 FlywheelSpeedController::FlywheelSpeedController(rev::CANSparkFlex *FL_motor)
   : m_shooterPID{frc::PIDController{kP, kI, kD}},
     m_flywheelMotor(FL_motor),
