@@ -33,6 +33,8 @@ class FlywheelSystem
 
         rev::CANSparkMax *FeedMotor;
 
+        bool CurrentlyFeeding = false;
+
         FlywheelSystem(rev::CANSparkMax *feed_motor);
 
         void SimpleSetFlywheelMotor(double percent);

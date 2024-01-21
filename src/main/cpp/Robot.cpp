@@ -167,7 +167,7 @@ void Robot::TeleopPeriodic()
   }
   else {
     if(!flywheel.CurrentlyFeeding){overbumper.SetIntakeMotorSpeed(0);} //REMOVE THE IF WHEN INDEXER IS ON SEPERATE MOTOR
-    overbumper.SetIntakeMotorSpeed(0);
+    //overbumper.SetIntakeMotorSpeed(0);
     overbumper.PIDWristUp();
   }
 
