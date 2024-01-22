@@ -68,6 +68,6 @@ void FlywheelSpeedController::SpinFlyWheelRPM(double setpoint){
 }
 
 void FlywheelSpeedController::UseOutput(double output, double setpoint) {
-  units::turns_per_second_t RPS{setpoint*60.0};
+  units::turns_per_second_t RPS{setpoint/60.0};
   m_flywheelMotor->SetVoltage(units::volt_t{output} + m_shooterFeedforward.Calculate(RPS));
 }

@@ -2,11 +2,11 @@
 #define FLYWHEEL_MOTOR_2 16
 
 //(these need to be set, IN RPS)
-inline constexpr auto kShooterFreeRPS = 5300_tr / 1_s;
-inline constexpr auto kShooterTargetRPS = 4000_tr / 1_s;
-inline constexpr auto kShooterToleranceRPS = 50_tr / 1_s;
+inline constexpr auto kShooterFreeRPS = 113_tr / 1_s; //neo vortex
+inline constexpr auto kShooterTargetRPS = 70_tr / 1_s;
+inline constexpr auto kShooterToleranceRPS = 5_tr / 1_s;
 
-inline constexpr double kP = 1;
+inline constexpr double kP = 0.01;
 inline constexpr double kI = 0;
 inline constexpr double kD = 0;
 
