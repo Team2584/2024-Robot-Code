@@ -21,9 +21,7 @@ void FlywheelSystem::SimpleFlywheelRing()
 }
 
 bool FlywheelSystem::SetFlywheelVelocity(double velocity){
-  TopFlywheel.SpinFlyWheelRPM(velocity);
-  BottomFlywheel.SpinFlyWheelRPM(velocity);
-  return (TopFlywheel.AtSetpoint() && BottomFlywheel.AtSetpoint());
+  return SetFlywheelVelocity(velocity, velocity);
 }
 
 bool FlywheelSystem::SetFlywheelVelocity(double bottomVelocity, double topVelocity){
