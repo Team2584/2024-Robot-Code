@@ -74,6 +74,10 @@ void SwerveDriveAutonomousController::ResetPIDLoop()
     rotationPIDController.ResetPIDLoop();
 }
 
+Pose2d SwerveDriveAutonomousController::GetTagPose()
+{
+    return photonTagSwerve->GetTagOdometryPose();
+}
 
 /**
  * Call this function before the first DriveToPose() call to initialize.

@@ -8,7 +8,7 @@ AprilTagSwerve::AprilTagSwerve()
       tagOdometry{kinematics, Rotation2d(units::degree_t{GetIMUHeading()}), GetSwerveModulePositions(), Pose2d()},
       robotToCam{frc::Translation3d{CAMERA_ONE_X, CAMERA_ONE_Y, CAMERA_ONE_Z}, frc::Rotation3d{CAMERA_ONE_X_ROTATION, CAMERA_ONE_Y_ROTATION, CAMERA_ONE_Z_ROTATION}},
       camera{CAMERA_ONE_NAME},
-      poseEstimator{aprilTags, photonlib::CLOSEST_TO_REFERENCE_POSE, photonlib::PhotonCamera(CAMERA_ONE_NAME), robotToCam}
+      poseEstimator{APRIL_TAGS, photonlib::CLOSEST_TO_REFERENCE_POSE, photonlib::PhotonCamera(CAMERA_ONE_NAME), robotToCam}
 {
     tagOdometry.SetVisionMeasurementStdDevs(wpi::array(APRILTAG_CONFIDENCE_X, APRILTAG_CONFIDENCE_Y, APRILTAG_CONFIDENCE_ROTATION));
 }

@@ -1,3 +1,6 @@
+#ifndef FLYWHEEL_CONSTANTS_H // Ensures that this header file is only compiled once
+#define FLYWHEEL_CONSTANTS_H
+
 #define FLYWHEEL_MOTOR_1 15
 #define FLYWHEEL_MOTOR_2 16
 #define FLYWHEEL_ANGLING_MOTOR 17
@@ -29,3 +32,5 @@ inline constexpr double kFeederSpeed = 50;
 #define ANGLER_VELOCITY_TOLERANCE 0.5 // In percent power
 #define ANGLER_MIN_SPEED 0 // In percent power
 #define ANGLER_MAX_SPEED 1.0 // In percent power
+
+#endif //FLYWHEEL_CONSTANTS_H

@@ -47,7 +47,7 @@ void FlywheelSystem::FlywheelRing(){
 double FlywheelSystem::GetAnglerEncoderReading()
 {
   double reading = magEncoder->GetPosition();
-  return reading;
+  return reading * M_PI * 2;
 }
 
 void FlywheelSystem::MoveAnglerPercent(double percent)

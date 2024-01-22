@@ -2,6 +2,7 @@
 #define PHOTON_SWERVE_H
 
 #include "Swerve.h"
+#include "Constants/FieldConstants.h"
 
 /**
  * This class inherits from the base SwerveDrive class, but adds the functionality of calculating odometry using the photonvision library, a camera, and april tags
