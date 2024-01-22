@@ -27,10 +27,14 @@ class FlywheelSystem
     public:
         rev::CANSparkFlex FlywheelMotor1;
         rev::CANSparkFlex FlywheelMotor2;
+        rev::CANSparkMax FlywheelAnglingMotor;
+
+        rev::SparkAbsoluteEncoder *magEncoder;
 
         FlywheelSpeedController TopFlywheel;
         FlywheelSpeedController BottomFlywheel;
-
+        PID FlywheelAnglerPID;
+        
         rev::CANSparkMax *FeedMotor;
 
         bool CurrentlyFeeding = false;
@@ -46,4 +50,10 @@ class FlywheelSystem
         bool SetFlywheelVelocity(double bottomVelocity, double topVelocity);
 
         void FlywheelRing();
+
+        double GetAnglerEncoderReading();
+
+        void MoveAnglerPercent(double percent);
+
+        bool PIDAngler(double point);
 };

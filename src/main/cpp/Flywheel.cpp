@@ -3,10 +3,14 @@
 FlywheelSystem::FlywheelSystem(rev::CANSparkMax *feed_motor)
   : FlywheelMotor1{FLYWHEEL_MOTOR_1, rev::CANSparkFlex::MotorType::kBrushless},
     FlywheelMotor2{FLYWHEEL_MOTOR_2, rev::CANSparkFlex::MotorType::kBrushless},
+    FlywheelAnglingMotor{FLYWHEEL_ANGLING_MOTOR, rev::CANSparkFlex::MotorType::kBrushless},
     TopFlywheel{FlywheelSpeedController(&FlywheelMotor1)},
     BottomFlywheel{FlywheelSpeedController(&FlywheelMotor2)},
+    FlywheelAnglerPID{ANGLER_KP, ANGLER_KI, ANGLER_KD, ANGLER_KI_MAX, 
+                     ANGLER_MIN_SPEED, ANGLER_MAX_SPEED, ANGLER_TOLERANCE, ANGLER_VELOCITY_TOLERANCE},
     FeedMotor{feed_motor}
 {
+    magEncoder = new rev::SparkAbsoluteEncoder(FlywheelAnglingMotor.GetAbsoluteEncoder(rev::SparkAbsoluteEncoder::Type::kDutyCycle));
 }
 
 void FlywheelSystem::SimpleSetFlywheelMotor(double percent)
@@ -40,6 +44,21 @@ void FlywheelSystem::FlywheelRing(){
   }
 }
 
+double FlywheelSystem::GetAnglerEncoderReading()
+{
+  double reading = magEncoder->GetPosition();
+  return reading;
+}
+
+void FlywheelSystem::MoveAnglerPercent(double percent)
+{
+  FlywheelAnglingMotor.Set(percent);
+}
+
+bool FlywheelSystem::PIDAngler(double point)
+{
+  return FlywheelAnglerPID.Calculate(GetAnglerEncoderReading(), point);
+}
 
 
 

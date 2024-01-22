@@ -1,5 +1,6 @@
 #define FLYWHEEL_MOTOR_1 15
 #define FLYWHEEL_MOTOR_2 16
+#define FLYWHEEL_ANGLING_MOTOR 17
 
 //(these need to be set, IN RPS)
 inline constexpr auto kShooterFreeRPS = 113_tr / 1_s; //neo vortex
@@ -18,3 +19,13 @@ inline constexpr auto kV =  12.0_V / kShooterFreeRPS;
 inline constexpr double kFeederSpeed = 50;
 
 #define FLYWHEEL_BASE_PERCENT 60
+
+// Flywheel Angler PID Values
+#define ANGLER_KP 0.007
+#define ANGLER_KI 0
+#define ANGLER_KI_MAX 0 // In percent power
+#define ANGLER_KD 0
+#define ANGLER_TOLERANCE 3 // In Degrees
+#define ANGLER_VELOCITY_TOLERANCE 0.5 // In percent power
+#define ANGLER_MIN_SPEED 0 // In percent power
+#define ANGLER_MAX_SPEED 1.0 // In percent power
