@@ -10,13 +10,10 @@ inline constexpr double kP = 0.01;
 inline constexpr double kI = 0;
 inline constexpr double kD = 0;
 
-//THESE CONSTANTS ARE GUESSES (taken from WPILIB), must be determined empirically
-//find using sysld: https://docs.wpilib.org/en/stable/docs/software/advanced-controls/system-identification/introduction.html#introduction-to-system-identification
-//or, rewrite all units and use https://www.reca.lc/flywheel based on flywheel diam/distance desired
+//This (guess) kV = 0.10619, actual vortex kV = 0.10432
+//kS will need to be found using sysid https://docs.wpilib.org/en/stable/docs/software/advanced-controls/system-identification/introduction.html
 inline constexpr auto kS = 0.05_V;
 inline constexpr auto kV =  12.0_V / kShooterFreeRPS; 
-
-inline constexpr double kEncoderDistancePerRotation = 0.5;
 
 inline constexpr double kFeederSpeed = 50;
 
