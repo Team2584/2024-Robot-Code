@@ -10,12 +10,21 @@
 #include "Tools/PID.h"
 #include "Tools/Math.h"
 
+#include <numbers>
+#include <units/length.h>
+#include <units/angle.h>
+#include <units/time.h>
+#include <units/voltage.h>
+
+#include <fmt/core.h>
+
 #include <frc/TimedRobot.h>
 #include <frc/smartdashboard/SendableChooser.h>
 #include <frc/smartdashboard/SmartDashboard.h>
 
 #include <frc/XboxController.h>
 #include <frc/DutyCycleEncoder.h>
+#include <frc/Ultrasonic.h>
 
 #include <frc/geometry/Transform2d.h>
 #include <frc/geometry/Rotation2d.h>
@@ -35,8 +44,13 @@
 #include <ctre/phoenix6/TalonFX.hpp>
 #include <ctre/phoenix6/Pigeon2.hpp>
 
+#include <rev/CANSparkBase.h>
+#include <rev/CANSparkFlex.h>
 #include <rev/CANSparkMax.h>
 #include <rev/AbsoluteEncoder.h>
+
+#include <frc/controller/SimpleMotorFeedforward.h>
+#include <frc/controller/PIDController.h>
 
 #include <photonlib/PhotonCamera.h>
 #include <photonlib/PhotonPoseEstimator.h>
