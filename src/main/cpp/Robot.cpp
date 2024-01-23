@@ -4,6 +4,7 @@
 
 #include "Robot.h"
 #include "Constants/TeleopConstants.h"
+#include "Constants/IntakeConstants.h"
 
 #include "AprilTagBasedSwerve.h"
 #include "Autonomous Functionality/SwerveDriveAutoControl.h"
@@ -26,8 +27,11 @@ void Robot::RobotInit()
   m_chooser.SetDefaultOption(kAutoNameDefault, kAutoNameDefault);
   m_chooser.AddOption(kAutoNameCustom, kAutoNameCustom);
   frc::SmartDashboard::PutData("Auto Modes", &m_chooser);
-  SmartDashboard::PutNumber("Up Dpad Flywheel Speed", 0);
+  SmartDashboard::PutNumber("Start Flywheel Speed", 0);
+  SmartDashboard::PutNumber("Flywheel kP", 0.005);
+
 }
+
 
 /**
  * This function is called every 20 ms, no matter the mode. Use
@@ -166,7 +170,7 @@ void Robot::TeleopPeriodic()
   }
   else if(xboxController.GetLeftBumper()){
     overbumper.OuttakeRing();
-    overbumper.PIDWristDown();
+     overbumper.PIDWristUp();
   }
   else {
     if(!flywheel.CurrentlyFeeding){overbumper.SetIntakeMotorSpeed(0);} //REMOVE THE IF WHEN INDEXER IS ON SEPERATE MOTOR
@@ -177,7 +181,7 @@ void Robot::TeleopPeriodic()
   SmartDashboard::PutNumber("Wrist Pos", overbumper.GetWristEncoderReading());
   
   if(xboxController.GetXButtonPressed()){
-    flywheel.SimpleFlywheelRing();
+    flywheel.SimpleSetFlywheelMotor(0);
   }
   else if (xboxController.GetYButtonPressed()){
     flywheel.SetFlywheelVelocity(2000);
@@ -186,14 +190,14 @@ void Robot::TeleopPeriodic()
     flywheel.FlywheelRing();
   }
   else if (xboxController.GetStartButtonPressed()){
-    flywheel.SimpleSetFlywheelMotor(0);
-  }
-  else if (xboxController.GetPOV() == 0){
-    flywheel.SetFlywheelVelocity(SmartDashboard::GetNumber("Up Dpad Flywheel Speed", 0));
+    flywheel.SetFlywheelVelocity(SmartDashboard::GetNumber("Start Flywheel Speed", 0));
   }
 
   SmartDashboard::PutNumber("Top FlyWheel RPM", flywheel.TopFlywheel.GetMeasurement());
   SmartDashboard::PutNumber("Top FlyWheel Setpoint", flywheel.TopFlywheel.m_shooterPID.GetSetpoint());
+  
+  kP = SmartDashboard::GetNumber("Flywheel kP", 0.005);
+  flywheel.
 
 }
 

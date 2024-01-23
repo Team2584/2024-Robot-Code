@@ -11,6 +11,10 @@
 #include "Tools/Math.h"
 
 #include <numbers>
+#include <units/length.h>
+#include <units/angle.h>
+#include <units/time.h>
+#include <units/voltage.h>
 
 #include <fmt/core.h>
 
@@ -20,6 +24,7 @@
 
 #include <frc/XboxController.h>
 #include <frc/DutyCycleEncoder.h>
+#include <frc/Ultrasonic.h>
 
 #include <frc/geometry/Transform2d.h>
 #include <frc/geometry/Rotation2d.h>
@@ -46,9 +51,6 @@
 
 #include <frc/controller/SimpleMotorFeedforward.h>
 #include <frc/controller/PIDController.h>
-#include <units/angle.h>
-#include <units/time.h>
-#include <units/voltage.h>
 
 #include <photonlib/PhotonCamera.h>
 #include <photonlib/PhotonPoseEstimator.h>
