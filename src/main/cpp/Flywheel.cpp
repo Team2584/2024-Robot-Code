@@ -41,8 +41,6 @@ void FlywheelSystem::FlywheelRing(){
 }
 
 
-
-
 FlywheelSpeedController::FlywheelSpeedController(rev::CANSparkFlex *FL_motor)
   : m_shooterPID{frc::PIDController{kP, kI, kD}},
     m_flywheelMotor(FL_motor),
@@ -52,19 +50,34 @@ FlywheelSpeedController::FlywheelSpeedController(rev::CANSparkFlex *FL_motor)
   m_shooterPID.SetTolerance(kShooterToleranceRPS.value());
 }
 
+/*
+  @brief Get Neo Vortex's Current Velocity (Built-in encoder)
+*/
 double FlywheelSpeedController::GetMeasurement() {
   return m_shooterEncoder->GetVelocity();
 }
 
+/*
+  @return True if velocity is within tolerance
+*/
 bool FlywheelSpeedController::AtSetpoint() {
   return m_shooterPID.AtSetpoint();
 }
 
+/*
+  @brief Sets flywheel to desired speed
+  @param setpoint Speed in RPM
+*/
 void FlywheelSpeedController::SpinFlyWheelRPM(double setpoint){
   m_shooterPID.SetSetpoint(setpoint);
   UseOutput(m_shooterPID.Calculate(GetMeasurement()), setpoint);
 }
 
+/*
+  @brief Uses output of PID controller and FeedForward Controller to set flywheel speed
+  @param output PID controller output
+  @param setpoint Speed in RPM
+*/
 void FlywheelSpeedController::UseOutput(double output, double setpoint) {
   units::turns_per_second_t RPS{setpoint/60.0};
   m_flywheelMotor->SetVoltage(units::volt_t{output} + m_shooterFeedforward.Calculate(RPS));

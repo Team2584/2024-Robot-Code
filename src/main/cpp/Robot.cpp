@@ -4,6 +4,7 @@
 
 #include "Robot.h"
 #include "Constants/TeleopConstants.h"
+#include "Constants/IntakeConstants.h"
 
 #include "AprilTagBasedSwerve.h"
 #include "Autonomous Functionality/SwerveDriveAutoControl.h"
@@ -25,7 +26,15 @@ void Robot::RobotInit()
   m_chooser.AddOption(kAutoNameCustom, kAutoNameCustom);
   frc::SmartDashboard::PutData("Auto Modes", &m_chooser);
   SmartDashboard::PutNumber("Up Dpad Flywheel Speed", 0);
+  SmartDashboard::PutNumber("WRISTKP", 2.1);
+  SmartDashboard::PutNumber(" WRISTKI", 0.03);
+SmartDashboard::PutNumber("WRISTKIMAX", 0.1);
+   SmartDashboard::PutNumber("ALLOWABLE_ERROR_WRIST", 0.015);
+  SmartDashboard::PutNumber("WRISTMAX_SPEED", 0.3);
+ SmartDashboard::PutNumber("Wrist low", 0.96);
+
 }
+
 
 /**
  * This function is called every 20 ms, no matter the mode. Use
@@ -193,6 +202,14 @@ void Robot::TeleopPeriodic()
   SmartDashboard::PutNumber("Top FlyWheel RPM", flywheel.TopFlywheel.GetMeasurement());
   SmartDashboard::PutNumber("Top FlyWheel Setpoint", flywheel.TopFlywheel.m_shooterPID.GetSetpoint());
 
+  //WRISTFF  = SmartDashboard::GetNumber("Wrist FF", 0);
+  WRISTKP  = SmartDashboard::GetNumber("WRISTKP", 2.1);
+  WRISTKI  = SmartDashboard::GetNumber(" WRISTKI", 0.03);
+  WRISTKIMAX  = SmartDashboard::GetNumber("WRISTKIMAX", 0.1);
+  ALLOWABLE_ERROR_WRIST  = SmartDashboard::GetNumber("ALLOWABLE_ERROR_WRIST", 0.015);
+  WRISTMAX_SPEED  = SmartDashboard::GetNumber("WRISTMAX_SPEED", 0.3);
+  WRIST_LOW  = SmartDashboard::GetNumber("Wrist low", 0.96);
+  
 }
 
 void Robot::DisabledInit() {}
