@@ -6,7 +6,7 @@ inline constexpr auto kShooterFreeRPS = 113_tr / 1_s; //~neo vortex rpm
 inline constexpr auto kShooterTargetRPS = 70_tr / 1_s;                 
 inline constexpr auto kShooterToleranceRPS = 5_tr / 1_s;
 
-inline constexpr double kP = 0.025; //make this ~zero if flywheel rampsup too hard
+inline constexpr double kP = 0.005; //make this ~zero if flywheel rampsup too hard
 inline constexpr double kI = 0;
 inline constexpr double kD = 0; 
 
