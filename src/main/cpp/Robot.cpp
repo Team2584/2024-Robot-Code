@@ -25,13 +25,8 @@ void Robot::RobotInit()
   m_chooser.SetDefaultOption(kAutoNameDefault, kAutoNameDefault);
   m_chooser.AddOption(kAutoNameCustom, kAutoNameCustom);
   frc::SmartDashboard::PutData("Auto Modes", &m_chooser);
-  SmartDashboard::PutNumber("Up Dpad Flywheel Speed", 0);
-  SmartDashboard::PutNumber("WRISTKP", 2.1);
-  SmartDashboard::PutNumber(" WRISTKI", 0.03);
-SmartDashboard::PutNumber("WRISTKIMAX", 0.1);
-   SmartDashboard::PutNumber("ALLOWABLE_ERROR_WRIST", 0.015);
-  SmartDashboard::PutNumber("WRISTMAX_SPEED", 0.3);
- SmartDashboard::PutNumber("Wrist low", 0.96);
+  SmartDashboard::PutNumber("Start Flywheel Speed", 0);
+  SmartDashboard::PutNumber("Flywheel kP", 0.005);
 
 }
 
@@ -173,7 +168,7 @@ void Robot::TeleopPeriodic()
   }
   else if(xboxController.GetLeftBumper()){
     overbumper.OuttakeRing();
-    overbumper.PIDWristDown();
+     overbumper.PIDWristUp();
   }
   else {
     if(!flywheel.CurrentlyFeeding){overbumper.SetIntakeMotorSpeed(0);} //REMOVE THE IF WHEN INDEXER IS ON SEPERATE MOTOR
@@ -184,7 +179,7 @@ void Robot::TeleopPeriodic()
   SmartDashboard::PutNumber("Wrist Pos", overbumper.GetWristEncoderReading());
   
   if(xboxController.GetXButtonPressed()){
-    flywheel.SimpleFlywheelRing();
+    flywheel.SimpleSetFlywheelMotor(0);
   }
   else if (xboxController.GetYButtonPressed()){
     flywheel.SetFlywheelVelocity(2000);
@@ -193,23 +188,15 @@ void Robot::TeleopPeriodic()
     flywheel.FlywheelRing();
   }
   else if (xboxController.GetStartButtonPressed()){
-    flywheel.SimpleSetFlywheelMotor(0);
-  }
-  else if (xboxController.GetPOV() == 0){
-    flywheel.SetFlywheelVelocity(SmartDashboard::GetNumber("Up Dpad Flywheel Speed", 0));
+    flywheel.SetFlywheelVelocity(SmartDashboard::GetNumber("Start Flywheel Speed", 0));
   }
 
   SmartDashboard::PutNumber("Top FlyWheel RPM", flywheel.TopFlywheel.GetMeasurement());
   SmartDashboard::PutNumber("Top FlyWheel Setpoint", flywheel.TopFlywheel.m_shooterPID.GetSetpoint());
-
-  //WRISTFF  = SmartDashboard::GetNumber("Wrist FF", 0);
-  WRISTKP  = SmartDashboard::GetNumber("WRISTKP", 2.1);
-  WRISTKI  = SmartDashboard::GetNumber(" WRISTKI", 0.03);
-  WRISTKIMAX  = SmartDashboard::GetNumber("WRISTKIMAX", 0.1);
-  ALLOWABLE_ERROR_WRIST  = SmartDashboard::GetNumber("ALLOWABLE_ERROR_WRIST", 0.015);
-  WRISTMAX_SPEED  = SmartDashboard::GetNumber("WRISTMAX_SPEED", 0.3);
-  WRIST_LOW  = SmartDashboard::GetNumber("Wrist low", 0.96);
   
+  kP = SmartDashboard::GetNumber("Flywheel kP", 0.005);
+  flywheel.
+
 }
 
 void Robot::DisabledInit() {}

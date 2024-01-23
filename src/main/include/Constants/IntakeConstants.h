@@ -17,11 +17,13 @@ inline double WRIST_LOW = 0.965;
 #define WRIST_SPEED_LOW_THRESHHOLD -2.0
 
 //Wrist PID Constants
-inline double WRISTFF  = 0;
+inline double WRISTKD  = 0;
 inline double WRISTKP  = 3.5;
 inline double WRISTKI  = 0.03;
 inline double WRISTKIMAX  = 0.1;
-inline double ALLOWABLE_ERROR_WRIST  = 0.015;
+inline double WRIST_POS_ERROR  = 0.015; //~3deg
+inline double WRIST_VELOCITY_ERROR = 0.1;
 inline double WRISTMAX_SPEED  = 0.3;
+inline double WRISTMIN_SPEED  = 0.05;
 
 #endif

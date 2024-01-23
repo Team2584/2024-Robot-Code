@@ -9,17 +9,25 @@ public:
     rev::CANSparkMax wristMotor;
     rev::CANSparkMax fixedIntakeMotor;
     rev::SparkAbsoluteEncoder *magEncoder;
+    frc::Ultrasonic m_rangeFinder;
 
-    double runningWristIntegral = 0;
-    double lastWristSpeed = 0;
+    PID m_WristPID;
+
+    const units::millimeter_t ULTRASONIC_INTAKE_DIST{100};
 
     Intake();
 
     void SetIntakeMotorSpeed(double percent);
+
+    void SetIntakeMotorSpeed(double OverBumperPercent, double FeederPercent);
+
     void IntakeRing();
+    
     void OuttakeRing();
 
     double GetWristEncoderReading();
+
+    bool GetObjectInIntake();
 
     void MoveWristPercent(double percent);
 
