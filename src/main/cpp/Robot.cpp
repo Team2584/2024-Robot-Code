@@ -197,8 +197,6 @@ void Robot::TeleopPeriodic()
   SmartDashboard::PutNumber("Top FlyWheel Setpoint", flywheel.TopFlywheel.m_shooterPID.GetSetpoint());
   
   kP = SmartDashboard::GetNumber("Flywheel kP", 0.005);
-  flywheel.
-
 }
 
 void Robot::DisabledInit() {}
