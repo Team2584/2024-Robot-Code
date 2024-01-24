@@ -11,6 +11,8 @@ FlywheelSystem::FlywheelSystem()//rev::CANSparkMax *feed_motor)
    // FeedMotor{feed_motor}
 {
     magEncoder = new rev::SparkAbsoluteEncoder(FlywheelAnglingMotor.GetAbsoluteEncoder(rev::SparkAbsoluteEncoder::Type::kDutyCycle));
+
+    FlywheelAnglerPID.EnableContinuousInput(0, 1);
 }
 
 void FlywheelSystem::SimpleSetFlywheelMotor(double percent)
@@ -60,6 +62,14 @@ bool FlywheelSystem::PIDAngler(double point)
   MoveAnglerPercent(FlywheelAnglerPID.Calculate(GetAnglerEncoderReading(), point));
   return FlywheelAnglerPID.PIDFinished();
 }
+
+
+
+
+
+
+
+
 
 FlywheelSpeedController::FlywheelSpeedController(rev::CANSparkFlex *FL_motor)
   : m_shooterPID{frc::PIDController{kP, kI, kD}},

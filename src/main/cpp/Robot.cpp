@@ -30,7 +30,7 @@ void Robot::RobotInit()
   frc::SmartDashboard::PutData("Auto Modes", &m_chooser);
   SmartDashboard::PutNumber("Start Flywheel Speed", 0);
   SmartDashboard::PutNumber("Flywheel kP", 0.005);
-  SmartDashboard::PutNumber("Flywheel Angler kP", 1);
+  flywheel.FlywheelAnglerPID.SetupConstantTuning("Angler");
 }
 
 
@@ -88,10 +88,8 @@ void Robot::TeleopInit()
 {
   //swerveDrive.ResetOdometry(Pose2d(0_m, 0_m, Rotation2d(180_deg)));
   //swerveDrive.ResetTagOdometry(Pose2d(0_m, 0_m, Rotation2d(180_deg)));
-
-  ANGLER_KP = SmartDashboard::GetNumber("Flywheel Angler kP", 1);
-  flywheel.FlywheelAnglerPID.ChangeConstants(ANGLER_KP, ANGLER_KI, ANGLER_KD, ANGLER_KI_MAX, 
-                     ANGLER_MIN_SPEED, ANGLER_MAX_SPEED, ANGLER_TOLERANCE, ANGLER_VELOCITY_TOLERANCE);
+  
+  flywheel.FlywheelAnglerPID.UpdateConstantTuning("Angler");
 }
 
 void Robot::TeleopPeriodic()

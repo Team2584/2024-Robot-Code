@@ -58,12 +58,12 @@ bool Intake::PIDWrist(double point)
 
 bool Intake::PIDWristDown()
 {
-  PIDWrist(WRIST_LOW);
+  return PIDWrist(WRIST_LOW);
 }
 
 bool Intake::PIDWristUp()
 {
-  PIDWrist(WRIST_HIGH);
+  return PIDWrist(WRIST_HIGH);
 }
 
 //If feed/index motor becomes seperate from intake chain remove this

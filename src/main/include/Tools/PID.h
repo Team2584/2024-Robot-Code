@@ -1,4 +1,6 @@
 #include "Math.h"
+#include <string>
+#include <frc/smartdashboard/SmartDashboard.h>
 #include <frc/controller/PIDController.h>
 
 /**
@@ -116,5 +118,42 @@ public:
     bool PIDFinished()
     {
         return pidController.AtSetpoint();
+    }
+
+    /**
+    * This function sets up smartdashboard to tune the PID loop
+    *
+    * @param pidName The name given at the beginning of each smartdashboard box
+    */
+    void SetupConstantTuning(std::string pidName)
+    {
+        frc::SmartDashboard::PutNumber(pidName + " kP", pidController.GetP());
+        frc::SmartDashboard::PutNumber(pidName + " kI", pidController.GetI());
+        frc::SmartDashboard::PutNumber(pidName + " kD", pidController.GetD());
+        frc::SmartDashboard::PutNumber(pidName + " max integral", pidController.GetIZone());
+        
+        frc::SmartDashboard::PutNumber(pidName + " min speed", minSpeed);
+        frc::SmartDashboard::PutNumber(pidName + " max speed", maxSpeed);
+        frc::SmartDashboard::PutNumber(pidName + " position tolerance", pidController.GetPositionTolerance());
+        frc::SmartDashboard::PutNumber(pidName + " velocity tolerance", pidController.GetVelocityTolerance());
+    }
+
+    /**
+    * This function updates the PID with numbers from smartdashboard
+    *
+    * @param pidName The name given at the beginning of each smartdashboard box
+    */
+    void UpdateConstantTuning(std::string pidName)
+    {
+        ChangeConstants(
+        frc::SmartDashboard::GetNumber(pidName + " kP", pidController.GetP()),
+        frc::SmartDashboard::GetNumber(pidName + " kI", pidController.GetI()),
+        frc::SmartDashboard::GetNumber(pidName + " kD", pidController.GetD()),
+        frc::SmartDashboard::GetNumber(pidName + " max integral", pidController.GetIZone()),
+        frc::SmartDashboard::GetNumber(pidName + " min speed", minSpeed),
+        frc::SmartDashboard::GetNumber(pidName + " max speed", maxSpeed),
+        frc::SmartDashboard::GetNumber(pidName + " position tolerance", pidController.GetPositionTolerance()),
+        frc::SmartDashboard::GetNumber(pidName + " velocity tolerance", pidController.GetVelocityTolerance())
+        );
     }
 };
