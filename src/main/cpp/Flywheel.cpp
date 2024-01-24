@@ -30,10 +30,10 @@ bool FlywheelSystem::SetFlywheelVelocity(double bottomVelocity, double topVeloci
   return (TopFlywheel.AtSetpoint() && BottomFlywheel.AtSetpoint());
 }
 
-void FlywheelSystem::FlywheelRing(){
-  if ((TopFlywheel.AtSetpoint() && BottomFlywheel.AtSetpoint())){
-    FeedMotor->Set(kFeederSpeed);
+void FlywheelSystem::FlywheelRing(frc::DigitalInput* m_rangeFinder){
+  if ((TopFlywheel.AtSetpoint() && m_rangeFinder->Get())){
     CurrentlyFeeding = true;
+    FeedMotor->Set(-70);
   }
   else {
     CurrentlyFeeding = false;
@@ -47,24 +47,27 @@ FlywheelSpeedController::FlywheelSpeedController(rev::CANSparkFlex *FL_motor)
     m_shooterFeedforward(kS, kV) 
 {
   m_shooterEncoder =  new rev::SparkRelativeEncoder(m_flywheelMotor->GetEncoder(rev::SparkRelativeEncoder::Type::kHallSensor));
-  m_shooterPID.SetTolerance(kShooterToleranceRPS.value());
+  //m_shooterPID.SetTolerance(kShooterToleranceRPS.value());
+  m_shooterPID.SetTolerance(kShooterToleranceRPS);
+
 }
 
-/*
+/**
   @brief Get Neo Vortex's Current Velocity (Built-in encoder)
 */
 double FlywheelSpeedController::GetMeasurement() {
   return m_shooterEncoder->GetVelocity();
 }
 
-/*
+/**
   @return True if velocity is within tolerance
 */
 bool FlywheelSpeedController::AtSetpoint() {
-  return m_shooterPID.AtSetpoint();
+  return (abs(GetMeasurement() - m_shooterPID.GetSetpoint()) < 100);
+  //return m_shooterPID.AtSetpoint();
 }
 
-/*
+/**
   @brief Sets flywheel to desired speed
   @param setpoint Speed in RPM
 */
@@ -73,7 +76,7 @@ void FlywheelSpeedController::SpinFlyWheelRPM(double setpoint){
   UseOutput(m_shooterPID.Calculate(GetMeasurement()), setpoint);
 }
 
-/*
+/**
   @brief Uses output of PID controller and FeedForward Controller to set flywheel speed
   @param output PID controller output
   @param setpoint Speed in RPM

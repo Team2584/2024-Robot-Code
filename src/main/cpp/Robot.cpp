@@ -26,8 +26,6 @@ void Robot::RobotInit()
   m_chooser.AddOption(kAutoNameCustom, kAutoNameCustom);
   frc::SmartDashboard::PutData("Auto Modes", &m_chooser);
   SmartDashboard::PutNumber("Start Flywheel Speed", 0);
-  SmartDashboard::PutNumber("Flywheel kP", 0.005);
-
 }
 
 
@@ -185,7 +183,7 @@ void Robot::TeleopPeriodic()
     flywheel.SetFlywheelVelocity(2000);
   }
   else if (xboxController.GetBackButton()){
-    flywheel.FlywheelRing();
+    flywheel.FlywheelRing(&overbumper.m_rangeFinder);
   }
   else if (xboxController.GetStartButtonPressed()){
     flywheel.SetFlywheelVelocity(SmartDashboard::GetNumber("Start Flywheel Speed", 0));
@@ -193,11 +191,7 @@ void Robot::TeleopPeriodic()
 
   SmartDashboard::PutNumber("Top FlyWheel RPM", flywheel.TopFlywheel.GetMeasurement());
   SmartDashboard::PutNumber("Top FlyWheel Setpoint", flywheel.TopFlywheel.m_shooterPID.GetSetpoint());
-  
-  kP = SmartDashboard::GetNumber("Flywheel kP", 0.005);
-
-  flywheel.TopFlywheel.m_shooterPID.SetP(kP);
-  
+    
 }
 
 void Robot::DisabledInit() {}
