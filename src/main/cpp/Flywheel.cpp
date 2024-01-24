@@ -1,11 +1,12 @@
 #include "FlyWheel.h"
 
-FlywheelSystem::FlywheelSystem(rev::CANSparkMax *feed_motor)
+FlywheelSystem::FlywheelSystem(rev::CANSparkMax *feed_motor, frc::DigitalInput *intakeSensor)
   : FlywheelMotor1{FLYWHEEL_MOTOR_1, rev::CANSparkFlex::MotorType::kBrushless},
     FlywheelMotor2{FLYWHEEL_MOTOR_2, rev::CANSparkFlex::MotorType::kBrushless},
     TopFlywheel{FlywheelSpeedController(&FlywheelMotor1)},
     BottomFlywheel{FlywheelSpeedController(&FlywheelMotor2)},
     FeedMotor{feed_motor}
+    m_IntakeSensor{intakeSensor}
 {
 }
 
@@ -30,8 +31,8 @@ bool FlywheelSystem::SetFlywheelVelocity(double bottomVelocity, double topVeloci
   return (TopFlywheel.AtSetpoint() && BottomFlywheel.AtSetpoint());
 }
 
-void FlywheelSystem::FlywheelRing(frc::DigitalInput* m_rangeFinder){
-  if ((TopFlywheel.AtSetpoint() && m_rangeFinder->Get())){
+void FlywheelSystem::FlywheelRing(){
+  if ((TopFlywheel.AtSetpoint() && m_IntakeSensor->Get())){
     CurrentlyFeeding = true;
     FeedMotor->Set(-70);
   }
@@ -47,9 +48,7 @@ FlywheelSpeedController::FlywheelSpeedController(rev::CANSparkFlex *FL_motor)
     m_shooterFeedforward(kS, kV) 
 {
   m_shooterEncoder =  new rev::SparkRelativeEncoder(m_flywheelMotor->GetEncoder(rev::SparkRelativeEncoder::Type::kHallSensor));
-  //m_shooterPID.SetTolerance(kShooterToleranceRPS.value());
-  m_shooterPID.SetTolerance(kShooterToleranceRPS);
-
+  m_shooterPID.SetTolerance(kShooterToleranceRPS.value());
 }
 
 /**
