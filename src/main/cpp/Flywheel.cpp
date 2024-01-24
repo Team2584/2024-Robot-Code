@@ -43,27 +43,26 @@ void FlywheelSystem::FlywheelRing(){
 
 
 FlywheelSpeedController::FlywheelSpeedController(rev::CANSparkFlex *FL_motor)
-  : m_shooterPID{frc::PIDController{f_kP, f_kI, f_kD}},
+  : m_shooterPID{f_kP,f_kI,f_kD},
     m_flywheelMotor(FL_motor),
     m_shooterFeedforward(kS, kV) 
 {
   m_shooterEncoder =  new rev::SparkRelativeEncoder(m_flywheelMotor->GetEncoder(rev::SparkRelativeEncoder::Type::kHallSensor));
-  m_shooterPID.SetTolerance(kShooterToleranceRPS.value());
+  m_shooterPID.SetTolerance(kShooterToleranceRPS.value(), kShooterTargetRPS_S.value());
 }
 
 /**
-  @brief Get Neo Vortex's Current Velocity (Built-in encoder)
+  @brief Get Neo Vortex's Current Velocity in RPS (Built-in encoder)
 */
 double FlywheelSpeedController::GetMeasurement() {
-  return m_shooterEncoder->GetVelocity();
+  return m_shooterEncoder->GetVelocity()/60.0;
 }
 
 /**
   @return True if velocity is within tolerance
 */
 bool FlywheelSpeedController::AtSetpoint() {
-  return (abs(GetMeasurement() - m_shooterPID.GetSetpoint()) < 100);
-  //return m_shooterPID.AtSetpoint();
+  return m_shooterPID.AtSetpoint();
 }
 
 /**
@@ -71,16 +70,16 @@ bool FlywheelSpeedController::AtSetpoint() {
   @param setpoint Speed in RPM
 */
 void FlywheelSpeedController::SpinFlyWheelRPM(double setpoint){
-  m_shooterPID.SetSetpoint(setpoint);
-  UseOutput(m_shooterPID.Calculate(GetMeasurement()), setpoint);
+  units::turns_per_second_t RPS{setpoint/60.0};
+  m_shooterPID.SetSetpoint(RPS.value());
+  UseOutput(m_shooterPID.Calculate(GetMeasurement()), RPS);
 }
 
 /**
   @brief Uses output of PID controller and FeedForward Controller to set flywheel speed
   @param output PID controller output
-  @param setpoint Speed in RPM
+  @param RPS Speed in RPS, as turns/s unit
 */
-void FlywheelSpeedController::UseOutput(double output, double setpoint) {
-  units::turns_per_second_t RPS{setpoint/60.0};
-  m_flywheelMotor->SetVoltage(units::volt_t{output} + m_shooterFeedforward.Calculate(RPS));
+void FlywheelSpeedController::UseOutput(double output, units::turns_per_second_t setpointRPS) {
+  m_flywheelMotor->SetVoltage(units::volt_t{output} + m_shooterFeedforward.Calculate(setpointRPS));
 }

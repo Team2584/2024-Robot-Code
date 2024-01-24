@@ -12,7 +12,7 @@ class FlywheelSpeedController
         
         FlywheelSpeedController(rev::CANSparkFlex *FL_motor);
 
-        void UseOutput(double output, double setpoint);
+        void UseOutput(double output, units::turns_per_second_t setpointRPS);
 
         double GetMeasurement();
 
