@@ -60,7 +60,7 @@ void Climb::HoldClimb(){
 
 //*****these two functions should be used for tuning the PID, not very useful after as BalanceWhileClimbing(double setpoint does it at the same time)
 
-//pid both arms to a point
+//pid both arms to a point 
 bool Climb::ClimbPID(double setpoint){
     if(climbZeroed){
         leftClimbMotor.Set(leftPID.Calculate(leftEncoder.GetPosition(), setpoint));
@@ -74,7 +74,7 @@ bool Climb::ClimbPID(double setpoint){
 bool Climb::BalanceAtPos(){
     double rotation = robotSwerveDrive->GetIMURoll();
     double rollVelocity = robotSwerveDrive->GetRollSpeed();
-    double error = rotation - 360;
+    double error = rotation < 180 ? rotation : 360 - rotation;
 
     leftClimbMotor.Set(rollPID.Calculate(error,0)*-1);
     rightClimbMotor.Set(rollPID.Calculate(error,0));
