@@ -465,3 +465,10 @@ void SwerveDrive::DriveSwerveMetersAndRadians(double FwdDriveSpeed, double Straf
 {
     DriveSwervePercent(VelocityToPercent(FwdDriveSpeed), VelocityToPercent(StrafeDriveSpeed), AngularVelocityToPercent(TurnSpeed));
 }
+
+double SwerveDrive::GetIMURoll(){
+    return fmod(pigeonIMU.GetRoll().GetValueAsDouble(), 360);
+}
+double SwerveDrive::GetRollSpeed(){
+    return pigeonIMU.GetAngularVelocityYDevice().GetValueAsDouble();
+}

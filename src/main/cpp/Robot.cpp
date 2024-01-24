@@ -11,12 +11,14 @@
 
 #include "Intake.h"
 #include "FlyWheel.h"
+#include "Climb.h"
 
 AprilTagSwerve swerveDrive{};
 XboxController xboxController{0};
 XboxController xboxController2{1};
 Intake overbumper{};
 FlywheelSystem flywheel{overbumper.GetFeedMotor(), overbumper.GetIntakeSensor()};
+Climb hang{&swerveDrive};
 
 SwerveDriveAutonomousController swerveAutoController{&swerveDrive};
 
