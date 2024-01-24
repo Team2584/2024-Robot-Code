@@ -85,6 +85,7 @@ void Robot::TeleopInit()
 {
   swerveDrive.ResetOdometry(Pose2d(0_m, 0_m, Rotation2d(180_deg)));
   swerveDrive.ResetTagOdometry(Pose2d(0_m, 0_m, Rotation2d(180_deg)));
+  //hang.ZeroClimb();
 }
 
 void Robot::TeleopPeriodic()

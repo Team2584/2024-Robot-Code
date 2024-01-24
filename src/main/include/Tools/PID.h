@@ -117,4 +117,13 @@ public:
     {
         return pidController.AtSetpoint();
     }
+
+    double GetPIDSetpoint(){
+        return pidController.GetSetpoint();
+    }
+
+    double GetPIDAllowedError(){
+        return pidController.GetPositionTolerance();
+    }
+
 };

@@ -25,6 +25,5 @@ inline double WRIST_POS_ERROR  = 0.015; //~3deg
 inline double WRIST_VELOCITY_ERROR = 1;
 inline double WRISTMAX_SPEED  = 0.3;
 inline double WRISTMIN_SPEED  = 0.1;
-inline double WRISTFF = 0;
 
 #endif
