@@ -5,6 +5,7 @@
 #include "Robot.h"
 #include "Constants/TeleopConstants.h"
 #include "Constants/IntakeConstants.h"
+#include "Constants/FlywheelConstants.h"
 
 #include "AprilTagBasedSwerve.h"
 #include "Autonomous Functionality/SwerveDriveAutoControl.h"
@@ -12,13 +13,13 @@
 #include "Intake.h"
 #include "FlyWheel.h"
 
-AprilTagSwerve swerveDrive{};
+//AprilTagSwerve swerveDrive{};
 XboxController xboxController{0};
 XboxController xboxController2{1};
-Intake overbumper{};
-FlywheelSystem flywheel{overbumper.GetFeedMotor()};
+//Intake overbumper{};
+FlywheelSystem flywheel{};//overbumper.GetFeedMotor()};
 
-SwerveDriveAutonomousController swerveAutoController{&swerveDrive};
+//SwerveDriveAutonomousController swerveAutoController{&swerveDrive};
 
 
 
@@ -29,7 +30,7 @@ void Robot::RobotInit()
   frc::SmartDashboard::PutData("Auto Modes", &m_chooser);
   SmartDashboard::PutNumber("Start Flywheel Speed", 0);
   SmartDashboard::PutNumber("Flywheel kP", 0.005);
-
+  SmartDashboard::PutNumber("Flywheel Angler kP", 1);
 }
 
 
@@ -85,19 +86,23 @@ void Robot::AutonomousPeriodic()
 
 void Robot::TeleopInit()
 {
-  swerveDrive.ResetOdometry(Pose2d(0_m, 0_m, Rotation2d(180_deg)));
-  swerveDrive.ResetTagOdometry(Pose2d(0_m, 0_m, Rotation2d(180_deg)));
+  //swerveDrive.ResetOdometry(Pose2d(0_m, 0_m, Rotation2d(180_deg)));
+  //swerveDrive.ResetTagOdometry(Pose2d(0_m, 0_m, Rotation2d(180_deg)));
+
+  ANGLER_KP = SmartDashboard::GetNumber("Flywheel Angler kP", 1);
+  flywheel.FlywheelAnglerPID.ChangeConstants(ANGLER_KP, ANGLER_KI, ANGLER_KD, ANGLER_KI_MAX, 
+                     ANGLER_MIN_SPEED, ANGLER_MAX_SPEED, ANGLER_TOLERANCE, ANGLER_VELOCITY_TOLERANCE);
 }
 
 void Robot::TeleopPeriodic()
 {
   /* UPDATES */
 
-  swerveDrive.Update();
+  //swerveDrive.Update();
 
   /* DEBUGGING INFO */
 
-  SmartDashboard::PutNumber("FL Module Heading", swerveDrive.FLModule.GetMagEncoderValue());
+  /*SmartDashboard::PutNumber("FL Module Heading", swerveDrive.FLModule.GetMagEncoderValue());
   SmartDashboard::PutNumber("FR Module Heading", swerveDrive.FRModule.GetMagEncoderValue());
   SmartDashboard::PutNumber("BL Module Heading", swerveDrive.BLModule.GetMagEncoderValue());
   SmartDashboard::PutNumber("BR Module Heading", swerveDrive.BRModule.GetMagEncoderValue());
@@ -110,7 +115,7 @@ void Robot::TeleopPeriodic()
   SmartDashboard::PutNumber("Tag Odometry X", swerveDrive.GetTagOdometryPose().X().value());
   SmartDashboard::PutNumber("Tag Odometry Y", swerveDrive.GetTagOdometryPose().Y().value());
   SmartDashboard::PutNumber("Tag Odometry Heading", swerveDrive.GetTagOdometryPose().Rotation().Degrees().value());
-
+  */
   /* DRIVER INPUT AND CONTROL */
 
   // Find controller input (*-1 converts values to fwd/left/counterclockwise positive)
@@ -164,7 +169,7 @@ void Robot::TeleopPeriodic()
     swerveAutoController.FollowTrajectory(PoseEstimationType::PureOdometry);
   }*/
 
-  if(xboxController.GetRightBumper()){
+  /*if(xboxController.GetRightBumper()){
     overbumper.IntakeRing();
     overbumper.PIDWristDown();
   }
@@ -176,9 +181,9 @@ void Robot::TeleopPeriodic()
     if(!flywheel.CurrentlyFeeding){overbumper.SetIntakeMotorSpeed(0);} //REMOVE THE IF WHEN INDEXER IS ON SEPERATE MOTOR
     //overbumper.SetIntakeMotorSpeed(0);
     overbumper.PIDWristUp();
-  }
+  }*/
 
-  SmartDashboard::PutNumber("Wrist Pos", overbumper.GetWristEncoderReading());
+  //SmartDashboard::PutNumber("Wrist Pos", overbumper.GetWristEncoderReading());
   
   if(xboxController.GetXButtonPressed()){
     flywheel.SimpleSetFlywheelMotor(0);
@@ -195,6 +200,8 @@ void Robot::TeleopPeriodic()
 
   if(xboxController.GetAButton())
     flywheel.PIDAngler(M_PI);
+  else if (xboxController.GetXButton())
+    flywheel.MoveAnglerPercent(0.3);
   else
     flywheel.MoveAnglerPercent(0);
 

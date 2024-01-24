@@ -1,14 +1,14 @@
 #include "FlyWheel.h"
 
-FlywheelSystem::FlywheelSystem(rev::CANSparkMax *feed_motor)
+FlywheelSystem::FlywheelSystem()//rev::CANSparkMax *feed_motor)
   : FlywheelMotor1{FLYWHEEL_MOTOR_1, rev::CANSparkFlex::MotorType::kBrushless},
     FlywheelMotor2{FLYWHEEL_MOTOR_2, rev::CANSparkFlex::MotorType::kBrushless},
     FlywheelAnglingMotor{FLYWHEEL_ANGLING_MOTOR, rev::CANSparkFlex::MotorType::kBrushless},
     TopFlywheel{FlywheelSpeedController(&FlywheelMotor1)},
     BottomFlywheel{FlywheelSpeedController(&FlywheelMotor2)},
     FlywheelAnglerPID{ANGLER_KP, ANGLER_KI, ANGLER_KD, ANGLER_KI_MAX, 
-                     ANGLER_MIN_SPEED, ANGLER_MAX_SPEED, ANGLER_TOLERANCE, ANGLER_VELOCITY_TOLERANCE},
-    FeedMotor{feed_motor}
+                     ANGLER_MIN_SPEED, ANGLER_MAX_SPEED, ANGLER_TOLERANCE, ANGLER_VELOCITY_TOLERANCE}
+   // FeedMotor{feed_motor}
 {
     magEncoder = new rev::SparkAbsoluteEncoder(FlywheelAnglingMotor.GetAbsoluteEncoder(rev::SparkAbsoluteEncoder::Type::kDutyCycle));
 }
@@ -36,7 +36,7 @@ bool FlywheelSystem::SetFlywheelVelocity(double bottomVelocity, double topVeloci
 
 void FlywheelSystem::FlywheelRing(){
   if ((TopFlywheel.AtSetpoint() && BottomFlywheel.AtSetpoint())){
-    FeedMotor->Set(kFeederSpeed);
+    //FeedMotor->Set(kFeederSpeed);
     CurrentlyFeeding = true;
   }
   else {
@@ -57,7 +57,8 @@ void FlywheelSystem::MoveAnglerPercent(double percent)
 
 bool FlywheelSystem::PIDAngler(double point)
 {
-  return FlywheelAnglerPID.Calculate(GetAnglerEncoderReading(), point);
+  MoveAnglerPercent(FlywheelAnglerPID.Calculate(GetAnglerEncoderReading(), point));
+  return FlywheelAnglerPID.PIDFinished();
 }
 
 FlywheelSpeedController::FlywheelSpeedController(rev::CANSparkFlex *FL_motor)

@@ -35,11 +35,11 @@ class FlywheelSystem
         FlywheelSpeedController BottomFlywheel;
         PID FlywheelAnglerPID;
         
-        rev::CANSparkMax *FeedMotor;
+        //rev::CANSparkMax *FeedMotor;
 
         bool CurrentlyFeeding = false;
 
-        FlywheelSystem(rev::CANSparkMax *feed_motor);
+        FlywheelSystem();//rev::CANSparkMax *feed_motor);
 
         void SimpleSetFlywheelMotor(double percent);
 
