@@ -45,5 +45,5 @@ class FlywheelSystem
         
         bool SetFlywheelVelocity(double bottomVelocity, double topVelocity);
 
-        void FlywheelRing();
+        void FlywheelRing(frc::DigitalInput* m_rangeFinder);
 };

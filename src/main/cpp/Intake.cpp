@@ -4,8 +4,8 @@ Intake::Intake()
   : intakeMotor{INTAKE_MOTOR_PORT, rev::CANSparkMax::MotorType::kBrushless}, 
     wristMotor{WRIST_MOTOR_PORT, rev::CANSparkMax::MotorType::kBrushless},
     fixedIntakeMotor{FIXED_INTAKE_MOTOR_PORT, rev::CANSparkMax::MotorType::kBrushless},
-    m_rangeFinder{1,2},
-    m_WristPID{WRISTKP,WRISTKI,WRISTKD,WRISTKIMAX,WRISTMIN_SPEED,WRISTMAX_SPEED,WRIST_POS_ERROR,WRIST_VELOCITY_ERROR}
+    m_rangeFinder{1},
+    m_WristPID{WRISTKP,WRISTKI,WRISTKD}
 {
   magEncoder = new rev::SparkAbsoluteEncoder(wristMotor.GetAbsoluteEncoder(rev::SparkAbsoluteEncoder::Type::kDutyCycle));
   wristMotor.SetIdleMode(rev::CANSparkMax::IdleMode::kCoast);
@@ -25,13 +25,13 @@ void Intake::SetIntakeMotorSpeed(double OverBumperPercent, double FeederPercent)
 void Intake::IntakeRing()
 {
   if(!GetObjectInIntake()){
-    SetIntakeMotorSpeed(INTAKE_SPEED_IN);
+    SetIntakeMotorSpeed(INTAKE_SPEED_IN*-1);
   }
 }
 
 void Intake::OuttakeRing()
 {
-  SetIntakeMotorSpeed(INTAKE_SPEED_OUT*-1);
+  SetIntakeMotorSpeed(INTAKE_SPEED_OUT);
 }
 
 double Intake::GetWristEncoderReading()
@@ -41,8 +41,7 @@ double Intake::GetWristEncoderReading()
 }
 
 bool Intake::GetObjectInIntake(){
-  units::millimeter_t distance = m_rangeFinder.GetRange();
-  return(distance < ULTRASONIC_INTAKE_DIST);
+  return (!m_rangeFinder.Get());
 }
 
 void Intake::MoveWristPercent(double percent)
@@ -52,18 +51,39 @@ void Intake::MoveWristPercent(double percent)
 
 bool Intake::PIDWrist(double point)
 {
-  MoveWristPercent(m_WristPID.Calculate(GetWristEncoderReading(), point));
-  return m_WristPID.PIDFinished();
+  double error = GetWristEncoderReading() - point;
+
+  SmartDashboard::PutNumber("Wrist Error", error);
+
+  if (fabs(error) < WRIST_POS_ERROR)
+  {
+    MoveWristPercent(0);
+    return true;
+  }
+
+  double intendedI = std::clamp(WRISTKI * runningWristIntegral, -1 * WRISTKIMAX, WRISTKIMAX);
+
+  double lastWristSpeed = std::clamp(WRISTKP * error + intendedI, -1 * WRISTMAX_SPEED, WRISTMAX_SPEED);
+
+  SmartDashboard::PutNumber("Wrist Speed", lastWristSpeed);
+  SmartDashboard::PutNumber("Wrist Intended I", intendedI);
+
+  if (lastWristSpeed < WRIST_SPEED_LOW_THRESHHOLD){
+    lastWristSpeed = WRIST_SPEED_LOW_THRESHHOLD;
+  }
+
+  MoveWristPercent(lastWristSpeed + WRISTFF);
+  return false;
 }
 
 bool Intake::PIDWristDown()
 {
-  PIDWrist(WRIST_LOW);
+  return PIDWrist(WRIST_LOW);
 }
 
 bool Intake::PIDWristUp()
 {
-  PIDWrist(WRIST_HIGH);
+  return PIDWrist(WRIST_HIGH);
 }
 
 //If feed/index motor becomes seperate from intake chain remove this
