@@ -25,6 +25,9 @@ inline constexpr double kFeederSpeed = 50;
 
 // Flywheel Angler PID Values
 inline double ANGLER_KP = 1;
+#define ANGLER_KS 0_V
+#define ANGLER_KG 0.08_V
+#define ANGLER_KV 0.88_V * 1_s / 1_rad
 #define ANGLER_KI 0
 #define ANGLER_KI_MAX 0 // In percent power
 #define ANGLER_KD 0

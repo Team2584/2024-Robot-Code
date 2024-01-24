@@ -34,6 +34,7 @@ class FlywheelSystem
         FlywheelSpeedController TopFlywheel;
         FlywheelSpeedController BottomFlywheel;
         PID FlywheelAnglerPID;
+        ArmFeedforward FlywheelAnglerFF;
         
         //rev::CANSparkMax *FeedMotor;
 

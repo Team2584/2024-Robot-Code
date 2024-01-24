@@ -7,7 +7,8 @@ FlywheelSystem::FlywheelSystem()//rev::CANSparkMax *feed_motor)
     TopFlywheel{FlywheelSpeedController(&FlywheelMotor1)},
     BottomFlywheel{FlywheelSpeedController(&FlywheelMotor2)},
     FlywheelAnglerPID{ANGLER_KP, ANGLER_KI, ANGLER_KD, ANGLER_KI_MAX, 
-                     ANGLER_MIN_SPEED, ANGLER_MAX_SPEED, ANGLER_TOLERANCE, ANGLER_VELOCITY_TOLERANCE}
+                     ANGLER_MIN_SPEED, ANGLER_MAX_SPEED, ANGLER_TOLERANCE, ANGLER_VELOCITY_TOLERANCE},
+    FlywheelAnglerFF{ANGLER_KS, ANGLER_KG, ANGLER_KV}
    // FeedMotor{feed_motor}
 {
     magEncoder = new rev::SparkAbsoluteEncoder(FlywheelAnglingMotor.GetAbsoluteEncoder(rev::SparkAbsoluteEncoder::Type::kDutyCycle));
@@ -49,6 +50,8 @@ void FlywheelSystem::FlywheelRing(){
 double FlywheelSystem::GetAnglerEncoderReading()
 {
   double reading = magEncoder->GetPosition();
+  if (reading > 0.5)
+    reading -= 1;
   return reading * M_PI * 2;
 }
 
@@ -59,7 +62,11 @@ void FlywheelSystem::MoveAnglerPercent(double percent)
 
 bool FlywheelSystem::PIDAngler(double point)
 {
-  MoveAnglerPercent(FlywheelAnglerPID.Calculate(GetAnglerEncoderReading(), point));
+  units::volt_t PID = units::volt_t{FlywheelAnglerPID.Calculate(GetAnglerEncoderReading(), point)};
+  units::volt_t FF = FlywheelAnglerFF.Calculate(units::radian_t{point}, 0_rad / 1_s);
+  SmartDashboard::PutNumber("Angler PID", PID.value());
+  SmartDashboard::PutNumber("Angler FF", FF.value());
+  FlywheelAnglingMotor.SetVoltage(PID + FF);
   return FlywheelAnglerPID.PIDFinished();
 }
 

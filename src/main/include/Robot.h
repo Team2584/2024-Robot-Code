@@ -26,6 +26,8 @@
 #include <frc/DutyCycleEncoder.h>
 #include <frc/Ultrasonic.h>
 
+#include <frc/controller/ArmFeedforward.h>
+
 #include <frc/geometry/Transform2d.h>
 #include <frc/geometry/Rotation2d.h>
 #include <frc/geometry/Pose2d.h>

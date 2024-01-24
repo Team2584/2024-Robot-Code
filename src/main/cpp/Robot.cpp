@@ -30,6 +30,7 @@ void Robot::RobotInit()
   frc::SmartDashboard::PutData("Auto Modes", &m_chooser);
   SmartDashboard::PutNumber("Start Flywheel Speed", 0);
   SmartDashboard::PutNumber("Flywheel kP", 0.005);
+  SmartDashboard::PutNumber("Angler Setpoint", M_PI / 2);
   flywheel.FlywheelAnglerPID.SetupConstantTuning("Angler");
 }
 
@@ -197,16 +198,17 @@ void Robot::TeleopPeriodic()
   }
 
   if(xboxController.GetAButton())
-    flywheel.PIDAngler(M_PI);
+    flywheel.PIDAngler(M_PI / 2);
   else if (xboxController.GetXButton())
-    flywheel.MoveAnglerPercent(0.3);
+    flywheel.PIDAngler(SmartDashboard::GetNumber("Angler Setpoint", M_PI / 2));
   else
     flywheel.MoveAnglerPercent(0);
 
   SmartDashboard::PutNumber("Top FlyWheel RPM", flywheel.TopFlywheel.GetMeasurement());
   SmartDashboard::PutNumber("Top FlyWheel Setpoint", flywheel.TopFlywheel.m_shooterPID.GetSetpoint());
-  
   kP = SmartDashboard::GetNumber("Flywheel kP", 0.005);
+
+  SmartDashboard::PutNumber("Current Angler", flywheel.GetAnglerEncoderReading());
 }
 
 void Robot::DisabledInit() {}
