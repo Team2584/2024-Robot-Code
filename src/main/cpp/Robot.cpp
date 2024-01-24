@@ -144,10 +144,10 @@ void Robot::TeleopPeriodic()
 
 
   // Drive the robot
-  swerveDrive.DriveSwervePercent(fwdDriveSpeed, strafeDriveSpeed, turnSpeed);
+  //swerveDrive.DriveSwervePercent(fwdDriveSpeed, strafeDriveSpeed, turnSpeed);
 
   // Drive to 0,0 for testing
-  if (xboxController.GetAButtonPressed())
+  /*if (xboxController.GetAButtonPressed())
     swerveAutoController.BeginDriveToPose();
   if (xboxController.GetAButton())
     swerveAutoController.DriveToPose(Pose2d(-0.5_m,0_m,Rotation2d(90_deg)), PoseEstimationType::TagBased);
@@ -162,7 +162,7 @@ void Robot::TeleopPeriodic()
   if (xboxController.GetBButton())
   {
     swerveAutoController.FollowTrajectory(PoseEstimationType::PureOdometry);
-  }
+  }*/
 
   if(xboxController.GetRightBumper()){
     overbumper.IntakeRing();
@@ -170,7 +170,7 @@ void Robot::TeleopPeriodic()
   }
   else if(xboxController.GetLeftBumper()){
     overbumper.OuttakeRing();
-     overbumper.PIDWristUp();
+    overbumper.PIDWristUp();
   }
   else {
     if(!flywheel.CurrentlyFeeding){overbumper.SetIntakeMotorSpeed(0);} //REMOVE THE IF WHEN INDEXER IS ON SEPERATE MOTOR
@@ -192,6 +192,11 @@ void Robot::TeleopPeriodic()
   else if (xboxController.GetStartButtonPressed()){
     flywheel.SetFlywheelVelocity(SmartDashboard::GetNumber("Start Flywheel Speed", 0));
   }
+
+  if(xboxController.GetAButton())
+    flywheel.PIDAngler(M_PI);
+  else
+    flywheel.MoveAnglerPercent(0);
 
   SmartDashboard::PutNumber("Top FlyWheel RPM", flywheel.TopFlywheel.GetMeasurement());
   SmartDashboard::PutNumber("Top FlyWheel Setpoint", flywheel.TopFlywheel.m_shooterPID.GetSetpoint());

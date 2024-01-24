@@ -31,6 +31,6 @@ inline constexpr double kFeederSpeed = 50;
 #define ANGLER_TOLERANCE 3 // In Degrees
 #define ANGLER_VELOCITY_TOLERANCE 0.5 // In percent power
 #define ANGLER_MIN_SPEED 0 // In percent power
-#define ANGLER_MAX_SPEED 1.0 // In percent power
+#define ANGLER_MAX_SPEED 0.3 // In percent power
 
 #endif //FLYWHEEL_CONSTANTS_H
