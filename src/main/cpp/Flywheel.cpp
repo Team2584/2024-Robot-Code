@@ -5,7 +5,7 @@ FlywheelSystem::FlywheelSystem(rev::CANSparkMax *feed_motor, frc::DigitalInput *
     FlywheelMotor2{FLYWHEEL_MOTOR_2, rev::CANSparkFlex::MotorType::kBrushless},
     TopFlywheel{FlywheelSpeedController(&FlywheelMotor1)},
     BottomFlywheel{FlywheelSpeedController(&FlywheelMotor2)},
-    FeedMotor{feed_motor}
+    FeedMotor{feed_motor},
     m_IntakeSensor{intakeSensor}
 {
 }
@@ -43,7 +43,7 @@ void FlywheelSystem::FlywheelRing(){
 
 
 FlywheelSpeedController::FlywheelSpeedController(rev::CANSparkFlex *FL_motor)
-  : m_shooterPID{frc::PIDController{kP, kI, kD}},
+  : m_shooterPID{frc::PIDController{f_kP, f_kI, f_kD}},
     m_flywheelMotor(FL_motor),
     m_shooterFeedforward(kS, kV) 
 {

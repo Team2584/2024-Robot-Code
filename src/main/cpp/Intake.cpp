@@ -5,7 +5,7 @@ Intake::Intake()
     wristMotor{WRIST_MOTOR_PORT, rev::CANSparkMax::MotorType::kBrushless},
     fixedIntakeMotor{FIXED_INTAKE_MOTOR_PORT, rev::CANSparkMax::MotorType::kBrushless},
     m_rangeFinder{1},
-    m_WristPID{WRISTKP,WRISTKI,WRISTKD}
+    m_WristPID{WRISTKP,WRISTKI,WRISTKD,WRISTKIMAX,WRISTMIN_SPEED,WRISTMAX_SPEED,WRIST_POS_ERROR,WRIST_VELOCITY_ERROR}
 {
   magEncoder = new rev::SparkAbsoluteEncoder(wristMotor.GetAbsoluteEncoder(rev::SparkAbsoluteEncoder::Type::kDutyCycle));
   wristMotor.SetIdleMode(rev::CANSparkMax::IdleMode::kCoast);
@@ -51,29 +51,8 @@ void Intake::MoveWristPercent(double percent)
 
 bool Intake::PIDWrist(double point)
 {
-  double error = GetWristEncoderReading() - point;
-
-  SmartDashboard::PutNumber("Wrist Error", error);
-
-  if (fabs(error) < WRIST_POS_ERROR)
-  {
-    MoveWristPercent(0);
-    return true;
-  }
-
-  double intendedI = std::clamp(WRISTKI * runningWristIntegral, -1 * WRISTKIMAX, WRISTKIMAX);
-
-  double lastWristSpeed = std::clamp(WRISTKP * error + intendedI, -1 * WRISTMAX_SPEED, WRISTMAX_SPEED);
-
-  SmartDashboard::PutNumber("Wrist Speed", lastWristSpeed);
-  SmartDashboard::PutNumber("Wrist Intended I", intendedI);
-
-  if (lastWristSpeed < WRIST_SPEED_LOW_THRESHHOLD){
-    lastWristSpeed = WRIST_SPEED_LOW_THRESHHOLD;
-  }
-
-  MoveWristPercent(lastWristSpeed + WRISTFF);
-  return false;
+  MoveWristPercent(m_WristPID.Calculate(GetWristEncoderReading(),point));
+  return m_WristPID.PIDFinished();
 }
 
 bool Intake::PIDWristDown()
@@ -89,5 +68,9 @@ bool Intake::PIDWristUp()
 //If feed/index motor becomes seperate from intake chain remove this
 rev::CANSparkMax* Intake::GetFeedMotor(){
   return &fixedIntakeMotor;
+}
+
+frc::DigitalInput* Intake::GetIntakeSensor(){
+  return &m_rangeFinder;
 }
 

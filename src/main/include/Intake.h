@@ -16,8 +16,6 @@ public:
 
     PID m_WristPID;
 
-
-
     Intake();
 
     void SetIntakeMotorSpeed(double percent);
@@ -42,5 +40,7 @@ public:
 
     //If feed/index motor becomes seperate from intake chain remove this
     rev::CANSparkMax* GetFeedMotor();
+
+    frc::DigitalInput* GetIntakeSensor();
 
 };

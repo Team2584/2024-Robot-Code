@@ -183,7 +183,7 @@ void Robot::TeleopPeriodic()
     flywheel.SetFlywheelVelocity(2000);
   }
   else if (xboxController.GetBackButton()){
-    flywheel.FlywheelRing(&overbumper.m_rangeFinder);
+    flywheel.FlywheelRing();
   }
   else if (xboxController.GetStartButtonPressed()){
     flywheel.SetFlywheelVelocity(SmartDashboard::GetNumber("Start Flywheel Speed", 0));
