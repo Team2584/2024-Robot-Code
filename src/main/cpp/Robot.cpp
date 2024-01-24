@@ -168,7 +168,7 @@ void Robot::TeleopPeriodic()
   }
   else if(xboxController.GetLeftBumper()){
     overbumper.OuttakeRing();
-     overbumper.PIDWristUp();
+    overbumper.PIDWristUp();
   }
   else {
     if(!flywheel.CurrentlyFeeding){overbumper.SetIntakeMotorSpeed(0);} //REMOVE THE IF WHEN INDEXER IS ON SEPERATE MOTOR
@@ -195,8 +195,9 @@ void Robot::TeleopPeriodic()
   SmartDashboard::PutNumber("Top FlyWheel Setpoint", flywheel.TopFlywheel.m_shooterPID.GetSetpoint());
   
   kP = SmartDashboard::GetNumber("Flywheel kP", 0.005);
-  flywheel.
 
+  flywheel.TopFlywheel.m_shooterPID.SetP(kP);
+  
 }
 
 void Robot::DisabledInit() {}

@@ -5,15 +5,18 @@ class Intake
 {
 public:
 
+
+    double runningWristIntegral = 0;
+
     rev::CANSparkMax intakeMotor;
     rev::CANSparkMax wristMotor;
     rev::CANSparkMax fixedIntakeMotor;
     rev::SparkAbsoluteEncoder *magEncoder;
-    frc::Ultrasonic m_rangeFinder;
+    frc::DigitalInput m_rangeFinder;
 
     PID m_WristPID;
 
-    const units::millimeter_t ULTRASONIC_INTAKE_DIST{100};
+
 
     Intake();
 

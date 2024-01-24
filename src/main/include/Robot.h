@@ -24,7 +24,7 @@
 
 #include <frc/XboxController.h>
 #include <frc/DutyCycleEncoder.h>
-#include <frc/Ultrasonic.h>
+#include <frc/DigitalInput.h>
 
 #include <frc/geometry/Transform2d.h>
 #include <frc/geometry/Rotation2d.h>
