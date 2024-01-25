@@ -101,6 +101,7 @@ bool Climb::BalanceWhileClimbing(){
 ///The logic for the arm PIDs isn't correct, as they won't nessesarily be aiming for the same point, 
 //just whatever point makes the conditions in GetClimbAtPos() true
 //this is a problem for later once everything else is tested :)
+//maybe just make 1 arm be the min value?
 
 bool Climb::BalanceWhileClimbing(double setpoint){
     if(climbZeroed){
@@ -120,10 +121,17 @@ bool Climb::BalanceWhileClimbing(double setpoint){
 }
 
 bool Climb::GetClimbAtPos(){
+    /*
     double avgPos = (leftEncoder.GetPosition() + rightEncoder.GetPosition())/2.0; 
     bool isAtPos =  abs(avgPos - rightPID.GetPIDSetpoint()) < rightPID.GetPIDAllowedError(); //if the arm's average pos ~= the set pos
     bool isBalanced = rollPID.PIDFinished(); //and robot is ~=horizontal
     return(isAtPos && isBalanced); 
+    */
+    double lowPos = leftEncoder.GetPosition() < rightEncoder.GetPosition() ? rightEncoder.GetPosition() : leftEncoder.GetPosition();
+    bool isAtPos =  abs(lowPos - rightPID.GetPIDSetpoint()) < rightPID.GetPIDAllowedError(); //if most extended arm ~= the set pos
+    bool isBalanced = rollPID.PIDFinished(); //and robot is ~=horizontal
+    return(isAtPos && isBalanced); 
+    
 }
 
 
