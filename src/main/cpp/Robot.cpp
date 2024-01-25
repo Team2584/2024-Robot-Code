@@ -184,7 +184,7 @@ void Robot::TeleopPeriodic()
 
   //SmartDashboard::PutNumber("Wrist Pos", overbumper.GetWristEncoderReading());
   
-  if(xboxController.GetXButtonPressed()){
+  if(xboxController.GetBButtonPressed()){
     flywheel.SimpleSetFlywheelMotor(0);
   }
   else if (xboxController.GetYButtonPressed()){
@@ -197,12 +197,15 @@ void Robot::TeleopPeriodic()
     flywheel.SetFlywheelVelocity(SmartDashboard::GetNumber("Start Flywheel Speed", 0));
   }
 
+  bool done = false;
   if(xboxController.GetAButton())
-    flywheel.PIDAngler(M_PI / 2);
+    done = flywheel.PIDAngler(M_PI / 2);
   else if (xboxController.GetXButton())
-    flywheel.PIDAngler(SmartDashboard::GetNumber("Angler Setpoint", M_PI / 2));
+    done = flywheel.PIDAngler(SmartDashboard::GetNumber("Angler Setpoint", M_PI / 2));
   else
     flywheel.MoveAnglerPercent(0);
+
+  SmartDashboard::PutBoolean("Angler PID Done", done);
 
   SmartDashboard::PutNumber("Top FlyWheel RPM", flywheel.TopFlywheel.GetMeasurement());
   SmartDashboard::PutNumber("Top FlyWheel Setpoint", flywheel.TopFlywheel.m_shooterPID.GetSetpoint());
