@@ -5,14 +5,13 @@ class Intake
 {
 public:
 
-
-    double runningWristIntegral = 0;
-
     rev::CANSparkMax intakeMotor;
     rev::CANSparkMax wristMotor;
     rev::CANSparkMax fixedIntakeMotor;
     rev::SparkAbsoluteEncoder *magEncoder;
     frc::DigitalInput m_rangeFinder;
+
+    bool CurrentlyFeeding = false;
 
     PID m_WristPID;
 
@@ -38,9 +37,8 @@ public:
 
     bool PIDWristUp();
 
-    //If feed/index motor becomes seperate from intake chain remove this
-    rev::CANSparkMax* GetFeedMotor();
+    bool GetFeeding();
 
-    frc::DigitalInput* GetIntakeSensor();
+    void SetFeeding(bool value);
 
 };

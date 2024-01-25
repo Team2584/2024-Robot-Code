@@ -1,47 +1,78 @@
+#include "Intake.h"
 #include "FlyWheel.h"
 
-FlywheelSystem::FlywheelSystem(rev::CANSparkMax *feed_motor, frc::DigitalInput *intakeSensor)
+FlywheelSystem::FlywheelSystem(Intake * _m_intake)
   : FlywheelMotor1{FLYWHEEL_MOTOR_1, rev::CANSparkFlex::MotorType::kBrushless},
     FlywheelMotor2{FLYWHEEL_MOTOR_2, rev::CANSparkFlex::MotorType::kBrushless},
     TopFlywheel{FlywheelSpeedController(&FlywheelMotor1)},
     BottomFlywheel{FlywheelSpeedController(&FlywheelMotor2)},
-    FeedMotor{feed_motor},
-    m_IntakeSensor{intakeSensor}
+    m_intake{_m_intake}
 {
 }
 
+/**
+ * @brief Sets both flywheel motors to a percent
+ * @param percent Percent to set both motors to
+ * @note Do not use this function in competition, use SetVelocity()
+*/
 void FlywheelSystem::SimpleSetFlywheelMotor(double percent)
 {
   FlywheelMotor1.Set(percent);
   FlywheelMotor2.Set(percent);
 }
 
-void FlywheelSystem::SimpleFlywheelRing()
+/**
+ * @brief Runs feeder motor if object is in intake
+*/
+void FlywheelSystem::RunFeederMotor()
 {
-  SimpleSetFlywheelMotor(FLYWHEEL_BASE_PERCENT);
+  if ((m_intake->GetObjectInIntake())){
+    m_intake->SetFeeding(true);
+    m_intake->SetIntakeMotorSpeed(0,60);
+  }
+  else {
+    m_intake->SetFeeding(false);
+  }
 }
 
+/**
+ * @brief Sets flywheel object velocities using PID+FeedForward
+ * @param velocity Velocity (RPM) to set both flywheels to
+ * @returns True if both flywheels are at Setpoint
+*/
 bool FlywheelSystem::SetFlywheelVelocity(double velocity){
   return SetFlywheelVelocity(velocity, velocity);
 }
 
+/**
+ * @brief Sets flywheel object velocities using PID+FeedForward
+ * @param bottomVelocity Velocity (RPM) to set the bottom flywheel to
+ * @param topVelocity Velocity (RPM) to set the top flywheel to
+ * @returns True if both flywheels are at Setpoint
+*/
 bool FlywheelSystem::SetFlywheelVelocity(double bottomVelocity, double topVelocity){
   TopFlywheel.SpinFlyWheelRPM(topVelocity);
   BottomFlywheel.SpinFlyWheelRPM(bottomVelocity);
   return (TopFlywheel.AtSetpoint() && BottomFlywheel.AtSetpoint());
 }
 
+/**
+ * @brief Launch Ring if Flywheel Velocities are at setpoint and there is an object in intake
+*/
 void FlywheelSystem::FlywheelRing(){
-  if ((TopFlywheel.AtSetpoint() && m_IntakeSensor->Get())){
-    CurrentlyFeeding = true;
-    FeedMotor->Set(-70);
+  if ((TopFlywheel.AtSetpoint() && BottomFlywheel.AtSetpoint() && m_intake->GetObjectInIntake())){
+    m_intake->SetFeeding(true);
+    m_intake->SetIntakeMotorSpeed(0,60);
   }
   else {
-    CurrentlyFeeding = false;
+    m_intake->SetFeeding(false);
   }
 }
 
-
+/**
+ * @brief Single-Motor Flywheel Object Constructor
+ * @param FL_motor Pointer to a CANSparkFlex motor controller
+*/
 FlywheelSpeedController::FlywheelSpeedController(rev::CANSparkFlex *FL_motor)
   : m_shooterPID{f_kP,f_kI,f_kD},
     m_flywheelMotor(FL_motor),

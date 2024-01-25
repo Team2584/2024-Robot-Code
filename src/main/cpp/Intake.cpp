@@ -65,12 +65,11 @@ bool Intake::PIDWristUp()
   return PIDWrist(WRIST_HIGH);
 }
 
-//If feed/index motor becomes seperate from intake chain remove this
-rev::CANSparkMax* Intake::GetFeedMotor(){
-  return &fixedIntakeMotor;
+bool Intake::GetFeeding(){
+  return CurrentlyFeeding;
 }
 
-frc::DigitalInput* Intake::GetIntakeSensor(){
-  return &m_rangeFinder;
+void Intake::SetFeeding(bool value){
+  CurrentlyFeeding = value;
 }
 

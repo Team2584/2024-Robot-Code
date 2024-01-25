@@ -30,16 +30,13 @@ class FlywheelSystem
         FlywheelSpeedController TopFlywheel;
         FlywheelSpeedController BottomFlywheel;
 
-        rev::CANSparkMax *FeedMotor;
-        frc::DigitalInput *m_IntakeSensor;
+        Intake * m_intake;
 
-        bool CurrentlyFeeding = false;
-
-        FlywheelSystem(rev::CANSparkMax *feed_motor, frc::DigitalInput *intakeSensor);
+        FlywheelSystem(Intake * _m_intake);
 
         void SimpleSetFlywheelMotor(double percent);
 
-        void SimpleFlywheelRing();
+        void RunFeederMotor();
 
         bool SetFlywheelVelocity(double velocity);
         
