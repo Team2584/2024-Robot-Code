@@ -7,12 +7,12 @@
 #define WRIST_MOTOR_PORT 19
 
 //Intake motor speeds, percent
-#define INTAKE_SPEED_IN 60
+#define INTAKE_SPEED_IN 80
 #define INTAKE_SPEED_OUT 60
 
 //Wrist absolute Encoder position values, 0-1 rotatons
 #define WRIST_HIGH 0.5
-inline double WRIST_LOW = 0.73;
+inline double WRIST_LOW = 0.715;
 
 #define WRIST_SPEED_LOW_THRESHHOLD -2.0
 
