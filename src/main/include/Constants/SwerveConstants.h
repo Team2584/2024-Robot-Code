@@ -67,8 +67,8 @@
 #define CAMERA_ONE_Y_ROTATION 0_deg // Camera's Rotation around robot's Y axis (rotated clockwise/counterclocwise)
 #define CAMERA_ONE_Z_ROTATION 0_deg // Camera's Rotation around robot's Z axis (tilted left/right)
 
-#define APRILTAG_CONFIDENCE_X 0.5
-#define APRILTAG_CONFIDENCE_Y 0.5
+#define APRILTAG_CONFIDENCE_X 0.05
+#define APRILTAG_CONFIDENCE_Y 0.05
 #define APRILTAG_CONFIDENCE_ROTATION 5.0
 
 /*

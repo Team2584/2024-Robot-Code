@@ -9,18 +9,19 @@
 
 #include "AprilTagBasedSwerve.h"
 #include "Autonomous Functionality/SwerveDriveAutoControl.h"
+#include "Autonomous Functionality/SpeakerFunctionality.h"
 
 #include "Intake.h"
 #include "FlyWheel.h"
 
-//AprilTagSwerve swerveDrive{};
+AprilTagSwerve swerveDrive{};
 XboxController xboxController{0};
 XboxController xboxController2{1};
 //Intake overbumper{};
 FlywheelSystem flywheel{};//overbumper.GetFeedMotor()};
 
-//SwerveDriveAutonomousController swerveAutoController{&swerveDrive};
-
+SwerveDriveAutonomousController swerveAutoController{&swerveDrive};
+AutonomousShootingController flywheelController{&swerveAutoController, &flywheel};
 
 
 void Robot::RobotInit()
@@ -97,7 +98,7 @@ void Robot::TeleopPeriodic()
 {
   /* UPDATES */
 
-  //swerveDrive.Update();
+  swerveDrive.Update();
 
   /* DEBUGGING INFO */
 
@@ -105,7 +106,7 @@ void Robot::TeleopPeriodic()
   SmartDashboard::PutNumber("FR Module Heading", swerveDrive.FRModule.GetMagEncoderValue());
   SmartDashboard::PutNumber("BL Module Heading", swerveDrive.BLModule.GetMagEncoderValue());
   SmartDashboard::PutNumber("BR Module Heading", swerveDrive.BRModule.GetMagEncoderValue());
-
+  */
   SmartDashboard::PutNumber("Odometry X Position", swerveDrive.GetOdometryPose().X().value());
   SmartDashboard::PutNumber("Odometry Y Position", swerveDrive.GetOdometryPose().Y().value());
   SmartDashboard::PutNumber("Odometry Heading", swerveDrive.GetOdometryPose().Rotation().Degrees().value());
@@ -114,7 +115,7 @@ void Robot::TeleopPeriodic()
   SmartDashboard::PutNumber("Tag Odometry X", swerveDrive.GetTagOdometryPose().X().value());
   SmartDashboard::PutNumber("Tag Odometry Y", swerveDrive.GetTagOdometryPose().Y().value());
   SmartDashboard::PutNumber("Tag Odometry Heading", swerveDrive.GetTagOdometryPose().Rotation().Degrees().value());
-  */
+  
   /* DRIVER INPUT AND CONTROL */
 
   // Find controller input (*-1 converts values to fwd/left/counterclockwise positive)
@@ -199,7 +200,7 @@ void Robot::TeleopPeriodic()
 
   bool done = false;
   if(xboxController.GetAButton())
-    done = flywheel.PIDAngler(M_PI / 2);
+    done = flywheelController.AngleFlywheelToSpeaker();
   else if (xboxController.GetXButton())
     done = flywheel.PIDAngler(SmartDashboard::GetNumber("Angler Setpoint", M_PI / 2));
   else

@@ -1,8 +1,8 @@
 #include "Autonomous Functionality/SpeakerFunctionality.h"
 
-AutonomousShootingController::AutonomousShootingController(SwerveDriveAutonomousController *swerveDriveController, FlywheelSystem *_flyWheel)
+AutonomousShootingController::AutonomousShootingController(SwerveDriveAutonomousController *swerveDrive_, FlywheelSystem *_flyWheel)
 {
-    swerveDrive = swerveDriveController;
+    swerveDrive = swerveDrive_;
     flyWheel = _flyWheel;
 }
 
@@ -25,7 +25,8 @@ bool AutonomousShootingController::AngleFlywheelToSpeaker()
     units::meter_t distance = currentPos.Distance(SPEAKER_POSITION.ToTranslation2d());
     Rotation2d targetAngle = Rotation2d(units::radian_t{atan2(SPEAKER_POSITION.Z().value(), distance.value())});
 
-    return flyWheel->PIDAngler(targetAngle.Radians().value());
+    SmartDashboard::PutNumber("Target Angler Angle", targetAngle.Radians().value());
+    return false; //flyWheel->PIDAngler(targetAngle.Radians().value());
 }
 
 bool AutonomousShootingController::AimAndFire()

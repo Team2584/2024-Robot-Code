@@ -15,7 +15,7 @@ private:
     FlywheelSystem *flyWheel;
 
 public:
-    AutonomousShootingController(SwerveDriveAutonomousController *swerveDriveController, FlywheelSystem *_flyWheel);
+    AutonomousShootingController(SwerveDriveAutonomousController *swerveDrive, FlywheelSystem *flyWheel_);
 
     bool TurnToSpeaker();
     bool AngleFlywheelToSpeaker();

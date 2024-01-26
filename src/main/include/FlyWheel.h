@@ -1,6 +1,9 @@
 #include "Robot.h"
 #include "constants/FlywheelConstants.h"
 
+#ifndef FLYWHEEL_H
+#define FLYWHEEL_H
+
 class FlywheelSpeedController
 {
     public:
@@ -58,3 +61,5 @@ class FlywheelSystem
 
         bool PIDAngler(double point);
 };
+
+#endif

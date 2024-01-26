@@ -54,8 +54,8 @@
 #include <frc/controller/SimpleMotorFeedforward.h>
 #include <frc/controller/PIDController.h>
 
-#include <photonlib/PhotonCamera.h>
-#include <photonlib/PhotonPoseEstimator.h>
+#include <photon/PhotonCamera.h>
+#include <photon/PhotonPoseEstimator.h>
 
 #include <pathplanner/lib/path/PathPlannerPath.h>
 #include <pathplanner/lib/path/PathPlannerTrajectory.h>
