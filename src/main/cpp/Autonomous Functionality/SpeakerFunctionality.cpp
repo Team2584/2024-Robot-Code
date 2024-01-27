@@ -26,7 +26,7 @@ bool AutonomousShootingController::AngleFlywheelToSpeaker()
     Rotation2d targetAngle = Rotation2d(units::radian_t{atan2(SPEAKER_POSITION.Z().value(), distance.value())});
 
     SmartDashboard::PutNumber("Target Angler Angle", targetAngle.Radians().value());
-    return false; //flyWheel->PIDAngler(targetAngle.Radians().value());
+    return flyWheel->PIDAngler(targetAngle.Radians().value());
 }
 
 bool AutonomousShootingController::AimAndFire()
