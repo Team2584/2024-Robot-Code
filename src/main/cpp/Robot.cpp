@@ -18,7 +18,7 @@ AprilTagSwerve swerveDrive{};
 XboxController xboxController{0};
 XboxController xboxController2{1};
 Intake overbumper{};
-FlywheelSystem flywheel{};//overbumper.GetFeedMotor()};
+FlywheelSystem flywheel{&overbumper};
 
 SwerveDriveAutonomousController swerveAutoController{&swerveDrive};
 AutonomousShootingController flywheelController{&swerveAutoController, &flywheel};
@@ -177,9 +177,8 @@ void Robot::TeleopPeriodic()
     overbumper.OuttakeRing();
     overbumper.PIDWristUp();
   }
-  else {
-    if(!flywheel.CurrentlyFeeding){overbumper.SetIntakeMotorSpeed(0);} //REMOVE THE IF WHEN INDEXER IS ON SEPERATE MOTOR
-    //overbumper.SetIntakeMotorSpeed(0);
+  else if(!overbumper.GetFeeding()){
+    overbumper.SetIntakeMotorSpeed(0); //REMOVE THE IF WHEN INDEXER IS ON SEPERATE MOTOR
     overbumper.PIDWristUp();
   }
 

@@ -10,11 +10,11 @@ public:
     rev::CANSparkMax fixedIntakeMotor;
     rev::CANSparkMax fixedIntakeMotor2;
     rev::SparkAbsoluteEncoder *magEncoder;
-    frc::Ultrasonic m_rangeFinder;
+    frc::DigitalInput m_rangeFinder;
+
+    bool CurrentlyFeeding = false;
 
     PID m_WristPID;
-
-    const units::millimeter_t ULTRASONIC_INTAKE_DIST{100};
 
     Intake();
 
@@ -40,7 +40,8 @@ public:
 
     bool PIDWristUp();
 
-    //If feed/index motor becomes seperate from intake chain remove this
-    rev::CANSparkMax* GetFeedMotor();
+    bool GetFeeding();
+
+    void SetFeeding(bool value);
 
 };

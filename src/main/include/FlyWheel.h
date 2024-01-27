@@ -13,10 +13,9 @@ class FlywheelSpeedController
         frc::SimpleMotorFeedforward<units::turns> m_shooterFeedforward;
         rev::SparkRelativeEncoder* m_shooterEncoder;
         
-        
         FlywheelSpeedController(rev::CANSparkFlex *FL_motor);
 
-        void UseOutput(double output, double setpoint);
+        void UseOutput(double output, units::turns_per_second_t setpointRPS);
 
         double GetMeasurement();
 
@@ -39,15 +38,17 @@ class FlywheelSystem
         PID FlywheelAnglerPID;
         ArmFeedforward FlywheelAnglerFF;
         
+        Intake * m_intake;
+
         //rev::CANSparkMax *FeedMotor;
 
         bool CurrentlyFeeding = false;
 
-        FlywheelSystem();//rev::CANSparkMax *feed_motor);
+        FlywheelSystem(Intake * _m_intake);
 
         void SimpleSetFlywheelMotor(double percent);
 
-        void SimpleFlywheelRing();
+        void RunFeederMotor();
 
         bool SetFlywheelVelocity(double velocity);
         
