@@ -17,7 +17,7 @@
 AprilTagSwerve swerveDrive{};
 XboxController xboxController{0};
 XboxController xboxController2{1};
-//Intake overbumper{};
+Intake overbumper{};
 FlywheelSystem flywheel{};//overbumper.GetFeedMotor()};
 
 SwerveDriveAutonomousController swerveAutoController{&swerveDrive};
@@ -149,7 +149,7 @@ void Robot::TeleopPeriodic()
 
 
   // Drive the robot
-  //swerveDrive.DriveSwervePercent(fwdDriveSpeed, strafeDriveSpeed, turnSpeed);
+  swerveDrive.DriveSwervePercent(fwdDriveSpeed, strafeDriveSpeed, turnSpeed);
 
   // Drive to 0,0 for testing
   /*if (xboxController.GetAButtonPressed())
@@ -169,7 +169,7 @@ void Robot::TeleopPeriodic()
     swerveAutoController.FollowTrajectory(PoseEstimationType::PureOdometry);
   }*/
 
-  /*if(xboxController.GetRightBumper()){
+  if(xboxController.GetRightBumper()){
     overbumper.IntakeRing();
     overbumper.PIDWristDown();
   }
@@ -181,7 +181,7 @@ void Robot::TeleopPeriodic()
     if(!flywheel.CurrentlyFeeding){overbumper.SetIntakeMotorSpeed(0);} //REMOVE THE IF WHEN INDEXER IS ON SEPERATE MOTOR
     //overbumper.SetIntakeMotorSpeed(0);
     overbumper.PIDWristUp();
-  }*/
+  }
 
   //SmartDashboard::PutNumber("Wrist Pos", overbumper.GetWristEncoderReading());
   

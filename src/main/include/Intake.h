@@ -8,6 +8,7 @@ public:
     rev::CANSparkMax intakeMotor;
     rev::CANSparkMax wristMotor;
     rev::CANSparkMax fixedIntakeMotor;
+    rev::CANSparkMax fixedIntakeMotor2;
     rev::SparkAbsoluteEncoder *magEncoder;
     frc::Ultrasonic m_rangeFinder;
 
@@ -24,6 +25,8 @@ public:
     void IntakeRing();
     
     void OuttakeRing();
+
+    void ShootRing();
 
     double GetWristEncoderReading();
 

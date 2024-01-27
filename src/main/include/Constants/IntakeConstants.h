@@ -5,6 +5,7 @@
 #define INTAKE_MOTOR_PORT 17
 #define FIXED_INTAKE_MOTOR_PORT 18
 #define WRIST_MOTOR_PORT 19
+#define FIXED_INTAKE_MOTOR_PORT_2 21
 
 //Intake motor speeds, percent
 #define INTAKE_SPEED_IN 50.0
