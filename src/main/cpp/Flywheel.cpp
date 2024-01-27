@@ -64,7 +64,7 @@ bool FlywheelSystem::SetFlywheelVelocity(double bottomVelocity, double topVeloci
  * @brief Launch Ring if Flywheel Velocities are at setpoint and there is an object in intake
 */
 void FlywheelSystem::FlywheelRing(){
-  if ((TopFlywheel.AtSetpoint() && BottomFlywheel.AtSetpoint() && m_intake->GetObjectInIntake())){
+  if ((TopFlywheel.AtSetpoint() && BottomFlywheel.AtSetpoint())){
     m_intake->SetFeeding(true);
     m_intake->SetIntakeMotorSpeed(0,60);
   }
@@ -93,7 +93,7 @@ bool FlywheelSystem::PIDAngler(double point)
     FlywheelAnglingMotor.Set(0);
     return false;
   }
-  
+
   units::volt_t PID = units::volt_t{FlywheelAnglerPID.Calculate(GetAnglerEncoderReading(), point)};
   units::volt_t FF = FlywheelAnglerFF.Calculate(units::radian_t{GetAnglerEncoderReading()}, 0_rad / 1_s);
   SmartDashboard::PutNumber("Angler PID", PID.value());

@@ -191,9 +191,6 @@ void Robot::TeleopPeriodic()
   if(xboxController.GetBButtonPressed()){
     flywheel.SimpleSetFlywheelMotor(0);
   }
-  else if (xboxController.GetYButtonPressed()){
-    flywheel.SetFlywheelVelocity(2000);
-  }
   else if (xboxController.GetBackButton()){
     flywheel.FlywheelRing();
   }
@@ -206,6 +203,8 @@ void Robot::TeleopPeriodic()
 
   if (anglingToSpeaker)
     flywheelController.AngleFlywheelToSpeaker();
+  else if (xboxController.GetYButton())
+    flywheel.PIDAngler(SmartDashboard::GetNumber("Angler Setpoint", M_PI / 2));
   else
     flywheel.MoveAnglerPercent(0);
 
