@@ -23,6 +23,8 @@ FlywheelSystem flywheel{&overbumper};
 SwerveDriveAutonomousController swerveAutoController{&swerveDrive};
 AutonomousShootingController flywheelController{&swerveAutoController, &flywheel};
 
+bool anglingToSpeaker = false;
+
 
 void Robot::RobotInit()
 {
@@ -199,16 +201,16 @@ void Robot::TeleopPeriodic()
     flywheel.SetFlywheelVelocity(SmartDashboard::GetNumber("Start Flywheel Speed", 0));
   }
 
-  bool done = false;
-  if(xboxController.GetAButton())
-    done = flywheelController.AngleFlywheelToSpeaker();
+  if(xboxController.GetAButtonPressed())
+    anglingToSpeaker = !anglingToSpeaker;
+
+  if (anglingToSpeaker)
+    flywheelController.AngleFlywheelToSpeaker();
   else
     flywheel.MoveAnglerPercent(0);
 
   if (xboxController.GetXButton())
     flywheelController.TurnToSpeaker();
-
-  SmartDashboard::PutBoolean("Angler PID Done", done);
 
   SmartDashboard::PutNumber("Top FlyWheel RPM", flywheel.TopFlywheel.GetMeasurement());
   SmartDashboard::PutNumber("Top FlyWheel Setpoint", flywheel.TopFlywheel.m_shooterPID.GetSetpoint());

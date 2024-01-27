@@ -88,6 +88,12 @@ void FlywheelSystem::MoveAnglerPercent(double percent)
 
 bool FlywheelSystem::PIDAngler(double point)
 {
+  if (point > M_PI / 2 || point < 0)
+  {
+    FlywheelAnglingMotor.Set(0);
+    return false;
+  }
+  
   units::volt_t PID = units::volt_t{FlywheelAnglerPID.Calculate(GetAnglerEncoderReading(), point)};
   units::volt_t FF = FlywheelAnglerFF.Calculate(units::radian_t{GetAnglerEncoderReading()}, 0_rad / 1_s);
   SmartDashboard::PutNumber("Angler PID", PID.value());
