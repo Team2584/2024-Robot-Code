@@ -1,4 +1,5 @@
 #include "Robot.h"
+#include "Intake.h"
 #include "constants/FlywheelConstants.h"
 
 #ifndef FLYWHEEL_H

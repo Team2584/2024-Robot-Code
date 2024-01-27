@@ -1,6 +1,9 @@
 #include "Constants/IntakeConstants.h"
 #include "Robot.h"
 
+#ifndef INTAKE_H
+#define INTAKE_H
+
 class Intake
 {
 public:
@@ -45,3 +48,5 @@ public:
     void SetFeeding(bool value);
 
 };
+
+#endif

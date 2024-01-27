@@ -1,4 +1,3 @@
-#include "Intake.h"
 #include "FlyWheel.h"
 
 FlywheelSystem::FlywheelSystem(Intake * _m_intake)
