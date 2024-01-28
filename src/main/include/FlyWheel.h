@@ -41,13 +41,9 @@ class FlywheelSystem
         
         Intake * m_intake;
 
-        //rev::CANSparkMax *FeedMotor;
-
-        bool CurrentlyFeeding = false;
-
         FlywheelSystem(Intake * _m_intake);
 
-        void SimpleSetFlywheelMotor(double percent);
+        void SpinFlywheelPercent(double percent);
 
         void RunFeederMotor();
 
@@ -55,7 +51,7 @@ class FlywheelSystem
         
         bool SetFlywheelVelocity(double bottomVelocity, double topVelocity);
 
-        void FlywheelRing();
+        void ShootRing();
 
         double GetAnglerEncoderReading();
 

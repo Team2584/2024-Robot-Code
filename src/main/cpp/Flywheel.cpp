@@ -19,7 +19,7 @@ FlywheelSystem::FlywheelSystem(Intake * _m_intake)
  * @param percent Percent to set both motors to
  * @note Do not use this function in competition, use SetVelocity()
 */
-void FlywheelSystem::SimpleSetFlywheelMotor(double percent)
+void FlywheelSystem::SpinFlywheelPercent(double percent)
 {
   FlywheelMotor1.Set(-percent);
   FlywheelMotor2.Set(-percent);
@@ -31,11 +31,10 @@ void FlywheelSystem::SimpleSetFlywheelMotor(double percent)
 void FlywheelSystem::RunFeederMotor()
 {
   if ((m_intake->GetObjectInIntake())){
-    m_intake->SetFeeding(true);
     m_intake->SetIntakeMotorSpeed(0,60);
   }
   else {
-    m_intake->SetFeeding(false);
+    m_intake->SetIntakeMotorSpeed(0,0);
   }
 }
 
@@ -63,7 +62,7 @@ bool FlywheelSystem::SetFlywheelVelocity(double bottomVelocity, double topVeloci
 /**
  * @brief Launch Ring if Flywheel Velocities are at setpoint and there is an object in intake
 */
-void FlywheelSystem::FlywheelRing(){
+void FlywheelSystem::ShootRing(){
   /*
   if ((TopFlywheel.AtSetpoint() && BottomFlywheel.AtSetpoint())){
     m_intake->SetFeeding(true);

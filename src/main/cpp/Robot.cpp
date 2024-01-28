@@ -174,7 +174,7 @@ void Robot::TeleopPeriodic()
   }*/
 
   if(xboxController.GetRightBumper()){
-    overbumper.IntakeRing();
+    overbumper.IntakeRing(); //intake until stop
     //overbumper.PIDWristDown();
   }
   else if(xboxController.GetLeftBumper()){
@@ -182,22 +182,24 @@ void Robot::TeleopPeriodic()
     //overbumper.PIDWristUp();
   }
   else if(xboxController.GetPOV() == 0 && overbumper.GetObjectInIntake()){
-    overbumper.SetIntakeMotorSpeed(-60);
+    overbumper.SetIntakeMotorSpeed(-60); //to flywheel
     //overbumper.PIDWristUp();
   }
-  else if(xboxController.GetPOV() == 90){
-    overbumper.SetIntakeMotorSpeed(-60,60);
+  else if(xboxController.GetPOV() == 180){
+    overbumper.SetIntakeMotorSpeed(-60,60); //to passthrough
     //overbumper.PIDWristUp();
   }
   else {
-    overbumper.SetIntakeMotorSpeed(0); //REMOVE THE IF WHEN INDEXER IS ON SEPERATE MOTOR
+    overbumper.SetIntakeMotorSpeed(0); 
     //overbumper.PIDWristUp();
   }
+
+  
 
   //SmartDashboard::PutNumber("Wrist Pos", overbumper.GetWristEncoderReading());
   
   if(xboxController.GetBButtonPressed()){
-    flywheel.SimpleSetFlywheelMotor(0);
+    flywheel.SpinFlywheelPercent(0);
   }
   else if (xboxController.GetStartButtonPressed()){
     flywheel.SetFlywheelVelocity(SmartDashboard::GetNumber("Start Flywheel Speed", 0));
