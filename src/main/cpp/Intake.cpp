@@ -20,7 +20,7 @@ void Intake::SetIntakeMotorSpeed(double percent)
 void Intake::SetIntakeMotorSpeed(double OverBumperPercent, double FeederPercent)
 {
   //intakeMotor.Set(OverBumperPercent); add back when intake on robot
-  fixedIntakeMotor.Set(FeederPercent);
+  fixedIntakeMotor.Set(OverBumperPercent);
   fixedIntakeMotor2.Set(FeederPercent);
 }
 
@@ -28,6 +28,9 @@ void Intake::IntakeRing()
 {
   if(!GetObjectInIntake()){
     SetIntakeMotorSpeed(INTAKE_SPEED_IN*-1);
+  }
+  else{
+    SetIntakeMotorSpeed(0);
   }
 }
 
