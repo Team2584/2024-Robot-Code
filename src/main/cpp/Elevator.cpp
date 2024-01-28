@@ -1,0 +1,75 @@
+#include "Elevator.h"
+
+
+Elevator::Elevator()
+:   winchMotor{ELEVATOR_MOTOR_PORT, rev::CANSparkMax::MotorType::kBrushless},
+    ampMotor{AMP_MECH_PORT, rev::CANSparkMax::MotorType::kBrushless},
+    ampMechSensor{2}
+    //ElevatorPID{ELEVKP,ELEVKI,ELEVKD,ELEVKIMAX,ELEVMIN_SPEED,ELEVMAX_SPEED,ALLOWABLE_ERROR_ELEV_POS,ALLOWABLE_ERROR_ELEV_VELOCITY}
+{
+    winchMotor.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
+    winchEncoder = new rev::SparkRelativeEncoder(winchMotor.GetEncoder(rev::SparkRelativeEncoder::Type::kHallSensor));
+    winchEncoder->SetPosition(0.0);
+    winchEncoder->SetPositionConversionFactor(ELEV_CONVERSION_FACTOR);
+}
+
+/**
+ * @brief Sets the winch motor's built-in encoer reading to zero
+*/
+void Elevator::ResetElevatorEncoder()
+{
+    winchEncoder->SetPosition(0.0);
+}
+
+/**
+ * @brief Gets the winch motor's built-in encoder reading
+*/
+double Elevator::GetWinchEncoderReading()
+{
+    return winchEncoder->GetPosition();
+}
+
+/**
+ * @brief Holds the elevator at its current position (Motor on brake)
+ * @note This shouldn't be used in driver control (probably), because the feedforward+pid will hold the lift for our application
+*/
+void Elevator::StopElevator()
+{
+    MoveElevatorPercent(0);
+}
+  
+/**
+ * @brief Sets the winch motor to a percentage value
+*/
+void Elevator::MoveElevatorPercent(double percent)
+{
+    winchMotor.Set(percent);
+}
+
+/**
+ * @brief PIDs Elevator to a setpoint (in meters)
+ * @param setpoint Setpoint in meters for the elevator
+ * @note The MotionController uses "setpoint" to denote the state target, and "goal" to denote the endpoint
+*/
+bool Elevator::PIDElevator(double setpoint){
+    units::meter_t goal{setpoint};
+    m_controller.SetGoal(goal);
+
+    winchMotor.SetVoltage(units::volt_t{
+        m_controller.Calculate(units::meter_t{winchEncoder->GetPosition()})} +
+        m_feedforward.Calculate(m_controller.GetSetpoint().velocity));
+
+    return m_controller.AtGoal();
+}
+
+void Elevator::SetAmpMotor(double speed){
+    ampMotor.Set(speed);
+}
+
+bool Elevator::GetObjectInMech(){
+    return (!ampMechSensor.Get());
+}
+
+bool  Elevator::GetElevatorAtSetpoint(){
+    return m_controller.AtGoal();
+}

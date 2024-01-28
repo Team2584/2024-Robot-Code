@@ -13,17 +13,20 @@
 
 #include "Intake.h"
 #include "FlyWheel.h"
+#include "Elevator.h"
 
 AprilTagSwerve swerveDrive{};
 XboxController xboxController{0};
 XboxController xboxController2{1};
 Intake overbumper{};
 FlywheelSystem flywheel{&overbumper};
+Elevator ampmech{};
 
 SwerveDriveAutonomousController swerveAutoController{&swerveDrive};
 AutonomousShootingController flywheelController{&swerveAutoController, &flywheel};
 
 bool anglingToSpeaker = false;
+bool elevPos = false;
 
 
 void Robot::RobotInit()
@@ -185,8 +188,9 @@ void Robot::TeleopPeriodic()
     overbumper.SetIntakeMotorSpeed(-60); //to flywheel
     //overbumper.PIDWristUp();
   }
-  else if(xboxController.GetPOV() == 180){
+  else if(xboxController.GetPOV() == 180 && !ampmech.GetObjectInMech()){
     overbumper.SetIntakeMotorSpeed(-60,60); //to passthrough
+    ampmech.SetAmpMotor(60);
     //overbumper.PIDWristUp();
   }
   else {
@@ -194,7 +198,36 @@ void Robot::TeleopPeriodic()
     //overbumper.PIDWristUp();
   }
 
-  
+  if (xboxController.GetPOV() == 90){
+    elevPos = !elevPos;
+  }
+
+  /*
+  //This code if for when we want to make sure the object is fully in the mech before raising elevator
+  //Not great for testing
+    if (xboxController.GetPOV() == 90){
+
+      if(!elevPos){
+        if(ampmech.GetObjectInMech()){
+          elevPos = !elevPos;
+        }
+      }
+      else{
+        elevPos = !elevPos;
+      } 
+  }
+  */
+
+  if(elevPos){
+    ampmech.PIDElevator(ELEV_HIGH);
+  }
+  else {
+    ampmech.PIDElevator(ELEV_LOW);
+  }
+
+  if(elevPos && ampmech.GetElevatorAtSetpoint() && xboxController.GetPOV() == 270){
+    ampmech.SetAmpMotor(60);
+  }
 
   //SmartDashboard::PutNumber("Wrist Pos", overbumper.GetWristEncoderReading());
   
