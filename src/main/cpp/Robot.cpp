@@ -5,9 +5,11 @@
 #include "Robot.h"
 #include "Constants/TeleopConstants.h"
 #include "Constants/IntakeConstants.h"
+#include "Constants/FlywheelConstants.h"
 
 #include "AprilTagBasedSwerve.h"
 #include "Autonomous Functionality/SwerveDriveAutoControl.h"
+#include "Autonomous Functionality/SpeakerFunctionality.h"
 
 #include "Intake.h"
 #include "FlyWheel.h"
@@ -19,6 +21,10 @@ Intake overbumper{};
 FlywheelSystem flywheel{&overbumper};
 
 SwerveDriveAutonomousController swerveAutoController{&swerveDrive};
+AutonomousShootingController flywheelController{&swerveAutoController, &flywheel};
+
+bool anglingToSpeaker = false;
+
 
 void Robot::RobotInit()
 {
@@ -26,6 +32,9 @@ void Robot::RobotInit()
   m_chooser.AddOption(kAutoNameCustom, kAutoNameCustom);
   frc::SmartDashboard::PutData("Auto Modes", &m_chooser);
   SmartDashboard::PutNumber("Start Flywheel Speed", 0);
+  SmartDashboard::PutNumber("Flywheel kP", 0.005);
+  SmartDashboard::PutNumber("Angler Setpoint", M_PI / 2);
+  flywheel.FlywheelAnglerPID.SetupConstantTuning("Angler");
 }
 
 
@@ -83,6 +92,8 @@ void Robot::TeleopInit()
 {
   swerveDrive.ResetOdometry(Pose2d(0_m, 0_m, Rotation2d(180_deg)));
   swerveDrive.ResetTagOdometry(Pose2d(0_m, 0_m, Rotation2d(180_deg)));
+  
+  flywheel.FlywheelAnglerPID.UpdateConstantTuning("Angler");
 }
 
 void Robot::TeleopPeriodic()
@@ -97,7 +108,7 @@ void Robot::TeleopPeriodic()
   SmartDashboard::PutNumber("FR Module Heading", swerveDrive.FRModule.GetMagEncoderValue());
   SmartDashboard::PutNumber("BL Module Heading", swerveDrive.BLModule.GetMagEncoderValue());
   SmartDashboard::PutNumber("BR Module Heading", swerveDrive.BRModule.GetMagEncoderValue());
-
+  
   SmartDashboard::PutNumber("Odometry X Position", swerveDrive.GetOdometryPose().X().value());
   SmartDashboard::PutNumber("Odometry Y Position", swerveDrive.GetOdometryPose().Y().value());
   SmartDashboard::PutNumber("Odometry Heading", swerveDrive.GetOdometryPose().Rotation().Degrees().value());
@@ -106,7 +117,7 @@ void Robot::TeleopPeriodic()
   SmartDashboard::PutNumber("Tag Odometry X", swerveDrive.GetTagOdometryPose().X().value());
   SmartDashboard::PutNumber("Tag Odometry Y", swerveDrive.GetTagOdometryPose().Y().value());
   SmartDashboard::PutNumber("Tag Odometry Heading", swerveDrive.GetTagOdometryPose().Rotation().Degrees().value());
-
+  
   /* DRIVER INPUT AND CONTROL */
 
   // Find controller input (*-1 converts values to fwd/left/counterclockwise positive)
@@ -114,6 +125,8 @@ void Robot::TeleopPeriodic()
   leftJoystickY = xboxController.GetLeftY() * -1;
   leftJoystickX = xboxController.GetLeftX() * -1;
   rightJoystickX = xboxController.GetRightX() * -1;
+
+  SmartDashboard::PutNumber("right joystick X", rightJoystickX);
 
   // Remove ghost movement by making sure joystick is moved a certain amount
   double leftJoystickDistance = sqrt(pow(leftJoystickX, 2.0) + pow(leftJoystickY, 2.0));
@@ -143,7 +156,7 @@ void Robot::TeleopPeriodic()
   swerveDrive.DriveSwervePercent(fwdDriveSpeed, strafeDriveSpeed, turnSpeed);
 
   // Drive to 0,0 for testing
-  if (xboxController.GetAButtonPressed())
+  /*if (xboxController.GetAButtonPressed())
     swerveAutoController.BeginDriveToPose();
   if (xboxController.GetAButton())
     swerveAutoController.DriveToPose(Pose2d(-0.5_m,0_m,Rotation2d(90_deg)), PoseEstimationType::TagBased);
@@ -158,39 +171,56 @@ void Robot::TeleopPeriodic()
   if (xboxController.GetBButton())
   {
     swerveAutoController.FollowTrajectory(PoseEstimationType::PureOdometry);
-  }
+  }*/
 
   if(xboxController.GetRightBumper()){
-    overbumper.IntakeRing();
-    overbumper.PIDWristDown();
+    overbumper.IntakeRing(); //intake until stop
+    //overbumper.PIDWristDown();
   }
   else if(xboxController.GetLeftBumper()){
     overbumper.OuttakeRing();
-    overbumper.PIDWristUp();
+    //overbumper.PIDWristUp();
   }
-  else if(!overbumper.GetFeeding()){
-    overbumper.SetIntakeMotorSpeed(0); //REMOVE THE IF WHEN INDEXER IS ON SEPERATE MOTOR
-    overbumper.PIDWristUp();
+  else if(xboxController.GetPOV() == 0 && overbumper.GetObjectInIntake()){
+    overbumper.SetIntakeMotorSpeed(-60); //to flywheel
+    //overbumper.PIDWristUp();
+  }
+  else if(xboxController.GetPOV() == 180){
+    overbumper.SetIntakeMotorSpeed(-60,60); //to passthrough
+    //overbumper.PIDWristUp();
+  }
+  else {
+    overbumper.SetIntakeMotorSpeed(0); 
+    //overbumper.PIDWristUp();
   }
 
-  SmartDashboard::PutNumber("Wrist Pos", overbumper.GetWristEncoderReading());
   
-  if(xboxController.GetXButtonPressed()){
-    flywheel.SimpleSetFlywheelMotor(0);
-  }
-  else if (xboxController.GetYButtonPressed()){
-    flywheel.SetFlywheelVelocity(2000);
-  }
-  else if (xboxController.GetBackButton()){
-    flywheel.FlywheelRing();
+
+  //SmartDashboard::PutNumber("Wrist Pos", overbumper.GetWristEncoderReading());
+  
+  if(xboxController.GetBButtonPressed()){
+    flywheel.SpinFlywheelPercent(0);
   }
   else if (xboxController.GetStartButtonPressed()){
     flywheel.SetFlywheelVelocity(SmartDashboard::GetNumber("Start Flywheel Speed", 0));
   }
 
+  if(xboxController.GetAButtonPressed())
+    anglingToSpeaker = !anglingToSpeaker;
+
+  if (anglingToSpeaker)
+    flywheelController.AngleFlywheelToSpeaker();
+  else if (xboxController.GetYButton())
+    flywheel.PIDAngler(SmartDashboard::GetNumber("Angler Setpoint", M_PI / 2));
+  else
+    flywheel.MoveAnglerPercent(0);
+
+  if (xboxController.GetXButton())
+    flywheelController.TurnToSpeaker();
+
   SmartDashboard::PutNumber("Top FlyWheel RPM", flywheel.TopFlywheel.GetMeasurement());
   SmartDashboard::PutNumber("Top FlyWheel Setpoint", flywheel.TopFlywheel.m_shooterPID.GetSetpoint());
-    
+  SmartDashboard::PutNumber("Current Angler", flywheel.GetAnglerEncoderReading());
 }
 
 void Robot::DisabledInit() {}

@@ -26,10 +26,10 @@
 #define PIGEON_IMU_PORT 6
 
 // Find offsets with bevel gears on the right side of the drive train
-#define FL_WHEEL_OFFSET 0.121462
-#define FR_WHEEL_OFFSET 0.229792
-#define BR_WHEEL_OFFSET 0.717629
-#define BL_WHEEL_OFFSET 0.007819
+#define FL_WHEEL_OFFSET 0.8486 //0.121462
+#define FR_WHEEL_OFFSET 0.543 //0.229792
+#define BL_WHEEL_OFFSET 0.09139 //0.007819
+#define BR_WHEEL_OFFSET 0.62 //0.717629
 
 // Assuming a rectangular drive train (input distance between center of wheels)
 #define DRIVE_LENGTH 0.5906_m 
@@ -59,22 +59,16 @@
                                                                             
 */
 
-// List of april tag's IDs and their position on the field in comparison to origin
-const std::vector<frc::AprilTag> fieldTagLayout = {
-    {0, Pose3d(1_m, 0_m, 1.15_m, Rotation3d(0_deg, 0_deg, 180_deg))},
-    {1, Pose3d(5_m, 5_m, 5_m, Rotation3d())}};
-const AprilTagFieldLayout aprilTags = AprilTagFieldLayout(fieldTagLayout, 54_ft, 27_ft); // frc field is 54 ft by 27 ft
-
 #define CAMERA_ONE_NAME "photonvision"
-#define CAMERA_ONE_X 16_in // Distance in meters from camera to center of robot forward/backward, forward positive
-#define CAMERA_ONE_Y -0.6_in // Distance in meters from camera to center of robot left/right, left positive
-#define CAMERA_ONE_Z 37_in // Camera's distance from ground in meters
+#define CAMERA_ONE_X 11_in // Distance in meters from camera to center of robot forward/backward, forward positive
+#define CAMERA_ONE_Y 12_in // Distance in meters from camera to center of robot left/right, left positive
+#define CAMERA_ONE_Z 24_in // Camera's distance from ground in meters
 #define CAMERA_ONE_X_ROTATION 0_deg // Camera's Rotation around robot's X axis (tilted up/down)
 #define CAMERA_ONE_Y_ROTATION 0_deg // Camera's Rotation around robot's Y axis (rotated clockwise/counterclocwise)
 #define CAMERA_ONE_Z_ROTATION 0_deg // Camera's Rotation around robot's Z axis (tilted left/right)
 
-#define APRILTAG_CONFIDENCE_X 0.5
-#define APRILTAG_CONFIDENCE_Y 0.5
+#define APRILTAG_CONFIDENCE_X 0.05
+#define APRILTAG_CONFIDENCE_Y 0.05
 #define APRILTAG_CONFIDENCE_ROTATION 5.0
 
 /*

@@ -1,13 +1,17 @@
-#include "Intake.h"
 #include "FlyWheel.h"
 
 FlywheelSystem::FlywheelSystem(Intake * _m_intake)
   : FlywheelMotor1{FLYWHEEL_MOTOR_1, rev::CANSparkFlex::MotorType::kBrushless},
     FlywheelMotor2{FLYWHEEL_MOTOR_2, rev::CANSparkFlex::MotorType::kBrushless},
+    FlywheelAnglingMotor{FLYWHEEL_ANGLING_MOTOR, rev::CANSparkFlex::MotorType::kBrushless},
     TopFlywheel{FlywheelSpeedController(&FlywheelMotor1)},
     BottomFlywheel{FlywheelSpeedController(&FlywheelMotor2)},
+    FlywheelAnglerPID{ANGLER_KP, ANGLER_KI, ANGLER_KD, ANGLER_KI_MAX, 
+                     ANGLER_MIN_SPEED, ANGLER_MAX_SPEED, ANGLER_TOLERANCE, ANGLER_VELOCITY_TOLERANCE},
+    FlywheelAnglerFF{ANGLER_KS, ANGLER_KG, ANGLER_KV},
     m_intake{_m_intake}
 {
+    magEncoder = new rev::SparkAbsoluteEncoder(FlywheelAnglingMotor.GetAbsoluteEncoder(rev::SparkAbsoluteEncoder::Type::kDutyCycle));
 }
 
 /**
@@ -15,10 +19,10 @@ FlywheelSystem::FlywheelSystem(Intake * _m_intake)
  * @param percent Percent to set both motors to
  * @note Do not use this function in competition, use SetVelocity()
 */
-void FlywheelSystem::SimpleSetFlywheelMotor(double percent)
+void FlywheelSystem::SpinFlywheelPercent(double percent)
 {
-  FlywheelMotor1.Set(percent);
-  FlywheelMotor2.Set(percent);
+  FlywheelMotor1.Set(-percent);
+  FlywheelMotor2.Set(-percent);
 }
 
 /**
@@ -27,11 +31,10 @@ void FlywheelSystem::SimpleSetFlywheelMotor(double percent)
 void FlywheelSystem::RunFeederMotor()
 {
   if ((m_intake->GetObjectInIntake())){
-    m_intake->SetFeeding(true);
     m_intake->SetIntakeMotorSpeed(0,60);
   }
   else {
-    m_intake->SetFeeding(false);
+    m_intake->SetIntakeMotorSpeed(0,0);
   }
 }
 
@@ -51,23 +54,63 @@ bool FlywheelSystem::SetFlywheelVelocity(double velocity){
  * @returns True if both flywheels are at Setpoint
 */
 bool FlywheelSystem::SetFlywheelVelocity(double bottomVelocity, double topVelocity){
-  TopFlywheel.SpinFlyWheelRPM(topVelocity);
-  BottomFlywheel.SpinFlyWheelRPM(bottomVelocity);
+  TopFlywheel.SpinFlyWheelRPM(-topVelocity);
+  BottomFlywheel.SpinFlyWheelRPM(-bottomVelocity);
   return (TopFlywheel.AtSetpoint() && BottomFlywheel.AtSetpoint());
 }
 
 /**
  * @brief Launch Ring if Flywheel Velocities are at setpoint and there is an object in intake
 */
-void FlywheelSystem::FlywheelRing(){
-  if ((TopFlywheel.AtSetpoint() && BottomFlywheel.AtSetpoint() && m_intake->GetObjectInIntake())){
+void FlywheelSystem::ShootRing(){
+  /*
+  if ((TopFlywheel.AtSetpoint() && BottomFlywheel.AtSetpoint())){
     m_intake->SetFeeding(true);
     m_intake->SetIntakeMotorSpeed(0,60);
   }
   else {
     m_intake->SetFeeding(false);
   }
+  */
+ 
 }
+
+double FlywheelSystem::GetAnglerEncoderReading()
+{
+  double reading = magEncoder->GetPosition();
+  if (reading > 0.5)
+    reading -= 1;
+  return reading * M_PI * 2;
+}
+
+void FlywheelSystem::MoveAnglerPercent(double percent)
+{
+  FlywheelAnglingMotor.Set(percent);
+}
+
+bool FlywheelSystem::PIDAngler(double point)
+{
+  if (point > M_PI / 2 || point < 0)
+  {
+    FlywheelAnglingMotor.Set(0);
+    return false;
+  }
+
+  units::volt_t PID = units::volt_t{FlywheelAnglerPID.Calculate(GetAnglerEncoderReading(), point)};
+  units::volt_t FF = FlywheelAnglerFF.Calculate(units::radian_t{GetAnglerEncoderReading()}, 0_rad / 1_s);
+  SmartDashboard::PutNumber("Angler PID", PID.value());
+  SmartDashboard::PutNumber("Angler FF", FF.value());
+  FlywheelAnglingMotor.SetVoltage(PID + FF);
+  return FlywheelAnglerPID.PIDFinished();
+}
+
+
+
+
+
+
+
+
 
 /**
  * @brief Single-Motor Flywheel Object Constructor

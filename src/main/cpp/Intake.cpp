@@ -3,7 +3,8 @@
 Intake::Intake()
   : intakeMotor{INTAKE_MOTOR_PORT, rev::CANSparkMax::MotorType::kBrushless}, 
     wristMotor{WRIST_MOTOR_PORT, rev::CANSparkMax::MotorType::kBrushless},
-    fixedIntakeMotor{FIXED_INTAKE_MOTOR_PORT, rev::CANSparkMax::MotorType::kBrushless},
+    fixedIntakeMotor{FIXED_INTAKE_MOTOR_PORT, rev::CANSparkMax::MotorType::kBrushed},
+    fixedIntakeMotor2{FIXED_INTAKE_MOTOR_PORT_2, rev::CANSparkMax::MotorType::kBrushed},
     m_rangeFinder{1},
     m_WristPID{WRISTKP,WRISTKI,WRISTKD,WRISTKIMAX,WRISTMIN_SPEED,WRISTMAX_SPEED,WRIST_POS_ERROR,WRIST_VELOCITY_ERROR}
 {
@@ -18,8 +19,9 @@ void Intake::SetIntakeMotorSpeed(double percent)
 
 void Intake::SetIntakeMotorSpeed(double OverBumperPercent, double FeederPercent)
 {
-  intakeMotor.Set(OverBumperPercent);
-  fixedIntakeMotor.Set(FeederPercent);
+  //intakeMotor.Set(OverBumperPercent); add back when intake on robot
+  fixedIntakeMotor.Set(OverBumperPercent);
+  fixedIntakeMotor2.Set(FeederPercent);
 }
 
 void Intake::IntakeRing()
@@ -27,11 +29,19 @@ void Intake::IntakeRing()
   if(!GetObjectInIntake()){
     SetIntakeMotorSpeed(INTAKE_SPEED_IN*-1);
   }
+  else{
+    SetIntakeMotorSpeed(0);
+  }
 }
 
 void Intake::OuttakeRing()
 {
   SetIntakeMotorSpeed(INTAKE_SPEED_OUT);
+}
+
+void Intake::ShootRing()
+{
+  SetIntakeMotorSpeed(INTAKE_SPEED_IN);
 }
 
 double Intake::GetWristEncoderReading()

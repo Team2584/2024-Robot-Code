@@ -8,7 +8,7 @@ AprilTagSwerve::AprilTagSwerve()
       tagOdometry{kinematics, Rotation2d(units::degree_t{GetIMUHeading()}), GetSwerveModulePositions(), Pose2d()},
       robotToCam{frc::Translation3d{CAMERA_ONE_X, CAMERA_ONE_Y, CAMERA_ONE_Z}, frc::Rotation3d{CAMERA_ONE_X_ROTATION, CAMERA_ONE_Y_ROTATION, CAMERA_ONE_Z_ROTATION}},
       camera{CAMERA_ONE_NAME},
-      poseEstimator{aprilTags, photonlib::CLOSEST_TO_REFERENCE_POSE, photonlib::PhotonCamera(CAMERA_ONE_NAME), robotToCam}
+      poseEstimator{APRIL_TAGS, photon::LOWEST_AMBIGUITY, photon::PhotonCamera(CAMERA_ONE_NAME), robotToCam}
 {
     tagOdometry.SetVisionMeasurementStdDevs(wpi::array(APRILTAG_CONFIDENCE_X, APRILTAG_CONFIDENCE_Y, APRILTAG_CONFIDENCE_ROTATION));
 }
@@ -52,7 +52,7 @@ void AprilTagSwerve::AddVisionMeasurement(Pose2d measurement, units::second_t ti
  */
 bool AprilTagSwerve::TagInView()
 {
-    photonlib::PhotonPipelineResult result = camera.GetLatestResult();
+    photon::PhotonPipelineResult result = camera.GetLatestResult();
     return result.HasTargets();
 }
 
@@ -61,7 +61,7 @@ bool AprilTagSwerve::TagInView()
  */
 Transform3d AprilTagSwerve::GetTagReading()
 {
-    photonlib::PhotonPipelineResult result = camera.GetLatestResult();
+    photon::PhotonPipelineResult result = camera.GetLatestResult();
     if (result.HasTargets())
         return result.GetBestTarget().GetBestCameraToTarget();
     else
@@ -87,10 +87,10 @@ void AprilTagSwerve::UpdateTagOdometry()
 
     // Add april tag data
     poseEstimator.SetReferencePose(prevEstimatedPose);
-    optional<photonlib::EstimatedRobotPose> possibleResult = poseEstimator.Update();
+    optional<photon::EstimatedRobotPose> possibleResult = poseEstimator.Update();
     if (possibleResult.has_value()) 
     {
-        photonlib::EstimatedRobotPose result = possibleResult.value();
+        photon::EstimatedRobotPose result = possibleResult.value();
         AddVisionMeasurement(result.estimatedPose.ToPose2d(), result.timestamp);
         prevEstimatedPose = result.estimatedPose;
     } 

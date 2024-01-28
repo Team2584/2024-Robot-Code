@@ -1,5 +1,9 @@
 #include "Robot.h"
+#include "Intake.h"
 #include "constants/FlywheelConstants.h"
+
+#ifndef FLYWHEEL_H
+#define FLYWHEEL_H
 
 class FlywheelSpeedController
 {
@@ -26,15 +30,20 @@ class FlywheelSystem
     public:
         rev::CANSparkFlex FlywheelMotor1;
         rev::CANSparkFlex FlywheelMotor2;
+        rev::CANSparkMax FlywheelAnglingMotor;
+
+        rev::SparkAbsoluteEncoder *magEncoder;
 
         FlywheelSpeedController TopFlywheel;
         FlywheelSpeedController BottomFlywheel;
-
+        PID FlywheelAnglerPID;
+        ArmFeedforward FlywheelAnglerFF;
+        
         Intake * m_intake;
 
         FlywheelSystem(Intake * _m_intake);
 
-        void SimpleSetFlywheelMotor(double percent);
+        void SpinFlywheelPercent(double percent);
 
         void RunFeederMotor();
 
@@ -42,5 +51,13 @@ class FlywheelSystem
         
         bool SetFlywheelVelocity(double bottomVelocity, double topVelocity);
 
-        void FlywheelRing();
+        void ShootRing();
+
+        double GetAnglerEncoderReading();
+
+        void MoveAnglerPercent(double percent);
+
+        bool PIDAngler(double point);
 };
+
+#endif

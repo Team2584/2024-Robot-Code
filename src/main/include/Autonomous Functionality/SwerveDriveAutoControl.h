@@ -1,6 +1,11 @@
 #include "Robot.h"
 #include "AprilTagBasedSwerve.h"
 #include "Constants/SwerveConstants.h"
+#include "Constants/FieldConstants.h"
+
+#ifndef SWERVE_CONTROLLER_H
+#define SWERVE_CONTROLLER_H
+
 
 /**
  * This class inherits from the base SwerveDrive class, but adds the functionality of calculating odometry using the photonvision library, a camera, and april tags
@@ -24,6 +29,7 @@ private:
     void ResetPIDLoop();
 
 public:
+    Pose2d GetTagPose();
     void BeginDriveToPose();
     bool DriveToPose(Pose2d target, PoseEstimationType poseEstimationType);
     void ResetTrajectoryQueue();
@@ -31,3 +37,5 @@ public:
     void BeginNextTrajectory();
     bool FollowTrajectory(PoseEstimationType poseEstimationType);
 };
+
+#endif
