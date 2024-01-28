@@ -4,7 +4,10 @@
 Elevator::Elevator()
 :   winchMotor{ELEVATOR_MOTOR_PORT, rev::CANSparkMax::MotorType::kBrushless},
     ampMotor{AMP_MECH_PORT, rev::CANSparkMax::MotorType::kBrushless},
-    ampMechSensor{2}
+    ampMechSensor{2},
+    m_constraints{e_kMaxVelocity, e_kMaxAcceleration},
+    m_controller{e_kP, e_kI, e_kD, m_constraints},
+    m_feedforward{e_kS, e_kG, e_kV}
     //ElevatorPID{ELEVKP,ELEVKI,ELEVKD,ELEVKIMAX,ELEVMIN_SPEED,ELEVMAX_SPEED,ALLOWABLE_ERROR_ELEV_POS,ALLOWABLE_ERROR_ELEV_VELOCITY}
 {
     winchMotor.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
@@ -62,8 +65,8 @@ bool Elevator::PIDElevator(double setpoint){
     return m_controller.AtGoal();
 }
 
-void Elevator::SetAmpMotor(double speed){
-    ampMotor.Set(speed);
+void Elevator::SetAmpMotorPercent(double percent){
+    ampMotor.Set(percent);
 }
 
 bool Elevator::GetObjectInMech(){

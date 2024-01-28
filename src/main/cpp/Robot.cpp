@@ -190,7 +190,7 @@ void Robot::TeleopPeriodic()
   }
   else if(xboxController.GetPOV() == 180 && !ampmech.GetObjectInMech()){
     overbumper.SetIntakeMotorSpeed(-60,60); //to passthrough
-    ampmech.SetAmpMotor(60);
+    ampmech.SetAmpMotorPercent(60);
     //overbumper.PIDWristUp();
   }
   else {
@@ -226,7 +226,7 @@ void Robot::TeleopPeriodic()
   }
 
   if(elevPos && ampmech.GetElevatorAtSetpoint() && xboxController.GetPOV() == 270){
-    ampmech.SetAmpMotor(60);
+    ampmech.SetAmpMotorPercent(60);
   }
 
   //SmartDashboard::PutNumber("Wrist Pos", overbumper.GetWristEncoderReading());

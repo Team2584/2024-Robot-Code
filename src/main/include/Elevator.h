@@ -16,15 +16,15 @@ class Elevator
     rev::CANSparkMax ampMotor;
     frc::DigitalInput ampMechSensor;
 
-    frc::TrapezoidProfile<units::meters>::Constraints m_constraints{e_kMaxVelocity, e_kMaxAcceleration};
-    frc::ProfiledPIDController<units::meters> m_controller{e_kP, e_kI, e_kD, m_constraints};
-    frc::ElevatorFeedforward m_feedforward{e_kS, e_kG, e_kV};
+    frc::TrapezoidProfile<units::meters>::Constraints m_constraints;
+    frc::ProfiledPIDController<units::meters> m_controller;
+    frc::ElevatorFeedforward m_feedforward;
 
     Elevator();
 
     void ResetElevatorEncoder();
 
-    void SetAmpMotor(double speed);
+    void SetAmpMotorPercent(double percent);
 
     double GetWinchEncoderReading();
 
