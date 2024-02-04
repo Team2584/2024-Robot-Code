@@ -156,4 +156,12 @@ public:
         frc::SmartDashboard::GetNumber(pidName + " velocity tolerance", pidController.GetVelocityTolerance())
         );
     }
+    double GetPIDSetpoint(){
+        return pidController.GetSetpoint();
+    }
+
+    double GetPIDAllowedError(){
+        return pidController.GetPositionTolerance();
+    }
+
 };

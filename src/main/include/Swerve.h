@@ -56,6 +56,7 @@ class SwerveDrive
         SwerveDrive();
 
         double GetIMUHeading();
+        
         void ResetHeading();
         wpi::array<SwerveModulePosition, 4> GetSwerveModulePositions();
         void ResetOdometry();
@@ -69,6 +70,10 @@ class SwerveDrive
         void DriveSwervePercentNonFieldOriented(double STRAFE_Drive_Speed, double FWD_Drive_Speed, double Turn_Speed);
         void DriveSwervePercent(double STRAFE_Drive_Speed, double FWD_Drive_Speed, double Turn_Speed);
         void DriveSwerveMetersAndRadians(double STRAFE_Drive_Speed, double FWD_Drive_Speed, double Turn_Speed);
+        double GetIMURoll();
+        double GetRollSpeed();
+
 };
+
 
 #endif // SWERVE_H

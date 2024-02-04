@@ -14,6 +14,7 @@
 #include "Intake.h"
 #include "FlyWheel.h"
 #include "Elevator.h"
+#include "Climb.h"
 
 AprilTagSwerve swerveDrive{};
 XboxController xboxController{0};
@@ -21,6 +22,7 @@ XboxController xboxController2{1};
 Intake overbumper{};
 FlywheelSystem flywheel{&overbumper};
 Elevator ampmech{};
+Climb hang{&swerveDrive};
 
 SwerveDriveAutonomousController swerveAutoController{&swerveDrive};
 AutonomousShootingController flywheelController{&swerveAutoController, &flywheel};
@@ -97,6 +99,7 @@ void Robot::TeleopInit()
   swerveDrive.ResetTagOdometry(Pose2d(0_m, 0_m, Rotation2d(180_deg)));
   
   flywheel.FlywheelAnglerPID.UpdateConstantTuning("Angler");
+  //hang.ZeroClimb();
 }
 
 void Robot::TeleopPeriodic()
