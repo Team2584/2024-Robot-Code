@@ -5,8 +5,6 @@ class Climb {
 
     public:
 
-    bool climbZeroed = false;
-
     rev::CANSparkMax leftClimbMotor, rightClimbMotor;
     rev::SparkRelativeEncoder leftEncoder, rightEncoder;
     AprilTagSwerve* robotSwerveDrive;
@@ -18,7 +16,7 @@ class Climb {
 
     Climb(AprilTagSwerve* _swerveDrive);
 
-    void ZeroClimb();
+    bool ZeroClimb();
     void ExtendClimb();
     void RetractClimb();
     void HoldClimb();

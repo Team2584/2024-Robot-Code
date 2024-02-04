@@ -18,9 +18,11 @@ Climb::Climb(AprilTagSwerve* _swerveDrive)
     rightClimbMotor.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
 }
 
-//Bad implementation, fix later (call at begninning of teleopinit for testing once motor direction is found), 
-//forces motors to move until climb zero is hit
-void Climb::ZeroClimb(){
+/**
+ * @brief Brings the two climb motors down until they hit thier individual sensors. 
+ * @note This MUST be called AND fully finished before non-roll Climb PID functions can be used 
+*/
+bool Climb::ZeroClimb(){
     if(!leftStop.Get() && !rightStop.Get()){
         if(!leftStop.Get()){
             leftClimbMotor.Set(CLIMB_PCT_DOWN*-1);
@@ -34,10 +36,13 @@ void Climb::ZeroClimb(){
         else{
             rightClimbMotor.Disable();
         }
+        return false;
     }
-    leftEncoder.SetPosition(0);
-    rightEncoder.SetPosition(0);
-    climbZeroed = true;
+    else {
+        leftEncoder.SetPosition(0);
+        rightEncoder.SetPosition(0);
+        return true;
+    }
 }
 
 /**
@@ -58,7 +63,7 @@ void Climb::RetractClimb(){
 
 /**
  * @brief Stop Climb in Place (Disables motor until next .Set)
- * Disables so there aren't any issues end of match
+ * @note Disables so there aren't any issues end of match
 */
 void Climb::HoldClimb(){
     leftClimbMotor.Disable();
@@ -72,7 +77,7 @@ void Climb::HoldClimb(){
  * @return True if both arms are at setpoint
 */
 bool Climb::ClimbPID(double setpoint){
-    if(climbZeroed){
+    if(!ZeroClimb()){
         leftClimbMotor.Set(leftPID.Calculate(leftEncoder.GetPosition(), setpoint));
         rightClimbMotor.Set(rightPID.Calculate(rightEncoder.GetPosition(), setpoint));
         return (leftPID.PIDFinished() && rightPID.PIDFinished());
@@ -111,17 +116,13 @@ bool Climb::BalanceWhileClimbing(){
 
 
 //PID climb to point while maintining level. 
-///THIS FUNCTION IS NOT COMPLETE!!!!
-///The logic for the arm PIDs isn't correct, as they won't nessesarily be aiming for the same point, 
-//just whatever point makes the conditions in GetClimbAtPos() true
-//this is a problem for later once everything else is tested :)
-//maybe just make 1 arm be the min value?
+//The logic is probably correct, not 100% sure
 /**
  * @brief PID Climb to a set point while keeping the robot level
  * @param setpoint The setpoint in motor rotations
 */
 bool Climb::BalanceWhileClimbing(double setpoint){
-    if(climbZeroed){
+    if(!ZeroClimb()){
         double rotation = robotSwerveDrive->GetIMURoll();
         double error = rotation < 180 ? rotation : 360 - rotation;
 
@@ -145,7 +146,7 @@ bool Climb::BalanceWhileClimbing(double setpoint){
 
 /**
  * @brief Check if the Climb PID is Finished
- * @return True if the robot is ~horizontal and the most extended arm is at setpoint
+ * @return True if the robot's most extended arm is at setpoint 
 */
 bool Climb::GetClimbAtPos(){
     
@@ -153,17 +154,18 @@ bool Climb::GetClimbAtPos(){
     bool isAtPos =  abs(lowPos - rightPID.GetPIDSetpoint()) < rightPID.GetPIDAllowedError(); //if most extended arm ~= the set pos
     return(isAtPos); 
     
-    /*
-    //this code is similar but checks if the avg position of the arms is at the setpoint. may or may not be useful
-    double avgPos = (leftEncoder.GetPosition() + rightEncoder.GetPosition())/2.0; 
-    bool isAtPos =  abs(avgPos - rightPID.GetPIDSetpoint()) < rightPID.GetPIDAllowedError(); //if the arm's average pos ~= the set pos
-    */
 }
 
+/**
+ * @return If the robot is balanced
+*/
 bool Climb::GetClimbBalanced(){
     return rollPID.PIDFinished();
 }
 
+/**
+ * @return If the robot is balanced and the robot is climbed enough (probably not very useful)
+*/
 bool Climb::GetClimbDone(){
     return (GetClimbBalanced() && GetClimbAtPos());
 }

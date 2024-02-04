@@ -198,15 +198,15 @@ void Robot::TeleopPeriodic()
     overbumper.PIDWristDown();
   }
   else if(xboxController.GetLeftBumper()){
-    overbumper.OuttakeRing();
+    overbumper.OuttakeRing(); //outtake from main system
     overbumper.PIDWristUp();
   }
   else if(xboxController.GetPOV() == 0 && overbumper.GetObjectInIntake()){
-    overbumper.SetIntakeMotorSpeed(-60); //to flywheel
+    overbumper.SetIntakeMotorSpeed(-60); //to flywheel (this shoots)
     overbumper.PIDWristUp();
   }
   else if(xboxController.GetPOV() == 180 && !ampmech.GetObjectInMech()){
-    overbumper.SetIntakeMotorSpeed(-60,60); //to passthrough
+    overbumper.SetIntakeMotorSpeed(-60,60); //to elevator
     ampmech.SetAmpMotorPercent(60);
     overbumper.PIDWristUp();
   }
@@ -226,11 +226,12 @@ void Robot::TeleopPeriodic()
   //For testing - probably don't want to use this enum in final code and for sure not in this way
   //We will need to add an (object in elevator) check
   if (xboxController.GetPOV() == 90){
-    elevSetHeight = static_cast<Elevator::ElevatorSetting>((elevSetHeight + 1) % 3);
+    //This line of code cycles to the next value in a 3-value Enumerator (of elevator positions), or cycles back to the first if it's currently at the third
+    elevSetHeight = static_cast<Elevator::ElevatorSetting>((elevSetHeight + 1) % 3); 
   }
   ampmech.MoveToHeight(elevSetHeight);
 
-
+  //Check if the elevator is at the correct point before running the amp feed motor
   if((elevSetHeight == Elevator::AMP || elevSetHeight == Elevator::TRAP) && ampmech.GetElevatorAtSetpoint() && xboxController.GetPOV() == 270){
     ampmech.SetAmpMotorPercent(60);
   }
