@@ -99,7 +99,7 @@ void Robot::TeleopInit()
   swerveDrive.ResetTagOdometry(Pose2d(0_m, 0_m, Rotation2d(180_deg)));
   
   flywheel.FlywheelAnglerPID.UpdateConstantTuning("Angler");
-  //hang.ZeroClimb();
+  
 }
 
 void Robot::TeleopPeriodic()
@@ -235,8 +235,7 @@ void Robot::TeleopPeriodic()
     ampmech.SetAmpMotorPercent(60);
   }
   
-  /*
-                                                              
+  /*                                                      
   ,------.,--.                    ,--.                   ,--. 
   |  .---'|  |,--. ,--.,--.   ,--.|  ,---.  ,---.  ,---. |  | 
   |  `--, |  | \  '  / |  |.'.|  ||  .-.  || .-. :| .-. :|  | 
@@ -270,6 +269,13 @@ void Robot::TeleopPeriodic()
   |  |    |  |,--.|        || .-. ' 
   '  '--'\|  ||  ||  |  |  || `-' | 
    `-----'`--'`--'`--`--`--' `---'  
+  */
+
+  //ONLY uncomment this when motors are found to be going the right directions and limits work properly
+  /*
+  if(!hang.climbZeroed){
+    hang.ZeroClimb();
+  }
   */
 
   if(xboxController2.GetAButton()){

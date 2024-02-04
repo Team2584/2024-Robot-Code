@@ -21,7 +21,7 @@ Climb::Climb(AprilTagSwerve* _swerveDrive)
 //Bad implementation, fix later (call at begninning of teleopinit for testing once motor direction is found), 
 //forces motors to move until climb zero is hit
 void Climb::ZeroClimb(){
-    while(!leftStop.Get() && !rightStop.Get()){
+    if(!leftStop.Get() && !rightStop.Get()){
         if(!leftStop.Get()){
             leftClimbMotor.Set(CLIMB_PCT_DOWN*-1);
         }
