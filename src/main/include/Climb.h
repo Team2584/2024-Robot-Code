@@ -29,5 +29,7 @@ class Climb {
     bool BalanceWhileClimbing();
     bool BalanceWhileClimbing(double setpoint);
     bool GetClimbAtPos();
+    bool GetClimbBalanced();
+    bool GetClimbDone();
 
 };

@@ -11,6 +11,8 @@ class Elevator
     double toflastSpeed = 0;
     double toflastHeight = 0;
 
+    enum ElevatorSetting{LOW, AMP, TRAP};
+
     rev::CANSparkMax winchMotor;
     rev::SparkRelativeEncoder *winchEncoder;
     rev::CANSparkMax ampMotor;
@@ -28,10 +30,6 @@ class Elevator
 
     double GetWinchEncoderReading();
 
-    double TOFSReading();
-
-    double TOFSElevatorHeight();
-
     void StopElevator();
 
     void MoveElevatorPercent(double percent);
@@ -42,6 +40,7 @@ class Elevator
 
     bool GetElevatorAtSetpoint();
 
+    bool MoveToHeight(ElevatorSetting Height);
 
 };
 

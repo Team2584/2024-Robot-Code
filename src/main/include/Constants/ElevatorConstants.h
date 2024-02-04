@@ -27,6 +27,7 @@ inline auto e_kV = 1.3_V / 1_mps;
 
 static constexpr double ELEV_HIGH = 0.5;
 static constexpr double ELEV_LOW = 0;
+static constexpr double ELEV_TRAP = 0.7;
 
 inline constexpr double gearRatioValue1 = 1.0/16.0;
 inline constexpr double diameterValue1 = 0.05; //meters

@@ -82,3 +82,16 @@ bool Elevator::GetObjectInMech(){
 bool  Elevator::GetElevatorAtSetpoint(){
     return m_controller.AtGoal();
 }
+
+bool Elevator::MoveToHeight(ElevatorSetting Height) {
+    if (Height == AMP){
+       return PIDElevator(ELEV_HIGH);
+    }
+    else if (Height == LOW){
+        return PIDElevator(ELEV_LOW);
+    }
+    else if (Height == TRAP){
+        return PIDElevator(ELEV_TRAP);
+    }
+    return false;
+}

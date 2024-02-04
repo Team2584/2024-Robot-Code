@@ -125,8 +125,14 @@ bool Climb::BalanceWhileClimbing(double setpoint){
         double rotation = robotSwerveDrive->GetIMURoll();
         double error = rotation < 180 ? rotation : 360 - rotation;
 
-        double leftPIDOutput = leftPID.Calculate(leftEncoder.GetPosition(), setpoint);
-        double rightPIDOutput = rightPID.Calculate(rightEncoder.GetPosition(), setpoint);
+        double leftPIDOutput = 0;
+        double rightPIDOutput = 0;
+
+        if(!GetClimbAtPos()){
+            leftPIDOutput = leftPID.Calculate(leftEncoder.GetPosition(), setpoint);
+            rightPIDOutput = rightPID.Calculate(rightEncoder.GetPosition(), setpoint);
+        }
+
         double rollPIDOutput = rollPID.Calculate(error,0);
 
         leftClimbMotor.Set(leftPIDOutput - rollPIDOutput);
@@ -145,16 +151,20 @@ bool Climb::GetClimbAtPos(){
     
     double lowPos = leftEncoder.GetPosition() < rightEncoder.GetPosition() ? rightEncoder.GetPosition() : leftEncoder.GetPosition();
     bool isAtPos =  abs(lowPos - rightPID.GetPIDSetpoint()) < rightPID.GetPIDAllowedError(); //if most extended arm ~= the set pos
-    bool isBalanced = rollPID.PIDFinished(); //and robot is ~=horizontal
-    return(isAtPos && isBalanced); 
+    return(isAtPos); 
     
     /*
     //this code is similar but checks if the avg position of the arms is at the setpoint. may or may not be useful
     double avgPos = (leftEncoder.GetPosition() + rightEncoder.GetPosition())/2.0; 
     bool isAtPos =  abs(avgPos - rightPID.GetPIDSetpoint()) < rightPID.GetPIDAllowedError(); //if the arm's average pos ~= the set pos
-    bool isBalanced = rollPID.PIDFinished(); //and robot is ~=horizontal
-    return(isAtPos && isBalanced); 
     */
 }
 
+bool Climb::GetClimbBalanced(){
+    return rollPID.PIDFinished();
+}
+
+bool Climb::GetClimbDone(){
+    return (GetClimbBalanced() && GetClimbAtPos());
+}
 
