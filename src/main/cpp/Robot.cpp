@@ -202,7 +202,7 @@ void Robot::TeleopPeriodic()
     overbumper.PIDWristUp();
   }
   else if(xboxController.GetPOV() == 0 && overbumper.GetObjectInIntake()){
-    overbumper.SetIntakeMotorSpeed(-60); //to flywheel (this shoots)
+    overbumper.SetIntakeMotorSpeed(-60, -60); //to flywheel (this shoots)
     overbumper.PIDWristUp();
   }
   else if(xboxController.GetPOV() == 180 && !ampmech.GetObjectInMech()){
@@ -225,7 +225,7 @@ void Robot::TeleopPeriodic()
 
   //For testing - probably don't want to use this enum in final code and for sure not in this way
   //We will need to add an (object in elevator) check
-  if (xboxController.GetPOV() == 90){
+  if (xboxController.GetBButtonPressed()){
     //This line of code cycles to the next value in a 3-value Enumerator (of elevator positions), or cycles back to the first if it's currently at the third
     elevSetHeight = static_cast<Elevator::ElevatorSetting>((elevSetHeight + 1) % 3); 
   }
@@ -244,7 +244,7 @@ void Robot::TeleopPeriodic()
   `--'    `--'.-'  /   '--'   '--'`--' `--' `----' `----'`--'                                          
   */
 
-  if(xboxController.GetBButtonPressed()){
+  if(xboxController.GetBackButtonPressed()){
     flywheel.SpinFlywheelPercent(0);
   }
   else if (xboxController.GetStartButtonPressed()){

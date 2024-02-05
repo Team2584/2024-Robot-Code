@@ -6,41 +6,44 @@
 
 class Elevator
 {
+    private:
+
+        double toflastSpeed = 0;
+        double toflastHeight = 0;
+
+        rev::CANSparkMax winchMotor;
+        rev::SparkRelativeEncoder *winchEncoder;
+        rev::CANSparkMax ampMotor;
+        frc::DigitalInput ampMechSensor;
+
+        frc::TrapezoidProfile<units::meters>::Constraints m_constraints;
+        frc::ProfiledPIDController<units::meters> m_controller;
+        frc::ElevatorFeedforward m_feedforward;
+
+        bool PIDElevator(double setpoint);
+        
+
     public:
 
-    double toflastSpeed = 0;
-    double toflastHeight = 0;
+        enum ElevatorSetting{LOW, AMP, TRAP};
 
-    enum ElevatorSetting{LOW, AMP, TRAP};
+        Elevator();
 
-    rev::CANSparkMax winchMotor;
-    rev::SparkRelativeEncoder *winchEncoder;
-    rev::CANSparkMax ampMotor;
-    frc::DigitalInput ampMechSensor;
+        void SetAmpMotorPercent(double percent);
 
-    frc::TrapezoidProfile<units::meters>::Constraints m_constraints;
-    frc::ProfiledPIDController<units::meters> m_controller;
-    frc::ElevatorFeedforward m_feedforward;
+        double GetWinchEncoderReading();
 
-    Elevator();
+        void StopElevator();
 
-    void ResetElevatorEncoder();
+        void MoveElevatorPercent(double percent);
 
-    void SetAmpMotorPercent(double percent);
+        void ResetElevatorEncoder();
 
-    double GetWinchEncoderReading();
+        bool GetObjectInMech();
 
-    void StopElevator();
+        bool GetElevatorAtSetpoint();
 
-    void MoveElevatorPercent(double percent);
-
-    bool PIDElevator(double setpoint);
-
-    bool GetObjectInMech();
-
-    bool GetElevatorAtSetpoint();
-
-    bool MoveToHeight(ElevatorSetting Height);
+        bool MoveToHeight(ElevatorSetting Height);
 
 };
 

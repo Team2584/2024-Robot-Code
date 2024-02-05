@@ -6,46 +6,45 @@
 
 class Intake
 {
-public:
 
-    rev::CANSparkMax intakeMotor;
-    rev::CANSparkMax wristMotor;
-    rev::CANSparkMax fixedIntakeMotor;
-    rev::CANSparkMax fixedIntakeMotor2;
-    rev::SparkAbsoluteEncoder *magEncoder;
-    frc::DigitalInput m_rangeFinder;
+    private:
 
-    bool CurrentlyFeeding = false;
+        rev::CANSparkMax wristMotor;
+        rev::CANSparkMax onWristIntakeMotor;
+        rev::CANSparkMax fixedIntakeMotor;
+        rev::CANSparkMax fixedIntakeMotor2;
+        rev::SparkAbsoluteEncoder *magEncoder;
+        frc::DigitalInput m_rangeFinder;
 
-    PID m_WristPID;
+        bool PIDWrist(double point);
 
-    Intake();
+    public:
 
-    void SetIntakeMotorSpeed(double percent);
+        PID m_WristPID;
 
-    void SetIntakeMotorSpeed(double OverBumperPercent, double FeederPercent);
+        Intake();
 
-    void IntakeRing();
-    
-    void OuttakeRing();
+        void SetIntakeMotorSpeed(double percent);
 
-    void ShootRing();
+        void SetIntakeMotorSpeed(double FeederPercent_1, double FeederPercent_2);
+        
+        void SetIntakeMotorSpeed(double OverBumperPercent, double FeederPercent_1, double FeederPercent_2);
 
-    double GetWristEncoderReading();
+        void IntakeRing();
+        
+        void OuttakeRing();
 
-    bool GetObjectInIntake();
+        void ShootRing();
 
-    void MoveWristPercent(double percent);
+        double GetWristEncoderReading();
 
-    bool PIDWrist(double point);
+        bool GetObjectInIntake();
 
-    bool PIDWristDown();
+        void MoveWristPercent(double percent);
 
-    bool PIDWristUp();
+        bool PIDWristDown();
 
-    bool GetFeeding();
-
-    void SetFeeding(bool value);
+        bool PIDWristUp();
 
 };
 

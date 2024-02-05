@@ -3,33 +3,47 @@
 
 class Climb {
 
+    private:
+
+        rev::CANSparkMax leftClimbMotor, rightClimbMotor;
+        rev::SparkRelativeEncoder leftEncoder, rightEncoder;
+        AprilTagSwerve* robotSwerveDrive;
+        frc::DigitalInput leftStop;
+        frc::DigitalInput rightStop;
+        PID leftPID;
+        PID rightPID;
+        PID rollPID;
+
+        bool climbZeroed = false;
+
     public:
 
-    rev::CANSparkMax leftClimbMotor, rightClimbMotor;
-    rev::SparkRelativeEncoder leftEncoder, rightEncoder;
-    AprilTagSwerve* robotSwerveDrive;
-    frc::DigitalInput leftStop;
-    frc::DigitalInput rightStop;
-    PID leftPID;
-    PID rightPID;
-    PID rollPID;
+        Climb(AprilTagSwerve* _swerveDrive);
 
-    bool climbZeroed = false;
+        bool ZeroClimb();
 
-    Climb(AprilTagSwerve* _swerveDrive);
+        void ExtendClimb();
 
-    bool ZeroClimb();
-    void ExtendClimb();
-    void RetractClimb();
-    void HoldClimb();
-    bool LiftRobotAuto();
-    bool LowerRobotAuto();
-    bool ClimbPID(double setpoint);
-    bool BalanceAtPos();
-    bool BalanceWhileClimbing();
-    bool BalanceWhileClimbing(double setpoint);
-    bool GetClimbAtPos();
-    bool GetClimbBalanced();
-    bool GetClimbDone();
+        void RetractClimb();
+
+        void HoldClimb();
+
+        bool LiftRobotAuto();
+
+        bool LowerRobotAuto();
+
+        bool ClimbPID(double setpoint);
+
+        bool BalanceAtPos();
+
+        bool BalanceWhileClimbing();
+
+        bool BalanceWhileClimbing(double setpoint);
+
+        bool GetClimbAtPos();
+        
+        bool GetClimbBalanced();
+
+        bool GetClimbDone();
 
 };

@@ -1,9 +1,9 @@
 #include "Intake.h"
 
 Intake::Intake()
-  : intakeMotor{INTAKE_MOTOR_PORT, rev::CANSparkMax::MotorType::kBrushless}, 
-    wristMotor{WRIST_MOTOR_PORT, rev::CANSparkMax::MotorType::kBrushless},
-    fixedIntakeMotor{FIXED_INTAKE_MOTOR_PORT, rev::CANSparkMax::MotorType::kBrushed},
+  : wristMotor{WRIST_MOTOR_PORT, rev::CANSparkMax::MotorType::kBrushless},
+    onWristIntakeMotor{ON_WRIST_MOTOR_PORT, rev::CANSparkMax::MotorType::kBrushless},
+    fixedIntakeMotor{FIXED_INTAKE_MOTOR_PORT, rev::CANSparkMax::MotorType::kBrushless},
     fixedIntakeMotor2{FIXED_INTAKE_MOTOR_PORT_2, rev::CANSparkMax::MotorType::kBrushed},
     m_rangeFinder{1},
     m_WristPID{WRISTKP,WRISTKI,WRISTKD,WRISTKIMAX,WRISTMIN_SPEED,WRISTMAX_SPEED,WRIST_POS_ERROR,WRIST_VELOCITY_ERROR}
@@ -17,11 +17,18 @@ void Intake::SetIntakeMotorSpeed(double percent)
   SetIntakeMotorSpeed(percent, percent);
 }
 
-void Intake::SetIntakeMotorSpeed(double OverBumperPercent, double FeederPercent)
+void Intake::SetIntakeMotorSpeed(double FeederPercent_1, double FeederPercent_2)
 {
-  //intakeMotor.Set(OverBumperPercent); add back when intake on robot
-  fixedIntakeMotor.Set(OverBumperPercent);
-  fixedIntakeMotor2.Set(FeederPercent);
+  onWristIntakeMotor.Set(0);
+  fixedIntakeMotor.Set(FeederPercent_1);
+  fixedIntakeMotor2.Set(FeederPercent_2);
+}
+
+void Intake::SetIntakeMotorSpeed(double OverBumperPercent, double FeederPercent_1, double FeederPercent_2)
+{
+  onWristIntakeMotor.Set(OverBumperPercent);
+  fixedIntakeMotor.Set(FeederPercent_1);
+  fixedIntakeMotor2.Set(FeederPercent_2);
 }
 
 void Intake::IntakeRing()
@@ -74,12 +81,3 @@ bool Intake::PIDWristUp()
 {
   return PIDWrist(WRIST_HIGH);
 }
-
-bool Intake::GetFeeding(){
-  return CurrentlyFeeding;
-}
-
-void Intake::SetFeeding(bool value){
-  CurrentlyFeeding = value;
-}
-
