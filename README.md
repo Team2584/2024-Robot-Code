@@ -23,4 +23,7 @@
 ## Standards in the code base
 1. Robot-oriented coordinates are measured with positive X facing away, Y facing left, and Z facing upwards. The origin is centered on the chassis (x/y) and is on the ground (z). 
 2. Robot-oriented coordinates are measured from the perspective of the blue driver station with positive X facing away, Y facing left, and Z facing upwards. The origin is in the close right corner of the field.
-3. Positive rotation of the robot is (generally) counterclockwise positive with 0 degrees facing in the positive X direction.
+3. Positive heading rotation of the robot is (generally) counterclockwise positive with 0 degrees facing in the positive X direction.
+4. Positive roll rotation of the robot is counterclockwise positive with 0 degrees facing in the positive Y direction.
+5. Systems' constant values are not used in Robot.cpp
+6. General good practice is observed - ex. no changing of class object member values outside of functions of that class.
