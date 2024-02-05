@@ -14,6 +14,7 @@ Elevator::Elevator()
     winchEncoder = new rev::SparkRelativeEncoder(winchMotor.GetEncoder(rev::SparkRelativeEncoder::Type::kHallSensor));
     winchEncoder->SetPosition(0.0);
     winchEncoder->SetPositionConversionFactor(ELEV_CONVERSION_FACTOR);
+    m_controller.SetTolerance(ALLOWABLE_ERROR_ELEV_POS);
 }
 
 /**
