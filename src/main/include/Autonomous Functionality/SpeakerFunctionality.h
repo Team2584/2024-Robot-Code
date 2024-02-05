@@ -18,6 +18,7 @@ public:
     AutonomousShootingController(SwerveDriveAutonomousController *swerveDrive, FlywheelSystem *flyWheel_);
 
     bool TurnToSpeaker();
+    void TurnToSpeakerWhileDriving(double xSpeed, double ySpeed);
     bool AngleFlywheelToSpeaker();
     bool AimAndFire();
 };
