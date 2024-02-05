@@ -9,7 +9,6 @@ class FlywheelSpeedController
 {
     private:
 
-        frc::PIDController m_shooterPID;
         rev::CANSparkFlex* m_flywheelMotor;
         frc::SimpleMotorFeedforward<units::turns> m_shooterFeedforward;
         rev::SparkRelativeEncoder* m_shooterEncoder;
@@ -17,6 +16,8 @@ class FlywheelSpeedController
         void UseOutput(double output, units::turns_per_second_t setpointRPS);
 
     public:
+
+        frc::PIDController m_shooterPID;
        
         FlywheelSpeedController(rev::CANSparkFlex *FL_motor);
 
