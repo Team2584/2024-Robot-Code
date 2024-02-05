@@ -26,7 +26,7 @@ inline units::volt_t e_kG = 1.2_V;
 inline auto e_kV = 1.3_V / 1_mps;
 inline auto ALLOWABLE_ERROR_ELEV_POS = 0.6_m;
 
-static constexpr double ELEV_HIGH = 0.5;
+static constexpr double ELEV_AMP = 0.5;
 static constexpr double ELEV_LOW = 0;
 static constexpr double ELEV_TRAP = 0.7;
 

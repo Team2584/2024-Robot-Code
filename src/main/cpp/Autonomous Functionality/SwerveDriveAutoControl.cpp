@@ -133,6 +133,20 @@ bool SwerveDriveAutonomousController::DriveToPose(Pose2d target, PoseEstimationT
     return false;
 }
 
+void SwerveDriveAutonomousController::TurnToAngleWhileDriving(double xSpeed, double ySpeed, Pose2d target, PoseEstimationType poseEstimationType)
+{
+    double speeds[3] = {0, 0, 0};
+    bool PIDFinished[3] = {false, false, false};
+ 
+    CalculatePIDToPose(poseEstimationType, target, speeds, PIDFinished);
+
+    // Debugging info
+    SmartDashboard::PutNumber("Pose Rotation Speed", speeds[2]);
+    SmartDashboard::PutBoolean("Pose Rotation Done", PIDFinished[2]);
+
+    baseSwerveDrive->DriveSwervePercent(xSpeed, ySpeed, speeds[2]);
+}
+
 /*
  * Reset the Trajectory Queue
  */

@@ -19,6 +19,19 @@ bool AutonomousShootingController::TurnToSpeaker()
     return swerveDrive->DriveToPose(Pose2d(currentPose.Translation(), targetAngle), PoseEstimationType::TagBased); // Drive to current pose but at the target angle
 }
 
+void AutonomousShootingController::TurnToSpeakerWhileDriving(double xSpeed, double ySpeed)
+{
+    Pose2d currentPose = swerveDrive->GetTagPose();
+
+    // Determine what our target angle is
+    Translation2d diff = SPEAKER_POSITION.ToTranslation2d() - currentPose.Translation(); 
+    Rotation2d targetAngle = Rotation2d(units::radian_t{atan2(diff.Y().value(), diff.X().value())});
+
+    SmartDashboard::PutNumber("Targe Speaker Swerve Angle", targetAngle.Degrees().value());
+
+    swerveDrive->TurnToPoseWhileDriving(xSpeed, ySpeed, targetAngle, PoseEstimationType::TagBased); 
+}
+
 bool AutonomousShootingController::AngleFlywheelToSpeaker()
 {   
     Translation2d currentPos = swerveDrive->GetTagPose().Translation();
