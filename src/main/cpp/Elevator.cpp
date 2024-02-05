@@ -79,7 +79,7 @@ bool  Elevator::GetElevatorAtSetpoint(){
 
 bool Elevator::MoveToHeight(ElevatorSetting Height) {
     if (Height == AMP){
-       return PIDElevator(ELEV_HIGH);
+       return PIDElevator(ELEV_AMP);
     }
     else if (Height == LOW){
         return PIDElevator(ELEV_LOW);
