@@ -38,11 +38,12 @@ bool Climb::ZeroClimb(){
         }
         return false;
     }
-    else {
+    else if (!climbZeroed){
         leftEncoder.SetPosition(0);
         rightEncoder.SetPosition(0);
-        return true;
+        climbZeroed = true;
     }
+    return true;
 }
 
 /**

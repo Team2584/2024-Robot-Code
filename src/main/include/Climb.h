@@ -14,6 +14,8 @@ class Climb {
     PID rightPID;
     PID rollPID;
 
+    bool climbZeroed = false;
+
     Climb(AprilTagSwerve* _swerveDrive);
 
     bool ZeroClimb();
