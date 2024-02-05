@@ -133,12 +133,12 @@ bool SwerveDriveAutonomousController::DriveToPose(Pose2d target, PoseEstimationT
     return false;
 }
 
-void SwerveDriveAutonomousController::TurnToAngleWhileDriving(double xSpeed, double ySpeed, Pose2d target, PoseEstimationType poseEstimationType)
+void SwerveDriveAutonomousController::TurnToAngleWhileDriving(double xSpeed, double ySpeed, Rotation2d target, PoseEstimationType poseEstimationType)
 {
     double speeds[3] = {0, 0, 0};
     bool PIDFinished[3] = {false, false, false};
  
-    CalculatePIDToPose(poseEstimationType, target, speeds, PIDFinished);
+    CalculatePIDToPose(poseEstimationType, Pose2d(GetTagPose().X(), GetTagPose().Y(), target), speeds, PIDFinished);
 
     // Debugging info
     SmartDashboard::PutNumber("Pose Rotation Speed", speeds[2]);

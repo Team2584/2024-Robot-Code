@@ -32,7 +32,7 @@ public:
     Pose2d GetTagPose();
     void BeginDriveToPose();
     bool DriveToPose(Pose2d target, PoseEstimationType poseEstimationType);
-    void TurnToAngleWhileDriving(double xSpeed, double ySpeed, Pose2d target, PoseEstimationType poseEstimationType);
+    void TurnToAngleWhileDriving(double xSpeed, double ySpeed, Rotation2d target, PoseEstimationType poseEstimationType);
     void ResetTrajectoryQueue();
     void LoadTrajectory(string trajectoryString);
     void BeginNextTrajectory();

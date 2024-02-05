@@ -29,7 +29,7 @@ void AutonomousShootingController::TurnToSpeakerWhileDriving(double xSpeed, doub
 
     SmartDashboard::PutNumber("Targe Speaker Swerve Angle", targetAngle.Degrees().value());
 
-    swerveDrive->TurnToPoseWhileDriving(xSpeed, ySpeed, targetAngle, PoseEstimationType::TagBased); 
+    swerveDrive->TurnToAngleWhileDriving(xSpeed, ySpeed, targetAngle, PoseEstimationType::TagBased); 
 }
 
 bool AutonomousShootingController::AngleFlywheelToSpeaker()
