@@ -27,14 +27,14 @@ class NoteController
         void UpdateNotePos();
         NotePosition GetNotePos();
 
-        void IntakeToStop();
-        bool IntakeToStopSmart();
+        void IntakeNote();
+        bool IntakeNoteSmart();
 
         bool Outtake();
         void OuttakeFromElevator();
         bool OuttakeFromElevatorSmart();
 
-        void ToFlywheelShoot();
+        void ToFlywheel();
         bool ToFlywheelShootSmart();
         
         void ToElevator();

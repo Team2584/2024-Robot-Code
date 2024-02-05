@@ -109,6 +109,7 @@ void Robot::TeleopPeriodic()
   /* UPDATES */
 
   swerveDrive.Update();
+  notecontroller.UpdateNotePos();
 
   /* DEBUGGING INFO */
 
@@ -188,28 +189,26 @@ void Robot::TeleopPeriodic()
   }*/
 
   /*                                            
-  ,--.          ,--.          ,--.              /  //  /,------.                ,--.,--.                
-  |  |,--,--, ,-'  '-. ,--,--.|  |,-. ,---.    /  //  / |  .---',---.  ,---.  ,-|  |`--',--,--,  ,---.  
-  |  ||      \'-.  .-'' ,-.  ||     /| .-. :  /  //  /  |  `--,| .-. :| .-. :' .-. |,--.|      \| .-. | 
-  |  ||  ||  |  |  |  \ '-'  ||  \  \\   --. /  //  /   |  |`  \   --.\   --.\ `-' ||  ||  ||  |' '-' ' 
-  `--'`--''--'  `--'   `--`--'`--'`--'`----'/  //  /    `--'    `----' `----' `---' `--'`--''--'.`-  /                                            `---' 
+   _  _     _          ___         _           _ _         
+  | \| |___| |_ ___   / __|___ _ _| |_ _ _ ___| | |___ _ _ 
+  | .` / _ \  _/ -_) | (__/ _ \ ' \  _| '_/ _ \ | / -_) '_|
+  |_|\_\___/\__\___|  \___\___/_||_\__|_| \___/_|_\___|_|                                                     
   */
 
   if(xboxController.GetRightBumper()){
-    overbumper.IntakeRing(); //intake until stop
+    notecontroller.IntakeNoteSmart();
     overbumper.PIDWristDown();
   }
   else if(xboxController.GetLeftBumper()){
-    overbumper.OuttakeRing(); //outtake from main system
+    notecontroller.Outtake();
     overbumper.PIDWristUp();
   }
-  else if(xboxController.GetPOV() == 0 && overbumper.GetObjectInIntake()){
-    overbumper.SetIntakeMotorSpeed(-60, -60); //to flywheel (this shoots)
+  else if(xboxController.GetPOV() == 0){
+    notecontroller.ToFlywheel();
     overbumper.PIDWristUp();
   }
-  else if(xboxController.GetPOV() == 180 && !ampmech.GetObjectInMech()){
-    overbumper.SetIntakeMotorSpeed(-60,60); //to elevator
-    ampmech.SetAmpMotorPercent(60);
+  else if(xboxController.GetPOV() == 180){
+    notecontroller.ToElevatorSmart();
     overbumper.PIDWristUp();
   }
   else {
@@ -309,6 +308,8 @@ void Robot::TeleopPeriodic()
   SmartDashboard::PutNumber("Top FlyWheel RPM", flywheel.TopFlywheel.GetMeasurement());
   SmartDashboard::PutNumber("Top FlyWheel Setpoint", flywheel.TopFlywheel.m_shooterPID.GetSetpoint());
   SmartDashboard::PutNumber("Current Angler", flywheel.GetAnglerEncoderReading());
+
+  SmartDashboard::PutString("Ring State", std::to_string(notecontroller.GetNotePos()));
 }
 
 void Robot::DisabledInit() {}

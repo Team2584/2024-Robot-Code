@@ -35,11 +35,11 @@ NoteController::NotePosition NoteController::GetNotePos(){
     return notePos;
 }
 
-void NoteController::IntakeToStop(){
+void NoteController::IntakeNote(){
     intake->SetIntakeMotorSpeed(INTAKE_SPEED_IN*-1);
 }
 
-bool NoteController::IntakeToStopSmart(){
+bool NoteController::IntakeNoteSmart(){
     if(GetNotePos() == NO){
         intake->SetIntakeMotorSpeed(INTAKE_SPEED_IN*-1);
     }
@@ -61,7 +61,7 @@ bool NoteController::OuttakeFromElevatorSmart(){
     return (GetNotePos() == IN_INTAKE);
 }
 
-void NoteController::ToFlywheelShoot(){
+void NoteController::ToFlywheel(){
     intake->SetIntakeMotorSpeed(-60, -60);
 }
 
