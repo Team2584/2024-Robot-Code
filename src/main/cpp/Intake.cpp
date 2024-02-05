@@ -31,26 +31,6 @@ void Intake::SetIntakeMotorSpeed(double OverBumperPercent, double FeederPercent_
   fixedIntakeMotor2.Set(FeederPercent_2);
 }
 
-void Intake::IntakeRing()
-{
-  if(!GetObjectInIntake()){
-    SetIntakeMotorSpeed(INTAKE_SPEED_IN*-1);
-  }
-  else{
-    SetIntakeMotorSpeed(0);
-  }
-}
-
-void Intake::OuttakeRing()
-{
-  SetIntakeMotorSpeed(INTAKE_SPEED_OUT);
-}
-
-void Intake::ShootRing()
-{
-  SetIntakeMotorSpeed(INTAKE_SPEED_IN);
-}
-
 double Intake::GetWristEncoderReading()
 {
   double reading = magEncoder->GetPosition();

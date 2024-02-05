@@ -16,6 +16,7 @@ class Elevator
         rev::CANSparkMax ampMotor;
     
         rev::SparkLimitSwitch ampMechSensor;
+        frc::DigitalInput tunnelSensor;
 
         frc::TrapezoidProfile<units::meters>::Constraints m_constraints;
         frc::ProfiledPIDController<units::meters> m_controller;
@@ -41,6 +42,8 @@ class Elevator
         void ResetElevatorEncoder();
 
         bool GetObjectInMech();
+
+        bool GetObjectInTunnel();
 
         bool GetElevatorAtSetpoint();
 

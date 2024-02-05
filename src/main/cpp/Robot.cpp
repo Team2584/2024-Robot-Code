@@ -15,6 +15,7 @@
 #include "FlyWheel.h"
 #include "Elevator.h"
 #include "Climb.h"
+#include "NoteController.h"
 
 AprilTagSwerve swerveDrive{};
 XboxController xboxController{0};
@@ -23,6 +24,7 @@ Intake overbumper{};
 FlywheelSystem flywheel{&overbumper};
 Elevator ampmech{};
 Climb hang{&swerveDrive};
+NoteController notecontroller{&overbumper, &flywheel, &ampmech};
 
 SwerveDriveAutonomousController swerveAutoController{&swerveDrive};
 AutonomousShootingController flywheelController{&swerveAutoController, &flywheel};

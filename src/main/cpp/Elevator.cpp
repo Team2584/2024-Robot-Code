@@ -5,6 +5,7 @@ Elevator::Elevator()
 :   winchMotor{ELEVATOR_MOTOR_PORT, rev::CANSparkMax::MotorType::kBrushless},
     ampMotor{AMP_MECH_PORT, rev::CANSparkMax::MotorType::kBrushless},
     ampMechSensor{ampMotor.GetForwardLimitSwitch(rev::SparkLimitSwitch::Type::kNormallyOpen)},
+    tunnelSensor{2},
     m_constraints{e_kMaxVelocity, e_kMaxAcceleration},
     m_controller{e_kP, e_kI, e_kD, m_constraints},
     m_feedforward{e_kS, e_kG, e_kV}
@@ -71,6 +72,10 @@ void Elevator::SetAmpMotorPercent(double percent){
 
 bool Elevator::GetObjectInMech(){
     return (!ampMechSensor.Get());
+}
+
+bool Elevator::GetObjectInTunnel(){
+    return (!tunnelSensor.Get());
 }
 
 bool  Elevator::GetElevatorAtSetpoint(){
