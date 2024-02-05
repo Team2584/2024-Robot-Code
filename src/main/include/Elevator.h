@@ -14,7 +14,8 @@ class Elevator
         rev::CANSparkMax winchMotor;
         rev::SparkRelativeEncoder *winchEncoder;
         rev::CANSparkMax ampMotor;
-        frc::DigitalInput ampMechSensor;
+    
+        rev::SparkLimitSwitch ampMechSensor;
 
         frc::TrapezoidProfile<units::meters>::Constraints m_constraints;
         frc::ProfiledPIDController<units::meters> m_controller;

@@ -4,11 +4,10 @@
 Elevator::Elevator()
 :   winchMotor{ELEVATOR_MOTOR_PORT, rev::CANSparkMax::MotorType::kBrushless},
     ampMotor{AMP_MECH_PORT, rev::CANSparkMax::MotorType::kBrushless},
-    ampMechSensor{2},
+    ampMechSensor{ampMotor.GetForwardLimitSwitch(rev::SparkLimitSwitch::Type::kNormallyOpen)},
     m_constraints{e_kMaxVelocity, e_kMaxAcceleration},
     m_controller{e_kP, e_kI, e_kD, m_constraints},
     m_feedforward{e_kS, e_kG, e_kV}
-    //ElevatorPID{ELEVKP,ELEVKI,ELEVKD,ELEVKIMAX,ELEVMIN_SPEED,ELEVMAX_SPEED,ALLOWABLE_ERROR_ELEV_POS,ALLOWABLE_ERROR_ELEV_VELOCITY}
 {
     winchMotor.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
     winchEncoder = new rev::SparkRelativeEncoder(winchMotor.GetEncoder(rev::SparkRelativeEncoder::Type::kHallSensor));
@@ -59,15 +58,9 @@ bool Elevator::PIDElevator(double setpoint){
     units::meter_t goal{setpoint};
     m_controller.SetGoal(goal);
 
-    winchMotor.SetVoltage(units::volt_t{
-        m_controller.Calculate(units::meter_t{winchEncoder->GetPosition()})} +
+    winchMotor.SetVoltage(
+        units::volt_t{m_controller.Calculate(units::meter_t{winchEncoder->GetPosition()})} +
         m_feedforward.Calculate(m_controller.GetSetpoint().velocity));
-    
-    /*
-    winchMotor.SetVoltage(units::volt_t{
-        m_controller.Calculate(units::meter_t{winchEncoder->GetPosition()})} +
-        m_feedforward.Calculate(m_controller.GetSetpoint().position, m_controller.GetSetpoint().velocity));
-    */
 
     return m_controller.AtGoal();
 }
