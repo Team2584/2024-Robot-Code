@@ -28,7 +28,7 @@ SwerveDriveAutonomousController swerveAutoController{&swerveDrive};
 AutonomousShootingController flywheelController{&swerveAutoController, &flywheel};
 
 Elevator::ElevatorSetting elevSetHeight = Elevator::LOW;
-Intake::WristSetting wristSetPoint = Intake::LOW;
+Intake::WristSetting wristSetPoint = Intake::HIGH;
 bool anglingToSpeaker = false;
 
 
@@ -231,18 +231,24 @@ void Robot::TeleopPeriodic()
     flywheel.SetFlywheelVelocity(SmartDashboard::GetNumber("Start Flywheel Speed", 0));
   }
 
-  if(xboxController.GetAButtonPressed())
+  if(xboxController.GetAButtonPressed()){
     anglingToSpeaker = !anglingToSpeaker;
-    wristSetPoint = Intake::SHOOT;
-  if (anglingToSpeaker)
-    flywheelController.AngleFlywheelToSpeaker();
-  else if (xboxController.GetYButton())
-    flywheel.PIDAngler(SmartDashboard::GetNumber("Angler Setpoint", M_PI / 2));
-  else
-    flywheel.MoveAnglerPercent(0);
+  }
 
-  if (xboxController.GetXButton())
+  if (anglingToSpeaker){
+    wristSetPoint = Intake::SHOOT;
+    flywheelController.AngleFlywheelToSpeaker();
+  }
+  else if (xboxController.GetYButton()){
+    flywheel.PIDAngler(SmartDashboard::GetNumber("Angler Setpoint", M_PI / 2));
+  }
+  else{
+    flywheel.MoveAnglerPercent(0);
+  }
+
+  if (xboxController.GetXButton()){
     flywheelController.TurnToSpeaker();
+  }
 
   //PID Intake wrist
   overbumper.PIDWristToPoint(wristSetPoint);
