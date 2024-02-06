@@ -12,11 +12,12 @@
 #define INTAKE_SPEED_IN 80
 #define INTAKE_SPEED_OUT 60
 
-//Wrist absolute Encoder position values, 0-1 rotatons
-#define WRIST_HIGH 0.5
-inline double WRIST_LOW = 0.715;
-
-#define WRIST_SPEED_LOW_THRESHHOLD -2.0
+namespace IntakeWrist{
+    //Wrist absolute Encoder position values, 0-1 rotatons
+    inline const double WRIST_HIGH = 0.5;
+    inline const double WRIST_LOW = 0.715;
+    inline const double WRIST_SHOOT = 0.655;
+}
 
 //Wrist PID Constants
 inline double WRISTKD  = 0;

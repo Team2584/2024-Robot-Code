@@ -28,6 +28,7 @@ SwerveDriveAutonomousController swerveAutoController{&swerveDrive};
 AutonomousShootingController flywheelController{&swerveAutoController, &flywheel};
 
 Elevator::ElevatorSetting elevSetHeight = Elevator::LOW;
+Intake::WristSetting wristSetPoint = Intake::LOW;
 bool anglingToSpeaker = false;
 
 
@@ -195,25 +196,56 @@ void Robot::TeleopPeriodic()
 
   if(xboxController.GetRightBumper()){
     overbumper.IntakeRing(); //intake until stop
-    overbumper.PIDWristDown();
+    wristSetPoint = Intake::LOW;
   }
   else if(xboxController.GetLeftBumper()){
     overbumper.OuttakeRing(); //outtake from main system
-    overbumper.PIDWristUp();
+    wristSetPoint = Intake::HIGH;
   }
   else if(xboxController.GetPOV() == 0 && overbumper.GetObjectInIntake()){
     overbumper.SetIntakeMotorSpeed(-60, -60); //to flywheel (this shoots)
-    overbumper.PIDWristUp();
+    wristSetPoint = Intake::HIGH;
   }
   else if(xboxController.GetPOV() == 180 && !ampmech.GetObjectInMech()){
     overbumper.SetIntakeMotorSpeed(-60,60); //to elevator
     ampmech.SetAmpMotorPercent(60);
-    overbumper.PIDWristUp();
+    wristSetPoint = Intake::HIGH;
   }
   else {
     overbumper.SetIntakeMotorSpeed(0); 
-    overbumper.PIDWristUp();
+    wristSetPoint = Intake::HIGH;
   }
+  
+  /*                                                      
+  ,------.,--.                    ,--.                   ,--. 
+  |  .---'|  |,--. ,--.,--.   ,--.|  ,---.  ,---.  ,---. |  | 
+  |  `--, |  | \  '  / |  |.'.|  ||  .-.  || .-. :| .-. :|  | 
+  |  |`   |  |  \   '  |   .'.   ||  | |  |\   --.\   --.|  | 
+  `--'    `--'.-'  /   '--'   '--'`--' `--' `----' `----'`--'                                          
+  */
+
+  if(xboxController.GetBackButtonPressed()){
+    flywheel.SpinFlywheelPercent(0);
+  }
+  else if (xboxController.GetStartButtonPressed()){
+    flywheel.SetFlywheelVelocity(SmartDashboard::GetNumber("Start Flywheel Speed", 0));
+  }
+
+  if(xboxController.GetAButtonPressed())
+    anglingToSpeaker = !anglingToSpeaker;
+    wristSetPoint = Intake::SHOOT;
+  if (anglingToSpeaker)
+    flywheelController.AngleFlywheelToSpeaker();
+  else if (xboxController.GetYButton())
+    flywheel.PIDAngler(SmartDashboard::GetNumber("Angler Setpoint", M_PI / 2));
+  else
+    flywheel.MoveAnglerPercent(0);
+
+  if (xboxController.GetXButton())
+    flywheelController.TurnToSpeaker();
+
+  //PID Intake wrist
+  overbumper.PIDWristToPoint(wristSetPoint);
 
   /*                                                   
   ,------.,--.                         ,--.                  /  //  /,---.                   ,--.   ,--.             ,--.      
@@ -235,34 +267,6 @@ void Robot::TeleopPeriodic()
   if((elevSetHeight == Elevator::AMP || elevSetHeight == Elevator::TRAP) && ampmech.GetElevatorAtSetpoint() && xboxController.GetPOV() == 270){
     ampmech.SetAmpMotorPercent(60);
   }
-  
-  /*                                                      
-  ,------.,--.                    ,--.                   ,--. 
-  |  .---'|  |,--. ,--.,--.   ,--.|  ,---.  ,---.  ,---. |  | 
-  |  `--, |  | \  '  / |  |.'.|  ||  .-.  || .-. :| .-. :|  | 
-  |  |`   |  |  \   '  |   .'.   ||  | |  |\   --.\   --.|  | 
-  `--'    `--'.-'  /   '--'   '--'`--' `--' `----' `----'`--'                                          
-  */
-
-  if(xboxController.GetBackButtonPressed()){
-    flywheel.SpinFlywheelPercent(0);
-  }
-  else if (xboxController.GetStartButtonPressed()){
-    flywheel.SetFlywheelVelocity(SmartDashboard::GetNumber("Start Flywheel Speed", 0));
-  }
-
-  if(xboxController.GetAButtonPressed())
-    anglingToSpeaker = !anglingToSpeaker;
-
-  if (anglingToSpeaker)
-    flywheelController.AngleFlywheelToSpeaker();
-  else if (xboxController.GetYButton())
-    flywheel.PIDAngler(SmartDashboard::GetNumber("Angler Setpoint", M_PI / 2));
-  else
-    flywheel.MoveAnglerPercent(0);
-
-  if (xboxController.GetXButton())
-    flywheelController.TurnToSpeaker();
 
   /*
    ,-----.,--.,--.           ,--.    

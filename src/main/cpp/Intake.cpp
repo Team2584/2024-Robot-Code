@@ -72,12 +72,15 @@ bool Intake::PIDWrist(double point)
   return m_WristPID.PIDFinished();
 }
 
-bool Intake::PIDWristDown()
-{
-  return PIDWrist(WRIST_LOW);
-}
-
-bool Intake::PIDWristUp()
-{
-  return PIDWrist(WRIST_HIGH);
+bool Intake::PIDWristToPoint(WristSetting Point){
+  if(Point == LOW){
+    return PIDWrist(IntakeWrist::WRIST_LOW);
+  }
+  else if(Point == HIGH){
+    return PIDWrist(IntakeWrist::WRIST_HIGH);
+  }
+  else if (Point == SHOOT){
+    return PIDWrist(IntakeWrist::WRIST_SHOOT);
+  }
+  return false;
 }

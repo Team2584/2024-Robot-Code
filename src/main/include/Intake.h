@@ -22,6 +22,8 @@ class Intake
 
         PID m_WristPID;
 
+        enum WristSetting{LOW, HIGH, SHOOT};
+
         Intake();
 
         void SetIntakeMotorSpeed(double percent);
@@ -42,9 +44,7 @@ class Intake
 
         void MoveWristPercent(double percent);
 
-        bool PIDWristDown();
-
-        bool PIDWristUp();
+        bool PIDWristToPoint(WristSetting Point);
 
 };
 
