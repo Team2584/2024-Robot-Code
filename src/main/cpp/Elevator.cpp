@@ -73,6 +73,27 @@ bool Elevator::GetObjectInMech(){
     return (!ampMechSensor.Get());
 }
 
+bool Elevator::PrepareNote(){
+    if (ampMechSensor.Get() != lastSensorValue){
+        timesPassed += 1;
+    }
+
+    if (timesPassed >= 4){
+        ampMotor.StopMotor();
+        timesPassed = 0;
+        return true;
+    }
+
+    ampMotor.Set(0.5);
+
+    lastSensorValue = ampMechSensor.Get();
+    return false;
+}
+
+void Elevator::DepositNote(){
+    ampMotor.Set(0.5);
+}
+
 bool  Elevator::GetElevatorAtSetpoint(){
     return m_controller.AtGoal();
 }

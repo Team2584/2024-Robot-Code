@@ -11,6 +11,9 @@ class Elevator
         double toflastSpeed = 0;
         double toflastHeight = 0;
 
+        bool lastSensorValue = false;
+        int timesPassed = 0;
+
         rev::CANSparkMax winchMotor;
         rev::SparkRelativeEncoder *winchEncoder;
         rev::CANSparkMax ampMotor;
@@ -41,6 +44,10 @@ class Elevator
         void ResetElevatorEncoder();
 
         bool GetObjectInMech();
+
+        bool PrepareNote();
+
+        void DepositNote();
 
         bool GetElevatorAtSetpoint();
 
