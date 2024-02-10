@@ -1,17 +1,16 @@
 #include "Robot.h"
 #include "constants/LEDConstants.h"
+#include <frc/motorcontrol/PWMSparkMax.h>
 
 class LEDLights{
-
-    private:
-
-        rev::CANSparkMax LED_MOTOR_1;
-
-
     public:
+        std::map<std::string, float> lightEffects;
+        frc::PWMSparkMax* lights;
 
-        void SetLED(std::string color)
+        float currentLightEffect = -0.59;
 
-        void SetLED()
+        void SetLED(std::string color);
+        void SetLED();
 
+        LEDLights(frc::PWMSparkMax *lights_);
 };
