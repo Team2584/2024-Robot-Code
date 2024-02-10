@@ -1,9 +1,18 @@
 
 /* !!!!!!!!!!
+In Robot.cpp:
+  #include "LEDs.h"
+  
 In order to use SetLED:
-LEDLights::SetLED(LEDLights::lightEffect::fire);
+  In Robot.cpp:
+    Ex: LEDLights *lightStrip{0};
+    Do: LEDLights *NAME{INT PORT};
+  
+  To call:
+    Ex: lightStrip->SetLED(LEDLights::fire);
+    Do: NAME->SetLED(LEDLights::EFFECT NAME)
 !!!!!!!!!! */
-void LEDLights::SetLED(LEDLights::lightEffect color)
+void LEDLights::SetLED(int color)
 {
   lights->Set(lightEffectIDs[color]);
   currentLightingEffect = color;
