@@ -1,8 +1,9 @@
 #include "LEDs.h"
 
-LEDLights::LEDLights(frc::PWMSparkMax *lights_)
+LEDLights::LEDLights(int port)
 {
-  lights = lights_;
+  frc::PWMSparkMax lightController{port};
+  lights = &lightController;
   SetLED();
 }
 

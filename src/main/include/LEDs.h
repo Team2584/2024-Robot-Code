@@ -14,7 +14,8 @@ class LEDLights{
         enum lightEffect{fire, red, orange, yellow, lime, green, blue, purple};
         float lightEffectIDs[100] = {-0.59, 0.61, 0.65, 0.69, 0.73, 0.77, 0.81, 0.91};
 
-
+        
+        frc::PWMSparkMax* test;
         frc::PWMSparkMax* lights;
             
         float currentLightEffect = lightEffectIDs[lightEffect::fire];
@@ -22,5 +23,5 @@ class LEDLights{
         void SetLED(lightEffect color);
         void SetLED();
 
-        LEDLights(frc::PWMSparkMax *lights_);
+        LEDLights(int port);
 };
