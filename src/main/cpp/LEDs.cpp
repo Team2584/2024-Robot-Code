@@ -1,8 +1,5 @@
 #include "LEDs.h"
 
-/**
- * Instantiates a two motor elevator lift
- */
 LEDLights::LEDLights(frc::PWMSparkMax *lights_)
 {
   lights = lights_;
@@ -14,6 +11,11 @@ void LEDLights::SetLED()
   SetLED(fire);
 }
 
+/* !!!!!!!!!!
+In order to use SetLED:
+#include "LEDs.h"
+LEDLights::SetLED(LEDLights::lightEffect::fire);
+!!!!!!!!!! */
 void LEDLights::SetLED(LEDLights::lightEffect color)
 {
   lights->Set(lightEffectIDs[color]);

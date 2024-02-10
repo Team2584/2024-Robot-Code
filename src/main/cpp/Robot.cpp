@@ -15,6 +15,7 @@
 #include "FlyWheel.h"
 #include "Elevator.h"
 #include "Climb.h"
+#include "LEDs.h"
 
 AprilTagSwerve swerveDrive{};
 XboxController xboxController{0};
@@ -30,7 +31,6 @@ AutonomousShootingController flywheelController{&swerveAutoController, &flywheel
 Elevator::ElevatorSetting elevSetHeight = Elevator::LOW;
 Intake::WristSetting wristSetPoint = Intake::LOW;
 bool anglingToSpeaker = false;
-
 
 void Robot::RobotInit()
 {
