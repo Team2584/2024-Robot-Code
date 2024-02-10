@@ -24,7 +24,7 @@ Intake overbumper{};
 FlywheelSystem flywheel{&overbumper};
 Elevator ampmech{};
 Climb hang{&swerveDrive};
-LEDLights *lightStrip;
+LEDLights *lightStrip{0};
 
 SwerveDriveAutonomousController swerveAutoController{&swerveDrive};
 AutonomousShootingController flywheelController{&swerveAutoController, &flywheel};

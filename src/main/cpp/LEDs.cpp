@@ -1,3 +1,19 @@
+
+/* !!!!!!!!!!
+In order to use SetLED:
+LEDLights::SetLED(LEDLights::lightEffect::fire);
+!!!!!!!!!! */
+void LEDLights::SetLED(LEDLights::lightEffect color)
+{
+  lights->Set(lightEffectIDs[color]);
+  currentLightingEffect = color;
+}
+
+
+
+
+
+
 #include "LEDs.h"
 
 LEDLights::LEDLights(int port)
@@ -12,12 +28,14 @@ void LEDLights::SetLED()
   SetLED(fire);
 }
 
-/* !!!!!!!!!!
-In order to use SetLED:
-#include "LEDs.h"
-LEDLights::SetLED(LEDLights::lightEffect::fire);
-!!!!!!!!!! */
-void LEDLights::SetLED(LEDLights::lightEffect color)
-{
-  lights->Set(lightEffectIDs[color]);
+float LEDLights::getCurrentLEDCode(){
+  return lightEffectIDs[currentLightingEffect];
+}
+
+int LEDLights::getCurrentLEDEffectID(){
+  return currentLightingEffect;
+}
+
+PWMSparkMax* LEDLights::getLightController(){
+  return lights;
 }
