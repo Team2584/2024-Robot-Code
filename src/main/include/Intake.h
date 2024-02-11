@@ -10,17 +10,20 @@ class Intake
     private:
 
         rev::CANSparkMax wristMotor;
-        rev::CANSparkMax onWristIntakeMotor;
-        rev::CANSparkMax fixedIntakeMotor;
-        rev::CANSparkMax fixedIntakeMotor2;
+        rev::CANSparkFlex onWristIntakeMotor;
+        rev::CANSparkMax mainFixedMotor;
+        rev::CANSparkMax selectorFixedMotor;
         rev::SparkAbsoluteEncoder *magEncoder;
-        frc::DigitalInput m_rangeFinder;
+        frc::DigitalInput m_mainSensor;
+        frc::DigitalInput m_tunnelSensor;
 
         bool PIDWrist(double point);
 
     public:
 
         PID m_WristPID;
+
+        enum WristSetting{LOW, HIGH, SHOOT};
 
         Intake();
 
@@ -40,11 +43,11 @@ class Intake
 
         bool GetObjectInIntake();
 
+        bool GetObjectInTunnel();
+
         void MoveWristPercent(double percent);
 
-        bool PIDWristDown();
-
-        bool PIDWristUp();
+        bool PIDWristToPoint(WristSetting Point);
 
 };
 

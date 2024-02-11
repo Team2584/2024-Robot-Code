@@ -11,6 +11,9 @@ class Elevator
         double toflastSpeed = 0;
         double toflastHeight = 0;
 
+        bool lastSensorValue = false;
+        int timesPassed = 0;
+
         rev::CANSparkMax winchMotor;
         rev::SparkRelativeEncoder *winchEncoder;
         rev::CANSparkMax ampMotor;
@@ -24,7 +27,6 @@ class Elevator
 
         bool PIDElevator(double setpoint);
         
-
     public:
 
         enum ElevatorSetting{LOW, AMP, TRAP};
@@ -43,7 +45,9 @@ class Elevator
 
         bool GetObjectInMech();
 
-        bool GetObjectInTunnel();
+        bool PrepareNote();
+
+        void DepositNote();
 
         bool GetElevatorAtSetpoint();
 

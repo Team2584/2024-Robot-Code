@@ -5,11 +5,11 @@ class Climb {
 
     private:
 
-        rev::CANSparkMax leftClimbMotor, rightClimbMotor;
+        rev::CANSparkFlex leftClimbMotor, rightClimbMotor;
         rev::SparkRelativeEncoder leftEncoder, rightEncoder;
         AprilTagSwerve* robotSwerveDrive;
-        frc::DigitalInput leftStop;
-        frc::DigitalInput rightStop;
+        rev::SparkLimitSwitch leftStop;
+        rev::SparkLimitSwitch rightStop;
         PID leftPID;
         PID rightPID;
         PID rollPID;
@@ -27,10 +27,6 @@ class Climb {
         void RetractClimb();
 
         void HoldClimb();
-
-        bool LiftRobotAuto();
-
-        bool LowerRobotAuto();
 
         bool ClimbPID(double setpoint);
 
