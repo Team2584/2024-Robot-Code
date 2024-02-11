@@ -8,25 +8,16 @@ NoteController::NoteController(Intake* _intake, FlywheelSystem* _flywheel, Eleva
 }
 
 void NoteController::UpdateNotePos(){
-    if((intake->GetObjectInIntake() && intake->GetObjectInTunnel()) || GetNotePos() == REVERSING){
-        if(!intake->GetObjectInIntake() && !intake->GetObjectInTunnel()){
-            notePos = NoteController::IN_INTAKE;
-        }
-        else{
-            notePos = NoteController::REVERSING;
-        }
-        return;
-    }
     if(intake->GetObjectInIntake()){
         notePos = NoteController::IN_INTAKE;
     }
-    if(intake->GetObjectInTunnel()){
-        notePos = NoteController::IN_TUNNEL;
-    }
-    if(!intake->GetObjectInTunnel() && elevator->GetObjectInMech()){
+    if(notePos == NoteController::IN_INTAKE && !intake->GetObjectInTunnel() && elevator->GetObjectInMech()){
         notePos = NoteController::IN_ELEVATOR;
     }
-    if(!intake->GetObjectInIntake() && !intake->GetObjectInTunnel() && !elevator->GetObjectInMech()){
+    if(notePos == NoteController::IN_ELEVATOR && !elevator->GetObjectInMech() && !elevator->GetObjectInMech()){
+        notePos = NoteController::NO;
+    }
+    if(notePos == NoteController::IN_INTAKE && !intake->GetObjectInTunnel()){
         notePos = NoteController::NO;
     }
 }
@@ -41,7 +32,10 @@ void NoteController::IntakeNote(){
 
 bool NoteController::IntakeNoteSmart(){
     if(GetNotePos() == NO){
-        intake->SetIntakeMotorSpeed(IntakeConstants::INTAKE_SPEED_IN*-1);
+       IntakeNote();
+    }
+    else{
+        intake->SetIntakeMotorSpeed(0);
     }
     return (GetNotePos() == IN_INTAKE);
 }
@@ -52,22 +46,30 @@ bool NoteController::Outtake(){
 
 void NoteController::OuttakeFromElevator(){
     intake->SetIntakeMotorSpeed(60,60);
+    elevator->SetAmpMotorPercent(0.75);
 }
 
 bool NoteController::OuttakeFromElevatorSmart(){
-    if(GetNotePos() != NO || GetNotePos() == REVERSING){
-        intake->SetIntakeMotorSpeed(60,60);
+    if(GetNotePos() != IN_INTAKE ){
+        OuttakeFromElevator();
+    }
+    else{
+        elevator->SetAmpMotorPercent(0);
+        intake->SetIntakeMotorSpeed(0);
     }
     return (GetNotePos() == IN_INTAKE);
 }
 
-void NoteController::ToFlywheel(){
+void NoteController::ToFlywheelShoot(){
     intake->SetIntakeMotorSpeed(-60, -60);
 }
 
 bool NoteController::ToFlywheelShootSmart(){
     if(flywheel->TopFlywheel.AtSetpoint() && flywheel->BottomFlywheel.AtSetpoint() && GetNotePos() == IN_INTAKE){
-        intake->SetIntakeMotorSpeed(-60, -60);
+        ToFlywheelShoot();
+    }
+    else{
+        intake->SetIntakeMotorSpeed(0);
     }
     return (GetNotePos() == NO);
 }
@@ -79,19 +81,25 @@ void NoteController::ToElevator(){
 
 bool NoteController::ToElevatorSmart(){
     if(GetNotePos() != IN_ELEVATOR){
-        intake->SetIntakeMotorSpeed(-60,60); //to elevator
-        elevator->SetAmpMotorPercent(60);
+        ToElevator();
+    }
+    else{
+        elevator->SetAmpMotorPercent(0);
+        intake->SetIntakeMotorSpeed(0);
     }
     return (GetNotePos() == IN_ELEVATOR);
 }
 
 void NoteController::DepositNote(){
-    elevator->SetAmpMotorPercent(60);
+    elevator->SetAmpMotorPercent(-0.75);
 }
 
 bool NoteController::DepositNoteSmart(Elevator::ElevatorSetting _elevSetHeight){
     if(GetNotePos() == IN_ELEVATOR && elevator->GetElevatorAtSetpoint() && (_elevSetHeight == Elevator::AMP || _elevSetHeight == Elevator::TRAP)){
-        elevator->SetAmpMotorPercent(60);
+        elevator->SetAmpMotorPercent(-0.75);
+    }
+    else{
+        elevator->SetAmpMotorPercent(0);
     }
     return (GetNotePos() == NO);
 }

@@ -201,21 +201,20 @@ void Robot::TeleopPeriodic()
   wristSetPoint = Intake::HIGH;
 
   if(xboxController.GetRightBumper()){
-    overbumper.IntakeRing(); //intake until stop
+    notecontroller.IntakeNoteSmart();
     wristSetPoint = Intake::LOW;
   }
   else if(xboxController.GetLeftBumper()){
-    overbumper.OuttakeRing(); //outtake from main system
+    notecontroller.Outtake();
   }
   else if(xboxController.GetPOV() == 0){
-    overbumper.SetIntakeMotorSpeed(-60, -60); //to flywheel (this shoots)
+    notecontroller.ToFlywheelShoot();
   }
   else if(xboxController.GetPOV() == 180){
-    overbumper.SetIntakeMotorSpeed(-60,60); //to elevator
-    ampmech.SetAmpMotorPercent(60);
+    notecontroller.ToElevatorSmart();
   }
-  else {
-    overbumper.SetIntakeMotorSpeed(0); 
+  else if(xboxController.GetPOV() == 270){
+    notecontroller.DepositNoteSmart(elevSetHeight);
   }
   
   /*                                                      
@@ -270,22 +269,18 @@ void Robot::TeleopPeriodic()
     //This line of code cycles to the next value in a 3-value Enumerator (of elevator positions), or cycles back to the first if it's currently at the third
     elevSetHeight = static_cast<Elevator::ElevatorSetting>((elevSetHeight + 1) % 3); 
   }
-  ampmech.MoveToHeight(elevSetHeight);
+  
   */
   if (xboxController.GetBButton()){
-    ampmech.MoveToHeight(Elevator::AMP);
-  }
-  else{
-    ampmech.MoveToHeight(Elevator::LOW);
+    if(notecontroller.GetNotePos() == NoteController::IN_ELEVATOR){
+      elevSetHeight = Elevator::AMP;
+    }
+    else{
+      elevSetHeight = Elevator::LOW;
+    }
   }
 
-  //Check if the elevator is at the correct point before running the amp feed motor
-  if(xboxController.GetPOV() == 270){
-    ampmech.SetAmpMotorPercent(-0.75);
-  }
-  else {
-    ampmech.SetAmpMotorPercent(0);
-  }
+  ampmech.MoveToHeight(elevSetHeight);
 
   /*
    ,-----.,--.,--.           ,--.    

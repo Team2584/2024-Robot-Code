@@ -34,7 +34,7 @@ class NoteController
         void OuttakeFromElevator();
         bool OuttakeFromElevatorSmart();
 
-        void ToFlywheel();
+        void ToFlywheelShoot();
         bool ToFlywheelShootSmart();
         
         void ToElevator();
