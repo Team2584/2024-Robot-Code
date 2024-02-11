@@ -6,7 +6,7 @@ Intake::Intake()
     fixedIntakeMotor{FIXED_INTAKE_MOTOR_PORT, rev::CANSparkMax::MotorType::kBrushless},
     fixedIntakeMotor2{FIXED_INTAKE_MOTOR_PORT_2, rev::CANSparkMax::MotorType::kBrushed},
     m_rangeFinder{1},
-    m_WristPID{WRISTKP,WRISTKI,WRISTKD,WRISTKIMAX,WRISTMIN_SPEED,WRISTMAX_SPEED,WRIST_POS_ERROR,WRIST_VELOCITY_ERROR}
+    m_WristPID{IntakeConstants::Wrist::KP,IntakeConstants::Wrist::KI,IntakeConstants::Wrist::KD,IntakeConstants::Wrist::KIMAX,IntakeConstants::Wrist::MIN_SPEED,IntakeConstants::Wrist::MAX_SPEED,IntakeConstants::Wrist::POS_ERROR,IntakeConstants::Wrist::VELOCITY_ERROR}
 {
   magEncoder = new rev::SparkAbsoluteEncoder(wristMotor.GetAbsoluteEncoder(rev::SparkAbsoluteEncoder::Type::kDutyCycle));
   wristMotor.SetIdleMode(rev::CANSparkMax::IdleMode::kCoast);
@@ -34,7 +34,7 @@ void Intake::SetIntakeMotorSpeed(double OverBumperPercent, double FeederPercent_
 void Intake::IntakeRing()
 {
   if(!GetObjectInIntake()){
-    SetIntakeMotorSpeed(INTAKE_SPEED_IN*-1);
+    SetIntakeMotorSpeed(IntakeConstants::INTAKE_SPEED_IN*-1);
   }
   else{
     SetIntakeMotorSpeed(0);
@@ -43,12 +43,12 @@ void Intake::IntakeRing()
 
 void Intake::OuttakeRing()
 {
-  SetIntakeMotorSpeed(INTAKE_SPEED_OUT);
+  SetIntakeMotorSpeed(IntakeConstants::INTAKE_SPEED_OUT);
 }
 
 void Intake::ShootRing()
 {
-  SetIntakeMotorSpeed(INTAKE_SPEED_IN);
+  SetIntakeMotorSpeed(IntakeConstants::INTAKE_SPEED_IN);
 }
 
 double Intake::GetWristEncoderReading()
@@ -74,13 +74,13 @@ bool Intake::PIDWrist(double point)
 
 bool Intake::PIDWristToPoint(WristSetting Point){
   if(Point == LOW){
-    return PIDWrist(IntakeWrist::WRIST_LOW);
+    return PIDWrist(IntakeConstants::Wrist::WRIST_LOW);
   }
   else if(Point == HIGH){
-    return PIDWrist(IntakeWrist::WRIST_HIGH);
+    return PIDWrist(IntakeConstants::Wrist::WRIST_HIGH);
   }
   else if (Point == SHOOT){
-    return PIDWrist(IntakeWrist::WRIST_SHOOT);
+    return PIDWrist(IntakeConstants::Wrist::WRIST_SHOOT);
   }
   return false;
 }

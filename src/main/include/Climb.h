@@ -8,8 +8,8 @@ class Climb {
         rev::CANSparkMax leftClimbMotor, rightClimbMotor;
         rev::SparkRelativeEncoder leftEncoder, rightEncoder;
         AprilTagSwerve* robotSwerveDrive;
-        frc::DigitalInput leftStop;
-        frc::DigitalInput rightStop;
+        rev::SparkLimitSwitch leftStop;
+        rev::SparkLimitSwitch rightStop;
         PID leftPID;
         PID rightPID;
         PID rollPID;

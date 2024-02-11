@@ -8,11 +8,11 @@ Climb::Climb(AprilTagSwerve* _swerveDrive)
     leftEncoder{leftClimbMotor.GetEncoder(rev::SparkRelativeEncoder::Type::kHallSensor)},
     rightEncoder{rightClimbMotor.GetEncoder(rev::SparkRelativeEncoder::Type::kHallSensor)},
     robotSwerveDrive{_swerveDrive},
-    leftStop{CLIMB_LEFT_STOP_PORT},
-    rightStop{CLIMB_RIGHT_STOP_PORT},
-    leftPID{c_KP,c_KI,c_KD,c_KIMAX,c_MIN_SPEED,c_MAX_SPEED,c_POS_ERROR,c_VELOCITY_ERROR},
-    rightPID{c_KP,c_KI,c_KD,c_KIMAX,c_MIN_SPEED,c_MAX_SPEED,c_POS_ERROR,c_VELOCITY_ERROR},
-    rollPID{c_t_KP,c_t_KI,c_t_KD,c_t_KIMAX,c_t_MIN_SPEED,c_t_MAX_SPEED,c_t_ROT_ERROR,c_t_VELOCITY_ERROR}
+    leftStop{leftClimbMotor.GetForwardLimitSwitch(rev::SparkLimitSwitch::Type::kNormallyOpen)},
+    rightStop{rightClimbMotor.GetForwardLimitSwitch(rev::SparkLimitSwitch::Type::kNormallyOpen)},
+    leftPID{ClimbConstants::m_linear_KP,ClimbConstants::m_linear_KI,ClimbConstants::m_linear_KD,ClimbConstants::m_linear_KIMAX,ClimbConstants::m_linear_MIN_SPEED,ClimbConstants::m_linear_MAX_SPEED,ClimbConstants::m_linear_POS_ERROR,ClimbConstants::m_linear_VELOCITY_ERROR},
+    rightPID{ClimbConstants::m_linear_KP,ClimbConstants::m_linear_KI,ClimbConstants::m_linear_KD,ClimbConstants::m_linear_KIMAX,ClimbConstants::m_linear_MIN_SPEED,ClimbConstants::m_linear_MAX_SPEED,ClimbConstants::m_linear_POS_ERROR,ClimbConstants::m_linear_VELOCITY_ERROR},
+    rollPID{ClimbConstants::m_rotation_KP,ClimbConstants::m_rotation_KI,ClimbConstants::m_rotation_KD,ClimbConstants::m_rotation_KIMAX,ClimbConstants::m_rotation_MIN_SPEED,ClimbConstants::m_rotation_MAX_SPEED,ClimbConstants::m_rotation_ROT_ERROR,ClimbConstants::m_rotation_VELOCITY_ERROR}
 {
     leftClimbMotor.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
     rightClimbMotor.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
@@ -25,13 +25,13 @@ Climb::Climb(AprilTagSwerve* _swerveDrive)
 bool Climb::ZeroClimb(){
     if(!leftStop.Get() && !rightStop.Get()){
         if(!leftStop.Get()){
-            leftClimbMotor.Set(CLIMB_PCT_DOWN*-1);
+            leftClimbMotor.Set(ClimbConstants::BasePctDown*-1);
         }
         else{
             leftClimbMotor.Disable();
         }
         if(!rightStop.Get()){
-            rightClimbMotor.Set(CLIMB_PCT_DOWN*-1);
+            rightClimbMotor.Set(ClimbConstants::BasePctDown*-1);
         }
         else{
             rightClimbMotor.Disable();
@@ -50,16 +50,16 @@ bool Climb::ZeroClimb(){
  * @brief Move Both Climb Arms Up
 */
 void Climb::ExtendClimb(){
-    leftClimbMotor.Set(CLIMB_PCT_UP);
-    rightClimbMotor.Set(CLIMB_PCT_UP);
+    leftClimbMotor.Set(ClimbConstants::BasePctUp);
+    rightClimbMotor.Set(ClimbConstants::BasePctUp);
 }
 
 /**
  * @brief Move Both Climb Arms Down
 */
 void Climb::RetractClimb(){
-    leftClimbMotor.Set(CLIMB_PCT_DOWN*-1);
-    rightClimbMotor.Set(CLIMB_PCT_DOWN*-1);
+    leftClimbMotor.Set(ClimbConstants::BasePctDown*-1);
+    rightClimbMotor.Set(ClimbConstants::BasePctDown*-1);
 }
 
 /**
@@ -109,8 +109,8 @@ bool Climb::BalanceWhileClimbing(){
     double rotation = robotSwerveDrive->GetIMURoll();
     double error = rotation < 180 ? rotation : 360 - rotation;
 
-    leftClimbMotor.Set(rollPID.Calculate(error,0)*-1 + CLIMB_PCT_DOWN*-1);
-    rightClimbMotor.Set(rollPID.Calculate(error,0) + CLIMB_PCT_DOWN*-1);
+    leftClimbMotor.Set(rollPID.Calculate(error,0)*-1 + ClimbConstants::BasePctDown*-1);
+    rightClimbMotor.Set(rollPID.Calculate(error,0) + ClimbConstants::BasePctDown*-1);
 
     return rollPID.PIDFinished();
 }
@@ -165,7 +165,7 @@ bool Climb::GetClimbBalanced(){
 }
 
 /**
- * @return If the robot is balanced and the robot is climbed enough (probably not very useful)
+ * @return If the robot is balanced and the robot is climbed enough
 */
 bool Climb::GetClimbDone(){
     return (GetClimbBalanced() && GetClimbAtPos());
