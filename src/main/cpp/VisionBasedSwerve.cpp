@@ -16,6 +16,8 @@ VisionSwerve::VisionSwerve()
       sanityEntry{sanityTopic.GetEntry(-1)},
       connectedTopic{visionTable->GetDoubleTopic("connected")},
       connectedEntry{connectedTopic.GetEntry(false)},
+      noteInViewTopic{visionTable->GetBooleanTopic("noteInView")},
+      noteInViewSubscriber{noteInViewTopic.Subscribe({})},
       notePosTopic{visionTable->GetDoubleTopic("ringPos")},
       notePoseSubscriber{notePosTopic.Subscribe({})}
 {
