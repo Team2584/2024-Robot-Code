@@ -11,7 +11,7 @@ SwerveDriveAutonomousController::SwerveDriveAutonomousController(SwerveDrive *sw
       yPIDController{DTP_TRANSLATION_KP, DTP_TRANSLATION_KI, DTP_TRANSLATION_KD, DTP_TRANSLATION_KI_MAX, 
                      DTP_TRANSLATION_MIN_SPEED, DTP_TRANSLATION_MAX_SPEED, DTP_TRANSLATION_TOLERANCE, DTP_TRANSLATION_VELOCITY_TOLERANCE},
       rotationPIDController{DTP_ROTATION_KP, DTP_ROTATION_KI, DTP_ROTATION_KD, DTP_ROTATION_KI_MAX, 
-                     DTP_ROTATION_MIN_SPEED, DTP_ROTATION_MAX_SPEED, DTP_ROTATION_TOLERANCE, DTP_ROTATION_VELOCITY_TOLERANCE}
+                     DTP_ROTATION_MIN_SPEED, DTP_ROTATION_MAX_SPEED, DTP_ROTATION_TOLERANCE, DTP_ROTATION_VELOCITY_TOLERANCE}            
 {
     baseSwerveDrive = swerveDrive;
     rotationPIDController.EnableContinuousInput(-M_PI, M_PI);
@@ -24,7 +24,7 @@ SwerveDriveAutonomousController::SwerveDriveAutonomousController(SwerveDrive *sw
  */
 SwerveDriveAutonomousController::SwerveDriveAutonomousController(VisionSwerve *swerveDrive) : SwerveDriveAutonomousController((SwerveDrive*) swerveDrive)  // TODO write comment
 {
-    photonTagSwerve = swerveDrive;
+    visionBasedSwerve = swerveDrive;
 }
 
 /**
@@ -48,18 +48,34 @@ void SwerveDriveAutonomousController::CalculatePIDToPose(PoseEstimationType pose
     }
     else if (poseEstimationType == PoseEstimationType::TagBased)
     {
-        // Check if given reference to a photon tag swerve. 
-        if (photonTagSwerve == NULL)
+        // Check if given reference to a vision based swerve. 
+        if (visionBasedSwerve == NULL)
         {
             SmartDashboard::PutString("ERROR", "Attemped to read april tag data from a base swerve drive in SwerveDriveAutoController.cpp!");
             return;
         }
 
-        speeds[0] = xPIDController.Calculate(photonTagSwerve->GetTagOdometryPose().X().value(), target.X().value());
+        speeds[0] = xPIDController.Calculate(visionBasedSwerve->GetTagOdometryPose().X().value(), target.X().value());
         PIDComplete[0] = xPIDController.PIDFinished();
-        speeds[1] = yPIDController.Calculate(photonTagSwerve->GetTagOdometryPose().Y().value(), target.Y().value());
+        speeds[1] = yPIDController.Calculate(visionBasedSwerve->GetTagOdometryPose().Y().value(), target.Y().value());
         PIDComplete[1] = yPIDController.PIDFinished();
-        speeds[2] = rotationPIDController.Calculate(photonTagSwerve->GetTagOdometryPose().Rotation().Radians().value(), target.Rotation().Radians().value());
+        speeds[2] = rotationPIDController.Calculate(visionBasedSwerve->GetTagOdometryPose().Rotation().Radians().value(), target.Rotation().Radians().value());
+        PIDComplete[2] = rotationPIDController.PIDFinished();
+    }
+    else if (poseEstimationType == PoseEstimationType::NoteBased)
+    {
+        // Check if given reference to a vision based swerve. 
+        if (visionBasedSwerve == NULL)
+        {
+            SmartDashboard::PutString("ERROR", "Attemped to read depth camaera data from a base swerve drive in SwerveDriveAutoController.cpp!");
+            return;
+        }
+
+        speeds[0] = xPIDController.Calculate(visionBasedSwerve->GetNoteOdometryPose().X().value(), target.X().value());
+        PIDComplete[0] = xPIDController.PIDFinished();
+        speeds[1] = yPIDController.Calculate(visionBasedSwerve->GetNoteOdometryPose().Y().value(), target.Y().value());
+        PIDComplete[1] = yPIDController.PIDFinished();
+        speeds[2] = rotationPIDController.Calculate(visionBasedSwerve->GetNoteOdometryPose().Rotation().Radians().value(), target.Rotation().Radians().value());
         PIDComplete[2] = rotationPIDController.PIDFinished();
     }
 }
@@ -76,7 +92,7 @@ void SwerveDriveAutonomousController::ResetPIDLoop()
 
 Pose2d SwerveDriveAutonomousController::GetTagPose()
 {
-    return photonTagSwerve->GetTagOdometryPose();
+    return visionBasedSwerve->GetTagOdometryPose();
 }
 
 /**
@@ -84,15 +100,27 @@ Pose2d SwerveDriveAutonomousController::GetTagPose()
  * 
  * @param poseEstimationType The type of data we use to estimate our position on the field
  */
-void SwerveDriveAutonomousController::BeginDriveToPose()
+void SwerveDriveAutonomousController::BeginDriveToPose(PoseEstimationType poseEstimationType)
 {
     // Ensure our PID constants are set for Driving to Pose
-    xPIDController.ChangeConstants(DTP_TRANSLATION_KP, DTP_TRANSLATION_KI, DTP_TRANSLATION_KD, DTP_TRANSLATION_KI_MAX, 
-                     DTP_TRANSLATION_MIN_SPEED, DTP_TRANSLATION_MAX_SPEED, DTP_TRANSLATION_TOLERANCE, DTP_TRANSLATION_VELOCITY_TOLERANCE);
-    yPIDController.ChangeConstants(DTP_TRANSLATION_KP, DTP_TRANSLATION_KI, DTP_TRANSLATION_KD, DTP_TRANSLATION_KI_MAX, 
-                     DTP_TRANSLATION_MIN_SPEED, DTP_TRANSLATION_MAX_SPEED, DTP_TRANSLATION_TOLERANCE, DTP_TRANSLATION_VELOCITY_TOLERANCE);
-    rotationPIDController.ChangeConstants(DTP_ROTATION_KP, DTP_ROTATION_KI, DTP_ROTATION_KD, DTP_ROTATION_KI_MAX, 
-                     DTP_ROTATION_MIN_SPEED, DTP_ROTATION_MAX_SPEED, DTP_ROTATION_TOLERANCE, DTP_ROTATION_VELOCITY_TOLERANCE);
+    if (poseEstimationType == PoseEstimationType::TagBased || poseEstimationType == PoseEstimationType::PureOdometry)
+    {
+        xPIDController.ChangeConstants(DTP_TRANSLATION_KP, DTP_TRANSLATION_KI, DTP_TRANSLATION_KD, DTP_TRANSLATION_KI_MAX, 
+                        DTP_TRANSLATION_MIN_SPEED, DTP_TRANSLATION_MAX_SPEED, DTP_TRANSLATION_TOLERANCE, DTP_TRANSLATION_VELOCITY_TOLERANCE);
+        yPIDController.ChangeConstants(DTP_TRANSLATION_KP, DTP_TRANSLATION_KI, DTP_TRANSLATION_KD, DTP_TRANSLATION_KI_MAX, 
+                        DTP_TRANSLATION_MIN_SPEED, DTP_TRANSLATION_MAX_SPEED, DTP_TRANSLATION_TOLERANCE, DTP_TRANSLATION_VELOCITY_TOLERANCE);
+        rotationPIDController.ChangeConstants(DTP_ROTATION_KP, DTP_ROTATION_KI, DTP_ROTATION_KD, DTP_ROTATION_KI_MAX, 
+                        DTP_ROTATION_MIN_SPEED, DTP_ROTATION_MAX_SPEED, DTP_ROTATION_TOLERANCE, DTP_ROTATION_VELOCITY_TOLERANCE);
+    }
+    else if (poseEstimationType == PoseEstimationType::NoteBased)
+    {
+        xPIDController.ChangeConstants(NOTE_X_KP, NOTE_X_KI, NOTE_X_KD, NOTE_X_KI_MAX, 
+                        NOTE_X_MIN_SPEED, NOTE_X_MAX_SPEED, NOTE_X_TOLERANCE, NOTE_X_VELOCITY_TOLERANCE);
+        yPIDController.ChangeConstants(NOTE_Y_KP, NOTE_Y_KI, NOTE_Y_KD, NOTE_Y_KI_MAX, 
+                        NOTE_Y_MIN_SPEED, NOTE_Y_MAX_SPEED, NOTE_Y_TOLERANCE, NOTE_Y_VELOCITY_TOLERANCE);
+        rotationPIDController.ChangeConstants(NOTE_ROTATION_KP, NOTE_ROTATION_KI, NOTE_ROTATION_KD, NOTE_ROTATION_KI_MAX, 
+                        NOTE_ROTATION_MIN_SPEED, NOTE_ROTATION_MAX_SPEED, NOTE_ROTATION_TOLERANCE, NOTE_ROTATION_VELOCITY_TOLERANCE);
+    }
 
     ResetPIDLoop();
 }
@@ -278,12 +306,54 @@ bool SwerveDriveAutonomousController::FollowTrajectory(PoseEstimationType poseEs
     return false;
 }
 
+void SwerveDriveAutonomousController::BeginDriveToNote()
+{
+    BeginDriveToPose(PoseEstimationType::NoteBased);
+
+    hasTurnedToNote = false;
+}
+
 bool SwerveDriveAutonomousController::TurnToNote()
 {
+    Pose2d currentPose = visionBasedSwerve->GetNoteOdometryPose();
+    noteTargetAngle = Rotation2d(units::radian_t{atan2(currentPose.Y().value(), currentPose.X().value())});
 
+    SmartDashboard::PutNumber("Targe Note Angle", noteTargetAngle.Degrees().value());
+
+    return DriveToPose(Pose2d(currentPose.Translation(), noteTargetAngle), PoseEstimationType::NoteBased); // Drive to current pose but at the target angle
 }
 
 bool SwerveDriveAutonomousController::DriveToNote()
 {
+    if (!hasTurnedToNote)
+    {
+        hasTurnedToNote = TurnToNote(); 
+        return false;
+    }
 
+    double speeds[3] = {0, 0, 0};
+    bool PIDFinished[3] = {false, false, false};
+ 
+    CalculatePIDToPose(PoseEstimationType::NoteBased, Pose2d(0_m, 0_m, noteTargetAngle), speeds, PIDFinished);
+
+    // Debugging info
+    SmartDashboard::PutNumber("Pose X Speed", speeds[0]);
+    SmartDashboard::PutNumber("Pose Y Speed", speeds[1]);
+    SmartDashboard::PutNumber("Pose Rotation Speed", speeds[2]);
+
+    SmartDashboard::PutBoolean("Pose X Done", PIDFinished[0]);
+    SmartDashboard::PutBoolean("Pose Y Done", PIDFinished[1]);
+    SmartDashboard::PutBoolean("Pose Rotation Done", PIDFinished[2]);
+
+
+    // If all PID loops are finished, stop driving the swerve.
+    if (PIDFinished[0] && PIDFinished[1] && PIDFinished[2])
+    {
+        baseSwerveDrive->DriveSwervePercent(0, 0, 0);
+        return true;
+    }
+
+    // Drive swerve at desired speeds
+    baseSwerveDrive->DriveSwervePercentNonFieldOriented(speeds[0], speeds[1], speeds[2]);
+    return false;
 }
