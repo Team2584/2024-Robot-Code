@@ -3,7 +3,7 @@
 
 #define FLYWHEEL_MOTOR_1 15
 #define FLYWHEEL_MOTOR_2 16
-#define FLYWHEEL_ANGLING_MOTOR 20
+#define FLYWHEEL_ANGLING_MOTOR 30
 
 //(these need to be set, IN RPS)
 inline constexpr auto kShooterFreeRPS = 113_tr / 1_s    ; //~neo vortex rpm

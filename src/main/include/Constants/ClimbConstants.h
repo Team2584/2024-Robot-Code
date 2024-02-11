@@ -25,8 +25,8 @@ inline double c_t_MIN_SPEED  = 0.1;
 #define CLIMB_PCT_UP 0.05
 #define CLIMB_PCT_DOWN 0.05
 
-#define CLIMB_LEFT_STOP_PORT 2
-#define CLIMB_RIGHT_STOP_PORT 3
+#define CLIMB_LEFT_STOP_PORT 8
+#define CLIMB_RIGHT_STOP_PORT 7
 
 //Convention: Up = motor spin positive
 //Right = positive

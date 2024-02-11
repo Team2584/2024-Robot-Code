@@ -9,13 +9,13 @@
 
 
 //Intake motor speeds, percent
-#define INTAKE_SPEED_IN 80
-#define INTAKE_SPEED_OUT 60
+#define INTAKE_SPEED_IN 100
+#define INTAKE_SPEED_OUT 100
 
 namespace IntakeWrist{
     //Wrist absolute Encoder position values, 0-1 rotatons
     inline const double WRIST_HIGH = 0.5;
-    inline const double WRIST_LOW = 0.715;
+    inline const double WRIST_LOW = 0.72; //was 715
     inline const double WRIST_SHOOT = 0.655;
 }
 
@@ -27,6 +27,6 @@ inline double WRISTKIMAX  = 0.1;
 inline double WRIST_POS_ERROR  = 0.015; //~3deg
 inline double WRIST_VELOCITY_ERROR = 1;
 inline double WRISTMAX_SPEED  = 0.3;
-inline double WRISTMIN_SPEED  = 0.1;
+inline double WRISTMIN_SPEED  = 0.05;
 
 #endif

@@ -18,20 +18,20 @@
 */
 inline units::meters_per_second_t e_kMaxVelocity = 1.75_mps;
 inline units::meters_per_second_squared_t e_kMaxAcceleration = 0.75_mps_sq;
-inline double e_kP = 0.08;
-inline double e_kI = 0.0;
+inline double e_kP = 60;
+inline double e_kI = 4;
 inline double e_kD = 0.0;
 inline units::volt_t e_kS = 1.1_V;
-inline units::volt_t e_kG = 1.2_V;
+inline units::volt_t e_kG = 0_V;
 inline auto e_kV = 1.3_V / 1_mps;
-inline auto ALLOWABLE_ERROR_ELEV_POS = 0.6_m;
+inline auto ALLOWABLE_ERROR_ELEV_POS = 0.04_m;
 
-static constexpr double ELEV_AMP = 0.5;
-static constexpr double ELEV_LOW = 0;
-static constexpr double ELEV_TRAP = 0.7;
+inline auto ELEV_AMP = 0.57;
+inline auto ELEV_LOW = 0;
+inline auto ELEV_TRAP = 0.3;
 
-inline constexpr double gearRatioValue1 = 1.0/16.0;
-inline constexpr double diameterValue1 = 0.05; //meters
+inline constexpr double gearRatioValue1 = 1.0/25.0;
+inline constexpr double diameterValue1 = 0.0762; //meters
 inline constexpr double ELEV_CONVERSION_FACTOR = gearRatioValue1 * (3.14159365 * diameterValue1);
 
 #endif

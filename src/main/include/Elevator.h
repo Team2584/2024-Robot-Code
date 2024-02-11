@@ -26,7 +26,6 @@ class Elevator
 
         bool PIDElevator(double setpoint);
         
-
     public:
 
         enum ElevatorSetting{LOW, AMP, TRAP};

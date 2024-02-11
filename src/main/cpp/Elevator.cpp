@@ -9,7 +9,7 @@ Elevator::Elevator()
     m_controller{e_kP, e_kI, e_kD, m_constraints},
     m_feedforward{e_kS, e_kG, e_kV}
 {
-    winchMotor.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
+    winchMotor.SetIdleMode(rev::CANSparkMax::IdleMode::kCoast);
     winchEncoder = new rev::SparkRelativeEncoder(winchMotor.GetEncoder(rev::SparkRelativeEncoder::Type::kHallSensor));
     winchEncoder->SetPosition(0.0);
     winchEncoder->SetPositionConversionFactor(ELEV_CONVERSION_FACTOR);
@@ -46,7 +46,7 @@ void Elevator::StopElevator()
 */
 void Elevator::MoveElevatorPercent(double percent)
 {
-    winchMotor.Set(percent);
+    winchMotor.Set(percent*-1);
 }
 
 /**
@@ -58,9 +58,16 @@ bool Elevator::PIDElevator(double setpoint){
     units::meter_t goal{setpoint};
     m_controller.SetGoal(goal);
 
-    winchMotor.SetVoltage(
-        units::volt_t{m_controller.Calculate(units::meter_t{winchEncoder->GetPosition()})} +
-        m_feedforward.Calculate(m_controller.GetSetpoint().velocity));
+    //winchMotor.SetVoltage((units::volt_t{m_controller.Calculate(units::meter_t{winchEncoder->GetPosition()}, goal)} + m_feedforward.Calculate(m_controller.GetSetpoint().velocity))*-1);
+    winchMotor.SetVoltage(units::volt_t{m_controller.Calculate(units::meter_t{winchEncoder->GetPosition()*-1}, goal)} *-1);
+
+    auto elevv = m_controller.Calculate(units::meter_t{winchEncoder->GetPosition()}, goal);
+    SmartDashboard::PutNumber("elev pid out", elevv);
+    auto elevf = m_controller.GetSetpoint().velocity;
+    SmartDashboard::PutNumber("elev setpoint", elevf.value());
+    auto elevpose = m_controller.GetPositionError();
+    SmartDashboard::PutNumber("elev error", elevpose.value());
+    SmartDashboard::PutNumber("elev encoder pos", winchEncoder->GetPosition());
 
     return m_controller.AtGoal();
 }
@@ -73,25 +80,8 @@ bool Elevator::GetObjectInMech(){
     return (!ampMechSensor.Get());
 }
 
-bool Elevator::PrepareNote(){
-    if (ampMechSensor.Get() != lastSensorValue){
-        timesPassed += 1;
-    }
-
-    if (timesPassed >= 4){
-        ampMotor.StopMotor();
-        timesPassed = 0;
-        return true;
-    }
-
-    ampMotor.Set(0.5);
-
-    lastSensorValue = ampMechSensor.Get();
-    return false;
-}
-
 void Elevator::DepositNote(){
-    ampMotor.Set(0.5);
+    ampMotor.Set(-0.75);
 }
 
 bool  Elevator::GetElevatorAtSetpoint(){

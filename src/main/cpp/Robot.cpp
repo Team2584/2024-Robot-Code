@@ -37,10 +37,12 @@ void Robot::RobotInit()
   m_chooser.SetDefaultOption(kAutoNameDefault, kAutoNameDefault);
   m_chooser.AddOption(kAutoNameCustom, kAutoNameCustom);
   frc::SmartDashboard::PutData("Auto Modes", &m_chooser);
+  /*
   SmartDashboard::PutNumber("Start Flywheel Speed", 0);
   SmartDashboard::PutNumber("Flywheel kP", 0.005);
   SmartDashboard::PutNumber("Angler Setpoint", M_PI / 2);
   flywheel.FlywheelAnglerPID.SetupConstantTuning("Angler");
+  */
 }
 
 
@@ -98,8 +100,8 @@ void Robot::TeleopInit()
 {
   swerveDrive.ResetOdometry(Pose2d(0_m, 0_m, Rotation2d(180_deg)));
   swerveDrive.ResetTagOdometry(Pose2d(0_m, 0_m, Rotation2d(180_deg)));
-  
-  flywheel.FlywheelAnglerPID.UpdateConstantTuning("Angler");
+  ampmech.ResetElevatorEncoder();
+  //flywheel.FlywheelAnglerPID.UpdateConstantTuning("Angler");
   
 }
 
@@ -202,11 +204,11 @@ void Robot::TeleopPeriodic()
     overbumper.OuttakeRing(); //outtake from main system
     wristSetPoint = Intake::HIGH;
   }
-  else if(xboxController.GetPOV() == 0 && overbumper.GetObjectInIntake()){
+  else if(xboxController.GetPOV() == 0){
     overbumper.SetIntakeMotorSpeed(-60, -60); //to flywheel (this shoots)
     wristSetPoint = Intake::HIGH;
   }
-  else if(xboxController.GetPOV() == 180 && !ampmech.GetObjectInMech()){
+  else if(xboxController.GetPOV() == 180){
     overbumper.SetIntakeMotorSpeed(-60,60); //to elevator
     ampmech.SetAmpMotorPercent(60);
     wristSetPoint = Intake::HIGH;
@@ -263,15 +265,26 @@ void Robot::TeleopPeriodic()
 
   //For testing - probably don't want to use this enum in final code and for sure not in this way
   //We will need to add an (object in elevator) check
+  /*
   if (xboxController.GetBButtonPressed()){
     //This line of code cycles to the next value in a 3-value Enumerator (of elevator positions), or cycles back to the first if it's currently at the third
     elevSetHeight = static_cast<Elevator::ElevatorSetting>((elevSetHeight + 1) % 3); 
   }
   ampmech.MoveToHeight(elevSetHeight);
+  */
+  if (xboxController.GetBButton()){
+    ampmech.MoveToHeight(Elevator::AMP);
+  }
+  else{
+    ampmech.MoveToHeight(Elevator::LOW);
+  }
 
   //Check if the elevator is at the correct point before running the amp feed motor
-  if((elevSetHeight == Elevator::AMP || elevSetHeight == Elevator::TRAP) && ampmech.GetElevatorAtSetpoint() && xboxController.GetPOV() == 270){
-    ampmech.SetAmpMotorPercent(60);
+  if(xboxController.GetPOV() == 270){
+    ampmech.SetAmpMotorPercent(-0.75);
+  }
+  else {
+    ampmech.SetAmpMotorPercent(0);
   }
 
   /*
@@ -314,9 +327,9 @@ void Robot::TeleopPeriodic()
                                   `---'  `---'              `---'   
   */
 
-  SmartDashboard::PutNumber("Top FlyWheel RPM", flywheel.TopFlywheel.GetMeasurement());
-  SmartDashboard::PutNumber("Top FlyWheel Setpoint", flywheel.TopFlywheel.m_shooterPID.GetSetpoint());
-  SmartDashboard::PutNumber("Current Angler", flywheel.GetAnglerEncoderReading());
+ // SmartDashboard::PutNumber("Top FlyWheel RPM", flywheel.TopFlywheel.GetMeasurement());
+  //SmartDashboard::PutNumber("Top FlyWheel Setpoint", flywheel.TopFlywheel.m_shooterPID.GetSetpoint());
+  //SmartDashboard::PutNumber("Current Angler", flywheel.GetAnglerEncoderReading());
 }
 
 void Robot::DisabledInit() {}
