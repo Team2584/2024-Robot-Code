@@ -196,26 +196,24 @@ void Robot::TeleopPeriodic()
   `--'`--''--'  `--'   `--`--'`--'`--'`----'/  //  /    `--'    `----' `----' `---' `--'`--''--'.`-  /                                            `---' 
   */
 
+  wristSetPoint = Intake::HIGH;
+
   if(xboxController.GetRightBumper()){
     overbumper.IntakeRing(); //intake until stop
     wristSetPoint = Intake::LOW;
   }
   else if(xboxController.GetLeftBumper()){
     overbumper.OuttakeRing(); //outtake from main system
-    wristSetPoint = Intake::HIGH;
   }
   else if(xboxController.GetPOV() == 0){
     overbumper.SetIntakeMotorSpeed(-60, -60); //to flywheel (this shoots)
-    wristSetPoint = Intake::HIGH;
   }
   else if(xboxController.GetPOV() == 180){
     overbumper.SetIntakeMotorSpeed(-60,60); //to elevator
     ampmech.SetAmpMotorPercent(60);
-    wristSetPoint = Intake::HIGH;
   }
   else {
     overbumper.SetIntakeMotorSpeed(0); 
-    wristSetPoint = Intake::HIGH;
   }
   
   /*                                                      
