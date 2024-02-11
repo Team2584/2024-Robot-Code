@@ -3,7 +3,7 @@
 
 #define FLYWHEEL_MOTOR_1 15
 #define FLYWHEEL_MOTOR_2 16
-#define FLYWHEEL_ANGLING_MOTOR 20
+#define FLYWHEEL_ANGLING_MOTOR 30
 
 namespace FlywheelConstants {
 

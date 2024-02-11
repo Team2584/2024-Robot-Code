@@ -13,7 +13,7 @@ inline const double INTAKE_SPEED_OUT = 60;
 
 namespace Wrist{
 inline const double WRIST_HIGH = 0.5;
-inline const double WRIST_LOW = 0.715;
+inline const double WRIST_LOW = 0.72; //was 715
 inline const double WRIST_SHOOT = 0.655;
 inline double KD  = 0;
 inline double KP  = 4;
@@ -22,7 +22,7 @@ inline double KIMAX  = 0.1;
 inline double POS_ERROR  = 0.015; //~3deg
 inline double VELOCITY_ERROR = 1;
 inline double MAX_SPEED  = 0.3;
-inline double MIN_SPEED  = 0.1;
+inline double MIN_SPEED  = 0.05;
 }
 }
 

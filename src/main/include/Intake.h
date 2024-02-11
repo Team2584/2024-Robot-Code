@@ -10,7 +10,7 @@ class Intake
     private:
 
         rev::CANSparkMax wristMotor;
-        rev::CANSparkMax onWristIntakeMotor;
+        rev::CANSparkFlex onWristIntakeMotor;
         rev::CANSparkMax fixedIntakeMotor;
         rev::CANSparkMax fixedIntakeMotor2;
         rev::SparkAbsoluteEncoder *magEncoder;

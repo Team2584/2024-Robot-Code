@@ -1,10 +1,9 @@
 #include "AprilTagBasedSwerve.h"
 #include "Climb.h"
 
-
 Climb::Climb(AprilTagSwerve* _swerveDrive)
-    :leftClimbMotor{CLIMB_MOTOR_L, rev::CANSparkMax::MotorType::kBrushless},
-    rightClimbMotor(CLIMB_MOTOR_R, rev::CANSparkMax::MotorType::kBrushless),
+    :leftClimbMotor{CLIMB_MOTOR_L, rev::CANSparkFlex::MotorType::kBrushless},
+    rightClimbMotor(CLIMB_MOTOR_R, rev::CANSparkFlex::MotorType::kBrushless),
     leftEncoder{leftClimbMotor.GetEncoder(rev::SparkRelativeEncoder::Type::kHallSensor)},
     rightEncoder{rightClimbMotor.GetEncoder(rev::SparkRelativeEncoder::Type::kHallSensor)},
     robotSwerveDrive{_swerveDrive},
@@ -23,7 +22,7 @@ Climb::Climb(AprilTagSwerve* _swerveDrive)
  * @note This MUST be called AND fully finished before non-roll Climb PID functions can be used 
 */
 bool Climb::ZeroClimb(){
-    if(!leftStop.Get() && !rightStop.Get()){
+    if(!leftStop.Get() && !rightStop.Get() && !climbZeroed){
         if(!leftStop.Get()){
             leftClimbMotor.Set(ClimbConstants::BasePctDown*-1);
         }
