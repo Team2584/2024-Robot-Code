@@ -7,7 +7,7 @@ class Climb {
 
         rev::CANSparkFlex leftClimbMotor, rightClimbMotor;
         rev::SparkRelativeEncoder leftEncoder, rightEncoder;
-        AprilTagSwerve* robotSwerveDrive;
+        VisionSwerve* robotSwerveDrive;
         frc::DigitalInput leftStop;
         frc::DigitalInput rightStop;
         PID leftPID;
@@ -18,7 +18,7 @@ class Climb {
 
     public:
 
-        Climb(AprilTagSwerve* _swerveDrive);
+        Climb(VisionSwerve* _swerveDrive);
 
         bool ZeroClimb();
 

@@ -22,7 +22,7 @@ SwerveDriveAutonomousController::SwerveDriveAutonomousController(SwerveDrive *sw
  * 
  * @param swerveDrive A photon tag swerve drive template
  */
-SwerveDriveAutonomousController::SwerveDriveAutonomousController(AprilTagSwerve *swerveDrive) : SwerveDriveAutonomousController((SwerveDrive*) swerveDrive)  // TODO write comment
+SwerveDriveAutonomousController::SwerveDriveAutonomousController(VisionSwerve *swerveDrive) : SwerveDriveAutonomousController((SwerveDrive*) swerveDrive)  // TODO write comment
 {
     photonTagSwerve = swerveDrive;
 }
@@ -276,4 +276,14 @@ bool SwerveDriveAutonomousController::FollowTrajectory(PoseEstimationType poseEs
 
     baseSwerveDrive->DriveSwerveMetersAndRadians(xFeedForward.value() + PIDSpeeds[0], yFeedForward.value() + PIDSpeeds[1], rotationFeedForward.value() + PIDSpeeds[2]);
     return false;
+}
+
+bool SwerveDriveAutonomousController::TurnToNote()
+{
+
+}
+
+bool SwerveDriveAutonomousController::DriveToNote()
+{
+
 }
