@@ -77,7 +77,7 @@ void Elevator::SetAmpMotorPercent(double percent){
 }
 
 bool Elevator::GetObjectInMech(){
-    return (!ampMechSensor.Get());
+    return (ampMechSensor.Get());
 }
 
 void Elevator::DepositNote(){

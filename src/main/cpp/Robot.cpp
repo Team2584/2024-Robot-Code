@@ -198,7 +198,7 @@ void Robot::TeleopPeriodic()
 
   wristSetPoint = Intake::HIGH;
 
-  if(xboxController.GetRightBumper()){
+  if(xboxController.GetRightBumper() && !overbumper.GetObjectInIntake()){
     overbumper.IntakeRing(); //intake until stop
     wristSetPoint = Intake::LOW;
   }
@@ -208,13 +208,21 @@ void Robot::TeleopPeriodic()
   else if(xboxController.GetPOV() == 0){
     overbumper.SetIntakeMotorSpeed(-60, -60); //to flywheel (this shoots)
   }
-  else if(xboxController.GetPOV() == 180){
+  else if(xboxController.GetPOV() == 180 && (ampmech.GetObjectInMech() ? (ampmech.GetObjectInMech() && overbumper.GetObjectInTunnel()) : true)){
     overbumper.SetIntakeMotorSpeed(-60,60); //to elevator
-    ampmech.SetAmpMotorPercent(60);
+    ampmech.SetAmpMotorPercent(-100);
+  }
+  else if(xboxController.GetPOV() == 270 && ampmech.GetObjectInMech()){
+    ampmech.SetAmpMotorPercent(-100);
   }
   else {
     overbumper.SetIntakeMotorSpeed(0); 
+    ampmech.SetAmpMotorPercent(0);
   }
+  
+  SmartDashboard::PutBoolean("inmech", ampmech.GetObjectInMech());
+  SmartDashboard::PutBoolean("intunnel", overbumper.GetObjectInTunnel());
+
   
   /*                                                      
   ,------.,--.                    ,--.                   ,--. 
@@ -278,12 +286,7 @@ void Robot::TeleopPeriodic()
   }
 
   //Check if the elevator is at the correct point before running the amp feed motor
-  if(xboxController.GetPOV() == 270){
-    ampmech.SetAmpMotorPercent(-0.75);
-  }
-  else {
-    ampmech.SetAmpMotorPercent(0);
-  }
+  
 
   /*
    ,-----.,--.,--.           ,--.    
@@ -305,6 +308,7 @@ void Robot::TeleopPeriodic()
   }
   else if (xboxController2.GetBButton()){
     hang.RetractClimb();
+    
   }
   else if (xboxController2.GetXButton()){
     hang.ZeroClimb();

@@ -21,8 +21,8 @@ inline const double m_rotation_VELOCITY_ERROR = 1;
 inline const double m_rotation_MAX_SPEED  = 0.3;
 inline const double m_rotation_MIN_SPEED  = 0.1;
 
-inline const double BasePctUp = 0.05;
-inline const double BasePctDown =  0.05;
+inline const double BasePctUp = 0.2;
+inline const double BasePctDown =  0.2;
 
 }
 
