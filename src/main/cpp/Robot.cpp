@@ -199,7 +199,7 @@ void Robot::TeleopPeriodic()
   */
 
   wristSetPoint = Intake::HIGH;
-
+  
   if(xboxController.GetRightBumper() && !overbumper.GetObjectInIntake()){
     overbumper.IntakeRing(); //intake until stop
     wristSetPoint = Intake::LOW;
