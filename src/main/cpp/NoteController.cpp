@@ -79,11 +79,26 @@ bool NoteController::LiftNoteToPosition(Elevator::ElevatorSetting position){
     return elevator->MoveToHeight(position);
 }
 
-bool NoteController::ScoreNoteInPosition(Elevator::ElevatorSetting position){
-    bool readyToDeposit = LiftNoteToPosition(position);
+/**
+* Called once before Score note in position (i.e. if score note in position is mapped to a button this function would be called on button press)
+*/
+void NoteController::BeginScoreNoteInPosition(Elevator::ElevatorSetting position){
+    readyToScoreNote = false; 
+}
 
-    if (readyToDeposit)
-        elevator->DepositNote();
+bool NoteController::ScoreNoteInPosition(Elevator::ElevatorSetting position){
+    if (!readyToScoreNote)
+    {
+        readyToScoreNote = LiftNoteToPosition(position);
+        return false;
+    }
     
-    return false;
+    bool noteDeposited = !elevator->GetObjectInMech();
+
+    if (!noteDeposited)
+        elevator->DepositNote();
+    else
+        elevator->SetAmpMotorPercent(0);
+
+    return noteDeposited;
 }

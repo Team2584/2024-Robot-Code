@@ -14,7 +14,7 @@ class NoteController
         FlywheelSystem* flywheel;
         Elevator* elevator;
 
-        bool currentlyDepositingNote = false;
+        bool readyToScoreNote = false;
 
     public:
 
@@ -26,6 +26,7 @@ class NoteController
         bool FromElevatorToSelector();
 
         bool LiftNoteToPosition(Elevator::ElevatorSetting position);
+        void BeginScoreNoteInPosition(Elevator::ElevatorSetting position);
         bool ScoreNoteInPosition(Elevator::ElevatorSetting position);
 };
 
