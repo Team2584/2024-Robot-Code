@@ -30,7 +30,7 @@ bool Climb::ZeroClimb(){
             leftClimbMotor.Disable();
         }
         if(!rightStop.Get()){
-            rightClimbMotor.Set(ClimbConstants::BasePctDown*-1);
+            rightClimbMotor.Set(ClimbConstants::BasePctDown);
         }
         else{
             rightClimbMotor.Disable();
@@ -50,7 +50,7 @@ bool Climb::ZeroClimb(){
 */
 void Climb::ExtendClimb(){
     leftClimbMotor.Set(ClimbConstants::BasePctUp);
-    rightClimbMotor.Set(ClimbConstants::BasePctUp);
+    rightClimbMotor.Set(ClimbConstants::BasePctUp*-1);
 }
 
 /**
@@ -58,7 +58,7 @@ void Climb::ExtendClimb(){
 */
 void Climb::RetractClimb(){
     leftClimbMotor.Set(ClimbConstants::BasePctDown*-1);
-    rightClimbMotor.Set(ClimbConstants::BasePctDown*-1);
+    rightClimbMotor.Set(ClimbConstants::BasePctDown);
 }
 
 /**

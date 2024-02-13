@@ -200,8 +200,8 @@ void Robot::TeleopPeriodic()
 
   wristSetPoint = Intake::HIGH;
 
-  if(xboxController.GetRightBumper()){
-    notecontroller.IntakeNoteSmart();
+  if(xboxController.GetRightBumper() && !overbumper.GetObjectInIntake()){
+    overbumper.IntakeRing(); //intake until stop
     wristSetPoint = Intake::LOW;
   }
   else if(xboxController.GetLeftBumper()){
@@ -210,12 +210,21 @@ void Robot::TeleopPeriodic()
   else if(xboxController.GetPOV() == 0){
     notecontroller.ToFlywheelShoot();
   }
-  else if(xboxController.GetPOV() == 180){
-    notecontroller.ToElevatorSmart();
+  else if(xboxController.GetPOV() == 180 && (ampmech.GetObjectInMech() ? (ampmech.GetObjectInMech() && overbumper.GetObjectInTunnel()) : true)){
+    overbumper.SetIntakeMotorSpeed(-60,60); //to elevator
+    ampmech.SetAmpMotorPercent(-100);
   }
-  else if(xboxController.GetPOV() == 270){
-    notecontroller.DepositNoteSmart(elevSetHeight);
+  else if(xboxController.GetPOV() == 270 && ampmech.GetObjectInMech()){
+    ampmech.SetAmpMotorPercent(-100);
   }
+  else {
+    overbumper.SetIntakeMotorSpeed(0); 
+    ampmech.SetAmpMotorPercent(0);
+  }
+  
+  SmartDashboard::PutBoolean("inmech", ampmech.GetObjectInMech());
+  SmartDashboard::PutBoolean("intunnel", overbumper.GetObjectInTunnel());
+
   
   /*                                                      
   ,------.,--.                    ,--.                   ,--. 
@@ -279,8 +288,7 @@ void Robot::TeleopPeriodic()
       elevSetHeight = Elevator::LOW;
     }
   }
-
-  ampmech.MoveToHeight(elevSetHeight);
+  
 
   /*
    ,-----.,--.,--.           ,--.    
@@ -302,6 +310,7 @@ void Robot::TeleopPeriodic()
   }
   else if (xboxController2.GetBButton()){
     hang.RetractClimb();
+    
   }
   else if (xboxController2.GetXButton()){
     hang.ZeroClimb();
