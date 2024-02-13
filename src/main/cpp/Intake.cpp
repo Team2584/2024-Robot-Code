@@ -1,15 +1,16 @@
 #include "Intake.h"
 
 Intake::Intake()
-  : intakeMotor{INTAKE_MOTOR_PORT, rev::CANSparkMax::MotorType::kBrushless}, 
-    wristMotor{WRIST_MOTOR_PORT, rev::CANSparkMax::MotorType::kBrushless},
-    fixedIntakeMotor{FIXED_INTAKE_MOTOR_PORT, rev::CANSparkMax::MotorType::kBrushed},
-    fixedIntakeMotor2{FIXED_INTAKE_MOTOR_PORT_2, rev::CANSparkMax::MotorType::kBrushed},
-    m_rangeFinder{1},
-    m_WristPID{WRISTKP,WRISTKI,WRISTKD,WRISTKIMAX,WRISTMIN_SPEED,WRISTMAX_SPEED,WRIST_POS_ERROR,WRIST_VELOCITY_ERROR}
+  : wristMotor{WRIST_MOTOR_PORT, rev::CANSparkMax::MotorType::kBrushless},
+    onWristIntakeMotor{ON_WRIST_MOTOR_PORT, rev::CANSparkFlex::MotorType::kBrushless},
+    mainFixedMotor{MAIN_FIXED_INTAKE_MOTOR_PORT, rev::CANSparkMax::MotorType::kBrushless},
+    selectorFixedMotor{SELECTOR_FIXED_INTAKE_MOTOR_PORT, rev::CANSparkMax::MotorType::kBrushless},
+    m_WristPID{IntakeConstants::Wrist::KP,IntakeConstants::Wrist::KI,IntakeConstants::Wrist::KD,IntakeConstants::Wrist::KIMAX,IntakeConstants::Wrist::MIN_SPEED,IntakeConstants::Wrist::MAX_SPEED,IntakeConstants::Wrist::POS_ERROR,IntakeConstants::Wrist::VELOCITY_ERROR},
+    m_mainSensor{9},
+    m_tunnelSensor{8}
 {
   magEncoder = new rev::SparkAbsoluteEncoder(wristMotor.GetAbsoluteEncoder(rev::SparkAbsoluteEncoder::Type::kDutyCycle));
-  wristMotor.SetIdleMode(rev::CANSparkMax::IdleMode::kCoast);
+  wristMotor.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
 }
 
 void Intake::SetIntakeMotorSpeed(double percent)
@@ -17,17 +18,23 @@ void Intake::SetIntakeMotorSpeed(double percent)
   SetIntakeMotorSpeed(percent, percent);
 }
 
-void Intake::SetIntakeMotorSpeed(double OverBumperPercent, double FeederPercent)
+void Intake::SetIntakeMotorSpeed( double mainMotorPct, double selectorMotorPct)
 {
-  //intakeMotor.Set(OverBumperPercent); add back when intake on robot
-  fixedIntakeMotor.Set(OverBumperPercent);
-  fixedIntakeMotor2.Set(FeederPercent);
+  onWristIntakeMotor.Set(0);
+  mainFixedMotor.Set(mainMotorPct);
+  selectorFixedMotor.Set(selectorMotorPct);
 }
 
+void Intake::SetIntakeMotorSpeed(double OverBumperPercent, double mainMotorPct, double selectorMotorPct)
+{
+  onWristIntakeMotor.Set(OverBumperPercent);
+  mainFixedMotor.Set(mainMotorPct);
+  selectorFixedMotor.Set(selectorMotorPct);
+}
 void Intake::IntakeRing()
 {
   if(!GetObjectInIntake()){
-    SetIntakeMotorSpeed(INTAKE_SPEED_IN*-1);
+    SetIntakeMotorSpeed(IntakeConstants::INTAKE_SPEED_IN*-1,IntakeConstants::INTAKE_SPEED_IN*-1, IntakeConstants::INTAKE_SPEED_IN);
   }
   else{
     SetIntakeMotorSpeed(0);
@@ -36,12 +43,12 @@ void Intake::IntakeRing()
 
 void Intake::OuttakeRing()
 {
-  SetIntakeMotorSpeed(INTAKE_SPEED_OUT);
+  SetIntakeMotorSpeed(IntakeConstants::INTAKE_SPEED_OUT);
 }
 
 void Intake::ShootRing()
 {
-  SetIntakeMotorSpeed(INTAKE_SPEED_IN);
+  SetIntakeMotorSpeed(IntakeConstants::INTAKE_SPEED_IN);
 }
 
 double Intake::GetWristEncoderReading()
@@ -51,7 +58,11 @@ double Intake::GetWristEncoderReading()
 }
 
 bool Intake::GetObjectInIntake(){
-  return (!m_rangeFinder.Get());
+  return (!m_mainSensor.Get());
+}
+
+bool Intake::GetObjectInTunnel(){
+  return (!m_tunnelSensor.Get());
 }
 
 void Intake::MoveWristPercent(double percent)
@@ -61,25 +72,19 @@ void Intake::MoveWristPercent(double percent)
 
 bool Intake::PIDWrist(double point)
 {
-  MoveWristPercent(m_WristPID.Calculate(GetWristEncoderReading(),point));
+  MoveWristPercent(m_WristPID.Calculate(GetWristEncoderReading(),point)*-1);
   return m_WristPID.PIDFinished();
 }
 
-bool Intake::PIDWristDown()
-{
-  return PIDWrist(WRIST_LOW);
+bool Intake::PIDWristToPoint(WristSetting Point){
+  if(Point == LOW){
+    return PIDWrist(IntakeConstants::Wrist::WRIST_LOW);
+  }
+  else if(Point == HIGH){
+    return PIDWrist(IntakeConstants::Wrist::WRIST_HIGH);
+  }
+  else if (Point == SHOOT){
+    return PIDWrist(IntakeConstants::Wrist::WRIST_SHOOT);
+  }
+  return false;
 }
-
-bool Intake::PIDWristUp()
-{
-  return PIDWrist(WRIST_HIGH);
-}
-
-bool Intake::GetFeeding(){
-  return CurrentlyFeeding;
-}
-
-void Intake::SetFeeding(bool value){
-  CurrentlyFeeding = value;
-}
-

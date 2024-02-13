@@ -13,16 +13,22 @@
 
 #include "Intake.h"
 #include "FlyWheel.h"
+#include "Elevator.h"
+#include "Climb.h"
 
 AprilTagSwerve swerveDrive{};
 XboxController xboxController{0};
 XboxController xboxController2{1};
 Intake overbumper{};
 FlywheelSystem flywheel{&overbumper};
+Elevator ampmech{};
+Climb hang{&swerveDrive};
 
 SwerveDriveAutonomousController swerveAutoController{&swerveDrive};
 AutonomousShootingController flywheelController{&swerveAutoController, &flywheel};
 
+Elevator::ElevatorSetting elevSetHeight = Elevator::LOW;
+Intake::WristSetting wristSetPoint = Intake::HIGH;
 bool anglingToSpeaker = false;
 
 
@@ -31,10 +37,12 @@ void Robot::RobotInit()
   m_chooser.SetDefaultOption(kAutoNameDefault, kAutoNameDefault);
   m_chooser.AddOption(kAutoNameCustom, kAutoNameCustom);
   frc::SmartDashboard::PutData("Auto Modes", &m_chooser);
+  /*
   SmartDashboard::PutNumber("Start Flywheel Speed", 0);
   SmartDashboard::PutNumber("Flywheel kP", 0.005);
   SmartDashboard::PutNumber("Angler Setpoint", M_PI / 2);
   flywheel.FlywheelAnglerPID.SetupConstantTuning("Angler");
+  */
 }
 
 
@@ -92,8 +100,9 @@ void Robot::TeleopInit()
 {
   swerveDrive.ResetOdometry(Pose2d(0_m, 0_m, Rotation2d(180_deg)));
   swerveDrive.ResetTagOdometry(Pose2d(0_m, 0_m, Rotation2d(180_deg)));
+  ampmech.ResetElevatorEncoder();
+  //flywheel.FlywheelAnglerPID.UpdateConstantTuning("Angler");
   
-  flywheel.FlywheelAnglerPID.UpdateConstantTuning("Angler");
 }
 
 void Robot::TeleopPeriodic()
@@ -118,7 +127,13 @@ void Robot::TeleopPeriodic()
   SmartDashboard::PutNumber("Tag Odometry Y", swerveDrive.GetTagOdometryPose().Y().value());
   SmartDashboard::PutNumber("Tag Odometry Heading", swerveDrive.GetTagOdometryPose().Rotation().Degrees().value());
   
-  /* DRIVER INPUT AND CONTROL */
+  /*                                               
+  ,---.                                            
+  '   .-' ,--.   ,--. ,---. ,--.--.,--.  ,--.,---.  
+  `.  `-. |  |.'.|  || .-. :|  .--' \  `'  /| .-. : 
+  .-'    ||   .'.   |\   --.|  |     \    / \   --. 
+  `-----' '--'   '--' `----'`--'      `--'   `----'
+  */
 
   // Find controller input (*-1 converts values to fwd/left/counterclockwise positive)
   double leftJoystickX, leftJoystickY, rightJoystickX;
@@ -173,54 +188,150 @@ void Robot::TeleopPeriodic()
     swerveAutoController.FollowTrajectory(PoseEstimationType::PureOdometry);
   }*/
 
-  if(xboxController.GetRightBumper()){
+  /*                                            
+  ,--.          ,--.          ,--.              /  //  /,------.                ,--.,--.                
+  |  |,--,--, ,-'  '-. ,--,--.|  |,-. ,---.    /  //  / |  .---',---.  ,---.  ,-|  |`--',--,--,  ,---.  
+  |  ||      \'-.  .-'' ,-.  ||     /| .-. :  /  //  /  |  `--,| .-. :| .-. :' .-. |,--.|      \| .-. | 
+  |  ||  ||  |  |  |  \ '-'  ||  \  \\   --. /  //  /   |  |`  \   --.\   --.\ `-' ||  ||  ||  |' '-' ' 
+  `--'`--''--'  `--'   `--`--'`--'`--'`----'/  //  /    `--'    `----' `----' `---' `--'`--''--'.`-  /                                            `---' 
+  */
+
+  wristSetPoint = Intake::HIGH;
+
+  if(xboxController.GetRightBumper() && !overbumper.GetObjectInIntake()){
     overbumper.IntakeRing(); //intake until stop
-    //overbumper.PIDWristDown();
+    wristSetPoint = Intake::LOW;
   }
   else if(xboxController.GetLeftBumper()){
-    overbumper.OuttakeRing();
-    //overbumper.PIDWristUp();
+    overbumper.OuttakeRing(); //outtake from main system
   }
-  else if(xboxController.GetPOV() == 0 && overbumper.GetObjectInIntake()){
-    overbumper.SetIntakeMotorSpeed(-60); //to flywheel
-    //overbumper.PIDWristUp();
+  else if(xboxController.GetPOV() == 0){
+    overbumper.SetIntakeMotorSpeed(-60, -60); //to flywheel (this shoots)
   }
-  else if(xboxController.GetPOV() == 180){
-    overbumper.SetIntakeMotorSpeed(-60,60); //to passthrough
-    //overbumper.PIDWristUp();
+  else if(xboxController.GetPOV() == 180 && (ampmech.GetObjectInMech() ? (ampmech.GetObjectInMech() && overbumper.GetObjectInTunnel()) : true)){
+    overbumper.SetIntakeMotorSpeed(-60,60); //to elevator
+    ampmech.SetAmpMotorPercent(-100);
+  }
+  else if(xboxController.GetPOV() == 270 && ampmech.GetObjectInMech()){
+    ampmech.SetAmpMotorPercent(-100);
   }
   else {
     overbumper.SetIntakeMotorSpeed(0); 
-    //overbumper.PIDWristUp();
+    ampmech.SetAmpMotorPercent(0);
   }
+  
+  SmartDashboard::PutBoolean("inmech", ampmech.GetObjectInMech());
+  SmartDashboard::PutBoolean("intunnel", overbumper.GetObjectInTunnel());
 
   
+  /*                                                      
+  ,------.,--.                    ,--.                   ,--. 
+  |  .---'|  |,--. ,--.,--.   ,--.|  ,---.  ,---.  ,---. |  | 
+  |  `--, |  | \  '  / |  |.'.|  ||  .-.  || .-. :| .-. :|  | 
+  |  |`   |  |  \   '  |   .'.   ||  | |  |\   --.\   --.|  | 
+  `--'    `--'.-'  /   '--'   '--'`--' `--' `----' `----'`--'                                          
+  */
 
-  //SmartDashboard::PutNumber("Wrist Pos", overbumper.GetWristEncoderReading());
-  
-  if(xboxController.GetBButtonPressed()){
+  if(xboxController.GetBackButtonPressed()){
     flywheel.SpinFlywheelPercent(0);
   }
   else if (xboxController.GetStartButtonPressed()){
     flywheel.SetFlywheelVelocity(SmartDashboard::GetNumber("Start Flywheel Speed", 0));
   }
 
-  if(xboxController.GetAButtonPressed())
+  if(xboxController.GetAButtonPressed()){
     anglingToSpeaker = !anglingToSpeaker;
+  }
 
-  if (anglingToSpeaker)
+  if (anglingToSpeaker){
+    wristSetPoint = Intake::SHOOT;
     flywheelController.AngleFlywheelToSpeaker();
-  else if (xboxController.GetYButton())
+  }
+  else if (xboxController.GetYButton()){
     flywheel.PIDAngler(SmartDashboard::GetNumber("Angler Setpoint", M_PI / 2));
-  else
+  }
+  else{
     flywheel.MoveAnglerPercent(0);
+  }
 
-  if (xboxController.GetXButton())
+  if (xboxController.GetXButton()){
     flywheelController.TurnToSpeaker();
+  }
 
-  SmartDashboard::PutNumber("Top FlyWheel RPM", flywheel.TopFlywheel.GetMeasurement());
-  SmartDashboard::PutNumber("Top FlyWheel Setpoint", flywheel.TopFlywheel.m_shooterPID.GetSetpoint());
-  SmartDashboard::PutNumber("Current Angler", flywheel.GetAnglerEncoderReading());
+  //PID Intake wrist
+  overbumper.PIDWristToPoint(wristSetPoint);
+
+  /*                                                   
+  ,------.,--.                         ,--.                  /  //  /,---.                   ,--.   ,--.             ,--.      
+  |  .---'|  | ,---.,--.  ,--.,--,--.,-'  '-. ,---. ,--.--. /  //  //  O  \ ,--,--,--. ,---. |   `.'   | ,---.  ,---.|  ,---.  
+  |  `--, |  || .-. :\  `'  /' ,-.  |'-.  .-'| .-. ||  .--'/  //  /|  .-.  ||        || .-. ||  |'.'|  || .-. :| .--'|  .-.  | 
+  |  `---.|  |\   --. \    / \ '-'  |  |  |  ' '-' '|  |  /  //  / |  | |  ||  |  |  || '-' '|  |   |  |\   --.\ `--.|  | |  | 
+  `------'`--' `----'  `--'   `--`--'  `--'   `---' `--' /  //  /  `--' `--'`--`--`--'|  |-' `--'   `--' `----' `---'`--' `--'
+  */
+
+  //For testing - probably don't want to use this enum in final code and for sure not in this way
+  //We will need to add an (object in elevator) check
+  /*
+  if (xboxController.GetBButtonPressed()){
+    //This line of code cycles to the next value in a 3-value Enumerator (of elevator positions), or cycles back to the first if it's currently at the third
+    elevSetHeight = static_cast<Elevator::ElevatorSetting>((elevSetHeight + 1) % 3); 
+  }
+  ampmech.MoveToHeight(elevSetHeight);
+  */
+  if (xboxController.GetBButton()){
+    ampmech.MoveToHeight(Elevator::AMP);
+  }
+  else{
+    ampmech.MoveToHeight(Elevator::LOW);
+  }
+
+  //Check if the elevator is at the correct point before running the amp feed motor
+  
+
+  /*
+   ,-----.,--.,--.           ,--.    
+  '  .--./|  |`--',--,--,--.|  |-.  
+  |  |    |  |,--.|        || .-. ' 
+  '  '--'\|  ||  ||  |  |  || `-' | 
+   `-----'`--'`--'`--`--`--' `---'  
+  */
+
+  //ONLY uncomment this when motors are found to be going the right directions and limits work properly
+  /*
+  if(!hang.climbZeroed){
+    hang.ZeroClimb();
+  }
+  */
+
+  if(xboxController2.GetAButton()){
+    hang.ExtendClimb();
+  }
+  else if (xboxController2.GetBButton()){
+    hang.RetractClimb();
+    
+  }
+  else if (xboxController2.GetXButton()){
+    hang.ZeroClimb();
+  }
+  else if (xboxController2.GetYButton()){
+    hang.BalanceWhileClimbing();
+  }
+  else{
+    hang.HoldClimb();
+  }
+
+  /*                                                                
+  ,------.         ,--.                         ,--.                
+  |  .-.  \  ,---. |  |-. ,--.,--. ,---.  ,---. `--',--,--,  ,---.  
+  |  |  \  :| .-. :| .-. '|  ||  || .-. || .-. |,--.|      \| .-. | 
+  |  '--'  /\   --.| `-' |'  ''  '' '-' '' '-' '|  ||  ||  |' '-' ' 
+  `-------'  `----' `---'  `----' .`-  / .`-  / `--'`--''--'.`-  /  
+                                  `---'  `---'              `---'   
+  */
+
+ // SmartDashboard::PutNumber("Top FlyWheel RPM", flywheel.TopFlywheel.GetMeasurement());
+  //SmartDashboard::PutNumber("Top FlyWheel Setpoint", flywheel.TopFlywheel.m_shooterPID.GetSetpoint());
+  //SmartDashboard::PutNumber("Current Angler", flywheel.GetAnglerEncoderReading());
 }
 
 void Robot::DisabledInit() {}

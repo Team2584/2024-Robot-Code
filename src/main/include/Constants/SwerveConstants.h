@@ -19,17 +19,17 @@
 #define BL_SPIN__MOTOR_PORT 13
 #define BR_DRIVE_MOTOR_PORT 4
 #define BR_SPIN__MOTOR_PORT 14
-#define FL_MAGNETIC_ENCODER_PORT 4
-#define FR_MAGNETIC_ENCODER_PORT 9
-#define BL_MAGNETIC_ENCODER_PORT 7
-#define BR_MAGNETIC_ENCODER_PORT 6
+#define FL_MAGNETIC_ENCODER_PORT 0
+#define FR_MAGNETIC_ENCODER_PORT 1
+#define BL_MAGNETIC_ENCODER_PORT 2
+#define BR_MAGNETIC_ENCODER_PORT 3
 #define PIGEON_IMU_PORT 6
 
 // Find offsets with bevel gears on the right side of the drive train
-#define FL_WHEEL_OFFSET 0.8486 //0.121462
-#define FR_WHEEL_OFFSET 0.543 //0.229792
-#define BL_WHEEL_OFFSET 0.09139 //0.007819
-#define BR_WHEEL_OFFSET 0.62 //0.717629
+#define FL_WHEEL_OFFSET 0.2103 //0.121462
+#define FR_WHEEL_OFFSET 0.5000 //0.229792
+#define BL_WHEEL_OFFSET 0.7116 //0.007819
+#define BR_WHEEL_OFFSET 0.6294 //0.717629
 
 // Assuming a rectangular drive train (input distance between center of wheels)
 #define DRIVE_LENGTH 0.5906_m 

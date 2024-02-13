@@ -12,8 +12,9 @@ class SwerveModule
 {
     private:
         // Instance Variables for each swerve module
-        ctre::phoenix6::hardware::TalonFX driveMotor; /* The motor responsible for actually driving the wheel*/
+        rev::CANSparkMax driveMotor; /* The motor responsible for actually driving the wheel*/
         rev::CANSparkMax spinMotor; /* The motor responsible for "spinning" the wheel left to right to change direction*/
+        rev::SparkMaxAlternateEncoder driveRelativeEncoder; /* The relative encoder built into the driveMotor */
         rev::SparkMaxAlternateEncoder spinRelativeEncoder; /* The relative encoder built into the spinMotor */
         frc::DutyCycleEncoder magEncoder; /* The magnetic absolute encoder tracking swerve heading. */
         PID spinPIDController; /* The PID Controller for the spinMotor, works using degrees */
@@ -56,6 +57,7 @@ class SwerveDrive
         SwerveDrive();
 
         double GetIMUHeading();
+        
         void ResetHeading();
         wpi::array<SwerveModulePosition, 4> GetSwerveModulePositions();
         void ResetOdometry();
@@ -69,6 +71,10 @@ class SwerveDrive
         void DriveSwervePercentNonFieldOriented(double STRAFE_Drive_Speed, double FWD_Drive_Speed, double Turn_Speed);
         void DriveSwervePercent(double STRAFE_Drive_Speed, double FWD_Drive_Speed, double Turn_Speed);
         void DriveSwerveMetersAndRadians(double STRAFE_Drive_Speed, double FWD_Drive_Speed, double Turn_Speed);
+        double GetIMURoll();
+        double GetRollSpeed();
+
 };
+
 
 #endif // SWERVE_H

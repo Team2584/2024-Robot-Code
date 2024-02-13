@@ -27,6 +27,8 @@
 #include <frc/DigitalInput.h>
 
 #include <frc/controller/ArmFeedforward.h>
+#include <frc/controller/ElevatorFeedforward.h>
+#include <frc/controller/ProfiledPIDController.h>
 
 #include <frc/geometry/Transform2d.h>
 #include <frc/geometry/Rotation2d.h>
