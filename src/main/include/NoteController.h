@@ -8,42 +8,25 @@
 
 class NoteController
 {
-    public:
-
-        enum NotePosition{NO, IN_INTAKE, FLYWHEEL, IN_TUNNEL, IN_ELEVATOR, REVERSING};
-
     private:
 
         Intake* intake;
         FlywheelSystem* flywheel;
         Elevator* elevator;
 
-        NotePosition notePos = NO;
+        bool currentlyDepositingNote = false;
 
     public:
 
         NoteController(Intake* _intake, FlywheelSystem* _flywheel, Elevator* _elevator);
 
-        void UpdateNotePos();
-        NotePosition GetNotePos();
+        bool IntakeNoteToSelector();
 
-        void IntakeNote();
-        bool IntakeNoteSmart();
+        bool ToElevator();
+        bool FromElevatorToSelector();
 
-        bool Outtake();
-        void OuttakeFromElevator();
-        bool OuttakeFromElevatorSmart();
-
-        void ToFlywheelShoot();
-        bool ToFlywheelShootSmart();
-        
-        void ToElevator();
-        bool ToElevatorSmart();
-
-        void DepositNote();
-        bool DepositNoteSmart(Elevator::ElevatorSetting _elevSetHeight);
-        
-
+        bool LiftNoteToPosition(Elevator::ElevatorSetting position);
+        bool ScoreNoteInPosition(Elevator::ElevatorSetting position);
 };
 
 #endif

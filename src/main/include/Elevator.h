@@ -28,7 +28,7 @@ class Elevator
         
     public:
 
-        enum ElevatorSetting{LOW, AMP, TRAP};
+        enum ElevatorSetting{LOW, OUTTAKE, AMP, TRAP};
 
         Elevator();
 
@@ -44,8 +44,8 @@ class Elevator
 
         bool GetObjectInMech();
 
-        bool PrepareNote();
-
+        void NoteFromSelector();
+        void NoteToSelector();
         void DepositNote();
 
         ElevatorSetting GetElevatorSetpoint();

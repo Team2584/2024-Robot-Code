@@ -9,7 +9,9 @@
 
 namespace IntakeConstants{
 inline const double INTAKE_SPEED_IN = 80;
-inline const double INTAKE_SPEED_OUT = 60;
+inline const double INTAKE_SPEED_OUT = -60;
+inline const double SELECTOR_SPEED_ELEVATOR = 60;
+inline const double SELECTOR_SPEED_SHOOTER = -60;
 
 namespace Wrist{
 inline const double WRIST_HIGH = 0.5;

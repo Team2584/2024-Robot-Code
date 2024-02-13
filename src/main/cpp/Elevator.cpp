@@ -80,8 +80,16 @@ bool Elevator::GetObjectInMech(){
     return (ampMechSensor.Get());
 }
 
+void Elevator::NoteFromSelector(){
+    SetAmpMotorPercent(ElevatorConstants::AmpMech::AMP_SPEED_FROM_SELECTOR);
+}
+
+void Elevator::NoteToSelector(){
+    SetAmpMotorPercent(ElevatorConstants::AmpMech::AMP_SPEED_TO_SELECTOR);
+}
+
 void Elevator::DepositNote(){
-    ampMotor.Set(-0.75);
+    SetAmpMotorPercent(ElevatorConstants::AmpMech::AMP_SPEED_DEPOSIT);
 }
 
 bool  Elevator::GetElevatorAtSetpoint(){
@@ -97,6 +105,9 @@ bool Elevator::MoveToHeight(ElevatorSetting Height) {
     }
     else if (Height == TRAP){
         return PIDElevator(ElevatorConstants::ELEV_TRAP);
+    }
+    else if (Height == OUTTAKE){
+        return PIDElevator(ElevatorConstants::ELEV_OUTTAKE);
     }
     return false;
 }

@@ -15,40 +15,48 @@ Intake::Intake()
 
 void Intake::SetIntakeMotorSpeed(double percent)
 {
-  SetIntakeMotorSpeed(percent, percent);
+  onWristIntakeMotor.Set(percent);
+  mainFixedMotor.Set(percent);
+  selectorFixedMotor.Set(percent);
 }
 
-void Intake::SetIntakeMotorSpeed( double mainMotorPct, double selectorMotorPct)
+void Intake::SetIntakeMotorSpeed(double mainMotorsPercent, double selectorMotorPct)
 {
-  onWristIntakeMotor.Set(0);
-  mainFixedMotor.Set(mainMotorPct);
+  onWristIntakeMotor.Set(mainMotorsPercent);
+  mainFixedMotor.Set(mainMotorsPercent);
   selectorFixedMotor.Set(selectorMotorPct);
 }
 
-void Intake::SetIntakeMotorSpeed(double OverBumperPercent, double mainMotorPct, double selectorMotorPct)
+void Intake::SetIntakeMotorSpeed(double OverBumperPercent, double fixedMotorPercent, double selectorMotorPct)
 {
   onWristIntakeMotor.Set(OverBumperPercent);
-  mainFixedMotor.Set(mainMotorPct);
+  mainFixedMotor.Set(fixedMotorPercent);
   selectorFixedMotor.Set(selectorMotorPct);
 }
-void Intake::IntakeRing()
+
+void Intake::IntakeNote()
 {
-  if(!GetObjectInIntake()){
-    SetIntakeMotorSpeed(IntakeConstants::INTAKE_SPEED_IN*-1,IntakeConstants::INTAKE_SPEED_IN*-1, IntakeConstants::INTAKE_SPEED_IN);
-  }
-  else{
-    SetIntakeMotorSpeed(0);
-  }
+  SetIntakeMotorSpeed(IntakeConstants::INTAKE_SPEED_IN, 0);
 }
 
-void Intake::OuttakeRing()
+void Intake::OuttakeNote()
 {
-  SetIntakeMotorSpeed(IntakeConstants::INTAKE_SPEED_OUT);
+  SetIntakeMotorSpeed(IntakeConstants::INTAKE_SPEED_OUT, IntakeConstants::SELECTOR_SPEED_ELEVATOR);
 }
 
-void Intake::ShootRing()
+void Intake::ShootNote()
 {
-  SetIntakeMotorSpeed(IntakeConstants::INTAKE_SPEED_IN);
+  SetIntakeMotorSpeed(IntakeConstants::INTAKE_SPEED_IN, IntakeConstants::SELECTOR_SPEED_SHOOTER);
+}
+
+void Intake::NoteToElevator()
+{
+  SetIntakeMotorSpeed(IntakeConstants::INTAKE_SPEED_IN, IntakeConstants::SELECTOR_SPEED_ELEVATOR);
+}
+
+void Intake::NoteFromElevator()
+{
+  SetIntakeMotorSpeed(IntakeConstants::INTAKE_SPEED_OUT, IntakeConstants::SELECTOR_SPEED_SHOOTER);
 }
 
 double Intake::GetWristEncoderReading()
