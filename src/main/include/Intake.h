@@ -11,10 +11,11 @@ class Intake
 
         rev::CANSparkMax wristMotor;
         rev::CANSparkFlex onWristIntakeMotor;
-        rev::CANSparkMax fixedIntakeMotor;
-        rev::CANSparkMax fixedIntakeMotor2;
+        rev::CANSparkMax mainFixedMotor;
+        rev::CANSparkMax selectorFixedMotor;
         rev::SparkAbsoluteEncoder *magEncoder;
-        frc::DigitalInput m_rangeFinder;
+        frc::DigitalInput m_mainSensor;
+        frc::DigitalInput m_tunnelSensor;
 
         bool PIDWrist(double point);
 
@@ -41,6 +42,8 @@ class Intake
         double GetWristEncoderReading();
 
         bool GetObjectInIntake();
+
+        bool GetObjectInTunnel();
 
         void MoveWristPercent(double percent);
 

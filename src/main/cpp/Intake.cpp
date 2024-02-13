@@ -3,10 +3,11 @@
 Intake::Intake()
   : wristMotor{WRIST_MOTOR_PORT, rev::CANSparkMax::MotorType::kBrushless},
     onWristIntakeMotor{ON_WRIST_MOTOR_PORT, rev::CANSparkFlex::MotorType::kBrushless},
-    fixedIntakeMotor{FIXED_INTAKE_MOTOR_PORT, rev::CANSparkMax::MotorType::kBrushless},
-    fixedIntakeMotor2{FIXED_INTAKE_MOTOR_PORT_2, rev::CANSparkMax::MotorType::kBrushless},
-    m_rangeFinder{9},
-    m_WristPID{WRISTKP,WRISTKI,WRISTKD,WRISTKIMAX,WRISTMIN_SPEED,WRISTMAX_SPEED,WRIST_POS_ERROR,WRIST_VELOCITY_ERROR}
+    mainFixedMotor{MAIN_FIXED_INTAKE_MOTOR_PORT, rev::CANSparkMax::MotorType::kBrushless},
+    selectorFixedMotor{SELECTOR_FIXED_INTAKE_MOTOR_PORT, rev::CANSparkMax::MotorType::kBrushless},
+    m_WristPID{IntakeConstants::Wrist::KP,IntakeConstants::Wrist::KI,IntakeConstants::Wrist::KD,IntakeConstants::Wrist::KIMAX,IntakeConstants::Wrist::MIN_SPEED,IntakeConstants::Wrist::MAX_SPEED,IntakeConstants::Wrist::POS_ERROR,IntakeConstants::Wrist::VELOCITY_ERROR},
+    m_mainSensor{9},
+    m_tunnelSensor{8}
 {
   magEncoder = new rev::SparkAbsoluteEncoder(wristMotor.GetAbsoluteEncoder(rev::SparkAbsoluteEncoder::Type::kDutyCycle));
   wristMotor.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
@@ -17,23 +18,23 @@ void Intake::SetIntakeMotorSpeed(double percent)
   SetIntakeMotorSpeed(percent, percent);
 }
 
-void Intake::SetIntakeMotorSpeed(double FeederPercent_1, double FeederPercent_2)
+void Intake::SetIntakeMotorSpeed( double mainMotorPct, double selectorMotorPct)
 {
   onWristIntakeMotor.Set(0);
-  fixedIntakeMotor.Set(FeederPercent_1);
-  fixedIntakeMotor2.Set(FeederPercent_2);
+  mainFixedMotor.Set(mainMotorPct);
+  selectorFixedMotor.Set(selectorMotorPct);
 }
 
-void Intake::SetIntakeMotorSpeed(double OverBumperPercent, double FeederPercent_1, double FeederPercent_2)
+void Intake::SetIntakeMotorSpeed(double OverBumperPercent, double mainMotorPct, double selectorMotorPct)
 {
   onWristIntakeMotor.Set(OverBumperPercent);
-  fixedIntakeMotor.Set(FeederPercent_1);
-  fixedIntakeMotor2.Set(FeederPercent_2);
+  mainFixedMotor.Set(mainMotorPct);
+  selectorFixedMotor.Set(selectorMotorPct);
 }
 void Intake::IntakeRing()
 {
   if(!GetObjectInIntake()){
-    SetIntakeMotorSpeed(INTAKE_SPEED_IN*-1,INTAKE_SPEED_IN*-1, INTAKE_SPEED_IN );
+    SetIntakeMotorSpeed(IntakeConstants::INTAKE_SPEED_IN*-1,IntakeConstants::INTAKE_SPEED_IN*-1, IntakeConstants::INTAKE_SPEED_IN);
   }
   else{
     SetIntakeMotorSpeed(0);
@@ -42,12 +43,12 @@ void Intake::IntakeRing()
 
 void Intake::OuttakeRing()
 {
-  SetIntakeMotorSpeed(INTAKE_SPEED_OUT);
+  SetIntakeMotorSpeed(IntakeConstants::INTAKE_SPEED_OUT);
 }
 
 void Intake::ShootRing()
 {
-  SetIntakeMotorSpeed(INTAKE_SPEED_IN);
+  SetIntakeMotorSpeed(IntakeConstants::INTAKE_SPEED_IN);
 }
 
 double Intake::GetWristEncoderReading()
@@ -57,7 +58,11 @@ double Intake::GetWristEncoderReading()
 }
 
 bool Intake::GetObjectInIntake(){
-  return (!m_rangeFinder.Get());
+  return (!m_mainSensor.Get());
+}
+
+bool Intake::GetObjectInTunnel(){
+  return (!m_tunnelSensor.Get());
 }
 
 void Intake::MoveWristPercent(double percent)
@@ -73,13 +78,13 @@ bool Intake::PIDWrist(double point)
 
 bool Intake::PIDWristToPoint(WristSetting Point){
   if(Point == LOW){
-    return PIDWrist(IntakeWrist::WRIST_LOW);
+    return PIDWrist(IntakeConstants::Wrist::WRIST_LOW);
   }
   else if(Point == HIGH){
-    return PIDWrist(IntakeWrist::WRIST_HIGH);
+    return PIDWrist(IntakeConstants::Wrist::WRIST_HIGH);
   }
   else if (Point == SHOOT){
-    return PIDWrist(IntakeWrist::WRIST_SHOOT);
+    return PIDWrist(IntakeConstants::Wrist::WRIST_SHOOT);
   }
   return false;
 }

@@ -8,8 +8,8 @@ class Climb {
         rev::CANSparkFlex leftClimbMotor, rightClimbMotor;
         rev::SparkRelativeEncoder leftEncoder, rightEncoder;
         VisionSwerve* robotSwerveDrive;
-        frc::DigitalInput leftStop;
-        frc::DigitalInput rightStop;
+        rev::SparkLimitSwitch leftStop;
+        rev::SparkLimitSwitch rightStop;
         PID leftPID;
         PID rightPID;
         PID rollPID;

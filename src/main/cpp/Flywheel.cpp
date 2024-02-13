@@ -6,9 +6,9 @@ FlywheelSystem::FlywheelSystem(Intake * _m_intake)
     FlywheelAnglingMotor{FLYWHEEL_ANGLING_MOTOR, rev::CANSparkFlex::MotorType::kBrushless},
     TopFlywheel{FlywheelSpeedController(&FlywheelMotor1)},
     BottomFlywheel{FlywheelSpeedController(&FlywheelMotor2)},
-    FlywheelAnglerPID{ANGLER_KP, ANGLER_KI, ANGLER_KD, ANGLER_KI_MAX, 
-                     ANGLER_MIN_SPEED, ANGLER_MAX_SPEED, ANGLER_TOLERANCE, ANGLER_VELOCITY_TOLERANCE},
-    FlywheelAnglerFF{ANGLER_KS, ANGLER_KG, ANGLER_KV},
+    FlywheelAnglerPID{FlywheelConstants::Angler::KP, FlywheelConstants::Angler::KI, FlywheelConstants::Angler::KD, FlywheelConstants::Angler::KI_MAX, 
+                     FlywheelConstants::Angler::MIN_SPEED, FlywheelConstants::Angler::MAX_SPEED, FlywheelConstants::Angler::POS_TOLERANCE, FlywheelConstants::Angler::VELOCITY_TOLERANCE},
+    FlywheelAnglerFF{FlywheelConstants::Angler::KS, FlywheelConstants::Angler::KG, FlywheelConstants::Angler::KV},
     m_intake{_m_intake}
 {
     magEncoder = new rev::SparkAbsoluteEncoder(FlywheelAnglingMotor.GetAbsoluteEncoder(rev::SparkAbsoluteEncoder::Type::kDutyCycle));
@@ -104,25 +104,17 @@ bool FlywheelSystem::PIDAngler(double point)
   return FlywheelAnglerPID.PIDFinished();
 }
 
-
-
-
-
-
-
-
-
 /**
  * @brief Single-Motor Flywheel Object Constructor
  * @param FL_motor Pointer to a CANSparkFlex motor controller
 */
 FlywheelSpeedController::FlywheelSpeedController(rev::CANSparkFlex *FL_motor)
-  : m_shooterPID{f_kP,f_kI,f_kD},
+  : m_shooterPID{FlywheelConstants::KP,FlywheelConstants::KI,FlywheelConstants::KD},
     m_flywheelMotor(FL_motor),
-    m_shooterFeedforward(kS, kV) 
+    m_shooterFeedforward(FlywheelConstants::KS, FlywheelConstants::KV) 
 {
   m_shooterEncoder =  new rev::SparkRelativeEncoder(m_flywheelMotor->GetEncoder(rev::SparkRelativeEncoder::Type::kHallSensor));
-  m_shooterPID.SetTolerance(kShooterToleranceRPS.value(), kShooterTargetRPS_S.value());
+  m_shooterPID.SetTolerance(FlywheelConstants::kShooterToleranceRPS.value(), FlywheelConstants::kShooterTargetRPS_S.value());
 }
 
 /**
