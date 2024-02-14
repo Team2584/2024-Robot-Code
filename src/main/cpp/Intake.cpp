@@ -5,8 +5,8 @@ Intake::Intake()
     onWristIntakeMotor{ON_WRIST_MOTOR_PORT, rev::CANSparkFlex::MotorType::kBrushless},
     mainFixedMotor{MAIN_FIXED_INTAKE_MOTOR_PORT, rev::CANSparkMax::MotorType::kBrushless},
     selectorFixedMotor{SELECTOR_FIXED_INTAKE_MOTOR_PORT, rev::CANSparkMax::MotorType::kBrushless},
-    m_mainSensor{9},
-    m_tunnelSensor{8},
+    m_mainSensor{INTAKE_IR_SENSOR_PORT},
+    m_tunnelSensor{TUNNEL_IR_SENSOR_PORT},
     m_WristPID{IntakeConstants::Wrist::KP,IntakeConstants::Wrist::KI,IntakeConstants::Wrist::KD,IntakeConstants::Wrist::KIMAX,IntakeConstants::Wrist::MIN_SPEED,IntakeConstants::Wrist::MAX_SPEED,IntakeConstants::Wrist::POS_ERROR,IntakeConstants::Wrist::VELOCITY_ERROR}
 {
   magEncoder = new rev::SparkAbsoluteEncoder(wristMotor.GetAbsoluteEncoder(rev::SparkAbsoluteEncoder::Type::kDutyCycle));
@@ -41,7 +41,7 @@ void Intake::IntakeNote()
 
 void Intake::OuttakeNote()
 {
-  SetIntakeMotorSpeed(IntakeConstants::INTAKE_SPEED_OUT, IntakeConstants::SELECTOR_SPEED_ELEVATOR);
+  SetIntakeMotorSpeed(IntakeConstants::INTAKE_SPEED_OUT, IntakeConstants::SELECTOR_SPEED_SHOOTER);
 }
 
 void Intake::ShootNote()

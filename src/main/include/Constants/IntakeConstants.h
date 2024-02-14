@@ -7,11 +7,14 @@
 #define MAIN_FIXED_INTAKE_MOTOR_PORT 19
 #define SELECTOR_FIXED_INTAKE_MOTOR_PORT 20
 
+#define INTAKE_IR_SENSOR_PORT 6
+#define TUNNEL_IR_SENSOR_PORT 5
+
 namespace IntakeConstants{
-inline const double INTAKE_SPEED_IN = 80;
-inline const double INTAKE_SPEED_OUT = -60;
-inline const double SELECTOR_SPEED_ELEVATOR = 60;
-inline const double SELECTOR_SPEED_SHOOTER = -60;
+inline const double INTAKE_SPEED_IN = -50;
+inline const double INTAKE_SPEED_OUT = 50;
+inline const double SELECTOR_SPEED_ELEVATOR = 50;
+inline const double SELECTOR_SPEED_SHOOTER = -50;
 
 namespace Wrist{
 inline const double WRIST_HIGH = 0.5;

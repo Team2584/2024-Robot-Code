@@ -17,6 +17,12 @@ Climb::Climb(AprilTagSwerve* _swerveDrive)
     rightClimbMotor.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
 }
 
+void Climb::SetClimbMotors(double left, double right)
+{
+    leftClimbMotor.Set(left);
+    rightClimbMotor.Set(right);
+}
+
 /**
  * @brief Brings the two climb motors down until they hit thier individual sensors. 
  * @note This MUST be called AND fully finished before non-roll Climb PID functions can be used 
