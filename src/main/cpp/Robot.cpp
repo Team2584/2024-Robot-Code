@@ -21,7 +21,7 @@ AprilTagSwerve swerveDrive{};
 XboxController xboxController{0};
 XboxController xboxController2{1};
 Intake overbumper{};
-FlywheelSystem flywheel{&overbumper};
+FlywheelSystem flywheel{&overbumper, &swerveDrive};
 Elevator ampmech{};
 Climb hang{&swerveDrive};
 NoteController notecontroller{&overbumper, &flywheel, &ampmech};

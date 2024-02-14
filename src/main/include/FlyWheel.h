@@ -1,5 +1,6 @@
 #include "Robot.h"
 #include "Intake.h"
+#include "Swerve.h"
 #include "constants/FlywheelConstants.h"
 
 #ifndef FLYWHEEL_H
@@ -48,7 +49,7 @@ class FlywheelSystem
         FlywheelSpeedController BottomFlywheel;
         PID FlywheelAnglerPID;
         
-        FlywheelSystem(Intake * _m_intake);
+        FlywheelSystem(Intake * _m_intake, SwerveDrive *swerveDrive);
 
         void SpinFlywheelPercent(double percent);
 
