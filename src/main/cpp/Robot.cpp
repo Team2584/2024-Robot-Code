@@ -21,7 +21,7 @@ AprilTagSwerve swerveDrive{};
 XboxController xboxController{0};
 XboxController xboxController2{1};
 Intake overbumper{};
-FlywheelSystem flywheel{&overbumper, &swerveDrive};
+FlywheelSystem flywheel{&overbumper};
 Elevator ampmech{};
 Climb hang{&swerveDrive};
 NoteController notecontroller{&overbumper, &flywheel, &ampmech};
@@ -185,7 +185,7 @@ void Robot::TeleopPeriodic()
   |_|\_\___/\__\___|  \___\___/_||_\__|_| \___/_|_\___|_|                                                     
   */
 
-  wristSetPoint = Intake::HIGH;
+  wristSetPoint = Intake::LOW;
   
   if(xboxController.GetRightBumper()){
     notecontroller.IntakeNoteToSelector();

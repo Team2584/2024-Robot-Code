@@ -1,6 +1,6 @@
 #include "FlyWheel.h"
 
-FlywheelSystem::FlywheelSystem(Intake * _m_intake, SwerveDrive * swerveDrive)
+FlywheelSystem::FlywheelSystem(Intake * _m_intake)
   : FlywheelMotor1{FLYWHEEL_MOTOR_1, rev::CANSparkFlex::MotorType::kBrushless},
     FlywheelMotor2{FLYWHEEL_MOTOR_2, rev::CANSparkFlex::MotorType::kBrushless},
     FlywheelAnglingMotor{FLYWHEEL_ANGLING_MOTOR, rev::CANSparkFlex::MotorType::kBrushless},

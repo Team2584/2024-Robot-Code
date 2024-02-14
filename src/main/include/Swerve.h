@@ -12,6 +12,7 @@ class SwerveModule
 {
     private:
         // Instance Variables for each swerve module
+        rev::CANSparkMax driveMotor; /* The motor responsible for actually driving the wheel*/
         rev::CANSparkMax spinMotor; /* The motor responsible for "spinning" the wheel left to right to change direction*/
         rev::SparkMaxAlternateEncoder driveRelativeEncoder; /* The relative encoder built into the driveMotor */
         rev::SparkMaxAlternateEncoder spinRelativeEncoder; /* The relative encoder built into the spinMotor */
@@ -23,8 +24,6 @@ class SwerveModule
         double spinEncoderInitialValue; /* Initial Value of Relative Spin Encoder used for zeroing*/
 
     public:
-        rev::CANSparkMax driveMotor; /* The motor responsible for actually driving the wheel*/
-
         SwerveModule(int driveMotorPort, int spinMotorPort, int magneticEncoderPort,
                     double encoderOffset_);
 
