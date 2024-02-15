@@ -126,7 +126,7 @@ void Robot::TeleopPeriodic()
   leftJoystickY = xboxController.GetLeftY() * -1;
   leftJoystickX = xboxController.GetLeftX() * -1;
   rightJoystickX = xboxController.GetRightX() * -1;
-  rightJoystickX = xboxController.GetRightY() * -1;
+  rightJoystickY = xboxController.GetRightY() * -1;
 
   SmartDashboard::PutNumber("right joystick X", rightJoystickX);
 
