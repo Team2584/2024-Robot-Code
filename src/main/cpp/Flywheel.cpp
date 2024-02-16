@@ -4,6 +4,7 @@ FlywheelSystem::FlywheelSystem(Intake * _m_intake)
   : FlywheelMotor1{FLYWHEEL_MOTOR_1, rev::CANSparkFlex::MotorType::kBrushless},
     FlywheelMotor2{FLYWHEEL_MOTOR_2, rev::CANSparkFlex::MotorType::kBrushless},
     FlywheelAnglingMotor{FLYWHEEL_ANGLING_MOTOR, rev::CANSparkFlex::MotorType::kBrushless},
+    magEncoder{FLYWHEEL_MAG_ENCODER_PORT},
     FlywheelAnglerFF{FlywheelConstants::Angler::KS, FlywheelConstants::Angler::KG, FlywheelConstants::Angler::KV},
     m_intake{_m_intake},
     TopFlywheel{FlywheelSpeedController(&FlywheelMotor1)},
@@ -11,7 +12,6 @@ FlywheelSystem::FlywheelSystem(Intake * _m_intake)
     FlywheelAnglerPID{FlywheelConstants::Angler::KP, FlywheelConstants::Angler::KI, FlywheelConstants::Angler::KD, FlywheelConstants::Angler::KI_MAX, 
                      FlywheelConstants::Angler::MIN_SPEED, FlywheelConstants::Angler::MAX_SPEED, FlywheelConstants::Angler::POS_TOLERANCE, FlywheelConstants::Angler::VELOCITY_TOLERANCE}
 {
-    magEncoder = new rev::SparkAbsoluteEncoder(FlywheelAnglingMotor.GetAbsoluteEncoder(rev::SparkAbsoluteEncoder::Type::kDutyCycle));
 }
 
 /**
@@ -77,9 +77,15 @@ void FlywheelSystem::ShootRing(){
 
 double FlywheelSystem::GetAnglerEncoderReading()
 {
-  double reading = magEncoder->GetPosition();
+  double reading = magEncoder.GetAbsolutePosition();
+  reading -= FLYWHEEL_MAG_ENCODER_OFFSET;
+  reading *= -1;
+
   if (reading > 0.5)
     reading -= 1;
+  if (reading < -0.5)
+    reading += 1;
+
   return reading * M_PI * 2;
 }
 
