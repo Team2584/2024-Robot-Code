@@ -51,7 +51,7 @@ bool AutonomousShootingController::AimAndFire()
 
     if (turnt && angled)
     {
-        flyWheel->RunFeederMotor();
+        //flyWheel->RunFeederMotor();
         return true;
     }
 

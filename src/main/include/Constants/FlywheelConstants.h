@@ -10,8 +10,8 @@
 namespace FlywheelConstants {
 
 //(these need to be set, IN RPS)
-inline constexpr auto kShooterFreeRPS = 113_tr / 1_s    ; //~neo vortex rpm
-inline constexpr auto kShooterTargetRPS = 70_tr / 1_s;                 
+inline constexpr auto kShooterFreeRPS = 113_tr / 1_s; //~neo vortex rpm
+inline constexpr auto kShooterTargetRPS = 70_tr / 1_s;               
 inline constexpr auto kShooterToleranceRPS = 15_tr / 1_s;
 inline constexpr auto kShooterTargetRPS_S = 15_tr / 1_s / 1_s;
 

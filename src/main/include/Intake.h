@@ -21,6 +21,7 @@ class Intake
 
     public:
 
+        ArmFeedforward m_WristFF;
         PID m_WristPID;
 
         enum WristSetting{LOW, HIGH, SHOOT};

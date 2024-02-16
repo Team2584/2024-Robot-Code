@@ -7,6 +7,7 @@ Intake::Intake()
     selectorFixedMotor{SELECTOR_FIXED_INTAKE_MOTOR_PORT, rev::CANSparkMax::MotorType::kBrushless},
     m_mainSensor{INTAKE_IR_SENSOR_PORT},
     m_tunnelSensor{TUNNEL_IR_SENSOR_PORT},
+    m_WristFF{IntakeConstants::Wrist::KS, IntakeConstants::Wrist::KG, IntakeConstants::Wrist::KV},
     m_WristPID{IntakeConstants::Wrist::KP,IntakeConstants::Wrist::KI,IntakeConstants::Wrist::KD,IntakeConstants::Wrist::KIMAX,IntakeConstants::Wrist::MIN_SPEED,IntakeConstants::Wrist::MAX_SPEED,IntakeConstants::Wrist::POS_ERROR,IntakeConstants::Wrist::VELOCITY_ERROR}
 {
   magEncoder = new rev::SparkAbsoluteEncoder(wristMotor.GetAbsoluteEncoder(rev::SparkAbsoluteEncoder::Type::kDutyCycle));
@@ -80,8 +81,12 @@ void Intake::MoveWristPercent(double percent)
 }
 
 bool Intake::PIDWrist(double point)
-{
-  MoveWristPercent(m_WristPID.Calculate(GetWristEncoderReading(),point));
+{  
+  units::volt_t PID = units::volt_t{m_WristPID.Calculate(GetWristEncoderReading(), point)};
+  units::volt_t FF = m_WristFF.Calculate(units::radian_t{GetWristEncoderReading()}, 0_rad / 1_s);
+  SmartDashboard::PutNumber("Wrist PID", PID.value());
+  SmartDashboard::PutNumber("Wrist FF", FF.value());
+  wristMotor.SetVoltage(PID + FF);
   return m_WristPID.PIDFinished();
 }
 
