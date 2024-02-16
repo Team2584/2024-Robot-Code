@@ -15,6 +15,7 @@
 #include "FlyWheel.h"
 #include "Elevator.h"
 #include "Climb.h"
+#include "NoteController.h"
 
 AprilTagSwerve swerveDrive{};
 XboxController xboxController{0};
@@ -23,6 +24,7 @@ Intake overbumper{};
 FlywheelSystem flywheel{&overbumper};
 Elevator ampmech{};
 Climb hang{&swerveDrive};
+NoteController notecontroller{&overbumper, &flywheel, &ampmech};
 
 SwerveDriveAutonomousController swerveAutoController{&swerveDrive};
 AutonomousShootingController flywheelController{&swerveAutoController, &flywheel};
@@ -110,22 +112,6 @@ void Robot::TeleopPeriodic()
   /* UPDATES */
 
   swerveDrive.Update();
-
-  /* DEBUGGING INFO */
-
-  SmartDashboard::PutNumber("FL Module Heading", swerveDrive.FLModule.GetMagEncoderValue());
-  SmartDashboard::PutNumber("FR Module Heading", swerveDrive.FRModule.GetMagEncoderValue());
-  SmartDashboard::PutNumber("BL Module Heading", swerveDrive.BLModule.GetMagEncoderValue());
-  SmartDashboard::PutNumber("BR Module Heading", swerveDrive.BRModule.GetMagEncoderValue());
-  
-  SmartDashboard::PutNumber("Odometry X Position", swerveDrive.GetOdometryPose().X().value());
-  SmartDashboard::PutNumber("Odometry Y Position", swerveDrive.GetOdometryPose().Y().value());
-  SmartDashboard::PutNumber("Odometry Heading", swerveDrive.GetOdometryPose().Rotation().Degrees().value());
-  
-  SmartDashboard::PutBoolean("Tag in View", swerveDrive.TagInView());
-  SmartDashboard::PutNumber("Tag Odometry X", swerveDrive.GetTagOdometryPose().X().value());
-  SmartDashboard::PutNumber("Tag Odometry Y", swerveDrive.GetTagOdometryPose().Y().value());
-  SmartDashboard::PutNumber("Tag Odometry Heading", swerveDrive.GetTagOdometryPose().Rotation().Degrees().value());
   
   /*                                               
   ,---.                                            
@@ -136,15 +122,17 @@ void Robot::TeleopPeriodic()
   */
 
   // Find controller input (*-1 converts values to fwd/left/counterclockwise positive)
-  double leftJoystickX, leftJoystickY, rightJoystickX;
+  double leftJoystickX, leftJoystickY, rightJoystickX, rightJoystickY;
   leftJoystickY = xboxController.GetLeftY() * -1;
   leftJoystickX = xboxController.GetLeftX() * -1;
   rightJoystickX = xboxController.GetRightX() * -1;
+  rightJoystickY = xboxController.GetRightY() * -1;
 
   SmartDashboard::PutNumber("right joystick X", rightJoystickX);
 
   // Remove ghost movement by making sure joystick is moved a certain amount
   double leftJoystickDistance = sqrt(pow(leftJoystickX, 2.0) + pow(leftJoystickY, 2.0));
+  double rightJoystickDistance = sqrt(pow(rightJoystickX, 2.0) + pow(rightJoystickY, 2.0));
 
   if (leftJoystickDistance < CONTROLLER_DEADBAND)
   {
@@ -152,9 +140,10 @@ void Robot::TeleopPeriodic()
     leftJoystickY = 0;
   }
 
-  if (abs(rightJoystickX) < CONTROLLER_DEADBAND)
+  if (abs(rightJoystickDistance) < CONTROLLER_DEADBAND)
   {
     rightJoystickX = 0;
+    rightJoystickY = 0;
   }
 
   // Scale control values to max speed
@@ -168,7 +157,8 @@ void Robot::TeleopPeriodic()
 
 
   // Drive the robot
-  swerveDrive.DriveSwervePercent(fwdDriveSpeed, strafeDriveSpeed, turnSpeed);
+  ampmech.MoveElevatorPercent(rightJoystickX);
+  //swerveDrive.DriveSwervePercent(fwdDriveSpeed, strafeDriveSpeed, turnSpeed);
 
   // Drive to 0,0 for testing
   /*if (xboxController.GetAButtonPressed())
@@ -189,39 +179,60 @@ void Robot::TeleopPeriodic()
   }*/
 
   /*                                            
-  ,--.          ,--.          ,--.              /  //  /,------.                ,--.,--.                
-  |  |,--,--, ,-'  '-. ,--,--.|  |,-. ,---.    /  //  / |  .---',---.  ,---.  ,-|  |`--',--,--,  ,---.  
-  |  ||      \'-.  .-'' ,-.  ||     /| .-. :  /  //  /  |  `--,| .-. :| .-. :' .-. |,--.|      \| .-. | 
-  |  ||  ||  |  |  |  \ '-'  ||  \  \\   --. /  //  /   |  |`  \   --.\   --.\ `-' ||  ||  ||  |' '-' ' 
-  `--'`--''--'  `--'   `--`--'`--'`--'`----'/  //  /    `--'    `----' `----' `---' `--'`--''--'.`-  /                                            `---' 
+   _  _     _          ___         _           _ _         
+  | \| |___| |_ ___   / __|___ _ _| |_ _ _ ___| | |___ _ _ 
+  | .` / _ \  _/ -_) | (__/ _ \ ' \  _| '_/ _ \ | / -_) '_|
+  |_|\_\___/\__\___|  \___\___/_||_\__|_| \___/_|_\___|_|                                                     
   */
 
   wristSetPoint = Intake::HIGH;
+  if (xboxController.GetLeftBumperPressed()){
+    notecontroller.BeginFromElevatorToSelector();
+  }
+  if (xboxController.GetBButtonPressed()){
+    notecontroller.BeginScoreNoteInPosition(Elevator::ElevatorSetting::AMP);
+  }
+  if (xboxController.GetYButtonPressed()){
+    notecontroller.BeginScoreNoteInPosition(Elevator::ElevatorSetting::TRAP);
+  }
 
-  if(xboxController.GetRightBumper() && !overbumper.GetObjectInIntake()){
-    overbumper.IntakeRing(); //intake until stop
+  if(xboxController.GetRightBumper()){
+    notecontroller.IntakeNoteToSelector();
     wristSetPoint = Intake::LOW;
   }
   else if(xboxController.GetLeftBumper()){
-    overbumper.OuttakeRing(); //outtake from main system
+    notecontroller.FromElevatorToSelector();
   }
-  else if(xboxController.GetPOV() == 0){
-    overbumper.SetIntakeMotorSpeed(-60, -60); //to flywheel (this shoots)
+  else if(xboxController.GetRightTriggerAxis() > 0.5){
+    notecontroller.ToElevator();
   }
-  else if(xboxController.GetPOV() == 180 && (ampmech.GetObjectInMech() ? (ampmech.GetObjectInMech() && overbumper.GetObjectInTunnel()) : true)){
-    overbumper.SetIntakeMotorSpeed(-60,60); //to elevator
-    ampmech.SetAmpMotorPercent(-100);
+  else if(xboxController.GetLeftTriggerAxis() > 0.5){
+    overbumper.ShootNote();
   }
-  else if(xboxController.GetPOV() == 270 && ampmech.GetObjectInMech()){
-    ampmech.SetAmpMotorPercent(-100);
+  else if (xboxController.GetXButton())
+  {
+    notecontroller.LiftNoteToPosition(Elevator::ElevatorSetting::TRAP);
+  }
+  else if (xboxController.GetAButton())
+  {
+    notecontroller.LiftNoteToPosition(Elevator::ElevatorSetting::AMP);
+  }
+  else if (xboxController.GetBButton())
+  {
+    notecontroller.ScoreNoteInPosition(Elevator::ElevatorSetting::AMP);
+  }
+  else if (xboxController.GetYButton())
+  {
+    notecontroller.ScoreNoteInPosition(Elevator::ElevatorSetting::TRAP);
   }
   else {
-    overbumper.SetIntakeMotorSpeed(0); 
+    overbumper.SetIntakeMotorSpeed(0);
     ampmech.SetAmpMotorPercent(0);
   }
-  
-  SmartDashboard::PutBoolean("inmech", ampmech.GetObjectInMech());
-  SmartDashboard::PutBoolean("intunnel", overbumper.GetObjectInTunnel());
+
+  SmartDashboard::PutBoolean("in intake", overbumper.GetObjectInIntake());
+  SmartDashboard::PutBoolean("in mech", ampmech.GetObjectInMech());
+  SmartDashboard::PutBoolean("in tunnel", overbumper.GetObjectInTunnel());
 
   
   /*                                                      
@@ -232,7 +243,7 @@ void Robot::TeleopPeriodic()
   `--'    `--'.-'  /   '--'   '--'`--' `--' `----' `----'`--'                                          
   */
 
-  if(xboxController.GetBackButtonPressed()){
+  /*if(xboxController.GetBackButtonPressed()){
     flywheel.SpinFlywheelPercent(0);
   }
   else if (xboxController.GetStartButtonPressed()){
@@ -256,7 +267,7 @@ void Robot::TeleopPeriodic()
 
   if (xboxController.GetXButton()){
     flywheelController.TurnToSpeaker();
-  }
+  }*/
 
   //PID Intake wrist
   overbumper.PIDWristToPoint(wristSetPoint);
@@ -271,22 +282,17 @@ void Robot::TeleopPeriodic()
 
   //For testing - probably don't want to use this enum in final code and for sure not in this way
   //We will need to add an (object in elevator) check
-  /*
-  if (xboxController.GetBButtonPressed()){
-    //This line of code cycles to the next value in a 3-value Enumerator (of elevator positions), or cycles back to the first if it's currently at the third
-    elevSetHeight = static_cast<Elevator::ElevatorSetting>((elevSetHeight + 1) % 3); 
-  }
-  ampmech.MoveToHeight(elevSetHeight);
-  */
-  if (xboxController.GetBButton()){
-    ampmech.MoveToHeight(Elevator::AMP);
-  }
-  else{
-    ampmech.MoveToHeight(Elevator::LOW);
-  }
-
-  //Check if the elevator is at the correct point before running the amp feed motor
   
+  /*if (xboxController.GetBButtonPressed()){
+    //This line of code cycles to the next value in a 3-value Enumerator (of elevator positions), or cycles back to the first if it's currently at the third
+    elevSetHeight = static_cast<Elevator::ElevatorSetting>((elevSetHeight + 1) % 4); 
+  }
+  if (xboxController.GetBButton())
+  {
+    ampmech.MoveToHeight(elevSetHeight);
+  }*/
+  
+
 
   /*
    ,-----.,--.,--.           ,--.    
@@ -303,7 +309,7 @@ void Robot::TeleopPeriodic()
   }
   */
 
-  if(xboxController2.GetAButton()){
+  /*if(xboxController2.GetAButton()){
     hang.ExtendClimb();
   }
   else if (xboxController2.GetBButton()){
@@ -318,7 +324,7 @@ void Robot::TeleopPeriodic()
   }
   else{
     hang.HoldClimb();
-  }
+  }*/
 
   /*                                                                
   ,------.         ,--.                         ,--.                
@@ -329,9 +335,26 @@ void Robot::TeleopPeriodic()
                                   `---'  `---'              `---'   
   */
 
- // SmartDashboard::PutNumber("Top FlyWheel RPM", flywheel.TopFlywheel.GetMeasurement());
+  SmartDashboard::PutNumber("FL Module Heading", swerveDrive.FLModule.GetMagEncoderValue());
+  SmartDashboard::PutNumber("FR Module Heading", swerveDrive.FRModule.GetMagEncoderValue());
+  SmartDashboard::PutNumber("BL Module Heading", swerveDrive.BLModule.GetMagEncoderValue());
+  SmartDashboard::PutNumber("BR Module Heading", swerveDrive.BRModule.GetMagEncoderValue());
+  
+  SmartDashboard::PutNumber("Odometry X Position", swerveDrive.GetOdometryPose().X().value());
+  SmartDashboard::PutNumber("Odometry Y Position", swerveDrive.GetOdometryPose().Y().value());
+  SmartDashboard::PutNumber("Odometry Heading", swerveDrive.GetOdometryPose().Rotation().Degrees().value());
+  
+  SmartDashboard::PutBoolean("Tag in View", swerveDrive.TagInView());
+  SmartDashboard::PutNumber("Tag Odometry X", swerveDrive.GetTagOdometryPose().X().value());
+  SmartDashboard::PutNumber("Tag Odometry Y", swerveDrive.GetTagOdometryPose().Y().value());
+  SmartDashboard::PutNumber("Tag Odometry Heading", swerveDrive.GetTagOdometryPose().Rotation().Degrees().value());
+
+  SmartDashboard::PutNumber("Elevator Encoder", ampmech.GetWinchEncoderReading());
+  SmartDashboard::PutNumber("Wrist Encoder", overbumper.GetWristEncoderReading());
+  SmartDashboard::PutNumber("Flywheel Encoder", flywheel.GetAnglerEncoderReading());
+
+  //SmartDashboard::PutNumber("Top FlyWheel RPM", flywheel.TopFlywheel.GetMeasurement());
   //SmartDashboard::PutNumber("Top FlyWheel Setpoint", flywheel.TopFlywheel.m_shooterPID.GetSetpoint());
-  //SmartDashboard::PutNumber("Current Angler", flywheel.GetAnglerEncoderReading());
 }
 
 void Robot::DisabledInit() {}

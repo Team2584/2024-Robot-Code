@@ -20,6 +20,8 @@ class Climb {
 
         Climb(AprilTagSwerve* _swerveDrive);
 
+        void SetClimbMotors(double left, double right);
+
         bool ZeroClimb();
 
         void ExtendClimb();
