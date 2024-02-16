@@ -14,6 +14,7 @@ class NoteController
         FlywheelSystem* flywheel;
         Elevator* elevator;
 
+        bool noteBackInSelector = false;
         bool readyToScoreNote = false;
 
     public:
@@ -23,6 +24,7 @@ class NoteController
         bool IntakeNoteToSelector();
 
         bool ToElevator();
+        void BeginFromElevatorToSelector();
         bool FromElevatorToSelector();
 
         bool LiftNoteToPosition(Elevator::ElevatorSetting position);

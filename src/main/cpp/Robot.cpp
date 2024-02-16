@@ -157,7 +157,7 @@ void Robot::TeleopPeriodic()
 
 
   // Drive the robot
-  hang.SetClimbMotors(leftJoystickY, rightJoystickY);
+  ampmech.MoveElevatorPercent(rightJoystickX);
   //swerveDrive.DriveSwervePercent(fwdDriveSpeed, strafeDriveSpeed, turnSpeed);
 
   // Drive to 0,0 for testing
@@ -185,20 +185,45 @@ void Robot::TeleopPeriodic()
   |_|\_\___/\__\___|  \___\___/_||_\__|_| \___/_|_\___|_|                                                     
   */
 
-  wristSetPoint = Intake::LOW;
-  
+  wristSetPoint = Intake::HIGH;
+  if (xboxController.GetLeftBumperPressed()){
+    notecontroller.BeginFromElevatorToSelector();
+  }
+  if (xboxController.GetBButtonPressed()){
+    notecontroller.BeginScoreNoteInPosition(Elevator::ElevatorSetting::AMP);
+  }
+  if (xboxController.GetYButtonPressed()){
+    notecontroller.BeginScoreNoteInPosition(Elevator::ElevatorSetting::TRAP);
+  }
+
   if(xboxController.GetRightBumper()){
     notecontroller.IntakeNoteToSelector();
     wristSetPoint = Intake::LOW;
   }
   else if(xboxController.GetLeftBumper()){
-    overbumper.OuttakeNote();
+    notecontroller.FromElevatorToSelector();
   }
   else if(xboxController.GetRightTriggerAxis() > 0.5){
     notecontroller.ToElevator();
   }
   else if(xboxController.GetLeftTriggerAxis() > 0.5){
     overbumper.ShootNote();
+  }
+  else if (xboxController.GetXButton())
+  {
+    notecontroller.LiftNoteToPosition(Elevator::ElevatorSetting::TRAP);
+  }
+  else if (xboxController.GetAButton())
+  {
+    notecontroller.LiftNoteToPosition(Elevator::ElevatorSetting::AMP);
+  }
+  else if (xboxController.GetBButton())
+  {
+    notecontroller.ScoreNoteInPosition(Elevator::ElevatorSetting::AMP);
+  }
+  else if (xboxController.GetYButton())
+  {
+    notecontroller.ScoreNoteInPosition(Elevator::ElevatorSetting::TRAP);
   }
   else {
     overbumper.SetIntakeMotorSpeed(0);
@@ -257,18 +282,16 @@ void Robot::TeleopPeriodic()
 
   //For testing - probably don't want to use this enum in final code and for sure not in this way
   //We will need to add an (object in elevator) check
-  /*
-  if (xboxController.GetBButtonPressed()){
-    //This line of code cycles to the next value in a 3-value Enumerator (of elevator positions), or cycles back to the first if it's currently at the third
-    elevSetHeight = static_cast<Elevator::ElevatorSetting>((elevSetHeight + 1) % 3); 
-  }
   
-  */
-
-  if (xboxController.GetPOV() == 0)
-    ampmech.MoveToHeight(Elevator::ElevatorSetting::TRAP);
-  else
-    ampmech.StopElevator();
+  /*if (xboxController.GetBButtonPressed()){
+    //This line of code cycles to the next value in a 3-value Enumerator (of elevator positions), or cycles back to the first if it's currently at the third
+    elevSetHeight = static_cast<Elevator::ElevatorSetting>((elevSetHeight + 1) % 4); 
+  }
+  if (xboxController.GetBButton())
+  {
+    ampmech.MoveToHeight(elevSetHeight);
+  }*/
+  
 
 
   /*
@@ -326,9 +349,12 @@ void Robot::TeleopPeriodic()
   SmartDashboard::PutNumber("Tag Odometry Y", swerveDrive.GetTagOdometryPose().Y().value());
   SmartDashboard::PutNumber("Tag Odometry Heading", swerveDrive.GetTagOdometryPose().Rotation().Degrees().value());
 
+  SmartDashboard::PutNumber("Elevator Encoder", ampmech.GetWinchEncoderReading());
+  SmartDashboard::PutNumber("Wrist Encoder", overbumper.GetWristEncoderReading());
+  SmartDashboard::PutNumber("Flywheel Encoder", flywheel.GetAnglerEncoderReading());
+
   //SmartDashboard::PutNumber("Top FlyWheel RPM", flywheel.TopFlywheel.GetMeasurement());
   //SmartDashboard::PutNumber("Top FlyWheel Setpoint", flywheel.TopFlywheel.m_shooterPID.GetSetpoint());
-  //SmartDashboard::PutNumber("Current Angler", flywheel.GetAnglerEncoderReading());
 }
 
 void Robot::DisabledInit() {}

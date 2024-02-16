@@ -8,7 +8,7 @@ NoteController::NoteController(Intake* _intake, FlywheelSystem* _flywheel, Eleva
 }
 
 bool NoteController::IntakeNoteToSelector(){
-    if(intake->GetObjectInIntake()){
+    if(!intake->GetObjectInIntake()){
         intake->IntakeNote();
         return false;
     }
@@ -18,7 +18,7 @@ bool NoteController::IntakeNoteToSelector(){
 }
 
 bool NoteController::ToElevator(){
-    bool elevatorPrepared = elevator->MoveToHeight(Elevator::ElevatorSetting::OUTTAKE);
+    bool elevatorPrepared = elevator->MoveToHeight(Elevator::ElevatorSetting::LOW);
 
     if (!elevatorPrepared)
     {
@@ -42,16 +42,23 @@ bool NoteController::ToElevator(){
     return noteInPosition;
 }
 
+void NoteController::BeginFromElevatorToSelector(){
+    noteBackInSelector = false;
+}
+
 bool NoteController::FromElevatorToSelector(){
     bool elevatorPrepared = elevator->MoveToHeight(Elevator::ElevatorSetting::OUTTAKE);
     if (!elevatorPrepared)
     {
-        intake->NoteFromElevator();
+        intake->SetIntakeMotorSpeed(0);
         elevator->SetAmpMotorPercent(0);
         return false;
     }
 
-    bool noteInPosition = intake->GetObjectInIntake();
+    if (intake->GetObjectInIntake() && !noteBackInSelector)
+        noteBackInSelector = true;
+
+    bool noteInPosition = noteBackInSelector && !intake->GetObjectInIntake();
     if (!noteInPosition)
     {
         intake->NoteFromElevator();
@@ -94,6 +101,7 @@ bool NoteController::ScoreNoteInPosition(Elevator::ElevatorSetting position){
     }
     
     bool noteDeposited = !elevator->GetObjectInMech();
+    elevator->MoveToHeight(position);
 
     if (!noteDeposited)
         elevator->DepositNote();

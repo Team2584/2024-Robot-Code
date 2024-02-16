@@ -29,7 +29,7 @@ void Elevator::ResetElevatorEncoder()
 */
 double Elevator::GetWinchEncoderReading()
 {
-    return winchEncoder->GetPosition();
+    return winchEncoder->GetPosition() * -1;
 }
 
 /**
@@ -59,16 +59,15 @@ bool Elevator::PIDElevator(double setpoint){
     m_controller.SetGoal(goal);
 
     //winchMotor.SetVoltage((units::volt_t{m_controller.Calculate(units::meter_t{winchEncoder->GetPosition()}, goal)} + m_feedforward.Calculate(m_controller.GetSetpoint().velocity))*-1);
-    winchMotor.SetVoltage(units::volt_t{m_controller.Calculate(units::meter_t{winchEncoder->GetPosition()*-1}, goal)} *-1);
+    winchMotor.SetVoltage(units::volt_t{m_controller.Calculate(units::meter_t{GetWinchEncoderReading()}, goal)} *-1);
 
-    auto elevv = m_controller.Calculate(units::meter_t{winchEncoder->GetPosition()}, goal);
+    auto elevv = m_controller.Calculate(units::meter_t{GetWinchEncoderReading()}, goal);
     SmartDashboard::PutNumber("elev pid out", elevv);
     auto elevf = m_controller.GetSetpoint().velocity;
     SmartDashboard::PutNumber("elev setpoint", elevf.value());
     auto elevpose = m_controller.GetPositionError();
-    SmartDashboard::PutNumber("elev error", elevpose.value());
-    SmartDashboard::PutNumber("elev encoder pos", winchEncoder->GetPosition());
-
+    SmartDashboard::PutNumber("elev error", elevpose.value());    
+    SmartDashboard::PutBoolean("Elev PID Done", m_controller.AtGoal());
     return m_controller.AtGoal();
 }
 

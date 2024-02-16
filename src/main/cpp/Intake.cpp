@@ -11,52 +11,53 @@ Intake::Intake()
 {
   magEncoder = new rev::SparkAbsoluteEncoder(wristMotor.GetAbsoluteEncoder(rev::SparkAbsoluteEncoder::Type::kDutyCycle));
   wristMotor.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
+  m_WristPID.EnableContinuousInput(0, 1);
 }
 
 void Intake::SetIntakeMotorSpeed(double percent)
 {
-  onWristIntakeMotor.Set(percent);
+  //onWristIntakeMotor.Set(percent);
   mainFixedMotor.Set(percent);
   selectorFixedMotor.Set(percent);
 }
 
 void Intake::SetIntakeMotorSpeed(double mainMotorsPercent, double selectorMotorPct)
 {
-  onWristIntakeMotor.Set(mainMotorsPercent);
+  //onWristIntakeMotor.Set(mainMotorsPercent);
   mainFixedMotor.Set(mainMotorsPercent);
   selectorFixedMotor.Set(selectorMotorPct);
 }
 
 void Intake::SetIntakeMotorSpeed(double OverBumperPercent, double fixedMotorPercent, double selectorMotorPct)
 {
-  onWristIntakeMotor.Set(OverBumperPercent);
+  //onWristIntakeMotor.Set(OverBumperPercent);
   mainFixedMotor.Set(fixedMotorPercent);
   selectorFixedMotor.Set(selectorMotorPct);
 }
 
 void Intake::IntakeNote()
 {
-  SetIntakeMotorSpeed(IntakeConstants::INTAKE_SPEED_IN, 0);
+  SetIntakeMotorSpeed(IntakeConstants::INTAKE_SPEED_IN, IntakeConstants::FIXED_INTAKE_SPEED_IN, 0);
 }
 
 void Intake::OuttakeNote()
 {
-  SetIntakeMotorSpeed(IntakeConstants::INTAKE_SPEED_OUT, IntakeConstants::SELECTOR_SPEED_SHOOTER);
+  SetIntakeMotorSpeed(IntakeConstants::INTAKE_SPEED_OUT, IntakeConstants::FIXED_INTAKE_SPEED_OUT, IntakeConstants::SELECTOR_SPEED_SHOOTER);
 }
 
 void Intake::ShootNote()
 {
-  SetIntakeMotorSpeed(IntakeConstants::INTAKE_SPEED_IN, IntakeConstants::SELECTOR_SPEED_SHOOTER);
+  SetIntakeMotorSpeed(0, IntakeConstants::FIXED_INTAKE_SPEED_IN, IntakeConstants::SELECTOR_SPEED_SHOOTER);
 }
 
 void Intake::NoteToElevator()
 {
-  SetIntakeMotorSpeed(IntakeConstants::INTAKE_SPEED_IN, IntakeConstants::SELECTOR_SPEED_ELEVATOR);
+  SetIntakeMotorSpeed(0, IntakeConstants::FIXED_INTAKE_SPEED_IN, IntakeConstants::SELECTOR_SPEED_ELEVATOR);
 }
 
 void Intake::NoteFromElevator()
 {
-  SetIntakeMotorSpeed(IntakeConstants::INTAKE_SPEED_OUT, IntakeConstants::SELECTOR_SPEED_SHOOTER);
+  SetIntakeMotorSpeed(IntakeConstants::INTAKE_SPEED_BACK_TO_SELECTOR, IntakeConstants::SELECTOR_SPEED_SHOOTER);
 }
 
 double Intake::GetWristEncoderReading()
@@ -80,7 +81,7 @@ void Intake::MoveWristPercent(double percent)
 
 bool Intake::PIDWrist(double point)
 {
-  MoveWristPercent(m_WristPID.Calculate(GetWristEncoderReading(),point)*-1);
+  MoveWristPercent(m_WristPID.Calculate(GetWristEncoderReading(),point));
   return m_WristPID.PIDFinished();
 }
 
