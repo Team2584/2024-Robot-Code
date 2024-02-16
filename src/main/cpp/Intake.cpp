@@ -17,21 +17,21 @@ Intake::Intake()
 
 void Intake::SetIntakeMotorSpeed(double percent)
 {
-  //onWristIntakeMotor.Set(percent);
+  onWristIntakeMotor.Set(percent);
   mainFixedMotor.Set(percent);
   selectorFixedMotor.Set(percent);
 }
 
 void Intake::SetIntakeMotorSpeed(double mainMotorsPercent, double selectorMotorPct)
 {
-  //onWristIntakeMotor.Set(mainMotorsPercent);
+  onWristIntakeMotor.Set(mainMotorsPercent);
   mainFixedMotor.Set(mainMotorsPercent);
   selectorFixedMotor.Set(selectorMotorPct);
 }
 
 void Intake::SetIntakeMotorSpeed(double OverBumperPercent, double fixedMotorPercent, double selectorMotorPct)
 {
-  //onWristIntakeMotor.Set(OverBumperPercent);
+  onWristIntakeMotor.Set(OverBumperPercent);
   mainFixedMotor.Set(fixedMotorPercent);
   selectorFixedMotor.Set(selectorMotorPct);
 }
