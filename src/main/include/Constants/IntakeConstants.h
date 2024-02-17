@@ -1,6 +1,8 @@
 #ifndef INTAKE_CONSTANTS_H
 #define INTAKE_CONSTANTS_H
 
+#include "Robot.h"
+
 // Ports for different motors and sensors (Spark MAX CAN ID - Check using REV firmware utility)
 #define ON_WRIST_MOTOR_PORT 17
 #define WRIST_MOTOR_PORT 18
@@ -23,13 +25,16 @@ namespace Wrist{
 inline const double WRIST_HIGH = 0.22;
 inline const double WRIST_LOW = 0.0;
 inline const double WRIST_SHOOT = 0.17;
+inline constexpr auto KS = 0_V;
+inline constexpr auto KG = 0.4_V;
+inline constexpr auto KV = 0.4_V * 1_s / 1_rad; //0.88
 inline double KD  = 0;
-inline double KP  = 4;
-inline double KI  = 0.03;
+inline double KP  = 35;
+inline double KI  = 0;
 inline double KIMAX  = 0.1;
 inline double POS_ERROR  = 0.015; //~3deg
 inline double VELOCITY_ERROR = 1;
-inline double MAX_SPEED  = 0.3;
+inline double MAX_SPEED  = 8;
 inline double MIN_SPEED  = 0.05;
 }
 }
