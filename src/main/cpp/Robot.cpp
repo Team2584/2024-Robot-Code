@@ -178,7 +178,7 @@ void Robot::TeleopPeriodic()
 
 
   // Drive the robot
-  swerveDrive.DriveSwervePercent(fwdDriveSpeed, strafeDriveSpeed, turnSpeed);
+  //swerveDrive.DriveSwervePercent(fwdDriveSpeed, strafeDriveSpeed, turnSpeed);
 
   // Drive to 0,0 for testing
   /*if (xboxController.GetAButtonPressed())
@@ -236,6 +236,9 @@ void Robot::TeleopPeriodic()
   else if (xboxController2.GetRightBumper()){
     notecontroller.FromElevatorToSelector();
   }
+  else if (xboxController2.GetLeftBumper()){
+    ampmech.NoteFromSelector();
+  }
   else if (xboxController2.GetXButton())
   {
     notecontroller.LiftNoteToPosition(Elevator::ElevatorSetting::TRAP);
@@ -255,6 +258,7 @@ void Robot::TeleopPeriodic()
   else {
     overbumper.SetIntakeMotorSpeed(0);
     ampmech.SetAmpMotorPercent(0);
+    ampmech.StopElevator();
   }
 
   SmartDashboard::PutBoolean("in intake", overbumper.GetObjectInIntake());
@@ -302,7 +306,7 @@ void Robot::TeleopPeriodic()
   /*if (xboxController.GetXButton()){
     flywheelController.TurnToSpeaker();
   }*/
-
+  ampmech.MoveElevatorPercent(rightJoystickY);
   //PID Intake wrist
   overbumper.PIDWristToPoint(wristSetPoint);
 
@@ -336,7 +340,29 @@ void Robot::TeleopPeriodic()
    `-----'`--'`--'`--`--`--' `---'  
   */
 
-  hang.SetClimbMotors(controller2LeftJoystickY, controller2RightJoystickY);
+  if (controller2LeftJoystickY != 0 || controller2RightJoystickY != 0)
+    hang.SetClimbMotors(controller2LeftJoystickY, controller2RightJoystickY);
+  else if(xboxController.GetAButton()){
+    hang.ExtendClimb();
+  }
+  else if (xboxController.GetBButton()){
+    hang.RetractClimb();
+  }
+  else if (xboxController.GetXButton()){
+    hang.ZeroClimb();
+  }
+  else if (xboxController.GetPOV() == 90){
+    hang.ClimbPID(-0.6);
+  }else if (xboxController.GetPOV() == 270){
+    hang.ClimbPID(0);
+  }
+  
+  else{
+    hang.HoldClimb();
+  }
+  if(xboxController.GetYButtonPressed()){
+    hang.climbZeroed = false;
+  }
 
   //ONLY uncomment this when motors are found to be going the right directions and limits work properly
   /*
@@ -391,6 +417,10 @@ void Robot::TeleopPeriodic()
 
   SmartDashboard::PutNumber("Top FlyWheel RPM", flywheel.TopFlywheel.GetMeasurement());
   SmartDashboard::PutNumber("Bottom FlyWheel RPM", flywheel.BottomFlywheel.GetMeasurement());
+
+  SmartDashboard::PutBoolean("climb l stop", hang.leftStop.Get());
+
+  SmartDashboard::PutNumber("climb l pos", hang.leftEncoder.GetPosition());
 }
 
 void Robot::DisabledInit() {}
