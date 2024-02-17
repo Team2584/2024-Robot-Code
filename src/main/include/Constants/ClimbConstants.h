@@ -29,8 +29,8 @@ inline const double BasePctDown =  0.2;
 #define CLIMB_MOTOR_L 23
 #define CLIMB_MOTOR_R 24
 
-#define CLIMB_LEFT_STOP_PORT 8
-#define CLIMB_RIGHT_STOP_PORT 7
+#define CLIMB_LEFT_STOP_PORT 9
+#define CLIMB_RIGHT_STOP_PORT 6
 
 //Convention: Up = motor spin positive
 //Right = positive
