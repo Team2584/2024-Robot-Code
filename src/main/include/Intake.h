@@ -29,15 +29,16 @@ class Intake
 
         void SetIntakeMotorSpeed(double percent);
 
-        void SetIntakeMotorSpeed(double FeederPercent_1, double FeederPercent_2);
+        void SetIntakeMotorSpeed(double IntakePercent, double SelectorPercent);
         
-        void SetIntakeMotorSpeed(double OverBumperPercent, double FeederPercent_1, double FeederPercent_2);
+        void SetIntakeMotorSpeed(double OverBumperPercent, double FixedMotorPercent, double SelectorPercent);
 
-        void IntakeRing();
-        
-        void OuttakeRing();
+        void IntakeNote();
+        void OuttakeNote();
 
-        void ShootRing();
+        void ShootNote();
+        void NoteToElevator();
+        void NoteFromElevator();
 
         double GetWristEncoderReading();
 

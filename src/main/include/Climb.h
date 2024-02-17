@@ -20,6 +20,8 @@ class Climb {
 
         Climb(VisionSwerve* _swerveDrive);
 
+        void SetClimbMotors(double left, double right);
+
         bool ZeroClimb();
 
         void ExtendClimb();
