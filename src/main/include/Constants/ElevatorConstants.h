@@ -1,3 +1,5 @@
+#include "Robot.h"
+
 #ifndef ELEVATOR_CONSTANTS_H
 #define ELEVATOR_CONSTANTS_H
 
@@ -29,6 +31,10 @@ namespace AmpMech{
     inline constexpr double AMP_SPEED_TO_SELECTOR = 0.5;
     inline constexpr double AMP_SPEED_DEPOSIT = -0.75;
 }
+
+// Autonomous Constants
+inline const Pose2d AMP_SCORING_POSITION = {1.8415_m, 7.7216_m, Rotation2d(270_deg)};
+inline const double ampDriveTime = 0.25_s;
 }
 
 
