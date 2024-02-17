@@ -1,5 +1,4 @@
 #include "Robot.h"
-#include "Intake.h"
 #include "constants/FlywheelConstants.h"
 
 #ifndef FLYWHEEL_H
@@ -40,25 +39,19 @@ class FlywheelSystem
         
         ArmFeedforward FlywheelAnglerFF;
         
-        Intake * m_intake;
-
     public:
 
         FlywheelSpeedController TopFlywheel;
         FlywheelSpeedController BottomFlywheel;
         PID FlywheelAnglerPID;
         
-        FlywheelSystem(Intake * _m_intake);
+        FlywheelSystem();
 
         void SpinFlywheelPercent(double percent);
-
-        void RunFeederMotor();
 
         bool SetFlywheelVelocity(double velocity);
         
         bool SetFlywheelVelocity(double bottomVelocity, double topVelocity);
-
-        void ShootRing();
 
         double GetAnglerEncoderReading();
 

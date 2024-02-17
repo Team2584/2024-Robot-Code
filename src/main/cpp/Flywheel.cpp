@@ -1,17 +1,16 @@
 #include "FlyWheel.h"
 
-FlywheelSystem::FlywheelSystem(Intake * _m_intake)
+FlywheelSystem::FlywheelSystem()
   : FlywheelMotor1{FLYWHEEL_MOTOR_1, rev::CANSparkFlex::MotorType::kBrushless},
     FlywheelMotor2{FLYWHEEL_MOTOR_2, rev::CANSparkFlex::MotorType::kBrushless},
     FlywheelAnglingMotor{FLYWHEEL_ANGLING_MOTOR, rev::CANSparkFlex::MotorType::kBrushless},
+    magEncoder{FLYWHEEL_MAG_ENCODER_PORT},
     FlywheelAnglerFF{FlywheelConstants::Angler::KS, FlywheelConstants::Angler::KG, FlywheelConstants::Angler::KV},
-    m_intake{_m_intake},
     TopFlywheel{FlywheelSpeedController(&FlywheelMotor1)},
     BottomFlywheel{FlywheelSpeedController(&FlywheelMotor2)},
     FlywheelAnglerPID{FlywheelConstants::Angler::KP, FlywheelConstants::Angler::KI, FlywheelConstants::Angler::KD, FlywheelConstants::Angler::KI_MAX, 
                      FlywheelConstants::Angler::MIN_SPEED, FlywheelConstants::Angler::MAX_SPEED, FlywheelConstants::Angler::POS_TOLERANCE, FlywheelConstants::Angler::VELOCITY_TOLERANCE}
 {
-    magEncoder = new rev::SparkAbsoluteEncoder(FlywheelAnglingMotor.GetAbsoluteEncoder(rev::SparkAbsoluteEncoder::Type::kDutyCycle));
 }
 
 /**
@@ -23,19 +22,6 @@ void FlywheelSystem::SpinFlywheelPercent(double percent)
 {
   FlywheelMotor1.Set(-percent);
   FlywheelMotor2.Set(-percent);
-}
-
-/**
- * @brief Runs feeder motor if object is in intake
-*/
-void FlywheelSystem::RunFeederMotor()
-{
-  if ((m_intake->GetObjectInIntake())){
-    m_intake->SetIntakeMotorSpeed(0,60);
-  }
-  else {
-    m_intake->SetIntakeMotorSpeed(0,0);
-  }
 }
 
 /**
@@ -59,27 +45,17 @@ bool FlywheelSystem::SetFlywheelVelocity(double bottomVelocity, double topVeloci
   return (TopFlywheel.AtSetpoint() && BottomFlywheel.AtSetpoint());
 }
 
-/**
- * @brief Launch Ring if Flywheel Velocities are at setpoint and there is an object in intake
-*/
-void FlywheelSystem::ShootRing(){
-  /*
-  if ((TopFlywheel.AtSetpoint() && BottomFlywheel.AtSetpoint())){
-    m_intake->SetFeeding(true);
-    m_intake->SetIntakeMotorSpeed(0,60);
-  }
-  else {
-    m_intake->SetFeeding(false);
-  }
-  */
- 
-}
-
 double FlywheelSystem::GetAnglerEncoderReading()
 {
-  double reading = magEncoder->GetPosition();
+  double reading = magEncoder.GetAbsolutePosition();
+  reading -= FLYWHEEL_MAG_ENCODER_OFFSET;
+  reading *= -1;
+
   if (reading > 0.5)
     reading -= 1;
+  if (reading < -0.5)
+    reading += 1;
+
   return reading * M_PI * 2;
 }
 
