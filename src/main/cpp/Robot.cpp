@@ -10,6 +10,7 @@
 #include "VisionBasedSwerve.h"
 #include "Autonomous Functionality/SwerveDriveAutoControl.h"
 #include "Autonomous Functionality/SpeakerFunctionality.h"
+#include "Autonomous Functionality/AmpFunctionality.h"
 
 #include "Intake.h"
 #include "FlyWheel.h"
@@ -29,6 +30,7 @@ NoteController notecontroller{&overbumper, &flywheel, &ampmech};
 
 SwerveDriveAutonomousController swerveAutoController{&swerveDrive};
 AutonomousShootingController flywheelController{&swerveAutoController, &flywheel};
+AutonomousAmpingController autoAmpController{&swerveAutoController, &notecontroller};
 
 Elevator::ElevatorSetting elevSetHeight = Elevator::LOW;
 Intake::WristSetting wristSetPoint = Intake::HIGH;
@@ -179,19 +181,30 @@ void Robot::TeleopPeriodic()
 
 
   // Drive the robot
-  swerveDrive.DriveSwervePercent(fwdDriveSpeed, strafeDriveSpeed, turnSpeed);
+  swerveDrive.DriveSwervePercent(strafeDriveSpeed, fwdDriveSpeed, turnSpeed);
 
   if (xboxController3.GetAButton())
   { 
     swerveAutoController.TurnToNote();
   }
 
-  // Drive to 0,0 for testing
-  /*if (xboxController.GetAButtonPressed())
-    swerveAutoController.BeginDriveToPose();
-  if (xboxController.GetAButton())
-    swerveAutoController.DriveToPose(Pose2d(-0.5_m,0_m,Rotation2d(90_deg)), PoseEstimationType::TagBased);
+  // Drive to a position for testing
+  if (xboxController3.GetRightBumperPressed())
+    swerveAutoController.BeginDriveToPose(PoseEstimationType::PureOdometry);
+  if (xboxController3.GetRightBumper())
+    swerveAutoController.DriveToPose(Pose2d(-0.5_m,0_m,Rotation2d(90_deg)), PoseEstimationType::PureOdometry);
 
+  if (xboxController3.GetLeftBumperPressed())
+    swerveAutoController.BeginDriveToPose(PoseEstimationType::TagBased);
+  if (xboxController3.GetLeftBumper())
+    swerveAutoController.DriveToPose(ElevatorConstants::AMP_SCORING_POSITION, PoseEstimationType::TagBased);
+
+  if (xboxController3.GetYButtonPressed())
+    autoAmpController.BeginDriveToAmp();
+  else
+    autoAmpController.DriveToAmp();
+    
+  /*
   // Follow spline for testing
   if (xboxController.GetBButtonPressed())
   {

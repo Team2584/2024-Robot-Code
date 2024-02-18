@@ -15,7 +15,7 @@ void AutonomousAmpingController::BeginDriveToAmp(){
 bool AutonomousAmpingController::DriveToAmp(){
     if (!centeredOnAmp) 
     {
-        centeredOnAmp = swerveDrive->DriveToPose(AMP_SCORING_POSITION);
+        centeredOnAmp = swerveDrive->DriveToPose(ElevatorConstants::AMP_SCORING_POSITION, PoseEstimationType::TagBased);
         return false;
     }
 
@@ -25,6 +25,12 @@ bool AutonomousAmpingController::DriveToAmp(){
         ampTimer.Restart();
     }
 
-    swerveDrive->DriveSwervePercent(0, 0.3, 0);
+    if (ampTimer.Get() < ElevatorConstants::ampDriveTime)
+    {
+        swerveDrive->swerveDrive->DriveSwervePercent(0, -0.3, 0);
+        return false;
+    }
     
+    swerveDrive->swerveDrive->DriveSwervePercent(0,0,0);
+    return true;
 }

@@ -371,7 +371,7 @@ double SwerveDrive::AngularPercentToVelocity(double percent)
  * @param StrafeDriveSpeed The speed the robot should move left and right, positive being left, in percentage (0 - 1.0)
  * @param TurnSpeed The speed the robot should turn left and right, positive being counterclockwise, in percentage (0 - 1.0)
  */
-void SwerveDrive::DriveSwervePercentNonFieldOriented(double FwdDriveSpeed, double StrafeDriveSpeed, double TurnSpeed)
+void SwerveDrive::DriveSwervePercentNonFieldOriented(double StrafeDriveSpeed, double FwdDriveSpeed, double TurnSpeed)
 {
     // Reverse strafe and turn directions because this function's equations work with right/clockwise positive
     StrafeDriveSpeed *= -1;
@@ -443,7 +443,7 @@ void SwerveDrive::DriveSwervePercentNonFieldOriented(double FwdDriveSpeed, doubl
  * @param StrafeDriveSpeed The speed the robot should move left and right, positive being right, in percentage (0 - 1.0)
  * @param TurnSpeed The speed the robot should turn left and right, positive being counterclockwise, in percentage (0 - 1.0)
  */
-void SwerveDrive::DriveSwervePercent(double FwdDriveSpeed, double StrafeDriveSpeed, double TurnSpeed)
+void SwerveDrive::DriveSwervePercent(double StrafeDriveSpeed, double FwdDriveSpeed, double TurnSpeed)
 {
     // Converts our field oriented speeds to robot oriented, by using trig (rotation matrix) with the current robot angle.
     double angle = -1 * GetOdometryPose().Rotation().Radians().value(); // Angle * -1 because rotation matrices rotate clockwise
@@ -451,7 +451,7 @@ void SwerveDrive::DriveSwervePercent(double FwdDriveSpeed, double StrafeDriveSpe
     FwdDriveSpeed = FwdDriveSpeed * cos(angle) - StrafeDriveSpeed * sin(angle);
     StrafeDriveSpeed = oldFwd * sin(angle) + StrafeDriveSpeed * cos(angle);
 
-    DriveSwervePercentNonFieldOriented(FwdDriveSpeed, StrafeDriveSpeed, TurnSpeed);
+    DriveSwervePercentNonFieldOriented(StrafeDriveSpeed, FwdDriveSpeed, TurnSpeed);
 }
 
 /**
