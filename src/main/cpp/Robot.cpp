@@ -11,7 +11,7 @@
 #include "Autonomous Functionality/SwerveDriveAutoControl.h"
 #include "Autonomous Functionality/SpeakerFunctionality.h"
 #include "Autonomous Functionality/AmpFunctionality.h"
-
+#include "Autonomous Functionality/AutonomousRoutines.h"
 #include "Intake.h"
 #include "FlyWheel.h"
 #include "Elevator.h"
@@ -32,6 +32,8 @@ SwerveDriveAutonomousController swerveAutoController{&swerveDrive};
 AutonomousShootingController flywheelController{&swerveAutoController, &flywheel};
 AutonomousAmpingController autoAmpController{&swerveAutoController, &notecontroller};
 
+AutonomousController autoController{&swerveAutoController, &notecontroller, &flywheelController, &autoAmpController};
+
 Elevator::ElevatorSetting elevSetHeight = Elevator::LOW;
 Intake::WristSetting wristSetPoint = Intake::HIGH;
 bool anglingToSpeaker = false;
@@ -39,13 +41,13 @@ bool anglingToSpeaker = false;
 
 void Robot::RobotInit()
 {
-  m_chooser.SetDefaultOption(kAutoNameDefault, kAutoNameDefault);
-  m_chooser.AddOption(kAutoNameCustom, kAutoNameCustom);
+  m_chooser.SetDefaultOption(kAutoBCSI2S, kAutoBCSI2S);
+  m_chooser.AddOption(kAutoBLSI3S, kAutoBLSI3S);
+  m_chooser.AddOption(kAutoBRSI1S, kAutoBRSI1S);
   frc::SmartDashboard::PutData("Auto Modes", &m_chooser);
   
   SmartDashboard::PutNumber("Flywheel Setpoint", 0);
   SmartDashboard::PutNumber("Angler Setpoint", M_PI / 2);
-  flywheel.FlywheelAnglerPID.SetupConstantTuning("Angler");
 }
 
 
@@ -77,10 +79,8 @@ void Robot::AutonomousInit()
   //     kAutoNameDefault);
   fmt::print("Auto selected: {}\n", m_autoSelected);
 
-  if (m_autoSelected == kAutoNameCustom)
-  {
-    // Custom Auto goes here
-  }
+  if (m_autoSelected == kAutoBCSI2S)
+    autoController.SetupBlueCenterShootIntake2Shoot(); 
   else
   {
     // Default Auto goes here
@@ -89,10 +89,8 @@ void Robot::AutonomousInit()
 
 void Robot::AutonomousPeriodic()
 {
-  if (m_autoSelected == kAutoNameCustom)
-  {
-    // Custom Auto goes here
-  }
+  if (m_autoSelected == kAutoBCSI2S)
+    autoController.BlueCenterShootIntake2Shoot();
   else
   {
     // Default Auto goes here
@@ -103,9 +101,7 @@ void Robot::TeleopInit()
 {
   swerveDrive.ResetOdometry(Pose2d(0_m, 0_m, Rotation2d(180_deg)));
   swerveDrive.ResetTagOdometry(Pose2d(0_m, 0_m, Rotation2d(180_deg)));
-  ampmech.ResetElevatorEncoder();
-  //flywheel.FlywheelAnglerPID.UpdateConstantTuning("Angler");
-  
+  ampmech.ResetElevatorEncoder();  
 }
 
 void Robot::TeleopPeriodic()
@@ -301,10 +297,6 @@ void Robot::TeleopPeriodic()
 
   if (xboxController2.GetPOV() == 0){
     flywheel.PIDAngler(SmartDashboard::GetNumber("Angler Setpoint", M_PI / 2));
-  }
-  else if (xboxController2.GetPOV() == 180)
-  {
-      flywheel.FlywheelAnglerPID.UpdateConstantTuning("Angler");
   }
   else{
     flywheel.MoveAnglerPercent(0);
