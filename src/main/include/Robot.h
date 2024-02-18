@@ -22,6 +22,7 @@
 #include <frc/smartdashboard/SendableChooser.h>
 #include <frc/smartdashboard/SmartDashboard.h>
 
+#include <frc/Timer.h>
 #include <frc/XboxController.h>
 #include <frc/DutyCycleEncoder.h>
 #include <frc/DigitalInput.h>

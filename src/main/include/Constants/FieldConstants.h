@@ -1,3 +1,5 @@
+#include "Robot.h"
+
 #ifndef FIELD_CONSTANTS_H // Ensures that this header file is only compiled once
 #define FIELD_CONSTANTS_H
 

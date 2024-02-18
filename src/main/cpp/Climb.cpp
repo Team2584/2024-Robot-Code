@@ -4,14 +4,14 @@
 Climb::Climb(VisionSwerve* _swerveDrive)
     :leftClimbMotor{CLIMB_MOTOR_L, rev::CANSparkFlex::MotorType::kBrushless},
     rightClimbMotor(CLIMB_MOTOR_R, rev::CANSparkFlex::MotorType::kBrushless),
-    leftEncoder{leftClimbMotor.GetEncoder(rev::SparkRelativeEncoder::Type::kHallSensor)},
-    rightEncoder{rightClimbMotor.GetEncoder(rev::SparkRelativeEncoder::Type::kHallSensor)},
     robotSwerveDrive{_swerveDrive},
-    leftStop{9},
-    rightStop{6},
     leftPID{ClimbConstants::m_linear_KP,ClimbConstants::m_linear_KI,ClimbConstants::m_linear_KD,ClimbConstants::m_linear_KIMAX,ClimbConstants::m_linear_MIN_SPEED,ClimbConstants::m_linear_MAX_SPEED,ClimbConstants::m_linear_POS_ERROR,ClimbConstants::m_linear_VELOCITY_ERROR},
     rightPID{ClimbConstants::m_linear_KP,ClimbConstants::m_linear_KI,ClimbConstants::m_linear_KD,ClimbConstants::m_linear_KIMAX,ClimbConstants::m_linear_MIN_SPEED,ClimbConstants::m_linear_MAX_SPEED,ClimbConstants::m_linear_POS_ERROR,ClimbConstants::m_linear_VELOCITY_ERROR},
-    rollPID{ClimbConstants::m_rotation_KP,ClimbConstants::m_rotation_KI,ClimbConstants::m_rotation_KD,ClimbConstants::m_rotation_KIMAX,ClimbConstants::m_rotation_MIN_SPEED,ClimbConstants::m_rotation_MAX_SPEED,ClimbConstants::m_rotation_ROT_ERROR,ClimbConstants::m_rotation_VELOCITY_ERROR}
+    rollPID{ClimbConstants::m_rotation_KP,ClimbConstants::m_rotation_KI,ClimbConstants::m_rotation_KD,ClimbConstants::m_rotation_KIMAX,ClimbConstants::m_rotation_MIN_SPEED,ClimbConstants::m_rotation_MAX_SPEED,ClimbConstants::m_rotation_ROT_ERROR,ClimbConstants::m_rotation_VELOCITY_ERROR},
+    leftEncoder{leftClimbMotor.GetEncoder(rev::SparkRelativeEncoder::Type::kHallSensor)},
+    rightEncoder{rightClimbMotor.GetEncoder(rev::SparkRelativeEncoder::Type::kHallSensor)},
+    leftStop{9},
+    rightStop{6}
 {
     leftClimbMotor.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
     rightClimbMotor.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
