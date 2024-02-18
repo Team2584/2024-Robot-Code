@@ -11,14 +11,23 @@
 class AutonomousController
 {
 private:
-    SwerveDriveAutonomousController *swerveDrive;
+    VisionSwerve *swerveDrive;
+    Intake *intake;
+    FlywheelSystem *flywheel;
+    Elevator *ampMech;
+
+    SwerveDriveAutonomousController *swerveDriveController;
     NoteController *noteController;
     AutonomousShootingController *shootingController;
     AutonomousAmpingController *ampingController;
 
-public:
-    AutonomousController(SwerveDriveAutonomousController *swerveDrive_, NoteController *noteController_, AutonomousShootingController *shootingController_, AutonomousAmpingController *ampingController_);
+    Timer masterTimer;
+    double splineSection = 0;
 
+public:
+    AutonomousController(VisionSwerve *swerveDrive_, Intake *intake_, FlywheelSystem *flywheel_, Elevator *ampMech_, SwerveDriveAutonomousController *swerveDriveController_, NoteController *noteController_, AutonomousShootingController *shootingController_, AutonomousAmpingController *ampingController_);
+
+    void SetupAuto();
     void SetupBlueCenterShootIntake2Shoot();
     void BlueCenterShootIntake2Shoot();
 };

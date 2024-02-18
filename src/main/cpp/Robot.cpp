@@ -32,7 +32,7 @@ SwerveDriveAutonomousController swerveAutoController{&swerveDrive};
 AutonomousShootingController flywheelController{&swerveAutoController, &flywheel};
 AutonomousAmpingController autoAmpController{&swerveAutoController, &notecontroller};
 
-AutonomousController autoController{&swerveAutoController, &notecontroller, &flywheelController, &autoAmpController};
+AutonomousController autoController{&swerveDrive, &overbumper, &flywheel, &ampmech, &swerveAutoController, &notecontroller, &flywheelController, &autoAmpController};
 
 Elevator::ElevatorSetting elevSetHeight = Elevator::LOW;
 Intake::WristSetting wristSetPoint = Intake::HIGH;
@@ -89,6 +89,10 @@ void Robot::AutonomousInit()
 
 void Robot::AutonomousPeriodic()
 {
+  /* Updates */
+  swerveDrive.Update();
+
+   /* Autos */
   if (m_autoSelected == kAutoBCSI2S)
     autoController.BlueCenterShootIntake2Shoot();
   else
