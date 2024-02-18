@@ -6,23 +6,30 @@ class Climb {
     private:
 
         rev::CANSparkFlex leftClimbMotor, rightClimbMotor;
-        rev::SparkRelativeEncoder leftEncoder, rightEncoder;
         AprilTagSwerve* robotSwerveDrive;
-        rev::SparkLimitSwitch leftStop;
-        rev::SparkLimitSwitch rightStop;
         PID leftPID;
         PID rightPID;
         PID rollPID;
 
-        bool climbZeroed = false;
+        
 
     public:
+    bool climbZeroed = false;
+        rev::SparkRelativeEncoder leftEncoder, rightEncoder;
+        frc::DigitalInput leftStop;
+        frc::DigitalInput rightStop;
 
         Climb(AprilTagSwerve* _swerveDrive);
 
-        void SetClimbMotors(double left, double right);
+        bool GetLStop();
+
+        bool GetRStop();
 
         bool ZeroClimb();
+
+        void SetClimbMotors(double Percentage);
+
+        void SetClimbMotors(double LeftMotor, double RightMotor);
 
         void ExtendClimb();
 

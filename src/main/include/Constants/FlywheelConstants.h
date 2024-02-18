@@ -33,14 +33,14 @@ namespace Angler {
 inline constexpr auto KS = 0_V;
 inline constexpr auto KG = 0.1625_V;
 inline constexpr auto KV = 0.4_V * 1_s / 1_rad; //0.88
-inline constexpr auto KP = 3;
+inline constexpr auto KP = 4;
 inline constexpr auto KI = 0;
 inline constexpr auto KI_MAX = 0; // In percent power
 inline constexpr auto KD = 0;
 inline constexpr auto POS_TOLERANCE = 0.05; // In Degrees
 inline constexpr auto VELOCITY_TOLERANCE = 5; // In percent power
 inline constexpr auto MIN_SPEED = 0;// In percent power
-inline constexpr auto MAX_SPEED = 6; //0.3 // In percent power
+inline constexpr auto MAX_SPEED = 8; //0.3 // In percent power
 }
 
 }

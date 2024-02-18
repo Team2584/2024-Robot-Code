@@ -13,7 +13,7 @@
 #define TUNNEL_IR_SENSOR_PORT 5
 
 namespace IntakeConstants{
-inline const double INTAKE_SPEED_IN = 1;
+inline const double INTAKE_SPEED_IN = -0.7;
 inline const double INTAKE_SPEED_OUT = 0.5;
 inline const double FIXED_INTAKE_SPEED_IN = -0.7;
 inline const double FIXED_INTAKE_SPEED_OUT = 0.7;
@@ -26,7 +26,7 @@ inline const double WRIST_HIGH = 0.22;
 inline const double WRIST_LOW = 0.0;
 inline const double WRIST_SHOOT = 0.17;
 inline constexpr auto KS = 0_V;
-inline constexpr auto KG = 0.4_V;
+inline constexpr auto KG = 0.36_V;
 inline constexpr auto KV = 0.4_V * 1_s / 1_rad; //0.88
 inline double KD  = 0;
 inline double KP  = 35;
