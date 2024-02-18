@@ -282,10 +282,6 @@ void Robot::TeleopPeriodic()
     ampmech.StopElevator();
   }
 
-  SmartDashboard::PutBoolean("in intake", overbumper.GetObjectInIntake());
-  SmartDashboard::PutBoolean("in mech", ampmech.GetObjectInMech());
-  SmartDashboard::PutBoolean("in tunnel", overbumper.GetObjectInTunnel());
-
   
   /*                                                      
   ,------.,--.                    ,--.                   ,--. 
@@ -435,12 +431,15 @@ void Robot::TeleopPeriodic()
   SmartDashboard::PutNumber("Wrist Encoder", overbumper.GetWristEncoderReading());
   SmartDashboard::PutNumber("Flywheel Encoder", flywheel.GetAnglerEncoderReading());
 
+  SmartDashboard::PutBoolean("in intake", overbumper.GetObjectInIntake());
+  SmartDashboard::PutBoolean("in mech", ampmech.GetObjectInMech());
+  SmartDashboard::PutBoolean("in tunnel", overbumper.GetObjectInTunnel());
+
   SmartDashboard::PutNumber("Top FlyWheel RPM", flywheel.TopFlywheel.GetMeasurement());
   SmartDashboard::PutNumber("Bottom FlyWheel RPM", flywheel.BottomFlywheel.GetMeasurement());
 
-  SmartDashboard::PutBoolean("climb l stop", hang.leftStop.Get());
-
-  SmartDashboard::PutNumber("climb l pos", hang.leftEncoder.GetPosition());
+  //SmartDashboard::PutBoolean("climb l stop", hang.leftStop.Get());
+  //SmartDashboard::PutNumber("climb l pos", hang.leftEncoder.GetPosition());
 }
 
 void Robot::DisabledInit() {}
