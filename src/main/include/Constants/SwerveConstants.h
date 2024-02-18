@@ -60,8 +60,8 @@
 */
 
 #define CAMERA_ONE_NAME "photonvision"
-#define CAMERA_ONE_X 8.250_in // Distance in meters from camera to center of robot forward/backward, forward positive
-#define CAMERA_ONE_Y 12.875_in // Distance in meters from camera to center of robot left/right, left positive
+#define CAMERA_ONE_X 11.626_in // Distance in meters from camera to center of robot forward/backward, forward positive
+#define CAMERA_ONE_Y 11.25_in // Distance in meters from camera to center of robot left/right, left positive
 #define CAMERA_ONE_Z 17.625_in // Camera's distance from ground in meters
 #define CAMERA_ONE_X_ROTATION 45_deg // Camera's Rotation around robot's X axis (tilted up/down)
 #define CAMERA_ONE_Y_ROTATION 0_deg // Camera's Rotation around robot's Y axis (rotated clockwise/counterclocwise)
