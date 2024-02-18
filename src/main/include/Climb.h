@@ -6,7 +6,7 @@ class Climb {
     private:
 
         rev::CANSparkFlex leftClimbMotor, rightClimbMotor;
-        AprilTagSwerve* robotSwerveDrive;
+        VisionSwerve* robotSwerveDrive;
         PID leftPID;
         PID rightPID;
         PID rollPID;
@@ -19,7 +19,7 @@ class Climb {
         frc::DigitalInput leftStop;
         frc::DigitalInput rightStop;
 
-        Climb(AprilTagSwerve* _swerveDrive);
+        Climb(VisionSwerve* _swerveDrive);
 
         bool GetLStop();
 

@@ -7,7 +7,7 @@
 #include "Constants/IntakeConstants.h"
 #include "Constants/FlywheelConstants.h"
 
-#include "AprilTagBasedSwerve.h"
+#include "VisionBasedSwerve.h"
 #include "Autonomous Functionality/SwerveDriveAutoControl.h"
 #include "Autonomous Functionality/SpeakerFunctionality.h"
 
@@ -17,7 +17,7 @@
 #include "Climb.h"
 #include "NoteController.h"
 
-AprilTagSwerve swerveDrive{};
+VisionSwerve swerveDrive{};
 XboxController xboxController{0};
 XboxController xboxController2{1};
 XboxController xboxController3{2};
