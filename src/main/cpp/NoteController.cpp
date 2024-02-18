@@ -74,7 +74,7 @@ bool NoteController::FromElevatorToSelector(){
 }
 
 bool NoteController::LiftNoteToPosition(Elevator::ElevatorSetting position){
-    bool noteInPosition = elevator->GetObjectInMech() && !intake->GetObjectInTunnel();
+    bool noteInPosition = elevator->GetObjectInMech();
     if (!noteInPosition)
     {
         ToElevator();

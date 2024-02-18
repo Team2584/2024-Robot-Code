@@ -14,15 +14,25 @@ class Climb {
         PID rightPID;
         PID rollPID;
 
-        bool climbZeroed = false;
+        
 
     public:
+    bool climbZeroed = false;
+        rev::SparkRelativeEncoder leftEncoder, rightEncoder;
+        frc::DigitalInput leftStop;
+        frc::DigitalInput rightStop;
 
         Climb(VisionSwerve* _swerveDrive);
 
-        void SetClimbMotors(double left, double right);
+        bool GetLStop();
+
+        bool GetRStop();
 
         bool ZeroClimb();
+
+        void SetClimbMotors(double Percentage);
+
+        void SetClimbMotors(double LeftMotor, double RightMotor);
 
         void ExtendClimb();
 

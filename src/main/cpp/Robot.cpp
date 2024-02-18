@@ -20,6 +20,7 @@
 VisionSwerve swerveDrive{};
 XboxController xboxController{0};
 XboxController xboxController2{1};
+XboxController xboxController3{2};
 Intake overbumper{};
 FlywheelSystem flywheel{};
 Elevator ampmech{};
@@ -236,6 +237,9 @@ void Robot::TeleopPeriodic()
   else if (xboxController2.GetRightBumper()){
     notecontroller.FromElevatorToSelector();
   }
+  else if (xboxController2.GetLeftBumper()){
+    ampmech.NoteFromSelector();
+  }
   else if (xboxController2.GetXButton())
   {
     notecontroller.LiftNoteToPosition(Elevator::ElevatorSetting::TRAP);
@@ -255,6 +259,7 @@ void Robot::TeleopPeriodic()
   else {
     overbumper.SetIntakeMotorSpeed(0);
     ampmech.SetAmpMotorPercent(0);
+    ampmech.StopElevator();
   }
 
   SmartDashboard::PutBoolean("in intake", overbumper.GetObjectInIntake());
@@ -270,18 +275,22 @@ void Robot::TeleopPeriodic()
   `--'    `--'.-'  /   '--'   '--'`--' `--' `----' `----'`--'                                          
   */
 
-  if(xboxController.GetBackButtonPressed()){
+  if(xboxController3.GetLeftTriggerAxis() > 0.5){
+    overbumper.ShootNote();
+  }
+
+  if(xboxController3.GetBackButtonPressed()){
     flywheel.SpinFlywheelPercent(0);
   }
-  else if (xboxController.GetStartButtonPressed()){
+  else if (xboxController3.GetStartButtonPressed()){
     flywheel.SetFlywheelVelocity(SmartDashboard::GetNumber("Flywheel Setpoint", 0));
   }
 
 
-  if (xboxController.GetPOV() == 0){
+  if (xboxController3.GetPOV() == 0){
     flywheel.PIDAngler(SmartDashboard::GetNumber("Angler Setpoint", M_PI / 2));
   }
-  else if (xboxController.GetPOV() == 180)
+  else if (xboxController3.GetPOV() == 180)
   {
       flywheel.FlywheelAnglerPID.UpdateConstantTuning("Angler");
   }
@@ -289,19 +298,18 @@ void Robot::TeleopPeriodic()
     flywheel.MoveAnglerPercent(0);
   }
 
-  /*
-    if(xboxController.GetAButtonPressed()){
+
+  if(xboxController3.GetAButtonPressed()){
     anglingToSpeaker = !anglingToSpeaker;
   }
 
   if (anglingToSpeaker){
-    wristSetPoint = Intake::SHOOT;
     flywheelController.AngleFlywheelToSpeaker();
   }
-  */
-  /*if (xboxController.GetXButton()){
+  
+  if (xboxController3.GetXButton()){
     flywheelController.TurnToSpeaker();
-  }*/
+  }
 
   //PID Intake wrist
   overbumper.PIDWristToPoint(wristSetPoint);
@@ -336,7 +344,29 @@ void Robot::TeleopPeriodic()
    `-----'`--'`--'`--`--`--' `---'  
   */
 
-  hang.SetClimbMotors(controller2LeftJoystickY, controller2RightJoystickY);
+  if (controller2LeftJoystickY != 0 || controller2RightJoystickY != 0)
+    hang.SetClimbMotors(controller2LeftJoystickY, controller2RightJoystickY);
+  else if(xboxController.GetAButton()){
+    hang.ExtendClimb();
+  }
+  else if (xboxController.GetBButton()){
+    hang.RetractClimb();
+  }
+  else if (xboxController.GetXButton()){
+    hang.ZeroClimb();
+  }
+  else if (xboxController.GetPOV() == 90){
+    hang.ClimbPID(-0.6);
+  }else if (xboxController.GetPOV() == 270){
+    hang.ClimbPID(0);
+  }
+  
+  else{
+    hang.HoldClimb();
+  }
+  if(xboxController.GetYButtonPressed()){
+    hang.climbZeroed = false;
+  }
 
   //ONLY uncomment this when motors are found to be going the right directions and limits work properly
   /*
@@ -391,6 +421,10 @@ void Robot::TeleopPeriodic()
 
   SmartDashboard::PutNumber("Top FlyWheel RPM", flywheel.TopFlywheel.GetMeasurement());
   SmartDashboard::PutNumber("Bottom FlyWheel RPM", flywheel.BottomFlywheel.GetMeasurement());
+
+  SmartDashboard::PutBoolean("climb l stop", hang.leftStop.Get());
+
+  SmartDashboard::PutNumber("climb l pos", hang.leftEncoder.GetPosition());
 }
 
 void Robot::DisabledInit() {}
