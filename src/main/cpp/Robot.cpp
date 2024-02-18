@@ -20,6 +20,7 @@
 AprilTagSwerve swerveDrive{};
 XboxController xboxController{0};
 XboxController xboxController2{1};
+XboxController xboxController3{2};
 Intake overbumper{};
 FlywheelSystem flywheel{};
 Elevator ampmech{};
@@ -178,7 +179,7 @@ void Robot::TeleopPeriodic()
 
 
   // Drive the robot
-  //swerveDrive.DriveSwervePercent(fwdDriveSpeed, strafeDriveSpeed, turnSpeed);
+  swerveDrive.DriveSwervePercent(fwdDriveSpeed, strafeDriveSpeed, turnSpeed);
 
   // Drive to 0,0 for testing
   /*if (xboxController.GetAButtonPressed())
@@ -274,18 +275,22 @@ void Robot::TeleopPeriodic()
   `--'    `--'.-'  /   '--'   '--'`--' `--' `----' `----'`--'                                          
   */
 
-  if(xboxController.GetBackButtonPressed()){
+  if(xboxController3.GetLeftTriggerAxis() > 0.5){
+    overbumper.ShootNote();
+  }
+
+  if(xboxController3.GetBackButtonPressed()){
     flywheel.SpinFlywheelPercent(0);
   }
-  else if (xboxController.GetStartButtonPressed()){
+  else if (xboxController3.GetStartButtonPressed()){
     flywheel.SetFlywheelVelocity(SmartDashboard::GetNumber("Flywheel Setpoint", 0));
   }
 
 
-  if (xboxController.GetPOV() == 0){
+  if (xboxController3.GetPOV() == 0){
     flywheel.PIDAngler(SmartDashboard::GetNumber("Angler Setpoint", M_PI / 2));
   }
-  else if (xboxController.GetPOV() == 180)
+  else if (xboxController3.GetPOV() == 180)
   {
       flywheel.FlywheelAnglerPID.UpdateConstantTuning("Angler");
   }
@@ -293,20 +298,19 @@ void Robot::TeleopPeriodic()
     flywheel.MoveAnglerPercent(0);
   }
 
-  /*
-    if(xboxController.GetAButtonPressed()){
+
+  if(xboxController3.GetAButtonPressed()){
     anglingToSpeaker = !anglingToSpeaker;
   }
 
   if (anglingToSpeaker){
-    wristSetPoint = Intake::SHOOT;
     flywheelController.AngleFlywheelToSpeaker();
   }
-  */
-  /*if (xboxController.GetXButton()){
+  
+  if (xboxController3.GetXButton()){
     flywheelController.TurnToSpeaker();
-  }*/
-  ampmech.MoveElevatorPercent(rightJoystickY);
+  }
+
   //PID Intake wrist
   overbumper.PIDWristToPoint(wristSetPoint);
 

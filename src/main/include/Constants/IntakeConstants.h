@@ -13,7 +13,7 @@
 #define TUNNEL_IR_SENSOR_PORT 5
 
 namespace IntakeConstants{
-inline const double INTAKE_SPEED_IN = -0.5;
+inline const double INTAKE_SPEED_IN = -0.7;
 inline const double INTAKE_SPEED_OUT = 0.5;
 inline const double FIXED_INTAKE_SPEED_IN = -0.7;
 inline const double FIXED_INTAKE_SPEED_OUT = 0.7;
