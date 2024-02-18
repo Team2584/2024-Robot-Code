@@ -137,7 +137,7 @@ void SwerveDriveAutonomousController::TurnToAngleWhileDriving(double xSpeed, dou
     double speeds[3] = {0, 0, 0};
     bool PIDFinished[3] = {false, false, false};
  
-    CalculatePIDToPose(poseEstimationType, Pose2d(GetTagPose().X(), GetTagPose().Y(), target), speeds, PIDFinished);
+    CalculatePIDToPose(poseEstimationType, Pose2d(swerveDrive->GetTagOdometryPose().X(), swerveDrive->GetTagOdometryPose().Y(), target), speeds, PIDFinished);
 
     // Debugging info
     SmartDashboard::PutNumber("Pose Rotation Speed", speeds[2]);
