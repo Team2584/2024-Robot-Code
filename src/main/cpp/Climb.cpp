@@ -1,8 +1,8 @@
-#include "AprilTagBasedSwerve.h"
+#include "VisionBasedSwerve.h"
 #include "Climb.h"
 
-Climb::Climb(AprilTagSwerve* _swerveDrive)
-:   leftClimbMotor{CLIMB_MOTOR_L, rev::CANSparkFlex::MotorType::kBrushless},
+Climb::Climb(VisionSwerve* _swerveDrive)
+    :leftClimbMotor{CLIMB_MOTOR_L, rev::CANSparkFlex::MotorType::kBrushless},
     rightClimbMotor(CLIMB_MOTOR_R, rev::CANSparkFlex::MotorType::kBrushless),
     leftEncoder{leftClimbMotor.GetEncoder(rev::SparkRelativeEncoder::Type::kHallSensor)},
     rightEncoder{rightClimbMotor.GetEncoder(rev::SparkRelativeEncoder::Type::kHallSensor)},

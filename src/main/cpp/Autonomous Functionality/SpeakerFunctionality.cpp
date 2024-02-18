@@ -8,7 +8,7 @@ AutonomousShootingController::AutonomousShootingController(SwerveDriveAutonomous
 
 bool AutonomousShootingController::TurnToSpeaker()
 {
-    Pose2d currentPose = swerveDrive->GetTagPose();
+    Pose2d currentPose = swerveDrive->swerveDrive->GetTagOdometryPose();
 
     // Determine what our target angle is
     Translation2d diff = SPEAKER_POSITION.ToTranslation2d() - currentPose.Translation(); 
@@ -21,7 +21,7 @@ bool AutonomousShootingController::TurnToSpeaker()
 
 void AutonomousShootingController::TurnToSpeakerWhileDriving(double xSpeed, double ySpeed)
 {
-    Pose2d currentPose = swerveDrive->GetTagPose();
+    Pose2d currentPose = swerveDrive->swerveDrive->GetTagOdometryPose();
 
     // Determine what our target angle is
     Translation2d diff = SPEAKER_POSITION.ToTranslation2d() - currentPose.Translation(); 
@@ -34,7 +34,7 @@ void AutonomousShootingController::TurnToSpeakerWhileDriving(double xSpeed, doub
 
 bool AutonomousShootingController::AngleFlywheelToSpeaker()
 {   
-    Translation2d currentPos = swerveDrive->GetTagPose().Translation();
+    Translation2d currentPos = swerveDrive->swerveDrive->GetTagOdometryPose().Translation();
 
     // Determine what our target angle is
     units::meter_t distance = currentPos.Distance(SPEAKER_POSITION.ToTranslation2d());
