@@ -181,6 +181,11 @@ void Robot::TeleopPeriodic()
   // Drive the robot
   swerveDrive.DriveSwervePercent(fwdDriveSpeed, strafeDriveSpeed, turnSpeed);
 
+  if (xboxController3.GetAButton())
+  { 
+    swerveAutoController.TurnToNote();
+  }
+
   // Drive to 0,0 for testing
   /*if (xboxController.GetAButtonPressed())
     swerveAutoController.BeginDriveToPose();
@@ -208,6 +213,7 @@ void Robot::TeleopPeriodic()
 
   wristSetPoint = Intake::SHOOT;
 
+  // These function calls "prepare" the true function calls below
   if (xboxController2.GetRightBumperPressed()){
     notecontroller.BeginFromElevatorToSelector();
   }
@@ -218,6 +224,7 @@ void Robot::TeleopPeriodic()
     notecontroller.BeginScoreNoteInPosition(Elevator::ElevatorSetting::TRAP);
   }
 
+  // This is the actual control scheme
   if (xboxController.GetRightBumper())
   {
     bool done = notecontroller.IntakeNoteToSelector();
@@ -275,22 +282,18 @@ void Robot::TeleopPeriodic()
   `--'    `--'.-'  /   '--'   '--'`--' `--' `----' `----'`--'                                          
   */
 
-  if(xboxController3.GetLeftTriggerAxis() > 0.5){
-    overbumper.ShootNote();
-  }
-
-  if(xboxController3.GetBackButtonPressed()){
+  if(xboxController2.GetBackButtonPressed()){
     flywheel.SpinFlywheelPercent(0);
   }
-  else if (xboxController3.GetStartButtonPressed()){
+  else if (xboxController2.GetStartButtonPressed()){
     flywheel.SetFlywheelVelocity(SmartDashboard::GetNumber("Flywheel Setpoint", 0));
   }
 
 
-  if (xboxController3.GetPOV() == 0){
+  if (xboxController2.GetPOV() == 0){
     flywheel.PIDAngler(SmartDashboard::GetNumber("Angler Setpoint", M_PI / 2));
   }
-  else if (xboxController3.GetPOV() == 180)
+  else if (xboxController2.GetPOV() == 180)
   {
       flywheel.FlywheelAnglerPID.UpdateConstantTuning("Angler");
   }
@@ -299,13 +302,13 @@ void Robot::TeleopPeriodic()
   }
 
 
-  if(xboxController3.GetAButtonPressed()){
+  /*if(xboxController3.GetAButtonPressed()){
     anglingToSpeaker = !anglingToSpeaker;
   }
 
   if (anglingToSpeaker){
     flywheelController.AngleFlywheelToSpeaker();
-  }
+  }*/
   
   if (xboxController3.GetXButton()){
     flywheelController.TurnToSpeaker();
@@ -344,7 +347,7 @@ void Robot::TeleopPeriodic()
    `-----'`--'`--'`--`--`--' `---'  
   */
 
-  if (controller2LeftJoystickY != 0 || controller2RightJoystickY != 0)
+  /*if (controller2LeftJoystickY != 0 || controller2RightJoystickY != 0)
     hang.SetClimbMotors(controller2LeftJoystickY, controller2RightJoystickY);
   else if(xboxController.GetAButton()){
     hang.ExtendClimb();
@@ -360,13 +363,13 @@ void Robot::TeleopPeriodic()
   }else if (xboxController.GetPOV() == 270){
     hang.ClimbPID(0);
   }
-  
   else{
     hang.HoldClimb();
   }
+
   if(xboxController.GetYButtonPressed()){
     hang.climbZeroed = false;
-  }
+  }*/
 
   //ONLY uncomment this when motors are found to be going the right directions and limits work properly
   /*
