@@ -13,8 +13,6 @@
 class SwerveDriveAutonomousController
 {
 private:
-    SwerveDrive *baseSwerveDrive = NULL; /* A reference to our base swerve drive template. */
-    VisionSwerve *visionBasedSwerve = NULL; /* A reference to our vision based swerve drive template. */
     PID xPIDController, yPIDController, rotationPIDController; /* PID Controllers to move in various directions */
     queue<pathplanner::PathPlannerTrajectory> trajectoryQueue; /* Queue of trajectories initialized and prepared to run */
     pathplanner::PathPlannerTrajectory currentTrajectory;  /* current trajectory in use */
@@ -24,7 +22,8 @@ private:
     Rotation2d noteTargetAngle = Rotation2d(0_rad);
 
 public:
-    SwerveDriveAutonomousController(SwerveDrive *swerveDrive);
+    VisionSwerve *swerveDrive; /* A reference to our swerve drive. */
+
     SwerveDriveAutonomousController(VisionSwerve *swerveDrive);
 
 private:

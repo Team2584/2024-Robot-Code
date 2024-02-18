@@ -6,10 +6,7 @@ class Climb {
     private:
 
         rev::CANSparkFlex leftClimbMotor, rightClimbMotor;
-        rev::SparkRelativeEncoder leftEncoder, rightEncoder;
         VisionSwerve* robotSwerveDrive;
-        rev::SparkLimitSwitch leftStop;
-        rev::SparkLimitSwitch rightStop;
         PID leftPID;
         PID rightPID;
         PID rollPID;
