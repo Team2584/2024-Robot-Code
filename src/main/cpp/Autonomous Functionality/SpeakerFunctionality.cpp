@@ -12,7 +12,7 @@ bool AutonomousShootingController::TurnToSpeaker()
 
     // Determine what our target angle is
     Translation2d diff = SPEAKER_POSITION.ToTranslation2d() - currentPose.Translation(); 
-    Rotation2d targetAngle = Rotation2d(units::radian_t{atan2(diff.Y().value(), diff.X().value())});
+    Rotation2d targetAngle = Rotation2d(units::radian_t{atan2(diff.X().value(), diff.Y().value())});
 
     SmartDashboard::PutNumber("Targe Speaker Swerve Angle", targetAngle.Degrees().value());
 
@@ -25,7 +25,7 @@ void AutonomousShootingController::TurnToSpeakerWhileDriving(double xSpeed, doub
 
     // Determine what our target angle is
     Translation2d diff = SPEAKER_POSITION.ToTranslation2d() - currentPose.Translation(); 
-    Rotation2d targetAngle = Rotation2d(units::radian_t{atan2(diff.Y().value(), diff.X().value())});
+    Rotation2d targetAngle = Rotation2d(units::radian_t{atan2(diff.X().value(), diff.Y().value())});
 
     SmartDashboard::PutNumber("Targe Speaker Swerve Angle", targetAngle.Degrees().value());
 

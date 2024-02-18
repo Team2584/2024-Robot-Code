@@ -287,7 +287,7 @@ void SwerveDriveAutonomousController::BeginDriveToNote()
 bool SwerveDriveAutonomousController::TurnToNote()
 {
     Pose2d currentPose = swerveDrive->GetNoteOdometryPose();
-    noteTargetAngle = Rotation2d(units::radian_t{atan2(currentPose.Y().value(), currentPose.X().value())});
+    noteTargetAngle = Rotation2d(units::radian_t{atan2(currentPose.X().value(), currentPose.Y().value())});
 
     SmartDashboard::PutNumber("Targe Note Angle", noteTargetAngle.Degrees().value());
 
