@@ -128,7 +128,10 @@ bool SwerveDriveAutonomousController::DriveToPose(Pose2d target, PoseEstimationT
     }
 
     // Drive swerve at desired speeds
-    swerveDrive->DriveSwervePercent(speeds[0], speeds[1], speeds[2]);
+    if (poseEstimationType == PoseEstimationType::TagBased)
+        swerveDrive->DriveSwervePercentTagOriented(speeds[0], speeds[1], speeds[2]);
+    else 
+        swerveDrive->DriveSwervePercent(speeds[0], speeds[1], speeds[2]);
     return false;
 }
 

@@ -90,7 +90,7 @@ enum PoseEstimationType
 
 /* Drive to Pose PID Values */
 // Translational PID in the x and y direction
-#define DTP_TRANSLATION_KP 0.5
+#define DTP_TRANSLATION_KP 0.55
 #define DTP_TRANSLATION_KI 0
 #define DTP_TRANSLATION_KI_MAX 0 // In percent power
 #define DTP_TRANSLATION_KD 0
