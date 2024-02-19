@@ -29,7 +29,7 @@ Climb hang{&swerveDrive};
 NoteController notecontroller{&overbumper, &flywheel, &ampmech};
 
 SwerveDriveAutonomousController swerveAutoController{&swerveDrive};
-AutonomousShootingController flywheelController{&swerveAutoController, &flywheel};
+AutonomousShootingController flywheelController{&swerveAutoController, &flywheel, &overbumper};
 AutonomousAmpingController autoAmpController{&swerveAutoController, &notecontroller};
 
 Elevator::ElevatorSetting elevSetHeight = Elevator::LOW;

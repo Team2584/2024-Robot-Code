@@ -1,9 +1,11 @@
 #include "Autonomous Functionality/SpeakerFunctionality.h"
 
-AutonomousShootingController::AutonomousShootingController(SwerveDriveAutonomousController *swerveDrive_, FlywheelSystem *_flyWheel)
+AutonomousShootingController::AutonomousShootingController(SwerveDriveAutonomousController *swerveDrive_, FlywheelSystem *_flyWheel, Intake *intake_)
+    : shotTimer{}
 {
     swerveDrive = swerveDrive_;
     flyWheel = _flyWheel;
+    intake = intake_;
 }
 
 bool AutonomousShootingController::TurnToSpeaker()
@@ -44,16 +46,26 @@ bool AutonomousShootingController::AngleFlywheelToSpeaker()
     return flyWheel->PIDAngler(targetAngle.Radians().value());
 }
 
+bool AutonomousShootingController::SpinFlywheelForSpeaker()
+{
+    return flyWheel->SetFlywheelVelocity(4000);
+}
+
 bool AutonomousShootingController::AimAndFire()
 {
     bool turnt = TurnToSpeaker();
     bool angled = AngleFlywheelToSpeaker();
+    bool spinning = SpinFlywheelForSpeaker();
 
-    if (turnt && angled)
-    {
-        //flyWheel->RunFeederMotor();
-        return true;
-    }
+    if (!(turnt && angled && spinning))
+        return false;
+    
+    shotTimer.Restart();
+    intake->ShootNote();
 
-    return false;
+    if (shotTimer.Get() < FlywheelConstants::shotTime) 
+        return false;
+
+    intake->SetIntakeMotorSpeed(0);
+    return true;
 } 
