@@ -45,7 +45,7 @@ void Robot::RobotInit()
   
   SmartDashboard::PutNumber("Flywheel Setpoint", 0);
   SmartDashboard::PutNumber("Angler Setpoint", M_PI / 2);
-  flywheel.FlywheelAnglerPID.SetupConstantTuning("Angler");
+  swerveAutoController.rotationPIDController.SetupConstantTuning("Note");
 }
 
 
@@ -104,7 +104,7 @@ void Robot::TeleopInit()
   swerveDrive.ResetOdometry(Pose2d(0_m, 0_m, Rotation2d(180_deg)));
   swerveDrive.ResetTagOdometry(Pose2d(0_m, 0_m, Rotation2d(180_deg)));
   ampmech.ResetElevatorEncoder();
-  //flywheel.FlywheelAnglerPID.UpdateConstantTuning("Angler");
+  swerveAutoController.rotationPIDController.UpdateConstantTuning("Note");
   
 }
 
@@ -178,10 +178,17 @@ void Robot::TeleopPeriodic()
   // Drive the robot
   swerveDrive.DriveSwervePercent(fwdDriveSpeed, strafeDriveSpeed, turnSpeed);
 
+  if (xboxController3.GetAButtonPressed())
+    swerveAutoController.BeginDriveToNote();
   if (xboxController3.GetAButton())
   { 
     swerveAutoController.TurnToNote();
   }
+
+  if (xboxController3.GetBButtonPressed())
+      swerveAutoController.BeginDriveToNote();
+  if (xboxController3.GetBButton())
+    swerveAutoController.DriveToNote();
 
   // Drive to a position for testing
   if (xboxController3.GetRightBumperPressed())
@@ -425,6 +432,11 @@ void Robot::TeleopPeriodic()
   SmartDashboard::PutNumber("Tag Odometry X", swerveDrive.GetTagOdometryPose().X().value());
   SmartDashboard::PutNumber("Tag Odometry Y", swerveDrive.GetTagOdometryPose().Y().value());
   SmartDashboard::PutNumber("Tag Odometry Heading", swerveDrive.GetTagOdometryPose().Rotation().Degrees().value());
+
+  SmartDashboard::PutBoolean("Note in View", swerveDrive.NoteInView());
+  SmartDashboard::PutNumber("Note Odometry X", swerveDrive.GetNoteOdometryPose().X().value());
+  SmartDashboard::PutNumber("Note Odometry Y", swerveDrive.GetNoteOdometryPose().Y().value());
+  SmartDashboard::PutNumber("Note Odometry Heading", swerveDrive.GetNoteOdometryPose().Rotation().Degrees().value());
 
   SmartDashboard::PutNumber("Elevator Encoder", ampmech.GetWinchEncoderReading());
   SmartDashboard::PutNumber("Wrist Encoder", overbumper.GetWristEncoderReading());

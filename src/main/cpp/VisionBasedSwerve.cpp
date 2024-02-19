@@ -154,7 +154,7 @@ Translation2d VisionSwerve::GetNotePosition()
 {
     auto array = notePoseSubscriber.Get();
     units::meter_t xPos = units::meter_t{array[1]};
-    units::meter_t yPos = units::meter_t{array[0]};
+    units::meter_t yPos = units::meter_t{array[0] * -1};
     return Translation2d(xPos, yPos);
 }
 

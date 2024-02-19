@@ -290,8 +290,10 @@ void SwerveDriveAutonomousController::BeginDriveToNote()
 bool SwerveDriveAutonomousController::TurnToNote()
 {
     Pose2d currentPose = swerveDrive->GetNoteOdometryPose();
-    noteTargetAngle = Rotation2d(units::radian_t{atan2(currentPose.X().value(), currentPose.Y().value())});
+    Rotation2d noteAngleDifference = Rotation2d(units::radian_t{atan2(currentPose.Y().value() * -1, currentPose.X().value())});
+    noteTargetAngle = currentPose.Rotation() - noteAngleDifference;
 
+    SmartDashboard::PutNumber("Targe Note Angle Diff", noteAngleDifference.Degrees().value());
     SmartDashboard::PutNumber("Targe Note Angle", noteTargetAngle.Degrees().value());
 
     return DriveToPose(Pose2d(currentPose.Translation(), noteTargetAngle), PoseEstimationType::NoteBased); // Drive to current pose but at the target angle
@@ -308,7 +310,7 @@ bool SwerveDriveAutonomousController::DriveToNote()
     double speeds[3] = {0, 0, 0};
     bool PIDFinished[3] = {false, false, false};
  
-    CalculatePIDToPose(PoseEstimationType::NoteBased, Pose2d(0_m, 0_m, noteTargetAngle), speeds, PIDFinished);
+    CalculatePIDToPose(PoseEstimationType::NoteBased, Pose2d(0.2_m, 0_m, noteTargetAngle), speeds, PIDFinished);
 
     // Debugging info
     SmartDashboard::PutNumber("Pose X Speed", speeds[0]);
