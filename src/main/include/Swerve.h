@@ -14,8 +14,8 @@ class SwerveModule
         // Instance Variables for each swerve module
         rev::CANSparkMax driveMotor; /* The motor responsible for actually driving the wheel*/
         rev::CANSparkMax spinMotor; /* The motor responsible for "spinning" the wheel left to right to change direction*/
-        rev::SparkMaxAlternateEncoder driveRelativeEncoder; /* The relative encoder built into the driveMotor */
-        rev::SparkMaxAlternateEncoder spinRelativeEncoder; /* The relative encoder built into the spinMotor */
+        rev::SparkRelativeEncoder driveRelativeEncoder; /* The relative encoder built into the driveMotor */
+        rev::SparkRelativeEncoder spinRelativeEncoder; /* The relative encoder built into the spinMotor */
         frc::DutyCycleEncoder magEncoder; /* The magnetic absolute encoder tracking swerve heading. */
         PID spinPIDController; /* The PID Controller for the spinMotor, works using degrees */
         double encoderOffset;       /* Offset in magnetic encoder from 0 facing the front of the robot */

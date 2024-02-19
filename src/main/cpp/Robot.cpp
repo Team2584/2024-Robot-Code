@@ -175,13 +175,8 @@ void Robot::TeleopPeriodic()
   double strafeDriveSpeed = leftJoystickX * MAX_DRIVE_SPEED;
   double turnSpeed = rightJoystickX * MAX_SPIN_SPEED;
 
-  SmartDashboard::PutNumber("FWD Drive", fwdDriveSpeed);
-  SmartDashboard::PutNumber("Strafe Drive", strafeDriveSpeed);
-  SmartDashboard::PutNumber("Turn Drive", turnSpeed);
-
-
   // Drive the robot
-  swerveDrive.DriveSwervePercent(strafeDriveSpeed, fwdDriveSpeed, turnSpeed);
+  swerveDrive.DriveSwervePercent(fwdDriveSpeed, strafeDriveSpeed, turnSpeed);
 
   if (xboxController3.GetAButton())
   { 
@@ -201,7 +196,7 @@ void Robot::TeleopPeriodic()
 
   if (xboxController3.GetYButtonPressed())
     autoAmpController.BeginDriveToAmp();
-  else
+  if (xboxController3.GetYButton())
     autoAmpController.DriveToAmp();
     
   /*
@@ -418,6 +413,10 @@ void Robot::TeleopPeriodic()
   SmartDashboard::PutNumber("BL Module Heading", swerveDrive.BLModule.GetMagEncoderValue());
   SmartDashboard::PutNumber("BR Module Heading", swerveDrive.BRModule.GetMagEncoderValue());
   
+  SmartDashboard::PutNumber("FL Drive Encoder", swerveDrive.FLModule.GetDriveEncoder());
+    SmartDashboard::PutNumber("FR Drive Encoder", swerveDrive.FRModule.GetDriveEncoder());
+  SmartDashboard::PutNumber("BL Drive Encoder", swerveDrive.BLModule.GetDriveEncoder());
+
   SmartDashboard::PutNumber("Odometry X Position", swerveDrive.GetOdometryPose().X().value());
   SmartDashboard::PutNumber("Odometry Y Position", swerveDrive.GetOdometryPose().Y().value());
   SmartDashboard::PutNumber("Odometry Heading", swerveDrive.GetOdometryPose().Rotation().Degrees().value());
