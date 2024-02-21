@@ -29,12 +29,12 @@ inline constexpr auto KS = 0_V;
 inline constexpr auto KG = 0.34_V;
 inline constexpr auto KV = 0.4_V * 1_s / 1_rad; //0.88
 inline double KD  = 0;
-inline double KP  = 35;
+inline double KP  = 25;
 inline double KI  = 0;
 inline double KIMAX  = 0.1;
 inline double POS_ERROR  = 0.015; //~3deg
 inline double VELOCITY_ERROR = 1;
-inline double MAX_SPEED  = 8;
+inline double MAX_SPEED  = 6;
 inline double MIN_SPEED  = 0.05;
 }
 }

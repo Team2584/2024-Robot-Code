@@ -326,7 +326,7 @@ void Robot::TeleopPeriodic()
   }
 
   //PID Intake wrist
-  overbumper.PIDWristToPoint(wristSetPoint);
+  //overbumper.PIDWristToPoint(wristSetPoint);
 
   /*                                                   
   ,------.,--.                         ,--.                  /  //  /,---.                   ,--.   ,--.             ,--.      
@@ -446,8 +446,8 @@ void Robot::TeleopPeriodic()
   SmartDashboard::PutBoolean("in mech", ampmech.GetObjectInMech());
   SmartDashboard::PutBoolean("in tunnel", overbumper.GetObjectInTunnel());
 
-  SmartDashboard::PutNumber("Top FlyWheel RPM", flywheel.TopFlywheel.GetMeasurement());
-  SmartDashboard::PutNumber("Bottom FlyWheel RPM", flywheel.BottomFlywheel.GetMeasurement());
+  SmartDashboard::PutNumber("Top FlyWheel RPM", flywheel.TopFlywheel.GetMeasurement()*60.0);
+  SmartDashboard::PutNumber("Bottom FlyWheel RPM", flywheel.BottomFlywheel.GetMeasurement()*60.0);
 
   //SmartDashboard::PutBoolean("climb l stop", hang.leftStop.Get());
   //SmartDashboard::PutNumber("climb l pos", hang.leftEncoder.GetPosition());
