@@ -13,7 +13,6 @@
 class SwerveDriveAutonomousController
 {
 private:
-    PID xPIDController, yPIDController, rotationPIDController; /* PID Controllers to move in various directions */
     queue<pathplanner::PathPlannerTrajectory> trajectoryQueue; /* Queue of trajectories initialized and prepared to run */
     pathplanner::PathPlannerTrajectory currentTrajectory;  /* current trajectory in use */
     Timer trajectoryTimer; /* tracks time spent in current trajectory*/
@@ -23,6 +22,7 @@ private:
 
 public:
     VisionSwerve *swerveDrive; /* A reference to our swerve drive. */
+    PID xPIDController, yPIDController, rotationPIDController; /* PID Controllers to move in various directions */
 
     SwerveDriveAutonomousController(VisionSwerve *swerveDrive);
 

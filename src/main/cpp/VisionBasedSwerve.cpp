@@ -113,6 +113,23 @@ void VisionSwerve::UpdateTagOdometry()
     } 
 }
 
+/**
+ * Drives the swerve drive, field oriented (in relation to the driver's pov) with an x y and spin.
+ * @param FwdDriveSpeed The speed the robot should move forward and back, positive being forward, in percentage (0 - 1.0)
+ * @param StrafeDriveSpeed The speed the robot should move left and right, positive being right, in percentage (0 - 1.0)
+ * @param TurnSpeed The speed the robot should turn left and right, positive being counterclockwise, in percentage (0 - 1.0)
+ */
+void VisionSwerve::DriveSwervePercentTagOriented(double FwdDriveSpeed, double StrafeDriveSpeed, double TurnSpeed)
+{
+    // Converts our field oriented speeds to robot oriented, by using trig (rotation matrix) with the current robot angle.
+    double angle = -1 * GetTagOdometryPose().Rotation().Radians().value(); // Angle * -1 because rotation matrices rotate clockwise
+    double oldFwd = FwdDriveSpeed;
+    FwdDriveSpeed = FwdDriveSpeed * cos(angle) - StrafeDriveSpeed * sin(angle);
+    StrafeDriveSpeed = oldFwd * sin(angle) + StrafeDriveSpeed * cos(angle);
+
+    DriveSwervePercentNonFieldOriented(FwdDriveSpeed, StrafeDriveSpeed, TurnSpeed);
+}
+
 void VisionSwerve::PrintRaspiSanityCheck()
 {
     SmartDashboard::PutNumber("Raspi Sanity Check", sanityEntry.Get());
@@ -137,7 +154,7 @@ Translation2d VisionSwerve::GetNotePosition()
 {
     auto array = notePoseSubscriber.Get();
     units::meter_t xPos = units::meter_t{array[1]};
-    units::meter_t yPos = units::meter_t{array[0]};
+    units::meter_t yPos = units::meter_t{array[0] * -1};
     return Translation2d(xPos, yPos);
 }
 

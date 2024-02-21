@@ -90,7 +90,7 @@ enum PoseEstimationType
 
 /* Drive to Pose PID Values */
 // Translational PID in the x and y direction
-#define DTP_TRANSLATION_KP 0.5
+#define DTP_TRANSLATION_KP 0.55
 #define DTP_TRANSLATION_KI 0
 #define DTP_TRANSLATION_KI_MAX 0 // In percent power
 #define DTP_TRANSLATION_KD 0
@@ -148,7 +148,7 @@ enum PoseEstimationType
 #define NOTE_Y_MIN_SPEED 0 // In percent power
 #define NOTE_Y_MAX_SPEED 0.2 // In percent power
 // Rotational PID to correct robot heading
-#define NOTE_ROTATION_KP 0.8
+#define NOTE_ROTATION_KP 0.35
 #define NOTE_ROTATION_KI 0
 #define NOTE_ROTATION_KI_MAX 0 // In percent power
 #define NOTE_ROTATION_KD 0

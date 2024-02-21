@@ -33,8 +33,8 @@ namespace AmpMech{
 }
 
 // Autonomously Score Amp Constants
-inline const Pose2d AMP_SCORING_POSITION = {1.8415_m, 7.7216_m, Rotation2d(270_deg)};
-inline constexpr auto ampDriveTime = 0.25_s;
+inline const Pose2d AMP_SCORING_POSITION = {1.8415_m, 7.5216_m, Rotation2d(90_deg)};
+inline constexpr auto ampDriveTime = 0.15_s;
 }
 
 

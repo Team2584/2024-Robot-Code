@@ -29,7 +29,7 @@ Climb hang{&swerveDrive};
 NoteController notecontroller{&overbumper, &flywheel, &ampmech};
 
 SwerveDriveAutonomousController swerveAutoController{&swerveDrive};
-AutonomousShootingController flywheelController{&swerveAutoController, &flywheel};
+AutonomousShootingController flywheelController{&swerveAutoController, &flywheel, &overbumper};
 AutonomousAmpingController autoAmpController{&swerveAutoController, &notecontroller};
 
 AutonomousController autoController{&swerveDrive, &overbumper, &flywheel, &ampmech, &swerveAutoController, &notecontroller, &flywheelController, &autoAmpController};
@@ -175,18 +175,20 @@ void Robot::TeleopPeriodic()
   double strafeDriveSpeed = leftJoystickX * MAX_DRIVE_SPEED;
   double turnSpeed = rightJoystickX * MAX_SPIN_SPEED;
 
-  SmartDashboard::PutNumber("FWD Drive", fwdDriveSpeed);
-  SmartDashboard::PutNumber("Strafe Drive", strafeDriveSpeed);
-  SmartDashboard::PutNumber("Turn Drive", turnSpeed);
-
-
   // Drive the robot
-  swerveDrive.DriveSwervePercent(strafeDriveSpeed, fwdDriveSpeed, turnSpeed);
+  swerveDrive.DriveSwervePercent(fwdDriveSpeed, strafeDriveSpeed, turnSpeed);
 
+  if (xboxController3.GetAButtonPressed())
+    swerveAutoController.BeginDriveToNote();
   if (xboxController3.GetAButton())
   { 
     swerveAutoController.TurnToNote();
   }
+
+  if (xboxController3.GetBButtonPressed())
+      swerveAutoController.BeginDriveToNote();
+  if (xboxController3.GetBButton())
+    swerveAutoController.DriveToNote();
 
   // Drive to a position for testing
   if (xboxController3.GetRightBumperPressed())
@@ -201,7 +203,7 @@ void Robot::TeleopPeriodic()
 
   if (xboxController3.GetYButtonPressed())
     autoAmpController.BeginDriveToAmp();
-  else
+  if (xboxController3.GetYButton())
     autoAmpController.DriveToAmp();
     
   /*
@@ -320,7 +322,7 @@ void Robot::TeleopPeriodic()
   }
 
   //PID Intake wrist
-  overbumper.PIDWristToPoint(wristSetPoint);
+  //overbumper.PIDWristToPoint(wristSetPoint);
 
   /*                                                   
   ,------.,--.                         ,--.                  /  //  /,---.                   ,--.   ,--.             ,--.      
@@ -414,6 +416,10 @@ void Robot::TeleopPeriodic()
   SmartDashboard::PutNumber("BL Module Heading", swerveDrive.BLModule.GetMagEncoderValue());
   SmartDashboard::PutNumber("BR Module Heading", swerveDrive.BRModule.GetMagEncoderValue());
   
+  SmartDashboard::PutNumber("FL Drive Encoder", swerveDrive.FLModule.GetDriveEncoder());
+    SmartDashboard::PutNumber("FR Drive Encoder", swerveDrive.FRModule.GetDriveEncoder());
+  SmartDashboard::PutNumber("BL Drive Encoder", swerveDrive.BLModule.GetDriveEncoder());
+
   SmartDashboard::PutNumber("Odometry X Position", swerveDrive.GetOdometryPose().X().value());
   SmartDashboard::PutNumber("Odometry Y Position", swerveDrive.GetOdometryPose().Y().value());
   SmartDashboard::PutNumber("Odometry Heading", swerveDrive.GetOdometryPose().Rotation().Degrees().value());
@@ -423,6 +429,11 @@ void Robot::TeleopPeriodic()
   SmartDashboard::PutNumber("Tag Odometry Y", swerveDrive.GetTagOdometryPose().Y().value());
   SmartDashboard::PutNumber("Tag Odometry Heading", swerveDrive.GetTagOdometryPose().Rotation().Degrees().value());
 
+  SmartDashboard::PutBoolean("Note in View", swerveDrive.NoteInView());
+  SmartDashboard::PutNumber("Note Odometry X", swerveDrive.GetNoteOdometryPose().X().value());
+  SmartDashboard::PutNumber("Note Odometry Y", swerveDrive.GetNoteOdometryPose().Y().value());
+  SmartDashboard::PutNumber("Note Odometry Heading", swerveDrive.GetNoteOdometryPose().Rotation().Degrees().value());
+
   SmartDashboard::PutNumber("Elevator Encoder", ampmech.GetWinchEncoderReading());
   SmartDashboard::PutNumber("Wrist Encoder", overbumper.GetWristEncoderReading());
   SmartDashboard::PutNumber("Flywheel Encoder", flywheel.GetAnglerEncoderReading());
@@ -431,8 +442,8 @@ void Robot::TeleopPeriodic()
   SmartDashboard::PutBoolean("in mech", ampmech.GetObjectInMech());
   SmartDashboard::PutBoolean("in tunnel", overbumper.GetObjectInTunnel());
 
-  SmartDashboard::PutNumber("Top FlyWheel RPM", flywheel.TopFlywheel.GetMeasurement());
-  SmartDashboard::PutNumber("Bottom FlyWheel RPM", flywheel.BottomFlywheel.GetMeasurement());
+  SmartDashboard::PutNumber("Top FlyWheel RPM", flywheel.TopFlywheel.GetMeasurement()*60.0);
+  SmartDashboard::PutNumber("Bottom FlyWheel RPM", flywheel.BottomFlywheel.GetMeasurement()*60.0);
 
   //SmartDashboard::PutBoolean("climb l stop", hang.leftStop.Get());
   //SmartDashboard::PutNumber("climb l pos", hang.leftEncoder.GetPosition());

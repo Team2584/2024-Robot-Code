@@ -39,6 +39,7 @@ public:
     Transform3d GetTagReading();
     Pose2d GetTagOdometryPose();
     void UpdateTagOdometry();
+    void DriveSwervePercentTagOriented(double FwdDriveSpeed, double StrafeDriveSpeed, double TurnSpeed);
 
     void PrintRaspiSanityCheck();
     bool NoteInView();
