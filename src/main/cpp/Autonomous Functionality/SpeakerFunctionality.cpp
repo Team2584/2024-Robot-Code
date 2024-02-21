@@ -57,6 +57,11 @@ bool AutonomousShootingController::AimAndFire()
     bool angled = AngleFlywheelToSpeaker();
     bool spinning = SpinFlywheelForSpeaker();
 
+    SmartDashboard::PutBoolean("Turned to Speaker", turnt);
+    SmartDashboard::PutBoolean("Angled to Speaker", angled);
+    SmartDashboard::PutBoolean("Flyhwheel Spinning Speaker", spinning);
+
+
     if (!(turnt && angled && spinning))
         return false;
     

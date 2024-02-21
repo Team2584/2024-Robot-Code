@@ -44,7 +44,7 @@ inline constexpr auto MAX_SPEED = 10; //0.3 // In percent power
 }
 
 /* Autonomous Constants */
-inline constexpr auto shotTime = 0.25_s;
+inline constexpr auto shotTime = 0.75_s;
 }
 
 

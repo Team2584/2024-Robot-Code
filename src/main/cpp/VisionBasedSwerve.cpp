@@ -130,6 +130,11 @@ void VisionSwerve::DriveSwervePercentTagOriented(double FwdDriveSpeed, double St
     DriveSwervePercentNonFieldOriented(FwdDriveSpeed, StrafeDriveSpeed, TurnSpeed);
 }
 
+void VisionSwerve::UpdateRaspiConnection()
+{
+    connectedEntry.Set(true);
+}
+
 void VisionSwerve::PrintRaspiSanityCheck()
 {
     SmartDashboard::PutNumber("Raspi Sanity Check", sanityEntry.Get());
@@ -153,8 +158,8 @@ void VisionSwerve::ResetNoteOdometry(Pose2d position)
 Translation2d VisionSwerve::GetNotePosition()
 {
     auto array = notePoseSubscriber.Get();
-    units::meter_t xPos = units::meter_t{array[1]};
-    units::meter_t yPos = units::meter_t{array[0] * -1};
+    units::meter_t xPos = units::meter_t{array[1] * -1};
+    units::meter_t yPos = units::meter_t{array[0]};
     return Translation2d(xPos, yPos);
 }
 
@@ -165,7 +170,11 @@ Pose2d VisionSwerve::GetNoteOdometryPose()
 
 void VisionSwerve::UpdateNoteOdometry()
 {
-    if (NoteInView())
+    // Update encoder counts of odometry
+    noteOdometry.Update(units::degree_t{GetIMUHeading()}, GetSwerveModulePositions());
+
+    // Incorporate Note Data If Note is more that 0.7_m from robot
+    if (NoteInView() && GetNotePosition().X() < -0.7_m)
     {
         ResetNoteOdometry(Pose2d(GetNotePosition(), GetOdometryPose().Rotation()));
     }
