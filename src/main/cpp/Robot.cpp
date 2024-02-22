@@ -17,6 +17,7 @@
 #include "Elevator.h"
 #include "Climb.h"
 #include "NoteController.h"
+#include "LimeLight.h"
 
 VisionSwerve swerveDrive{};
 XboxController xboxController{0};
@@ -58,7 +59,7 @@ void Robot::RobotInit()
  * LiveWindow and SmartDashboard integrated updating.
  */
 void Robot::RobotPeriodic() {
-  swerveDrive.UpdateRaspiConnection();
+  swerveDrive.UpdateLimelightConnection();
 }
 
 /**

@@ -10,21 +10,9 @@ VisionSwerve::VisionSwerve()
       camera{CAMERA_ONE_NAME},
       poseEstimator{APRIL_TAGS, photon::LOWEST_AMBIGUITY, photon::PhotonCamera(CAMERA_ONE_NAME), robotToCam},
       noteOdometry{kinematics, Rotation2d(units::degree_t{GetIMUHeading()}), GetSwerveModulePositions(), Pose2d()},
-      networkTableInstance{nt::NetworkTableInstance::GetDefault()},
-      visionTable{networkTableInstance.GetTable("vision")},
-      sanityTopic{visionTable->GetDoubleTopic("sanitycheck")},
-      sanityEntry{sanityTopic.GetEntry(-1)},
-      connectedTopic{visionTable->GetDoubleTopic("connected")},
-      connectedEntry{connectedTopic.GetEntry(false)},
-      noteInViewTopic{visionTable->GetBooleanTopic("noteInView")},
-      noteInViewSubscriber{noteInViewTopic.Subscribe({})},
-      notePosTopic{visionTable->GetDoubleTopic("ringPos")},
-      notePoseSubscriber{notePosTopic.Subscribe({})}
+      limelight{nt::NetworkTableInstance::GetDefault().GetTable("limelight")}
 {
     tagOdometry.SetVisionMeasurementStdDevs(wpi::array(APRILTAG_CONFIDENCE_X, APRILTAG_CONFIDENCE_Y, APRILTAG_CONFIDENCE_ROTATION));
-
-    networkTableInstance.StartServer();
-    connectedEntry.Set(true);
 }
 
 /**
@@ -130,22 +118,14 @@ void VisionSwerve::DriveSwervePercentTagOriented(double FwdDriveSpeed, double St
     DriveSwervePercentNonFieldOriented(FwdDriveSpeed, StrafeDriveSpeed, TurnSpeed);
 }
 
-void VisionSwerve::UpdateRaspiConnection()
+void VisionSwerve::UpdateLimelightConnection()
 {
-    if (sanityEntry.Get() == -1)
-        connectedEntry.Set(false);
-    else
-        connectedEntry.Set(true);
-}
-
-void VisionSwerve::PrintRaspiSanityCheck()
-{
-    SmartDashboard::PutNumber("Raspi Sanity Check", sanityEntry.Get());
+   
 }
 
 bool VisionSwerve::NoteInView()
 {
-    return noteInViewSubscriber.Get();
+    return limelight.noteInViewSubscriber.Get();
 }
 
 void VisionSwerve::ResetNoteOdometry()
@@ -160,10 +140,7 @@ void VisionSwerve::ResetNoteOdometry(Pose2d position)
 
 Translation2d VisionSwerve::GetNotePosition()
 {
-    auto array = notePoseSubscriber.Get();
-    units::meter_t xPos = units::meter_t{array[1] * -1};
-    units::meter_t yPos = units::meter_t{array[0]};
-    return Translation2d(xPos, yPos);
+    return limelight.GetNotePose();
 }
 
 Pose2d VisionSwerve::GetNoteOdometryPose()
