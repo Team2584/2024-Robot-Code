@@ -37,18 +37,23 @@ void AutonomousShootingController::TurnToSpeakerWhileDriving(double xSpeed, doub
 bool AutonomousShootingController::AngleFlywheelToSpeaker()
 {   
     Translation2d currentPos = swerveDrive->swerveDrive->GetTagOdometryPose().Translation();
+    double targetAngle;
 
     // Determine what our target angle is
     units::meter_t distance = currentPos.Distance(SPEAKER_POSITION.ToTranslation2d());
-    Rotation2d targetAngle = Rotation2d(units::radian_t{atan2(SPEAKER_POSITION.Z().value(), distance.value())});
+    
+    if (distance <= 3_m)
+        targetAngle = 0.995 - 0.148 * distance.value(); //Equation found by testing and getting data
+    else
+        targetAngle = 0.55;
 
-    SmartDashboard::PutNumber("Target Angler Angle", targetAngle.Radians().value());
-    return flyWheel->PIDAngler(targetAngle.Radians().value());
+    SmartDashboard::PutNumber("Target Angler Angle", targetAngle);
+    return flyWheel->PIDAngler(targetAngle);
 }
 
 bool AutonomousShootingController::SpinFlywheelForSpeaker()
 {
-    return flyWheel->SetFlywheelVelocity(4000);
+    return flyWheel->SetFlywheelVelocity(3500);
 }
 
 bool AutonomousShootingController::AimAndFire()
