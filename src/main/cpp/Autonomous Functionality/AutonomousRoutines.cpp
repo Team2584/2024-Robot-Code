@@ -1,7 +1,8 @@
 #include "Autonomous Functionality/AutonomousRoutines.h"
 
 AutonomousController::AutonomousController(VisionSwerve *swerveDrive_, Intake *intake_, FlywheelSystem *flywheel_, Elevator *ampMech_, SwerveDriveAutonomousController *swerveDriveController_, NoteController *noteController_, AutonomousShootingController *shootingController_, AutonomousAmpingController *ampingController_) 
-    : masterTimer{}
+    : masterTimer{},
+      safetyTimer{}
 {
     swerveDrive = swerveDrive_;
     intake = intake_;
@@ -18,6 +19,7 @@ void AutonomousController::SetupAuto()
     swerveDriveController->ResetTrajectoryQueue();
     splineSection = 0;
     masterTimer.Restart();
+    safetyTimer.Restart();
 }
 
 void AutonomousController::SetupBlueCenterShootIntake2Shoot()
@@ -35,8 +37,16 @@ void AutonomousController::BlueCenterShootIntake2Shoot()
     {
         intake->PIDWristToPoint(Intake::WristSetting::LOW);
         bool shotNote = shootingController->AimAndFire();
-        if (shotNote)
+        if (safetyTimer.Get() > 1.5_s)
+        {
+            intake->ShootNote();
+        }
+
+        if (shotNote || safetyTimer.Get() > 2.5_s)
+        {
+            safetyTimer.Restart();
             splineSection = 1;
+        }
     }
 
     if (splineSection == 1)
@@ -45,13 +55,36 @@ void AutonomousController::BlueCenterShootIntake2Shoot()
         bool noteInIntake = noteController->IntakeNoteToSelector();
         bool splineDone = swerveDriveController->FollowTrajectory(PoseEstimationType::TagBased);
 
-        if (noteInIntake)
+        if (noteInIntake || safetyTimer.Get() > 4_s)
+        {
+            intake->SetIntakeMotorSpeed(0);
+            swerveDrive->DriveSwervePercent(0,0,0);
+            safetyTimer.Restart();
             splineSection == 1.5;
+        }
     }
 
     if (splineSection == 1.5)
     {
         intake->PIDWristToPoint(Intake::WristSetting::SHOOT);
         bool shotNote = shootingController->AimAndFire();
+
+        if (safetyTimer.Get() > 2_s)
+        {
+            intake->ShootNote();
+        }
+
+        if (shotNote || safetyTimer.Get() > 3_s)
+        {
+            safetyTimer.Restart();
+            splineSection == 1.75;
+        }
+    }
+
+    if (splineSection == 1.75)
+    {
+        intake->PIDWristToPoint(Intake::WristSetting::SHOOT);
+        intake->SetIntakeMotorSpeed(0);
+        swerveDrive->DriveSwervePercent(0,0,0);
     }
 }

@@ -22,6 +22,7 @@ private:
     AutonomousAmpingController *ampingController;
 
     Timer masterTimer;
+    Timer safetyTimer;
     double splineSection = 0;
 
 public:
