@@ -10,8 +10,8 @@ Climb::Climb(VisionSwerve* _swerveDrive)
     rollPID{ClimbConstants::m_rotation_KP,ClimbConstants::m_rotation_KI,ClimbConstants::m_rotation_KD,ClimbConstants::m_rotation_KIMAX,ClimbConstants::m_rotation_MIN_SPEED,ClimbConstants::m_rotation_MAX_SPEED,ClimbConstants::m_rotation_ROT_ERROR,ClimbConstants::m_rotation_VELOCITY_ERROR},
     leftEncoder{leftClimbMotor.GetEncoder(rev::SparkRelativeEncoder::Type::kHallSensor)},
     rightEncoder{rightClimbMotor.GetEncoder(rev::SparkRelativeEncoder::Type::kHallSensor)},
-    leftStop{9},
-    rightStop{6}
+    leftHallSensor{leftClimbMotor.GetForwardLimitSwitch(rev::SparkLimitSwitch::Type::kNormallyOpen)},
+    rightHallSensor{rightClimbMotor.GetForwardLimitSwitch(rev::SparkLimitSwitch::Type::kNormallyOpen)}
 {
     leftClimbMotor.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
     rightClimbMotor.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
@@ -20,11 +20,17 @@ Climb::Climb(VisionSwerve* _swerveDrive)
 }
 
 bool Climb::GetLStop(){
-    return !leftStop.Get();
+    return !leftHallSensor.Get();
 }
 
 bool Climb::GetRStop(){
-    return !rightStop.Get();
+    return !rightHallSensor.Get();
+}
+
+void Climb::SetClimbZero(){
+    leftEncoder.SetPosition(0);
+    rightEncoder.SetPosition(0);
+    //add soft limits
 }
 
 /**
@@ -46,8 +52,7 @@ bool Climb::ZeroClimb(){
             rightClimbMotor.Disable();
         }
         if (GetRStop() && GetLStop()){
-            leftEncoder.SetPosition(0);
-            rightEncoder.SetPosition(0);
+            SetClimbZero();
             climbZeroed = true;
             return true;
         }
@@ -82,7 +87,7 @@ void Climb::RetractClimb(){
 }
 
 /**
- * @brief Stop Climb in Place (Disables motor until next .Set)
+ * @brief HallSensor Climb in Place (Disables motor until next .Set)
  * @note Disables so there aren't any issues end of match
 */
 void Climb::HoldClimb(){

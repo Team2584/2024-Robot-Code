@@ -11,15 +11,16 @@ class Climb {
         PID rightPID;
         PID rollPID;
 
-        
-
     public:
-    bool climbZeroed = false;
+
+        bool climbZeroed = false;
+
         rev::SparkRelativeEncoder leftEncoder, rightEncoder;
-        frc::DigitalInput leftStop;
-        frc::DigitalInput rightStop;
+        rev::SparkLimitSwitch leftHallSensor, rightHallSensor;
 
         Climb(VisionSwerve* _swerveDrive);
+
+        void SetClimbZero();
 
         bool GetLStop();
 

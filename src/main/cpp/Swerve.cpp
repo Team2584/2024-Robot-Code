@@ -18,9 +18,8 @@
  */
 SwerveModule::SwerveModule(int driveMotorPort, int spinMotorPort, int magneticEncoderPort,
                            double encoderOffset_)
-    : driveMotor{driveMotorPort, rev::CANSparkMax::MotorType::kBrushless},
+    : driveMotor{driveMotorPort},
       spinMotor{spinMotorPort, rev::CANSparkMax::MotorType::kBrushless},
-      driveRelativeEncoder{driveMotor.GetEncoder(rev::SparkRelativeEncoder::Type::kHallSensor)},
       spinRelativeEncoder{spinMotor.GetEncoder(rev::SparkRelativeEncoder::Type::kHallSensor)},
       magEncoder{magneticEncoderPort},
       spinPIDController{WHEEL_SPIN_KP, WHEEL_SPIN_KI, WHEEL_SPIN_KD, WHEEL_SPIN_KI_MAX,
@@ -63,7 +62,8 @@ double SwerveModule::GetModuleHeading()
  */
 double SwerveModule::GetDriveEncoder()
 {
-    return driveRelativeEncoder.GetPosition();
+    auto &rotorPosSignal = driveMotor.GetRotorPosition();
+    return rotorPosSignal.GetValue().value();
 }
 
 /**

@@ -14,10 +14,9 @@ class Elevator
         bool lastSensorValue = false;
         int timesPassed = 0;
 
-        rev::CANSparkMax winchMotor;
-        rev::SparkRelativeEncoder *winchEncoder;
+        ctre::phoenix6::hardware::TalonFX winchMotor;
+
         rev::CANSparkMax ampMotor;
-    
         rev::SparkLimitSwitch ampMechSensor;
 
         frc::TrapezoidProfile<units::meters>::Constraints m_constraints;
