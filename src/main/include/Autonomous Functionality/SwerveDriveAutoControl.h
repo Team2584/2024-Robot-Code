@@ -23,6 +23,8 @@ private:
 public:
     VisionSwerve *swerveDrive; /* A reference to our swerve drive. */
     PID xPIDController, yPIDController, rotationPIDController; /* PID Controllers to move in various directions */
+    PID trajXPIDController, trajYPIDController, trajRotationPIDController; /* PID Controllers to follow a trajectory */
+    PID noteXPIDController, noteYPIDController, noteRotationPIDController; /* PID Controllers to auto pick up a note */
 
     SwerveDriveAutonomousController(VisionSwerve *swerveDrive);
 

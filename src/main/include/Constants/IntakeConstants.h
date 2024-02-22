@@ -19,7 +19,7 @@ inline const double FIXED_INTAKE_SPEED_IN = -0.7;
 inline const double FIXED_INTAKE_SPEED_OUT = 0.7;
 inline const double INTAKE_SPEED_BACK_TO_SELECTOR = 0.5;
 inline const double SELECTOR_SPEED_ELEVATOR = 0.7;
-inline const double SELECTOR_SPEED_SHOOTER = -0.7;
+inline const double SELECTOR_SPEED_SHOOTER = -0.9;
 
 namespace Wrist{
 inline const double WRIST_HIGH = 0.22;

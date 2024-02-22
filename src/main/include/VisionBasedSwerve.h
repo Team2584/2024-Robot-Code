@@ -41,6 +41,7 @@ public:
     void UpdateTagOdometry();
     void DriveSwervePercentTagOriented(double FwdDriveSpeed, double StrafeDriveSpeed, double TurnSpeed);
 
+    void UpdateRaspiConnection();
     void PrintRaspiSanityCheck();
     bool NoteInView();
     void ResetNoteOdometry();

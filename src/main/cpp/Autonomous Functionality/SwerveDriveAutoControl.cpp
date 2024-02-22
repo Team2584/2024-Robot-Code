@@ -11,7 +11,19 @@ SwerveDriveAutonomousController::SwerveDriveAutonomousController(VisionSwerve *s
       yPIDController{DTP_TRANSLATION_KP, DTP_TRANSLATION_KI, DTP_TRANSLATION_KD, DTP_TRANSLATION_KI_MAX, 
                      DTP_TRANSLATION_MIN_SPEED, DTP_TRANSLATION_MAX_SPEED, DTP_TRANSLATION_TOLERANCE, DTP_TRANSLATION_VELOCITY_TOLERANCE},
       rotationPIDController{DTP_ROTATION_KP, DTP_ROTATION_KI, DTP_ROTATION_KD, DTP_ROTATION_KI_MAX, 
-                     DTP_ROTATION_MIN_SPEED, DTP_ROTATION_MAX_SPEED, DTP_ROTATION_TOLERANCE, DTP_ROTATION_VELOCITY_TOLERANCE}            
+                     DTP_ROTATION_MIN_SPEED, DTP_ROTATION_MAX_SPEED, DTP_ROTATION_TOLERANCE, DTP_ROTATION_VELOCITY_TOLERANCE},
+      trajXPIDController{TRAJECTORY_TRANSLATION_KP, TRAJECTORY_TRANSLATION_KI, TRAJECTORY_TRANSLATION_KD, TRAJECTORY_TRANSLATION_KI_MAX, 
+                     TRAJECTORY_TRANSLATION_MIN_SPEED, TRAJECTORY_TRANSLATION_MAX_SPEED, TRAJECTORY_TRANSLATION_TOLERANCE, TRAJECTORY_TRANSLATION_VELOCITY_TOLERANCE},
+      trajYPIDController{TRAJECTORY_TRANSLATION_KP, TRAJECTORY_TRANSLATION_KI, TRAJECTORY_TRANSLATION_KD, TRAJECTORY_TRANSLATION_KI_MAX, 
+                     TRAJECTORY_TRANSLATION_MIN_SPEED, TRAJECTORY_TRANSLATION_MAX_SPEED, TRAJECTORY_TRANSLATION_TOLERANCE, TRAJECTORY_TRANSLATION_VELOCITY_TOLERANCE},
+      trajRotationPIDController{TRAJECTORY_ROTATION_KP, TRAJECTORY_ROTATION_KI, TRAJECTORY_ROTATION_KD, TRAJECTORY_ROTATION_KI_MAX, 
+                     TRAJECTORY_ROTATION_MIN_SPEED, TRAJECTORY_ROTATION_MAX_SPEED, TRAJECTORY_ROTATION_TOLERANCE, TRAJECTORY_ROTATION_VELOCITY_TOLERANCE},           
+      noteXPIDController{NOTE_X_KP, NOTE_X_KI, NOTE_X_KD, NOTE_X_KI_MAX, 
+                     NOTE_X_MIN_SPEED, NOTE_X_MAX_SPEED, NOTE_X_TOLERANCE, NOTE_X_VELOCITY_TOLERANCE},
+      noteYPIDController{NOTE_Y_KP, NOTE_Y_KI, NOTE_Y_KD, NOTE_Y_KI_MAX, 
+                     NOTE_Y_MIN_SPEED, NOTE_Y_MAX_SPEED, NOTE_Y_TOLERANCE, NOTE_Y_VELOCITY_TOLERANCE},
+      noteRotationPIDController{NOTE_ROTATION_KP, NOTE_ROTATION_KI, NOTE_ROTATION_KD, NOTE_ROTATION_KI_MAX,    
+                           NOTE_ROTATION_MIN_SPEED, NOTE_ROTATION_MAX_SPEED, NOTE_ROTATION_TOLERANCE, NOTE_ROTATION_VELOCITY_TOLERANCE} 
 {
     swerveDrive = swerveDrive_;
     rotationPIDController.EnableContinuousInput(-M_PI, M_PI);
@@ -47,12 +59,12 @@ void SwerveDriveAutonomousController::CalculatePIDToPose(PoseEstimationType pose
     }
     else if (poseEstimationType == PoseEstimationType::NoteBased)
     {
-        speeds[0] = xPIDController.Calculate(swerveDrive->GetNoteOdometryPose().X().value(), target.X().value());
-        PIDComplete[0] = xPIDController.PIDFinished();
-        speeds[1] = yPIDController.Calculate(swerveDrive->GetNoteOdometryPose().Y().value(), target.Y().value());
-        PIDComplete[1] = yPIDController.PIDFinished();
-        speeds[2] = rotationPIDController.Calculate(swerveDrive->GetNoteOdometryPose().Rotation().Radians().value(), target.Rotation().Radians().value());
-        PIDComplete[2] = rotationPIDController.PIDFinished();
+        speeds[0] = noteXPIDController.Calculate(swerveDrive->GetNoteOdometryPose().X().value(), target.X().value());
+        PIDComplete[0] = noteXPIDController.PIDFinished();
+        speeds[1] = noteYPIDController.Calculate(swerveDrive->GetNoteOdometryPose().Y().value(), target.Y().value());
+        PIDComplete[1] = noteYPIDController.PIDFinished();
+        speeds[2] = noteRotationPIDController.Calculate(swerveDrive->GetNoteOdometryPose().Rotation().Radians().value(), target.Rotation().Radians().value());
+        PIDComplete[2] = noteRotationPIDController.PIDFinished();
     }
 }
 
@@ -64,6 +76,12 @@ void SwerveDriveAutonomousController::ResetPIDLoop()
     xPIDController.ResetPIDLoop();
     yPIDController.ResetPIDLoop();
     rotationPIDController.ResetPIDLoop();
+    trajXPIDController.ResetPIDLoop();
+    trajYPIDController.ResetPIDLoop();
+    trajRotationPIDController.ResetPIDLoop();
+    noteXPIDController.ResetPIDLoop();
+    noteYPIDController.ResetPIDLoop();
+    noteRotationPIDController.ResetPIDLoop();
 }
 
 /**
@@ -73,26 +91,6 @@ void SwerveDriveAutonomousController::ResetPIDLoop()
  */
 void SwerveDriveAutonomousController::BeginDriveToPose(PoseEstimationType poseEstimationType)
 {
-    // Ensure our PID constants are set for Driving to Pose
-    if (poseEstimationType == PoseEstimationType::TagBased || poseEstimationType == PoseEstimationType::PureOdometry)
-    {
-        xPIDController.ChangeConstants(DTP_TRANSLATION_KP, DTP_TRANSLATION_KI, DTP_TRANSLATION_KD, DTP_TRANSLATION_KI_MAX, 
-                        DTP_TRANSLATION_MIN_SPEED, DTP_TRANSLATION_MAX_SPEED, DTP_TRANSLATION_TOLERANCE, DTP_TRANSLATION_VELOCITY_TOLERANCE);
-        yPIDController.ChangeConstants(DTP_TRANSLATION_KP, DTP_TRANSLATION_KI, DTP_TRANSLATION_KD, DTP_TRANSLATION_KI_MAX, 
-                        DTP_TRANSLATION_MIN_SPEED, DTP_TRANSLATION_MAX_SPEED, DTP_TRANSLATION_TOLERANCE, DTP_TRANSLATION_VELOCITY_TOLERANCE);
-        rotationPIDController.ChangeConstants(DTP_ROTATION_KP, DTP_ROTATION_KI, DTP_ROTATION_KD, DTP_ROTATION_KI_MAX, 
-                        DTP_ROTATION_MIN_SPEED, DTP_ROTATION_MAX_SPEED, DTP_ROTATION_TOLERANCE, DTP_ROTATION_VELOCITY_TOLERANCE);
-    }
-    else if (poseEstimationType == PoseEstimationType::NoteBased)
-    {
-        xPIDController.ChangeConstants(NOTE_X_KP, NOTE_X_KI, NOTE_X_KD, NOTE_X_KI_MAX, 
-                        NOTE_X_MIN_SPEED, NOTE_X_MAX_SPEED, NOTE_X_TOLERANCE, NOTE_X_VELOCITY_TOLERANCE);
-        yPIDController.ChangeConstants(NOTE_Y_KP, NOTE_Y_KI, NOTE_Y_KD, NOTE_Y_KI_MAX, 
-                        NOTE_Y_MIN_SPEED, NOTE_Y_MAX_SPEED, NOTE_Y_TOLERANCE, NOTE_Y_VELOCITY_TOLERANCE);
-        rotationPIDController.ChangeConstants(NOTE_ROTATION_KP, NOTE_ROTATION_KI, NOTE_ROTATION_KD, NOTE_ROTATION_KI_MAX, 
-                        NOTE_ROTATION_MIN_SPEED, NOTE_ROTATION_MAX_SPEED, NOTE_ROTATION_TOLERANCE, NOTE_ROTATION_VELOCITY_TOLERANCE);
-    }
-
     ResetPIDLoop();
 }
 
@@ -191,14 +189,6 @@ void SwerveDriveAutonomousController::BeginNextTrajectory()
     // Resets timer so we know how long has passed in the current trajectory
     trajectoryTimer.Restart();
 
-    // Ensure our PID constants are set for following a trajectory
-    xPIDController.ChangeConstants(TRAJECTORY_TRANSLATION_KP, TRAJECTORY_TRANSLATION_KI, TRAJECTORY_TRANSLATION_KD, TRAJECTORY_TRANSLATION_KI_MAX, 
-                     TRAJECTORY_TRANSLATION_MIN_SPEED, TRAJECTORY_TRANSLATION_MAX_SPEED, TRAJECTORY_TRANSLATION_TOLERANCE, TRAJECTORY_TRANSLATION_VELOCITY_TOLERANCE);
-    yPIDController.ChangeConstants(TRAJECTORY_TRANSLATION_KP, TRAJECTORY_TRANSLATION_KI, TRAJECTORY_TRANSLATION_KD, TRAJECTORY_TRANSLATION_KI_MAX, 
-                     TRAJECTORY_TRANSLATION_MIN_SPEED, TRAJECTORY_TRANSLATION_MAX_SPEED, TRAJECTORY_TRANSLATION_TOLERANCE, TRAJECTORY_TRANSLATION_VELOCITY_TOLERANCE);
-    rotationPIDController.ChangeConstants(TRAJECTORY_ROTATION_KP, TRAJECTORY_ROTATION_KI, TRAJECTORY_ROTATION_KD, TRAJECTORY_ROTATION_KI_MAX, 
-                     TRAJECTORY_ROTATION_MIN_SPEED, TRAJECTORY_ROTATION_MAX_SPEED, TRAJECTORY_ROTATION_TOLERANCE, TRAJECTORY_ROTATION_VELOCITY_TOLERANCE);
-
     ResetPIDLoop();
 }
 
@@ -240,17 +230,34 @@ bool SwerveDriveAutonomousController::FollowTrajectory(PoseEstimationType poseEs
 
     /* Set PID Speeds */
 
-    double PIDSpeeds[3] = {0, 0, 0};
-    bool PIDLoopsFinished[3] = {false, false, false};
- 
-    
     Pose2d targetPose;
     if (trajectoryFinished)
         targetPose = currentTrajectory.getEndState().getTargetHolonomicPose();
     else
         targetPose = Pose2d(currentState.position, currentHeading);
         
-    CalculatePIDToPose(poseEstimationType, targetPose, PIDSpeeds, PIDLoopsFinished);
+    double PIDSpeeds[3] = {0, 0, 0};
+    bool PIDLoopsFinished[3] = {false, false, false};
+
+    if (poseEstimationType == PoseEstimationType::PureOdometry)
+    {
+        PIDSpeeds[0] = trajXPIDController.Calculate(swerveDrive->GetOdometryPose().X().value(), targetPose.X().value());
+        PIDLoopsFinished[0] = trajXPIDController.PIDFinished();
+        PIDLoopsFinished[0] = trajXPIDController.PIDFinished();
+        PIDSpeeds[1] = trajYPIDController.Calculate(swerveDrive->GetOdometryPose().Y().value(), targetPose.Y().value());
+        PIDLoopsFinished[1] = trajYPIDController.PIDFinished();
+        PIDSpeeds[2] = trajRotationPIDController.Calculate(swerveDrive->GetOdometryPose().Rotation().Radians().value(), targetPose.Rotation().Radians().value());
+        PIDLoopsFinished[2] = trajRotationPIDController.PIDFinished();
+    }
+    else 
+    {
+        PIDSpeeds[0] = trajXPIDController.Calculate(swerveDrive->GetTagOdometryPose().X().value(), targetPose.X().value());
+        PIDLoopsFinished[0] = trajXPIDController.PIDFinished();
+        PIDSpeeds[1] = trajYPIDController.Calculate(swerveDrive->GetTagOdometryPose().Y().value(), targetPose.Y().value());
+        PIDLoopsFinished[1] = trajYPIDController.PIDFinished();
+        PIDSpeeds[2] = trajRotationPIDController.Calculate(swerveDrive->GetTagOdometryPose().Rotation().Radians().value(), targetPose.Rotation().Radians().value());
+        PIDLoopsFinished[2] = trajRotationPIDController.PIDFinished();
+    }
 
     bool PIDFinished = PIDLoopsFinished[0] && PIDLoopsFinished[1] && PIDLoopsFinished[2];
 
@@ -267,8 +274,6 @@ bool SwerveDriveAutonomousController::FollowTrajectory(PoseEstimationType poseEs
     SmartDashboard::PutBoolean("Trajectory Y Done", PIDLoopsFinished[1]);
     SmartDashboard::PutBoolean("Trajectory Rotation Done", PIDLoopsFinished[2]);
     
-    /* Drive the Swerve */
-
     // If the trajectory and all PID loops are finished, stop driving the swerve.
     if (trajectoryFinished && PIDFinished)
     {
@@ -276,6 +281,7 @@ bool SwerveDriveAutonomousController::FollowTrajectory(PoseEstimationType poseEs
         return true;
     }
 
+    /* Drive the Swerve */
     swerveDrive->DriveSwerveMetersAndRadians(xFeedForward.value() + PIDSpeeds[0], yFeedForward.value() + PIDSpeeds[1], rotationFeedForward.value() + PIDSpeeds[2]);
     return false;
 }
@@ -290,8 +296,8 @@ void SwerveDriveAutonomousController::BeginDriveToNote()
 bool SwerveDriveAutonomousController::TurnToNote()
 {
     Pose2d currentPose = swerveDrive->GetNoteOdometryPose();
-    Rotation2d noteAngleDifference = Rotation2d(units::radian_t{atan2(currentPose.Y().value() * -1, currentPose.X().value())});
-    noteTargetAngle = currentPose.Rotation() - noteAngleDifference;
+    Rotation2d noteAngleDifference = Rotation2d(-1 * currentPose.X().value(), -1 * currentPose.Y().value());
+    noteTargetAngle = currentPose.Rotation() + noteAngleDifference;
 
     SmartDashboard::PutNumber("Targe Note Angle Diff", noteAngleDifference.Degrees().value());
     SmartDashboard::PutNumber("Targe Note Angle", noteTargetAngle.Degrees().value());
@@ -310,7 +316,7 @@ bool SwerveDriveAutonomousController::DriveToNote()
     double speeds[3] = {0, 0, 0};
     bool PIDFinished[3] = {false, false, false};
  
-    CalculatePIDToPose(PoseEstimationType::NoteBased, Pose2d(0.2_m, 0_m, noteTargetAngle), speeds, PIDFinished);
+    CalculatePIDToPose(PoseEstimationType::NoteBased, Pose2d(-0.6_m, 0_m, noteTargetAngle), speeds, PIDFinished);
 
     // Debugging info
     SmartDashboard::PutNumber("Pose X Speed", speeds[0]);
@@ -330,6 +336,6 @@ bool SwerveDriveAutonomousController::DriveToNote()
     }
 
     // Drive swerve at desired speeds
-    swerveDrive->DriveSwervePercentNonFieldOriented(speeds[0], speeds[1], speeds[2]);
+    swerveDrive->DriveSwervePercentNonFieldOriented(-1 * speeds[0], -1 * speeds[1], speeds[2]);
     return false;
 }

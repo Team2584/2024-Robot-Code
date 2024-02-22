@@ -59,7 +59,9 @@ void Robot::RobotInit()
  * <p> This runs after the mode specific periodic functions, but before
  * LiveWindow and SmartDashboard integrated updating.
  */
-void Robot::RobotPeriodic() {}
+void Robot::RobotPeriodic() {
+  swerveDrive.UpdateRaspiConnection();
+}
 
 /**
  * This autonomous (along with the chooser code above) shows how to select
@@ -178,18 +180,6 @@ void Robot::TeleopPeriodic()
   // Drive the robot
   swerveDrive.DriveSwervePercent(fwdDriveSpeed, strafeDriveSpeed, turnSpeed);
 
-  if (xboxController3.GetAButtonPressed())
-    swerveAutoController.BeginDriveToNote();
-  if (xboxController3.GetAButton())
-  { 
-    swerveAutoController.TurnToNote();
-  }
-
-  if (xboxController3.GetBButtonPressed())
-      swerveAutoController.BeginDriveToNote();
-  if (xboxController3.GetBButton())
-    swerveAutoController.DriveToNote();
-
   // Drive to a position for testing
   if (xboxController3.GetRightBumperPressed())
     swerveAutoController.BeginDriveToPose(PoseEstimationType::PureOdometry);
@@ -284,6 +274,26 @@ void Robot::TeleopPeriodic()
     ampmech.StopElevator();
   }
 
+
+  if (xboxController3.GetAButtonPressed())
+    swerveAutoController.BeginDriveToNote();
+  if (xboxController3.GetAButton())
+  { 
+    swerveAutoController.TurnToNote();
+  }
+
+  if (xboxController3.GetBButtonPressed())
+      swerveAutoController.BeginDriveToNote();
+  if (xboxController3.GetBButton())
+  {    
+    bool done = notecontroller.IntakeNoteToSelector();
+    if (!done)
+    {
+      wristSetPoint = Intake::LOW;
+      swerveAutoController.DriveToNote();
+    }
+  }
+
   
   /*                                                      
   ,------.,--.                    ,--.                   ,--. 
@@ -322,7 +332,7 @@ void Robot::TeleopPeriodic()
   }
 
   //PID Intake wrist
-  //overbumper.PIDWristToPoint(wristSetPoint);
+  overbumper.PIDWristToPoint(wristSetPoint);
 
   /*                                                   
   ,------.,--.                         ,--.                  /  //  /,---.                   ,--.   ,--.             ,--.      
