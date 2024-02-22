@@ -57,15 +57,11 @@ public:
 
         units::radian_t xrotationrad = xtargetdeg - limelightPose.Rotation().X();
         units::radian_t yrotationrad = ytargetdeg - limelightPose.Rotation().Y();
-        units::radian_t zrotationrad = limelightPose.Rotation().Z();
 
-        units::radian_t xrotationrad_transformed = xrotationrad * units::math::cos(zrotationrad) - yrotationrad * units::math::sin(zrotationrad);
-        units::radian_t yrotationrad_transformed = xrotationrad * units::math::sin(zrotationrad) + yrotationrad * units::math::cos(zrotationrad);
+        units::length::meter_t distanceFromLimelightToGoalX = (limelightPose.Translation().X())/units::math::tan(xrotationrad);
+        units::length::meter_t distanceFromLimelightToGoalY = (limelightPose.Translation().Y())/units::math::tan(yrotationrad);
 
-        units::length::meter_t distanceFromLimelightToGoalX = (limelightPose.Translation().X() - limelightPose.Translation().Z() * units::math::tan(xrotationrad_transformed)) / units::math::tan(xrotationrad_transformed);
-        units::length::meter_t distanceFromLimelightToGoalY = (limelightPose.Translation().Y() - limelightPose.Translation().Z() * units::math::tan(yrotationrad_transformed)) / units::math::tan(yrotationrad_transformed);
-
-        return Translation2d(distanceFromLimelightToGoalX, distanceFromLimelightToGoalY);
+        return Translation2d(distanceFromLimelightToGoalX,distanceFromLimelightToGoalY);
 
     }
 
