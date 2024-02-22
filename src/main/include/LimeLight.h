@@ -1,4 +1,5 @@
 #include "Robot.h"
+#include "Tools/LimelightHelpers.h"
 #include "constants/LimelightConstants.h"
 
 //Limelight API Docs: https://docs.limelightvision.io/docs/docs-limelight/apis/complete-networktables-api
@@ -10,11 +11,11 @@ public:
 
     nt::NetworkTableInstance networkTableInstance;
     std::shared_ptr<nt::NetworkTable> visionTable;
-    nt::BooleanTopic noteInViewTopic;
+    nt::BooleanTopic noteInViewTopic; //Whether the limelight has any valid targets (0 or 1)
     nt::BooleanSubscriber noteInViewSubscriber;    
-    nt::DoubleTopic notePosTopic_x;
-    nt::DoubleSubscriber notePoseSubscriber_x;
-    nt::DoubleTopic notePosTopic_y;
+    nt::DoubleTopic notePosTopic_x; //LL2: -29.8 to 29.8 degrees)
+    nt::DoubleSubscriber notePoseSubscriber_x; 
+    nt::DoubleTopic notePosTopic_y; //LL2: -24.85 to 24.85 degrees)
     nt::DoubleSubscriber notePoseSubscriber_y;
 
 private:
@@ -43,7 +44,12 @@ public:
         visionTable->PutNumber("ledMode", 3); //limelight LEDs of (Blinding people isn't funny)
     }
     
+    /**
+     * @brief Get the translation from the robot to the note
+     * @return A translation representing the distance from the robot origin to the object
+    */
     Translation2d GetNotePose(){
+
         units::degree_t xtargetdeg = units::degree_t{notePoseSubscriber_x.Get()};
         units::degree_t ytargetdeg = units::degree_t{notePoseSubscriber_y.Get()};
 
