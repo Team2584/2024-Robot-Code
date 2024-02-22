@@ -83,10 +83,10 @@ void Robot::AutonomousInit()
 
   if (m_autoSelected == kAutoBCSI2S)
     autoController.SetupBlueCenterShootIntake2Shoot(); 
-  else
-  {
-    // Default Auto goes here
-  }
+  else if (m_autoSelected == kAutoBLSI3S)
+    autoController.SetupBlueLeftShootIntake3Shoot();
+  else if (m_autoSelected == kAutoBRSI1S)
+    autoController.SetupBlueRightShootIntake1Shoot();
 }
 
 void Robot::AutonomousPeriodic()
@@ -97,10 +97,10 @@ void Robot::AutonomousPeriodic()
    /* Autos */
   if (m_autoSelected == kAutoBCSI2S)
     autoController.BlueCenterShootIntake2Shoot();
-  else
-  {
-    // Default Auto goes here
-  }
+  else if (m_autoSelected == kAutoBLSI3S)
+    autoController.BlueLeftShootIntake3Shoot();
+  else if (m_autoSelected == kAutoBRSI1S)
+    autoController.BlueRightShootIntake1Shoot();
 }
 
 void Robot::TeleopInit()

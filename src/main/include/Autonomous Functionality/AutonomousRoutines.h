@@ -28,7 +28,11 @@ private:
 public:
     AutonomousController(VisionSwerve *swerveDrive_, Intake *intake_, FlywheelSystem *flywheel_, Elevator *ampMech_, SwerveDriveAutonomousController *swerveDriveController_, NoteController *noteController_, AutonomousShootingController *shootingController_, AutonomousAmpingController *ampingController_);
 
-    void SetupAuto();
+    void SetupAuto(Pose2d startingPose);
     void SetupBlueCenterShootIntake2Shoot();
     void BlueCenterShootIntake2Shoot();
+    void SetupBlueLeftShootIntake3Shoot();
+    void BlueLeftShootIntake3Shoot();
+    void SetupBlueRightShootIntake1Shoot();
+    void BlueRightShootIntake1Shoot();
 };

@@ -14,8 +14,10 @@ AutonomousController::AutonomousController(VisionSwerve *swerveDrive_, Intake *i
     ampingController = ampingController_;
 }
 
-void AutonomousController::SetupAuto()
+void AutonomousController::SetupAuto(Pose2d startingPose)
 {
+    swerveDrive->ResetOdometry(startingPose);
+    swerveDrive->ResetTagOdometry(startingPose);
     swerveDriveController->ResetTrajectoryQueue();
     splineSection = 0;
     masterTimer.Restart();
@@ -24,9 +26,7 @@ void AutonomousController::SetupAuto()
 
 void AutonomousController::SetupBlueCenterShootIntake2Shoot()
 {
-    SetupAuto();
-    swerveDrive->ResetOdometry(Pose2d(1.39_m, 5.51_m, Rotation2d(180_deg)));
-    swerveDrive->ResetTagOdometry(Pose2d(1.39_m, 5.51_m, Rotation2d(180_deg)));
+    SetupAuto(Pose2d(1.39_m, 5.51_m, Rotation2d(180_deg)));
     swerveDriveController->LoadTrajectory("BCTo2");
     swerveDriveController->BeginNextTrajectory();
 }
@@ -87,4 +87,28 @@ void AutonomousController::BlueCenterShootIntake2Shoot()
         intake->SetIntakeMotorSpeed(0);
         swerveDrive->DriveSwervePercent(0,0,0);
     }
+}
+
+void AutonomousController::SetupBlueLeftShootIntake3Shoot()
+{
+    SetupAuto(Pose2d(0.74_m, 4.35_m, Rotation2d(-57.72_deg)));
+    swerveDriveController->LoadTrajectory("BLTo3");
+    swerveDriveController->BeginNextTrajectory();
+}
+
+void AutonomousController::BlueLeftShootIntake3Shoot()
+{
+    BlueCenterShootIntake2Shoot();
+}
+
+void AutonomousController::SetupBlueRightShootIntake1Shoot()
+{
+    SetupAuto(Pose2d(0.76_m, 6.68_m, Rotation2d(58.39_deg)));
+    swerveDriveController->LoadTrajectory("BRTo1");
+    swerveDriveController->BeginNextTrajectory();
+}
+
+void AutonomousController::BlueRightShootIntake1Shoot()
+{
+    BlueCenterShootIntake2Shoot();
 }
