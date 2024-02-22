@@ -137,7 +137,7 @@ enum PoseEstimationType
 #define NOTE_X_TOLERANCE 0.02 // In meters
 #define NOTE_X_VELOCITY_TOLERANCE 0.5 // In percent power
 #define NOTE_X_MIN_SPEED 0 // In percent power
-#define NOTE_X_MAX_SPEED 0.4 // In percent power
+#define NOTE_X_MAX_SPEED 0.6 // In percent power
 // Translational PID in the y direction
 #define NOTE_Y_KP 0.5
 #define NOTE_Y_KI 0
@@ -146,16 +146,16 @@ enum PoseEstimationType
 #define NOTE_Y_TOLERANCE 0.02 // In meters
 #define NOTE_Y_VELOCITY_TOLERANCE 0.5 // In percent power
 #define NOTE_Y_MIN_SPEED 0 // In percent power
-#define NOTE_Y_MAX_SPEED 0.2 // In percent power
+#define NOTE_Y_MAX_SPEED 0.4 // In percent power
 // Rotational PID to correct robot heading
-#define NOTE_ROTATION_KP 0.3
+#define NOTE_ROTATION_KP 0.28
 #define NOTE_ROTATION_KI 0
 #define NOTE_ROTATION_KI_MAX 0 // In percent power
 #define NOTE_ROTATION_KD 0
 #define NOTE_ROTATION_TOLERANCE 0.07 // In radians
 #define NOTE_ROTATION_VELOCITY_TOLERANCE 0.5 // In percent power
 #define NOTE_ROTATION_MIN_SPEED 0 // In percent power
-#define NOTE_ROTATION_MAX_SPEED 0.4 // In percent power
+#define NOTE_ROTATION_MAX_SPEED 0.6 // In percent power
 
 
 #endif // SWERVE_CONSTANTS_H
