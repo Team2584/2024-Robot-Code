@@ -16,6 +16,7 @@
 #include "FlyWheel.h"
 #include "Elevator.h"
 #include "Climb.h"
+#include "LEDs.h"
 #include "NoteController.h"
 
 VisionSwerve swerveDrive{};
@@ -27,6 +28,7 @@ FlywheelSystem flywheel{};
 Elevator ampmech{};
 Climb hang{&swerveDrive};
 NoteController notecontroller{&overbumper, &flywheel, &ampmech};
+LEDLights *lightStrip{0};
 
 SwerveDriveAutonomousController swerveAutoController{&swerveDrive};
 AutonomousShootingController flywheelController{&swerveAutoController, &flywheel, &overbumper};
@@ -35,7 +37,6 @@ AutonomousAmpingController autoAmpController{&swerveAutoController, &notecontrol
 Elevator::ElevatorSetting elevSetHeight = Elevator::LOW;
 Intake::WristSetting wristSetPoint = Intake::HIGH;
 bool anglingToSpeaker = false;
-
 
 void Robot::RobotInit()
 {
