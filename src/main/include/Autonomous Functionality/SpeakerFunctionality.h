@@ -1,6 +1,7 @@
 #include "Robot.h"
 #include "Constants/FlywheelConstants.h"
 
+#include "Intake.h"
 #include "FlyWheel.h"
 #include "Autonomous Functionality/SwerveDriveAutoControl.h"
 #include "Constants/FieldConstants.h"
@@ -13,12 +14,18 @@ class AutonomousShootingController
 private:
     SwerveDriveAutonomousController *swerveDrive;
     FlywheelSystem *flyWheel;
+    Intake *intake;
+
+    Timer shotTimer;
+    double targetAnglerAngle;
 
 public:
-    AutonomousShootingController(SwerveDriveAutonomousController *swerveDrive, FlywheelSystem *flyWheel_);
+    AutonomousShootingController(SwerveDriveAutonomousController *swerveDrive, FlywheelSystem *flyWheel_, Intake *intake_);
 
     bool TurnToSpeaker();
     void TurnToSpeakerWhileDriving(double xSpeed, double ySpeed);
     bool AngleFlywheelToSpeaker();
+    bool SpinFlywheelForSpeaker();
+    bool ClearElevatorForShot();
     bool AimAndFire();
 };

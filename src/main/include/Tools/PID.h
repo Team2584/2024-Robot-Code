@@ -11,10 +11,11 @@
 class PID
 {
 protected:
-    frc::PIDController pidController; /* the basic WPIlib PID Controller */
+     /* the basic WPIlib PID Controller */
     double maxSpeed, minSpeed;        /* maximum and mininimum magnitude of values returned by the PID controller */
 
 public:
+frc::PIDController pidController;
     /**
      * Constructor for a PID Controller
      *

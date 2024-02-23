@@ -12,9 +12,10 @@ class SwerveModule
 {
     private:
         // Instance Variables for each swerve module
-        ctre::phoenix6::hardware::TalonFX driveMotor; /* The motor responsible for actually driving the wheel*/
+        rev::CANSparkMax driveMotor; /* The motor responsible for actually driving the wheel*/
         rev::CANSparkMax spinMotor; /* The motor responsible for "spinning" the wheel left to right to change direction*/
-        rev::SparkMaxAlternateEncoder spinRelativeEncoder; /* The relative encoder built into the spinMotor */
+        rev::SparkRelativeEncoder driveRelativeEncoder; /* The relative encoder built into the driveMotor */
+        rev::SparkRelativeEncoder spinRelativeEncoder; /* The relative encoder built into the spinMotor */
         frc::DutyCycleEncoder magEncoder; /* The magnetic absolute encoder tracking swerve heading. */
         PID spinPIDController; /* The PID Controller for the spinMotor, works using degrees */
         double encoderOffset;       /* Offset in magnetic encoder from 0 facing the front of the robot */
@@ -67,9 +68,9 @@ class SwerveDrive
         double PercentToVelocity(double percent);
         double AngularVelocityToPercent(double velocity);
         double AngularPercentToVelocity(double percent);
-        void DriveSwervePercentNonFieldOriented(double STRAFE_Drive_Speed, double FWD_Drive_Speed, double Turn_Speed);
-        void DriveSwervePercent(double STRAFE_Drive_Speed, double FWD_Drive_Speed, double Turn_Speed);
-        void DriveSwerveMetersAndRadians(double STRAFE_Drive_Speed, double FWD_Drive_Speed, double Turn_Speed);
+        void DriveSwervePercentNonFieldOriented(double FWD_Drive_Speed, double STRAFE_Drive_Speed, double Turn_Speed);
+        void DriveSwervePercent(double FWD_Drive_Speed, double STRAFE_Drive_Speed, double Turn_Speed);
+        void DriveSwerveMetersAndRadians(double FWD_Drive_Speed, double STRAFE_Drive_Speed, double Turn_Speed);
         double GetIMURoll();
         double GetRollSpeed();
 

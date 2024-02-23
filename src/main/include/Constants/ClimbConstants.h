@@ -1,32 +1,39 @@
-#define C_MAX_H 100
-#define C_MIN_H 0
+namespace ClimbConstants {
 
-inline double c_KD  = 0;
-inline double c_KP  = 4;
-inline double c_KI  = 0;
-inline double c_KIMAX  = 0;
-inline double c_POS_ERROR  = 0.1; //~3deg
-inline double c_VELOCITY_ERROR = 1;
-inline double c_MAX_SPEED  = 0.3;
-inline double c_MIN_SPEED  = 0.1;
+inline const double MaxHeight = 100;
+inline const double MinHeight = 0;
 
-inline double c_t_KD  = 0;
-inline double c_t_KP  = 4;
-inline double c_t_KI  = 0;
-inline double c_t_KIMAX  = 0;
-inline double c_t_ROT_ERROR  = 0.1; //~3deg
-inline double c_t_VELOCITY_ERROR = 1;
-inline double c_t_MAX_SPEED  = 0.3;
-inline double c_t_MIN_SPEED  = 0.1;
+inline const double m_linear_KD  = 0;
+inline const double m_linear_KP  = 6;
+inline const double m_linear_KI  = 0.1;
+inline const double m_linear_KIMAX  = 0.4;
+inline const double m_linear_POS_ERROR  = 0.03;
+inline const double m_linear_VELOCITY_ERROR = 10000;
+inline const double m_linear_MAX_SPEED  = 0.5;
+inline const double m_linear_MIN_SPEED  = 0.05;
+
+inline const double m_rotation_KD  = 0;
+inline const double m_rotation_KP  = 4;
+inline const double m_rotation_KI  = 0;
+inline const double m_rotation_KIMAX  = 0;
+inline const double m_rotation_ROT_ERROR  = 0.3; 
+inline const double m_rotation_VELOCITY_ERROR = 10000;
+inline const double m_rotation_MAX_SPEED  = 0.3;
+inline const double m_rotation_MIN_SPEED  = 0.05;
+
+inline const double BasePctUp = 0.3;
+inline const double BasePctDown =  0.3;
+
+inline constexpr double gearRatioValue = 1.0/16.0;
+inline constexpr double diameterValue = 0.0508; //meters (GUESS)
+inline constexpr double CLIMB_CONVERSION_FACTOR = gearRatioValue * (3.14159365 * diameterValue);
+}
 
 #define CLIMB_MOTOR_L 23
 #define CLIMB_MOTOR_R 24
 
-#define CLIMB_PCT_UP 0.05
-#define CLIMB_PCT_DOWN 0.05
-
-#define CLIMB_LEFT_STOP_PORT 2
-#define CLIMB_RIGHT_STOP_PORT 3
+#define CLIMB_LEFT_STOP_PORT 9
+#define CLIMB_RIGHT_STOP_PORT 6
 
 //Convention: Up = motor spin positive
 //Right = positive

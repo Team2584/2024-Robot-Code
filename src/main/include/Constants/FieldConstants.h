@@ -1,3 +1,5 @@
+#include "Robot.h"
+
 #ifndef FIELD_CONSTANTS_H // Ensures that this header file is only compiled once
 #define FIELD_CONSTANTS_H
 
@@ -23,6 +25,6 @@ inline const std::vector<frc::AprilTag> FIELD_TAG_LAYOUT = {
     };
 inline const AprilTagFieldLayout APRIL_TAGS = AprilTagFieldLayout(FIELD_TAG_LAYOUT, 54_ft, 27_ft); // frc field is 54 ft by 27 ft
 
-inline const Translation3d SPEAKER_POSITION = {0.3_m, 5.5_m, 2.75_m}; // TODO MAY BE INCORRECT, PLEASE CHECK SOMEONE
+inline const Translation3d SPEAKER_POSITION = {0.3_m, 5.54_m, 2.75_m}; // TODO MAY BE INCORRECT, PLEASE CHECK SOMEONE
 
 #endif // FIELD_CONSTANTS_H
