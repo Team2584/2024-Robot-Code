@@ -28,7 +28,7 @@ FlywheelSystem flywheel{};
 Elevator ampmech{};
 Climb hang{&swerveDrive};
 NoteController notecontroller{&overbumper, &flywheel, &ampmech};
-LEDLights *lightStrip{0};
+LEDLights lightStrip{0};
 
 SwerveDriveAutonomousController swerveAutoController{&swerveDrive};
 AutonomousShootingController flywheelController{&swerveAutoController, &flywheel, &overbumper};
@@ -234,6 +234,7 @@ void Robot::TeleopPeriodic()
   if (xboxController.GetRightBumper())
   {
     bool done = notecontroller.IntakeNoteToSelector();
+    lightStrip.SetLED(LEDLights::green);//TODO: actually impliment
     if (!done)
       wristSetPoint = Intake::LOW;
   }
@@ -246,6 +247,7 @@ void Robot::TeleopPeriodic()
   }
   else if(xboxController2.GetLeftTriggerAxis() > 0.5){
     overbumper.ShootNote();
+    lightStrip.SetLED(LEDLights::fire);//TODO: actually impliment
   }
   else if (xboxController2.GetRightBumper()){
     notecontroller.FromElevatorToSelector();
