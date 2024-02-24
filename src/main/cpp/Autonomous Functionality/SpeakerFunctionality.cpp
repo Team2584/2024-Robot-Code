@@ -13,7 +13,7 @@ bool AutonomousShootingController::TurnToSpeaker()
     Pose2d currentPose = swerveDrive->swerveDrive->GetTagOdometryPose();
 
     // Determine what our target angle is
-    Translation2d diff = SPEAKER_POSITION.ToTranslation2d() - currentPose.Translation(); 
+    Translation2d diff = SPEAKER_AIM_POSITION.ToTranslation2d() - currentPose.Translation(); 
     Rotation2d targetAngle = Rotation2d(units::radian_t{atan2(diff.Y().value(), diff.X().value())});
 
     SmartDashboard::PutNumber("Targe Speaker Swerve Angle", targetAngle.Degrees().value());
@@ -26,7 +26,7 @@ void AutonomousShootingController::TurnToSpeakerWhileDriving(double xSpeed, doub
     Pose2d currentPose = swerveDrive->swerveDrive->GetTagOdometryPose();
 
     // Determine what our target angle is
-    Translation2d diff = SPEAKER_POSITION.ToTranslation2d() - currentPose.Translation(); 
+    Translation2d diff = SPEAKER_AIM_POSITION.ToTranslation2d() - currentPose.Translation(); 
     Rotation2d targetAngle = Rotation2d(units::radian_t{atan2(diff.Y().value(), diff.X().value())});
 
     SmartDashboard::PutNumber("Targe Speaker Swerve Angle", targetAngle.Degrees().value());
@@ -62,6 +62,11 @@ bool AutonomousShootingController::ClearElevatorForShot()
     return true;
 }
 
+void AutonomousShootingController::BeginAimAndFire()
+{
+    shootingNote = false;
+}
+
 bool AutonomousShootingController::AimAndFire()
 {
     bool turnt = TurnToSpeaker();
@@ -78,7 +83,12 @@ bool AutonomousShootingController::AimAndFire()
     if (!(turnt && angled && spinning && elevatorCleared))
         return false;
     
-    shotTimer.Restart();
+    if (!shootingNote)
+    {
+        shootingNote = true;
+        shotTimer.Restart();
+    }
+
     intake->ShootNote();
 
     if (shotTimer.Get() < FlywheelConstants::shotTime) 

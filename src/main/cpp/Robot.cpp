@@ -182,21 +182,14 @@ void Robot::TeleopPeriodic()
   swerveDrive.DriveSwervePercent(fwdDriveSpeed, strafeDriveSpeed, turnSpeed);
 
   // Drive to a position for testing
-  if (xboxController3.GetRightBumperPressed())
-    swerveAutoController.BeginDriveToPose(PoseEstimationType::PureOdometry);
-  if (xboxController3.GetRightBumper())
-    swerveAutoController.DriveToPose(Pose2d(-0.5_m,0_m,Rotation2d(90_deg)), PoseEstimationType::PureOdometry);
-
-  if (xboxController3.GetLeftBumperPressed())
-    swerveAutoController.BeginDriveToPose(PoseEstimationType::TagBased);
-  if (xboxController3.GetLeftBumper())
-    swerveAutoController.DriveToPose(ElevatorConstants::AMP_SCORING_POSITION, PoseEstimationType::TagBased);
-
   if (xboxController3.GetYButtonPressed())
     autoAmpController.BeginDriveToAmp();
   if (xboxController3.GetYButton())
     autoAmpController.DriveToAmp();
-    
+      
+  if (xboxController3.GetXButton()){
+    flywheelController.TurnToSpeaker();
+  }
   /*
   // Follow spline for testing
   if (xboxController.GetBButtonPressed())
@@ -229,12 +222,20 @@ void Robot::TeleopPeriodic()
   if (xboxController2.GetYButtonPressed()){
     notecontroller.BeginScoreNoteInPosition(Elevator::ElevatorSetting::TRAP);
   }
+  if (xboxController3.GetAButtonPressed())
+  {
+    flywheelController.BeginAimAndFire();
+  }
 
   // This is the actual control scheme
-  if (xboxController.GetRightBumper())
+  if (xboxController3.GetAButton())
+  {
+    flywheelController.AimAndFire();
+  }
+  else if (xboxController.GetRightBumper())
   {
     bool done = notecontroller.IntakeNoteToSelector();
-    lightStrip.SetLED(LEDLights::green);//TODO: actually impliment
+    //lightStrip.SetLED(LEDLights::green);//TODO: actually impliment
     if (!done)
       wristSetPoint = Intake::LOW;
   }
@@ -247,7 +248,7 @@ void Robot::TeleopPeriodic()
   }
   else if(xboxController2.GetLeftTriggerAxis() > 0.5){
     overbumper.ShootNote();
-    lightStrip.SetLED(LEDLights::fire);//TODO: actually impliment
+    //lightStrip.SetLED(LEDLights::fire);//TODO: actually impliment
   }
   else if (xboxController2.GetRightBumper()){
     notecontroller.FromElevatorToSelector();
@@ -278,12 +279,12 @@ void Robot::TeleopPeriodic()
   }
 
 
-  if (xboxController3.GetAButtonPressed())
+  /*if (xboxController3.GetAButtonPressed())
     swerveAutoController.BeginDriveToNote();
   if (xboxController3.GetAButton())
   { 
     swerveAutoController.TurnToNote();
-  }
+  }*/
 
   if (xboxController3.GetBButtonPressed())
       swerveAutoController.BeginDriveToNote();
@@ -314,7 +315,7 @@ void Robot::TeleopPeriodic()
   }
 
 
-  if (xboxController2.GetPOV() == 0){
+  /*if (xboxController2.GetPOV() == 0){
     flywheel.PIDAngler(SmartDashboard::GetNumber("Angler Setpoint", M_PI / 2));
   }
   else if (xboxController2.GetPOV() == 180)
@@ -323,7 +324,7 @@ void Robot::TeleopPeriodic()
   }
   else{
     flywheel.MoveAnglerPercent(0);
-  }
+  }*/
 
 
   /*if(xboxController3.GetAButtonPressed()){
@@ -333,10 +334,6 @@ void Robot::TeleopPeriodic()
   if (anglingToSpeaker){
     flywheelController.AngleFlywheelToSpeaker();
   }*/
-  
-  if (xboxController3.GetXButton()){
-    flywheelController.TurnToSpeaker();
-  }
 
   //PID Intake wrist
   overbumper.PIDWristToPoint(wristSetPoint);

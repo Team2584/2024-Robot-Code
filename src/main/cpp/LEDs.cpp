@@ -1,3 +1,4 @@
+#include "LEDs.h"
 
 /* !!!!!!!!!!
 In Robot.cpp:
@@ -17,13 +18,6 @@ void LEDLights::SetLED(int color)
   lights->Set(lightEffectIDs[color]);
   currentLightingEffect = color;
 }
-
-
-
-
-
-
-#include "LEDs.h"
 
 LEDLights::LEDLights(int port)
 {

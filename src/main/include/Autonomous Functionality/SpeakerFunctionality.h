@@ -18,6 +18,7 @@ private:
 
     Timer shotTimer;
     double targetAnglerAngle;
+    bool shootingNote;
 
 public:
     AutonomousShootingController(SwerveDriveAutonomousController *swerveDrive, FlywheelSystem *flyWheel_, Intake *intake_);
@@ -27,5 +28,6 @@ public:
     bool AngleFlywheelToSpeaker();
     bool SpinFlywheelForSpeaker();
     bool ClearElevatorForShot();
+    void BeginAimAndFire();
     bool AimAndFire();
 };
