@@ -54,6 +54,8 @@
 #include <rev/CANSparkMax.h>
 #include <rev/AbsoluteEncoder.h>
 
+#include <frc/PWM.h>
+
 #include <frc/controller/SimpleMotorFeedforward.h>
 #include <frc/controller/PIDController.h>
 

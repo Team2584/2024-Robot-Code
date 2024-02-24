@@ -132,7 +132,10 @@ void VisionSwerve::DriveSwervePercentTagOriented(double FwdDriveSpeed, double St
 
 void VisionSwerve::UpdateRaspiConnection()
 {
-    connectedEntry.Set(true);
+    if (sanityEntry.Get() == -1)
+        connectedEntry.Set(false);
+    else
+        connectedEntry.Set(true);
 }
 
 void VisionSwerve::PrintRaspiSanityCheck()
