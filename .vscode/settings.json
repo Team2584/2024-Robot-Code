@@ -25,6 +25,7 @@
     "memory": "cpp",
     "functional": "cpp",
     "type_traits": "cpp",
-    "utility": "cpp"
+    "utility": "cpp",
+    "iterator": "cpp"
   }
 }

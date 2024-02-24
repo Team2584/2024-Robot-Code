@@ -25,7 +25,9 @@ inline const std::vector<frc::AprilTag> FIELD_TAG_LAYOUT = {
     };
 inline const AprilTagFieldLayout APRIL_TAGS = AprilTagFieldLayout(FIELD_TAG_LAYOUT, 54_ft, 27_ft); // frc field is 54 ft by 27 ft
 
-inline const Translation3d SPEAKER_POSITION = {0_m, 4.98_m, 2.75_m}; // TODO MAY BE INCORRECT, PLEASE CHECK SOMEONE
-inline const Translation3d SPEAKER_AIM_POSITION = {0.3_m, 4.98_m, 2.75_m}; // TODO MAY BE INCORRECT, PLEASE CHECK SOMEONE
+inline const Translation3d BLUE_SPEAKER_POSITION = {0_m, 4.98_m, 2.75_m}; 
+inline const Translation3d BLUE_SPEAKER_AIM_POSITION = {0.3_m, 4.98_m, 2.75_m}; 
+inline const Translation3d RED_SPEAKER_POSITION = {16.579342_m, 5.547867999999999_m, 2.75_m}; 
+inline const Translation3d RED_SPEAKER_AIM_POSITION = {16.279342_m, 5.547867999999999_m, 2.75_m}; 
 
 #endif // FIELD_CONSTANTS_H

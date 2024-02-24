@@ -8,12 +8,19 @@ AutonomousShootingController::AutonomousShootingController(SwerveDriveAutonomous
     intake = intake_;
 }
 
-bool AutonomousShootingController::TurnToSpeaker()
+bool AutonomousShootingController::TurnToSpeaker(AllianceColor allianceColor)
 {
     Pose2d currentPose = swerveDrive->swerveDrive->GetTagOdometryPose();
 
     // Determine what our target angle is
-    Translation2d diff = SPEAKER_AIM_POSITION.ToTranslation2d() - currentPose.Translation(); 
+    Translation2d diff;
+    
+    if (allianceColor == AllianceColor::BLUE)
+        diff = BLUE_SPEAKER_AIM_POSITION.ToTranslation2d() - currentPose.Translation(); 
+    else
+        diff = RED_SPEAKER_AIM_POSITION.ToTranslation2d() - currentPose.Translation(); 
+    
+    
     Rotation2d targetAngle = Rotation2d(units::radian_t{atan2(diff.Y().value(), diff.X().value())});
 
     SmartDashboard::PutNumber("Targe Speaker Swerve Angle", targetAngle.Degrees().value());
@@ -21,12 +28,18 @@ bool AutonomousShootingController::TurnToSpeaker()
     return swerveDrive->DriveToPose(Pose2d(currentPose.Translation(), targetAngle), PoseEstimationType::TagBased); // Drive to current pose but at the target angle
 }
 
-void AutonomousShootingController::TurnToSpeakerWhileDriving(double xSpeed, double ySpeed)
+void AutonomousShootingController::TurnToSpeakerWhileDriving(double xSpeed, double ySpeed, AllianceColor allianceColor)
 {
     Pose2d currentPose = swerveDrive->swerveDrive->GetTagOdometryPose();
 
     // Determine what our target angle is
-    Translation2d diff = SPEAKER_AIM_POSITION.ToTranslation2d() - currentPose.Translation(); 
+    Translation2d diff;
+    
+    if (allianceColor == AllianceColor::BLUE)
+        diff = BLUE_SPEAKER_AIM_POSITION.ToTranslation2d() - currentPose.Translation(); 
+    else
+        diff = RED_SPEAKER_AIM_POSITION.ToTranslation2d() - currentPose.Translation(); 
+
     Rotation2d targetAngle = Rotation2d(units::radian_t{atan2(diff.Y().value(), diff.X().value())});
 
     SmartDashboard::PutNumber("Targe Speaker Swerve Angle", targetAngle.Degrees().value());
@@ -34,13 +47,19 @@ void AutonomousShootingController::TurnToSpeakerWhileDriving(double xSpeed, doub
     swerveDrive->TurnToAngleWhileDriving(xSpeed, ySpeed, targetAngle, PoseEstimationType::TagBased); 
 }
 
-bool AutonomousShootingController::AngleFlywheelToSpeaker()
+bool AutonomousShootingController::AngleFlywheelToSpeaker(AllianceColor allianceColor)
 {   
     Translation2d currentPos = swerveDrive->swerveDrive->GetTagOdometryPose().Translation();
 
     // Determine what our target angle is
-    units::meter_t distance = currentPos.Distance(SPEAKER_POSITION.ToTranslation2d());
+    units::meter_t distance;
     
+    if (allianceColor == AllianceColor::BLUE)
+        distance = currentPos.Distance(BLUE_SPEAKER_POSITION.ToTranslation2d());
+    else
+        distance = currentPos.Distance(RED_SPEAKER_POSITION.ToTranslation2d());
+
+
     if (distance <= 3_m)
         targetAnglerAngle = 0.995 - 0.148 * distance.value(); //Equation found by testing and getting data
     else
@@ -50,7 +69,7 @@ bool AutonomousShootingController::AngleFlywheelToSpeaker()
     return flyWheel->PIDAngler(targetAnglerAngle);
 }
 
-bool AutonomousShootingController::SpinFlywheelForSpeaker()
+bool AutonomousShootingController::SpinFlywheelForSpeaker(AllianceColor allianceColor)
 {
     return flyWheel->SetFlywheelVelocity(3500);
 }
@@ -62,16 +81,16 @@ bool AutonomousShootingController::ClearElevatorForShot()
     return true;
 }
 
-void AutonomousShootingController::BeginAimAndFire()
+void AutonomousShootingController::BeginAimAndFire(AllianceColor allianceColor)
 {
     shootingNote = false;
 }
 
-bool AutonomousShootingController::AimAndFire()
+bool AutonomousShootingController::AimAndFire(AllianceColor allianceColor)
 {
-    bool turnt = TurnToSpeaker();
-    bool angled = AngleFlywheelToSpeaker();
-    bool spinning = SpinFlywheelForSpeaker();
+    bool turnt = TurnToSpeaker(allianceColor);
+    bool angled = AngleFlywheelToSpeaker(allianceColor);
+    bool spinning = SpinFlywheelForSpeaker(allianceColor);
     bool elevatorCleared = ClearElevatorForShot();
 
     SmartDashboard::PutBoolean("Turned to Speaker", turnt);

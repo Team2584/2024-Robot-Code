@@ -40,6 +40,8 @@ Elevator::ElevatorSetting elevSetHeight = Elevator::LOW;
 Intake::WristSetting wristSetPoint = Intake::HIGH;
 bool anglingToSpeaker = false;
 
+AllianceColor allianceColor;
+
 void Robot::RobotInit()
 {
   m_chooser.SetDefaultOption(kAutoBCSI2S, kAutoBCSI2S);
@@ -62,6 +64,15 @@ void Robot::RobotInit()
  */
 void Robot::RobotPeriodic() {
   swerveDrive.UpdateRaspiConnection();
+
+  if (DriverStation::GetMatchType() != DriverStation::MatchType::kNone)
+  {
+    if (DriverStation::GetAlliance() == DriverStation::kRed)
+      allianceColor = AllianceColor::RED;
+    else
+      allianceColor = AllianceColor::BLUE;
+  }
+  SmartDashboard::PutBoolean("Is Blue Alliance", allianceColor == AllianceColor::BLUE);
 }
 
 /**
@@ -83,11 +94,20 @@ void Robot::AutonomousInit()
   fmt::print("Auto selected: {}\n", m_autoSelected);
 
   if (m_autoSelected == kAutoBCSI2S)
+  {
     autoController.SetupBlueCenterShootIntake2Shoot(); 
+    allianceColor = AllianceColor::BLUE;
+  }
   else if (m_autoSelected == kAutoBLSI3S)
+  {
     autoController.SetupBlueLeftShootIntake3Shoot();
+    allianceColor = AllianceColor::BLUE;
+  }
   else if (m_autoSelected == kAutoBRSI1S)
+  {
     autoController.SetupBlueRightShootIntake1Shoot();
+    allianceColor = AllianceColor::BLUE;
+  }
 }
 
 void Robot::AutonomousPeriodic()
@@ -183,12 +203,12 @@ void Robot::TeleopPeriodic()
 
   // Drive to a position for testing
   if (xboxController3.GetYButtonPressed())
-    autoAmpController.BeginDriveToAmp();
+    autoAmpController.BeginDriveToAmp(allianceColor);
   if (xboxController3.GetYButton())
-    autoAmpController.DriveToAmp();
+    autoAmpController.DriveToAmp(allianceColor);
       
   if (xboxController3.GetXButton()){
-    flywheelController.TurnToSpeaker();
+    flywheelController.TurnToSpeaker(allianceColor);
   }
   
   // Follow spline for testing
@@ -224,13 +244,13 @@ void Robot::TeleopPeriodic()
   }
   if (xboxController3.GetAButtonPressed())
   {
-    flywheelController.BeginAimAndFire();
+    flywheelController.BeginAimAndFire(allianceColor);
   }
 
   // This is the actual control scheme
   if (xboxController3.GetAButton())
   {
-    flywheelController.AimAndFire();
+    flywheelController.AimAndFire(allianceColor);
   }
   else if (xboxController.GetRightBumper())
   {

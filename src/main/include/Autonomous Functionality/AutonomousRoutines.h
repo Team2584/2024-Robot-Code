@@ -29,6 +29,7 @@ public:
     AutonomousController(VisionSwerve *swerveDrive_, Intake *intake_, FlywheelSystem *flywheel_, Elevator *ampMech_, SwerveDriveAutonomousController *swerveDriveController_, NoteController *noteController_, AutonomousShootingController *shootingController_, AutonomousAmpingController *ampingController_);
 
     void SetupAuto(Pose2d startingPose);
+    void BasicShootIntakeShoot(AllianceColor allianceColor);
     void SetupBlueCenterShootIntake2Shoot();
     void BlueCenterShootIntake2Shoot();
     void SetupBlueLeftShootIntake3Shoot();

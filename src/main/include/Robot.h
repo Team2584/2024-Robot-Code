@@ -26,6 +26,7 @@
 #include <frc/XboxController.h>
 #include <frc/DutyCycleEncoder.h>
 #include <frc/DigitalInput.h>
+#include <frc/DriverStation.h>
 
 #include <frc/controller/ArmFeedforward.h>
 #include <frc/controller/ElevatorFeedforward.h>
@@ -67,6 +68,8 @@
 
 using namespace frc;
 using namespace std;
+
+enum AllianceColor{RED, BLUE};
 
 class Robot : public frc::TimedRobot {
  public:
