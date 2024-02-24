@@ -285,7 +285,7 @@ bool SwerveDriveAutonomousController::FollowTrajectory(PoseEstimationType poseEs
     }
 
     /* Drive the Swerve */
-    swerveDrive->DriveSwerveMetersAndRadians(xFeedForward.value() + PIDSpeeds[0], yFeedForward.value() + PIDSpeeds[1], rotationFeedForward.value() + PIDSpeeds[2]);
+    swerveDrive->DriveSwerveTagOrientedMetersAndRadians(xFeedForward.value() + PIDSpeeds[0], yFeedForward.value() + PIDSpeeds[1], rotationFeedForward.value() + PIDSpeeds[2]);
     return false;
 }
 

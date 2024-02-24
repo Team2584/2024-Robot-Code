@@ -27,7 +27,7 @@ bool AutonomousAmpingController::DriveToAmp(){
 
     if (ampTimer.Get() < ElevatorConstants::ampDriveTime)
     {
-        swerveDrive->swerveDrive->DriveSwervePercent(0, -0.3, 0);
+        swerveDrive->swerveDrive->DriveSwervePercentTagOriented(0, -0.3, 0);
         return false;
     }
     
