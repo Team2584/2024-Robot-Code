@@ -4,6 +4,8 @@
 
 #pragma once
 
+#include "LEDs.h"
+
 #include <string>
 #include <queue>
 

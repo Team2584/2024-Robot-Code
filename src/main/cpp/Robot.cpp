@@ -16,19 +16,18 @@
 #include "FlyWheel.h"
 #include "Elevator.h"
 #include "Climb.h"
-#include "LEDs.h"
 #include "NoteController.h"
 
 VisionSwerve swerveDrive{};
 XboxController xboxController{0};
 XboxController xboxController2{1};
 XboxController xboxController3{2};
-Intake overbumper{};
 FlywheelSystem flywheel{};
 Elevator ampmech{};
 Climb hang{&swerveDrive};
 NoteController notecontroller{&overbumper, &flywheel, &ampmech};
 LEDLights lightStrip{0};
+Intake overbumper{&lightStrip};
 
 SwerveDriveAutonomousController swerveAutoController{&swerveDrive};
 AutonomousShootingController flywheelController{&swerveAutoController, &flywheel, &overbumper};
@@ -235,7 +234,6 @@ void Robot::TeleopPeriodic()
   else if (xboxController.GetRightBumper())
   {
     bool done = notecontroller.IntakeNoteToSelector();
-    //lightStrip.SetLED(LEDLights::green);//TODO: actually impliment
     if (!done)
       wristSetPoint = Intake::LOW;
   }
@@ -248,7 +246,6 @@ void Robot::TeleopPeriodic()
   }
   else if(xboxController2.GetLeftTriggerAxis() > 0.5){
     overbumper.ShootNote();
-    //lightStrip.SetLED(LEDLights::fire);//TODO: actually impliment
   }
   else if (xboxController2.GetRightBumper()){
     notecontroller.FromElevatorToSelector();
@@ -277,6 +274,8 @@ void Robot::TeleopPeriodic()
     ampmech.SetAmpMotorPercent(0);
     ampmech.StopElevator();
   }
+
+  lightStrip.SetLED((overbumper.GetObjectInIntake() ? LEDLights::fire : LEDLights::orange));
 
 
   /*if (xboxController3.GetAButtonPressed())
@@ -431,7 +430,7 @@ void Robot::TeleopPeriodic()
   SmartDashboard::PutNumber("BR Module Heading", swerveDrive.BRModule.GetMagEncoderValue());
   
   SmartDashboard::PutNumber("FL Drive Encoder", swerveDrive.FLModule.GetDriveEncoder());
-    SmartDashboard::PutNumber("FR Drive Encoder", swerveDrive.FRModule.GetDriveEncoder());
+  SmartDashboard::PutNumber("FR Drive Encoder", swerveDrive.FRModule.GetDriveEncoder());
   SmartDashboard::PutNumber("BL Drive Encoder", swerveDrive.BLModule.GetDriveEncoder());
 
   SmartDashboard::PutNumber("Odometry X Position", swerveDrive.GetOdometryPose().X().value());
