@@ -50,6 +50,12 @@ void Robot::RobotInit()
   m_chooser.SetDefaultOption(kAutoBCSI2S, kAutoBCSI2S);
   m_chooser.AddOption(kAutoBLSI3S, kAutoBLSI3S);
   m_chooser.AddOption(kAutoBRSI1S, kAutoBRSI1S);
+  m_chooser.AddOption(kAutoRCSI10S, kAutoRCSI10S);
+  m_chooser.AddOption(kAutoRLSI9S, kAutoRLSI9S);
+  m_chooser.AddOption(kAutoRRSI11S, kAutoRRSI11S);
+  m_chooser.AddOption(kAutoBLSI3SI8S, kAutoBLSI3SI8S);
+  m_chooser.AddOption(kAutoBLSS3S8TEST, kAutoBLSS3S8TEST);
+
   frc::SmartDashboard::PutData("Auto Modes", &m_chooser);
   
   SmartDashboard::PutNumber("Flywheel Setpoint", 0);
@@ -111,6 +117,31 @@ void Robot::AutonomousInit()
     autoController.SetupBlueRightShootIntake1Shoot();
     allianceColor = AllianceColor::BLUE;
   }
+  else if (m_autoSelected == kAutoRLSI9S)
+  {
+    autoController.SetupRedLeftShootIntake9Shoot();
+    allianceColor = AllianceColor::RED;
+  }
+  else if (m_autoSelected == kAutoRCSI10S)
+  {
+    autoController.SetupRedCenterShootIntake10Shoot();
+    allianceColor = AllianceColor::RED;
+  }
+  else if (m_autoSelected == kAutoRRSI11S)
+  {
+    autoController.SetupRedRightShootIntake11Shoot();
+    allianceColor = AllianceColor::RED;
+  }
+  else if (m_autoSelected == kAutoBLSI3SI8S)
+  {
+    autoController.SetupBlueLeftShootIntake3ShootIntake8Shoot();
+    allianceColor = AllianceColor::BLUE;
+  }
+  else if (m_autoSelected == kAutoBLSS3S8TEST)
+  {
+    autoController.SetupBlueLeftShootIntake3ShootIntake8ShootTESTING();    
+    allianceColor = AllianceColor::BLUE;
+  }
 }
 
 void Robot::AutonomousPeriodic()
@@ -125,6 +156,16 @@ void Robot::AutonomousPeriodic()
     autoController.BlueLeftShootIntake3Shoot();
   else if (m_autoSelected == kAutoBRSI1S)
     autoController.BlueRightShootIntake1Shoot();
+  else if (m_autoSelected == kAutoRCSI10S)
+    autoController.RedCenterShootIntake10Shoot();
+  else if (m_autoSelected == kAutoRLSI9S)
+    autoController.RedLeftShootIntake9Shoot();
+  else if (m_autoSelected == kAutoRRSI11S)
+    autoController.RedRightShootIntake11Shoot();
+  else if (m_autoSelected == kAutoBLSI3SI8S)
+    autoController.BlueLeftShootIntake3ShootIntake8Shoot();
+  else if (m_autoSelected == kAutoBLSS3S8TEST)
+    autoController.BlueLeftShootIntake3ShootIntake8ShootTESTING();    
 }
 
 void Robot::TeleopInit()

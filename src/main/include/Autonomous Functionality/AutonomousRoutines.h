@@ -42,4 +42,8 @@ public:
     void RedLeftShootIntake9Shoot();
     void SetupRedRightShootIntake11Shoot();
     void RedRightShootIntake11Shoot();
+    void SetupBlueLeftShootIntake3ShootIntake8Shoot();
+    void BlueLeftShootIntake3ShootIntake8Shoot();
+    void SetupBlueLeftShootIntake3ShootIntake8ShootTESTING();
+    void BlueLeftShootIntake3ShootIntake8ShootTESTING();
 };
