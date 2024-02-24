@@ -227,6 +227,9 @@ bool SwerveDriveAutonomousController::FollowTrajectory(PoseEstimationType poseEs
     SmartDashboard::PutNumber("Trajectory FF X", xFeedForward.value());
     SmartDashboard::PutNumber("Trajectory FF Y", yFeedForward.value());
     SmartDashboard::PutNumber("Trajectory FF Rotation", rotationFeedForward.value());
+    SmartDashboard::PutNumber("Trajectory Total Time", currentTrajectory.getTotalTime().value());
+    SmartDashboard::PutNumber("Trajectory Current Time", currentTime.value());
+
 
     /* Set PID Speeds */
 

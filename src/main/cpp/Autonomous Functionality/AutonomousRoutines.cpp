@@ -28,12 +28,18 @@ void AutonomousController::SetupBlueCenterShootIntake2Shoot()
 {
     SetupAuto(Pose2d(1.39_m, 5.51_m, Rotation2d(180_deg)));
     swerveDriveController->LoadTrajectory("BCTo2");
-    swerveDriveController->BeginNextTrajectory();
 }
 
 void AutonomousController::BlueCenterShootIntake2Shoot()
 {
+    SmartDashboard::PutNumber("spline section", splineSection);
     if (splineSection == 0)
+    {
+        shootingController->BeginAimAndFire();
+        splineSection = 0.5;
+    }
+
+    if (splineSection == 0.5)
     {
         intake->PIDWristToPoint(Intake::WristSetting::LOW);
         bool shotNote = shootingController->AimAndFire();
@@ -44,6 +50,7 @@ void AutonomousController::BlueCenterShootIntake2Shoot()
 
         if (shotNote || safetyTimer.Get() > 2.5_s)
         {
+            swerveDriveController->BeginNextTrajectory();
             safetyTimer.Restart();
             splineSection = 1;
         }
@@ -55,12 +62,15 @@ void AutonomousController::BlueCenterShootIntake2Shoot()
         bool noteInIntake = noteController->IntakeNoteToSelector();
         bool splineDone = swerveDriveController->FollowTrajectory(PoseEstimationType::TagBased);
 
+        SmartDashboard::PutBoolean("note in intake", noteInIntake);
+
         if (noteInIntake || safetyTimer.Get() > 4_s)
         {
+            shootingController->BeginAimAndFire();
             intake->SetIntakeMotorSpeed(0);
             swerveDrive->DriveSwervePercent(0,0,0);
             safetyTimer.Restart();
-            splineSection == 1.5;
+            splineSection = 1.5;
         }
     }
 
@@ -93,7 +103,6 @@ void AutonomousController::SetupBlueLeftShootIntake3Shoot()
 {
     SetupAuto(Pose2d(0.74_m, 4.35_m, Rotation2d(-57.72_deg)));
     swerveDriveController->LoadTrajectory("BLTo3");
-    swerveDriveController->BeginNextTrajectory();
 }
 
 void AutonomousController::BlueLeftShootIntake3Shoot()
@@ -105,7 +114,6 @@ void AutonomousController::SetupBlueRightShootIntake1Shoot()
 {
     SetupAuto(Pose2d(0.76_m, 6.68_m, Rotation2d(58.39_deg)));
     swerveDriveController->LoadTrajectory("BRTo1");
-    swerveDriveController->BeginNextTrajectory();
 }
 
 void AutonomousController::BlueRightShootIntake1Shoot()

@@ -190,18 +190,18 @@ void Robot::TeleopPeriodic()
   if (xboxController3.GetXButton()){
     flywheelController.TurnToSpeaker();
   }
-  /*
+  
   // Follow spline for testing
-  if (xboxController.GetBButtonPressed())
+  if (xboxController3.GetBButtonPressed())
   {
     swerveAutoController.ResetTrajectoryQueue();
-    swerveAutoController.LoadTrajectory("Test");
+    swerveAutoController.LoadTrajectory("BCTo2");
     swerveAutoController.BeginNextTrajectory();
   }
-  if (xboxController.GetBButton())
+  if (xboxController3.GetBButton())
   {
-    swerveAutoController.FollowTrajectory(PoseEstimationType::PureOdometry);
-  }*/
+    swerveAutoController.FollowTrajectory(PoseEstimationType::TagBased);
+  }
 
   /*                                            
    _  _     _          ___         _           _ _         
@@ -286,6 +286,7 @@ void Robot::TeleopPeriodic()
     swerveAutoController.TurnToNote();
   }*/
 
+  /*
   if (xboxController3.GetBButtonPressed())
       swerveAutoController.BeginDriveToNote();
   if (xboxController3.GetBButton())
@@ -296,7 +297,7 @@ void Robot::TeleopPeriodic()
       wristSetPoint = Intake::LOW;
       swerveAutoController.DriveToNote();
     }
-  }
+  }*/
 
   
   /*                                                      
