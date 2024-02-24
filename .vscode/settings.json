@@ -26,6 +26,9 @@
     "functional": "cpp",
     "type_traits": "cpp",
     "utility": "cpp",
-    "iterator": "cpp"
+    "iterator": "cpp",
+    "optional": "cpp",
+    "system_error": "cpp",
+    "regex": "cpp"
   }
 }

@@ -95,6 +95,10 @@ bool  Elevator::GetElevatorAtSetpoint(){
     return m_controller.AtGoal();
 }
 
+double Elevator::GetElevatorSetpoint(){
+    return m_controller.GetGoal().position.value();
+}
+
 bool Elevator::MoveToHeight(ElevatorSetting Height) {
     if (Height == AMP){
        return PIDElevator(ElevatorConstants::ELEV_AMP);
