@@ -36,4 +36,10 @@ public:
     void BlueLeftShootIntake3Shoot();
     void SetupBlueRightShootIntake1Shoot();
     void BlueRightShootIntake1Shoot();
+    void SetupRedCenterShootIntake10Shoot();
+    void RedCenterShootIntake10Shoot();
+    void SetupRedLeftShootIntake9Shoot();
+    void RedLeftShootIntake9Shoot();
+    void SetupRedRightShootIntake11Shoot();
+    void RedRightShootIntake11Shoot();
 };

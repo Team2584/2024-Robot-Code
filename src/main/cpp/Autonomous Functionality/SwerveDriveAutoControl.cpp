@@ -205,7 +205,7 @@ bool SwerveDriveAutonomousController::FollowTrajectory(PoseEstimationType poseEs
 
     units::second_t currentTime = trajectoryTimer.Get(); /* current time in the trajectory */
     pathplanner::PathPlannerTrajectory::State currentState  = currentTrajectory.sample(currentTime); /* current position estimated for the robot in an ideal world*/
-    Rotation2d currentHeading = Rotation2d(currentState.heading.Radians() * -1); /* Reverse the clockwise positive heading given by pathplanner */
+    Rotation2d currentHeading = Rotation2d(currentState.heading.Radians());
     bool trajectoryFinished = currentTrajectory.getTotalTime() < currentTime; /* If the trajectory would be finished in the ideal world */
 
     /* Set Feed Forward Speeds*/

@@ -106,7 +106,7 @@ void AutonomousController::BlueCenterShootIntake2Shoot()
 
 void AutonomousController::SetupBlueLeftShootIntake3Shoot()
 {
-    SetupAuto(Pose2d(0.74_m, 4.35_m, Rotation2d(-57.72_deg)));
+    SetupAuto(Pose2d(0.76_m, 6.68_m, Rotation2d(-120_deg)));
     swerveDriveController->LoadTrajectory("BLTo3");
 }
 
@@ -117,7 +117,7 @@ void AutonomousController::BlueLeftShootIntake3Shoot()
 
 void AutonomousController::SetupBlueRightShootIntake1Shoot()
 {
-    SetupAuto(Pose2d(0.76_m, 6.68_m, Rotation2d(58.39_deg)));
+    SetupAuto(Pose2d(0.74_m, 4.35_m, Rotation2d(120_deg)));
     swerveDriveController->LoadTrajectory("BRTo1");
 }
 
@@ -125,3 +125,37 @@ void AutonomousController::BlueRightShootIntake1Shoot()
 {
     BasicShootIntakeShoot(AllianceColor::BLUE);
 }
+
+void AutonomousController::SetupRedCenterShootIntake10Shoot()
+{
+    SetupAuto(Pose2d(15.22_m, 5.57_m, Rotation2d(0_deg)));
+    swerveDriveController->LoadTrajectory("RCTo10");
+}
+
+void AutonomousController::RedCenterShootIntake10Shoot()
+{
+    BasicShootIntakeShoot(AllianceColor::RED);
+}
+
+void AutonomousController::SetupRedLeftShootIntake9Shoot()
+{
+    SetupAuto(Pose2d(15.81_m, 4.43_m, Rotation2d(60_deg)));
+    swerveDriveController->LoadTrajectory("RLTo9");
+}
+
+void AutonomousController::RedLeftShootIntake9Shoot()
+{
+    BasicShootIntakeShoot(AllianceColor::RED);
+}
+
+void AutonomousController::SetupRedRightShootIntake11Shoot()
+{
+    SetupAuto(Pose2d(15.79_m, 6.7_m, Rotation2d(150_deg)));
+    swerveDriveController->LoadTrajectory("RRTo11");
+}
+
+void AutonomousController::RedRightShootIntake11Shoot()
+{
+    BasicShootIntakeShoot(AllianceColor::RED);
+}
+
