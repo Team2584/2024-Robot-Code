@@ -169,6 +169,8 @@ void AutonomousController::SetupBlueLeftShootIntake3ShootIntake8Shoot()
 void AutonomousController::BlueLeftShootIntake3ShootIntake8Shoot()
 {
     SmartDashboard::PutNumber("spline section", splineSection);
+    SmartDashboard::PutNumber("safety timer", safetyTimer.Get().value());
+    
     if (splineSection == 0)
     {
         shootingController->BeginAimAndFire(AllianceColor::BLUE);
@@ -213,12 +215,12 @@ void AutonomousController::BlueLeftShootIntake3ShootIntake8Shoot()
         intake->PIDWristToPoint(Intake::WristSetting::SHOOT);
         bool shotNote = shootingController->AimAndFire(AllianceColor::BLUE);
 
-        if (safetyTimer.Get() > 2_s)
+        if (safetyTimer.Get() > 3_s)
         {
             intake->ShootNote();
         }
 
-        if (shotNote || safetyTimer.Get() > 3_s)
+        if (shotNote || safetyTimer.Get() > 4_s)
         {
             safetyTimer.Restart();
             swerveDriveController->BeginNextTrajectory();

@@ -62,7 +62,7 @@ bool AutonomousShootingController::AngleFlywheelToSpeaker(AllianceColor alliance
 
 
     if (distance <= 3_m)
-        targetAnglerAngle = 0.995 - 0.148 * distance.value(); //Equation found by testing and getting data
+        targetAnglerAngle = 0.995 - 0.144 * distance.value(); //Equation found by testing and getting data
     else
         targetAnglerAngle = 0.55;
 
