@@ -146,8 +146,14 @@ void Robot::TeleopPeriodic()
 
   // Find controller input (*-1 converts values to fwd/left/counterclockwise positive)
   double leftJoystickX, leftJoystickY, rightJoystickX, rightJoystickY;
-  leftJoystickY = xboxController.GetLeftY() * -1;
-  leftJoystickX = xboxController.GetLeftX() * -1;
+  leftJoystickY = xboxController.GetLeftY();
+  leftJoystickX = xboxController.GetLeftX();
+  if (allianceColor == AllianceColor::BLUE)
+  {
+    leftJoystickY *= -1;
+    leftJoystickX *= -1;
+  }
+
   rightJoystickX = xboxController.GetRightX() * -1;
   rightJoystickY = xboxController.GetRightY() * -1;
 
