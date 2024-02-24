@@ -77,10 +77,19 @@ bool AutonomousShootingController::SpinFlywheelForSpeaker(AllianceColor alliance
 
 bool AutonomousShootingController::ClearElevatorForShot()
 {
-    // The class's variable targetAnglerAngle has the goal angle for the angler in radians.
-    // I figured feeding this function where the angler wants to be rather than where it is would be more efficient so we don't have the elevator hop around as the angler goes to it's position or wait to raise before the angler reaches it's position
-    elevator->StopElevator();
-    elevator->SetAmpMotorPercent(0);
+    double angle = targetAnglerAngle;
+
+    if(angle > FlywheelConstants::Angler::BLOCKED_LOW && angle < FlywheelConstants::Angler::BLOCKED_HIGH){
+        elevator->PIDElevator(ElevatorConstants::ELEV_TRAP);
+        elevator->SetAmpMotorPercent(0);
+        return elevator->GetElevatorSetpoint();
+    }
+    else{
+        elevator->StopElevator();
+        elevator->SetAmpMotorPercent(0);
+        return true;
+    }
+
     return true;
 }
 

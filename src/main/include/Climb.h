@@ -1,5 +1,9 @@
 #include "Robot.h"
 #include "constants/ClimbConstants.h"
+#include "VisionBasedSwerve.h" 
+
+#ifndef CLIMB_H
+#define CLIMB_H
 
 class Climb {
 
@@ -52,3 +56,5 @@ class Climb {
         bool GetClimbDone();
 
 };
+
+#endif
