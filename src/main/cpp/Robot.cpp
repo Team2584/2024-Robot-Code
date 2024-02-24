@@ -11,6 +11,7 @@
 #include "Autonomous Functionality/SwerveDriveAutoControl.h"
 #include "Autonomous Functionality/SpeakerFunctionality.h"
 #include "Autonomous Functionality/AmpFunctionality.h"
+#include "Autonomous Functionality/TrapFunctionality.h"
 #include "Autonomous Functionality/AutonomousRoutines.h"
 #include "Intake.h"
 #include "FlyWheel.h"
@@ -33,6 +34,7 @@ LEDLights lightStrip{0};
 SwerveDriveAutonomousController swerveAutoController{&swerveDrive};
 AutonomousShootingController flywheelController{&swerveAutoController, &flywheel, &overbumper, &ampmech};
 AutonomousAmpingController autoAmpController{&swerveAutoController, &notecontroller};
+AutonomousTrapController autoTrapController{&notecontroller, &ampmech, &hang};
 
 AutonomousController autoController{&swerveDrive, &overbumper, &flywheel, &ampmech, &swerveAutoController, &notecontroller, &flywheelController, &autoAmpController};
 
@@ -42,7 +44,7 @@ bool anglingToSpeaker = false;
 
 AllianceColor allianceColor = AllianceColor::BLUE;
 
-enum DRIVER_MODE {BASIC, AUTO_AIM_STATIONARY, SHOOT_ON_THE_MOVE, AUTO_AMP};
+enum DRIVER_MODE {BASIC, AUTO_AIM_STATIONARY, SHOOT_ON_THE_MOVE, AUTO_AMP, };
 DRIVER_MODE currentDriverMode = DRIVER_MODE::BASIC;
 
 void Robot::RobotInit()
