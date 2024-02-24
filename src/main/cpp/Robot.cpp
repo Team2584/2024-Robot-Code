@@ -53,6 +53,7 @@ void Robot::RobotInit()
   m_chooser.AddOption(kAutoRCSI10S, kAutoRCSI10S);
   m_chooser.AddOption(kAutoRLSI9S, kAutoRLSI9S);
   m_chooser.AddOption(kAutoRRSI11S, kAutoRRSI11S);
+  m_chooser.AddOption(kAutoBR4CloseNotes, kAutoBR4CloseNotes);
   m_chooser.AddOption(kAutoBLSI3SI8S, kAutoBLSI3SI8S);
   m_chooser.AddOption(kAutoBLSS3S8TEST, kAutoBLSS3S8TEST);
 
@@ -145,6 +146,11 @@ void Robot::AutonomousInit()
     autoController.SetupBlueLeftShootIntake3ShootIntake8ShootTESTING();    
     allianceColor = AllianceColor::BLUE;
   }
+  else if (m_autoSelected == kAutoBR4CloseNotes)
+  {
+    autoController.SetupBlueRightShootIntake1ShootIntake2ShootIntake3();
+    allianceColor = AllianceColor::BLUE;
+  }
 }
 
 void Robot::AutonomousPeriodic()
@@ -168,7 +174,9 @@ void Robot::AutonomousPeriodic()
   else if (m_autoSelected == kAutoBLSI3SI8S)
     autoController.BlueLeftShootIntake3ShootIntake8Shoot();
   else if (m_autoSelected == kAutoBLSS3S8TEST)
-    autoController.BlueLeftShootIntake3ShootIntake8ShootTESTING();    
+    autoController.BlueLeftShootIntake3ShootIntake8ShootTESTING(); 
+  else if (m_autoSelected == kAutoBR4CloseNotes)
+    autoController.BlueRightShootIntake1ShootIntake2ShootIntake3();
 }
 
 void Robot::TeleopInit()
@@ -394,24 +402,24 @@ void Robot::TeleopPeriodic()
   if (xboxController3.GetBButtonPressed())
   {
     swerveAutoController.ResetTrajectoryQueue();
-    swerveAutoController.LoadTrajectory("BCTo2");
+    swerveAutoController.LoadTrajectory("1To2");
     swerveAutoController.BeginNextTrajectory();
   }
   if (xboxController3.GetBButton())
   {
-    swerveAutoController.FollowTrajectory(PoseEstimationType::PureOdometry);
+    swerveAutoController.FollowTrajectory(PoseEstimationType::TagBased);
   }
 
   // Follow spline for testing
   if (xboxController3.GetAButtonPressed())
   {
     swerveAutoController.ResetTrajectoryQueue();
-    swerveAutoController.LoadTrajectory("BRTo1");
+    swerveAutoController.LoadTrajectory("Test");
     swerveAutoController.BeginNextTrajectory();
   }
   if (xboxController3.GetAButton())
   {
-    swerveAutoController.FollowTrajectory(PoseEstimationType::PureOdometry);
+    swerveAutoController.FollowTrajectory(PoseEstimationType::TagBased);
   }
 
   /*if (xboxController3.GetAButtonPressed())

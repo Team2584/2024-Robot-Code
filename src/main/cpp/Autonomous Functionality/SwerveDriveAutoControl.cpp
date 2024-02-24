@@ -220,8 +220,8 @@ bool SwerveDriveAutonomousController::FollowTrajectory(PoseEstimationType poseEs
     units::meters_per_second_t xFeedForward, yFeedForward; /* the current velocity estimated for the robot in an ideal world*/
     units::radians_per_second_t rotationFeedForward; /* the current rotational velocity estimated for the robot in an ideal world*/
 
-    xFeedForward = -1 * currentState.velocity * currentHeading.Cos();
-    yFeedForward = -1 * currentState.velocity * currentHeading.Sin(); 
+    xFeedForward = currentState.velocity * currentState.heading.Cos();
+    yFeedForward = currentState.velocity * currentState.heading.Sin(); 
     rotationFeedForward = currentState.headingAngularVelocity;
 
     if (trajectoryFinished)
@@ -296,9 +296,9 @@ bool SwerveDriveAutonomousController::FollowTrajectory(PoseEstimationType poseEs
 
     /* Drive the Swerve */
     if (poseEstimationType == PoseEstimationType::TagBased)
-        swerveDrive->DriveSwerveTagOrientedMetersAndRadians(xFeedForward.value() + PIDSpeeds[0], yFeedForward.value() + PIDSpeeds[1], rotationFeedForward.value() + PIDSpeeds[2]);
+        swerveDrive->DriveSwerveTagOrientedMetersAndRadians(xFeedForward.value() + PIDSpeeds[0], yFeedForward.value() + PIDSpeeds[1], /*rotationFeedForward.value() + */ PIDSpeeds[2]);
     else
-        swerveDrive->DriveSwerveMetersAndRadians(xFeedForward.value() + PIDSpeeds[0], yFeedForward.value() + PIDSpeeds[1], rotationFeedForward.value() + PIDSpeeds[2]);
+        swerveDrive->DriveSwerveMetersAndRadians(xFeedForward.value() + PIDSpeeds[0], yFeedForward.value() + PIDSpeeds[1], /*rotationFeedForward.value() + */ PIDSpeeds[2]);
     
     return false;
 }

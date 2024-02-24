@@ -62,9 +62,9 @@ bool AutonomousShootingController::AngleFlywheelToSpeaker(AllianceColor alliance
 
 
     if (distance <= 3_m)
-        targetAnglerAngle = 0.995 - 0.144 * distance.value(); //Equation found by testing and getting data
+        targetAnglerAngle = 1.04 - 0.179* distance.value(); //Equation found by testing and getting data
     else
-        targetAnglerAngle = 0.55;
+        targetAnglerAngle = 0.5;
 
     SmartDashboard::PutNumber("Target Angler Angle", targetAnglerAngle);
     return flyWheel->PIDAngler(targetAnglerAngle);
@@ -72,28 +72,16 @@ bool AutonomousShootingController::AngleFlywheelToSpeaker(AllianceColor alliance
 
 bool AutonomousShootingController::SpinFlywheelForSpeaker(AllianceColor allianceColor)
 {
-    return flyWheel->SetFlywheelVelocity(3000);
+    return flyWheel->SetFlywheelVelocity(3300);
 }
 
 bool AutonomousShootingController::ClearElevatorForShot()
 {
     // The class's variable targetAnglerAngle has the goal angle for the angler in radians.
     // I figured feeding this function where the angler wants to be rather than where it is would be more efficient so we don't have the elevator hop around as the angler goes to it's position or wait to raise before the angler reaches it's position
-    
-    double angle = targetAnglerAngle;
-
-    if(angle > FlywheelConstants::Angler::BLOCKED_LOW && angle < FlywheelConstants::Angler::BLOCKED_HIGH){
-        elevator->PIDElevator(ElevatorConstants::ELEV_TRAP);
-                elevator->SetAmpMotorPercent(0);
-
-        return elevator->GetElevatorSetpoint();
-    }
-    else{
-        elevator->StopElevator();
-                        elevator->SetAmpMotorPercent(0);
-
-        return true;
-    }
+    elevator->StopElevator();
+    elevator->SetAmpMotorPercent(0);
+    return true;
 }
 
 void AutonomousShootingController::BeginAimAndFire(AllianceColor allianceColor)
