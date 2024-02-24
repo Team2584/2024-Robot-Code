@@ -40,7 +40,7 @@ Elevator::ElevatorSetting elevSetHeight = Elevator::LOW;
 Intake::WristSetting wristSetPoint = Intake::HIGH;
 bool anglingToSpeaker = false;
 
-AllianceColor allianceColor;
+AllianceColor allianceColor = AllianceColor::BLUE;
 
 enum DRIVER_MODE {BASIC, AUTO_AIM_STATIONARY, SHOOT_ON_THE_MOVE, AUTO_AMP};
 DRIVER_MODE currentDriverMode = DRIVER_MODE::BASIC;
@@ -81,6 +81,9 @@ void Robot::RobotPeriodic() {
     else
       allianceColor = AllianceColor::BLUE;
   }
+  
+  allianceColor = AllianceColor::BLUE;
+  SmartDashboard::PutBoolean("In Match", DriverStation::GetMatchType() != DriverStation::MatchType::kNone);
   SmartDashboard::PutBoolean("Is Blue Alliance", allianceColor == AllianceColor::BLUE);
 }
 
@@ -170,7 +173,7 @@ void Robot::AutonomousPeriodic()
 
 void Robot::TeleopInit()
 {
-  swerveDrive.ResetOdometry(Pose2d(0_m, 0_m, Rotation2d(180_deg)));
+  swerveDrive.ResetOdometry(Pose2d(0.74_m, 4.35_m, Rotation2d(120_deg)));
   swerveDrive.ResetTagOdometry(Pose2d(0_m, 0_m, Rotation2d(180_deg)));
   ampmech.ResetElevatorEncoder();  
 
@@ -315,7 +318,8 @@ void Robot::TeleopPeriodic()
       overbumper.PIDWristToPoint(wristSetPoint);
 
       // Keep flywheel ready for close shots
-      flywheel.SetFlywheelVelocity(3000);
+      //flywheel.SetFlywheelVelocity(3000);
+      flywheel.SetFlywheelVelocity(0);
       flywheel.PIDAngler(0.8);
 
       // Switching Driver Mode
@@ -395,9 +399,20 @@ void Robot::TeleopPeriodic()
   }
   if (xboxController3.GetBButton())
   {
-    swerveAutoController.FollowTrajectory(PoseEstimationType::TagBased);
+    swerveAutoController.FollowTrajectory(PoseEstimationType::PureOdometry);
   }
 
+  // Follow spline for testing
+  if (xboxController3.GetAButtonPressed())
+  {
+    swerveAutoController.ResetTrajectoryQueue();
+    swerveAutoController.LoadTrajectory("BRTo1");
+    swerveAutoController.BeginNextTrajectory();
+  }
+  if (xboxController3.GetAButton())
+  {
+    swerveAutoController.FollowTrajectory(PoseEstimationType::PureOdometry);
+  }
 
   /*if (xboxController3.GetAButtonPressed())
     swerveAutoController.BeginDriveToNote();
@@ -532,6 +547,8 @@ void Robot::TeleopPeriodic()
 
   SmartDashboard::PutNumber("Top FlyWheel RPM", flywheel.TopFlywheel.GetMeasurement()*60.0);
   SmartDashboard::PutNumber("Bottom FlyWheel RPM", flywheel.BottomFlywheel.GetMeasurement()*60.0);
+
+  SmartDashboard::PutNumber("Driver Mode", currentDriverMode);
 
   //SmartDashboard::PutBoolean("climb l stop", hang.leftStop.Get());
   //SmartDashboard::PutNumber("climb l pos", hang.leftEncoder.GetPosition());

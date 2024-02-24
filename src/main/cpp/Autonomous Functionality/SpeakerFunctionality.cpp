@@ -72,7 +72,7 @@ bool AutonomousShootingController::AngleFlywheelToSpeaker(AllianceColor alliance
 
 bool AutonomousShootingController::SpinFlywheelForSpeaker(AllianceColor allianceColor)
 {
-    return flyWheel->SetFlywheelVelocity(3500);
+    return flyWheel->SetFlywheelVelocity(3000);
 }
 
 bool AutonomousShootingController::ClearElevatorForShot()
