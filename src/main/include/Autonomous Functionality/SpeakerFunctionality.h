@@ -6,6 +6,10 @@
 #include "Autonomous Functionality/SwerveDriveAutoControl.h"
 #include "Constants/FieldConstants.h"
 
+#ifndef SPEAKER_FUNCTIONALITY_H
+#define SPEAKER_FUNCTIONALITY_H
+
+
 /**
  * This class inherits from the base SwerveDrive class, but adds the functionality of calculating odometry using the photonvision library, a camera, and april tags
  */
@@ -31,3 +35,5 @@ public:
     void BeginAimAndFire();
     bool AimAndFire();
 };
+
+#endif
