@@ -1,11 +1,12 @@
 #include "Autonomous Functionality/SpeakerFunctionality.h"
 
-AutonomousShootingController::AutonomousShootingController(SwerveDriveAutonomousController *swerveDrive_, FlywheelSystem *_flyWheel, Intake *intake_)
+AutonomousShootingController::AutonomousShootingController(SwerveDriveAutonomousController *swerveDrive_, FlywheelSystem *_flyWheel, Intake *intake_, Elevator *elevator_)
     : shotTimer{}
 {
     swerveDrive = swerveDrive_;
     flyWheel = _flyWheel;
     intake = intake_;
+    elevator = elevator_;
 }
 
 bool AutonomousShootingController::TurnToSpeaker(AllianceColor allianceColor)
@@ -78,6 +79,8 @@ bool AutonomousShootingController::ClearElevatorForShot()
 {
     // The class's variable targetAnglerAngle has the goal angle for the angler in radians.
     // I figured feeding this function where the angler wants to be rather than where it is would be more efficient so we don't have the elevator hop around as the angler goes to it's position or wait to raise before the angler reaches it's position
+    elevator->StopElevator();
+    elevator->SetAmpMotorPercent(0);
     return true;
 }
 

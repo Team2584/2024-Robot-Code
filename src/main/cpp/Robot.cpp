@@ -31,7 +31,7 @@ NoteController notecontroller{&overbumper, &flywheel, &ampmech};
 LEDLights lightStrip{0};
 
 SwerveDriveAutonomousController swerveAutoController{&swerveDrive};
-AutonomousShootingController flywheelController{&swerveAutoController, &flywheel, &overbumper};
+AutonomousShootingController flywheelController{&swerveAutoController, &flywheel, &overbumper, &ampmech};
 AutonomousAmpingController autoAmpController{&swerveAutoController, &notecontroller};
 
 AutonomousController autoController{&swerveDrive, &overbumper, &flywheel, &ampmech, &swerveAutoController, &notecontroller, &flywheelController, &autoAmpController};
@@ -41,6 +41,9 @@ Intake::WristSetting wristSetPoint = Intake::HIGH;
 bool anglingToSpeaker = false;
 
 AllianceColor allianceColor;
+
+enum DRIVER_MODE {BASIC, AUTO_AIM_STATIONARY, SHOOT_ON_THE_MOVE, AUTO_AMP};
+DRIVER_MODE currentDriverMode = DRIVER_MODE::BASIC;
 
 void Robot::RobotInit()
 {
@@ -129,6 +132,8 @@ void Robot::TeleopInit()
   swerveDrive.ResetOdometry(Pose2d(0_m, 0_m, Rotation2d(180_deg)));
   swerveDrive.ResetTagOdometry(Pose2d(0_m, 0_m, Rotation2d(180_deg)));
   ampmech.ResetElevatorEncoder();  
+
+  currentDriverMode = DRIVER_MODE::BASIC;
 }
 
 void Robot::TeleopPeriodic()
@@ -193,13 +198,136 @@ void Robot::TeleopPeriodic()
   `-----' '--'   '--' `----'`--'      `--'   `----'
   */
 
-  // Scale control values to max speed
-  double fwdDriveSpeed = leftJoystickY * MAX_DRIVE_SPEED;
-  double strafeDriveSpeed = leftJoystickX * MAX_DRIVE_SPEED;
-  double turnSpeed = rightJoystickX * MAX_SPIN_SPEED;
+  switch (currentDriverMode) 
+  {
+    case DRIVER_MODE::BASIC:
+    {
+      // SWERVE
 
-  // Drive the robot
-  swerveDrive.DriveSwervePercent(fwdDriveSpeed, strafeDriveSpeed, turnSpeed);
+      double fwdDriveSpeed = leftJoystickY * MAX_DRIVE_SPEED;
+      double strafeDriveSpeed = leftJoystickX * MAX_DRIVE_SPEED;
+      double turnSpeed = rightJoystickX * MAX_SPIN_SPEED;
+
+      // SPEED BOOST
+      if (xboxController.GetLeftBumper())
+      {
+        fwdDriveSpeed = leftJoystickY * SPEED_BOOST_DRIVE;
+        strafeDriveSpeed = leftJoystickX * SPEED_BOOST_DRIVE;
+        turnSpeed = rightJoystickX * SPEED_BOOST_SPIN;      
+      }
+
+      swerveDrive.DriveSwervePercent(fwdDriveSpeed, strafeDriveSpeed, turnSpeed);
+
+      // These function calls "prepare" the true function calls below
+      if (xboxController2.GetRightBumperPressed()){
+        notecontroller.BeginFromElevatorToSelector();
+      }
+      if (xboxController2.GetBButtonPressed()){
+        notecontroller.BeginScoreNoteInPosition(Elevator::ElevatorSetting::AMP);
+      }
+
+      // Note Controller Stuff
+      wristSetPoint = Intake::SHOOT;
+
+      if (xboxController.GetRightBumper())
+      {
+        bool done = notecontroller.IntakeNoteToSelector();
+        if (!done)
+          wristSetPoint = Intake::LOW;
+      }
+      else if (xboxController.GetRightTriggerAxis() > 0.5)
+      {
+        overbumper.OuttakeNote();
+      }
+      else if(xboxController2.GetRightTriggerAxis() > 0.5){
+        notecontroller.ToElevator();
+      }
+      else if(xboxController2.GetLeftTriggerAxis() > 0.5){
+        overbumper.ShootNote();
+      }
+      else if (xboxController2.GetRightBumper()){
+        notecontroller.FromElevatorToSelector();
+      }
+      else if (xboxController2.GetLeftBumper()){
+        ampmech.NoteFromSelector();
+      }
+      else if (xboxController2.GetAButton())
+      {
+        notecontroller.LiftNoteToPosition(Elevator::ElevatorSetting::AMP);
+      }
+      else if (xboxController2.GetBButton())
+      {
+        notecontroller.ScoreNoteInPosition(Elevator::ElevatorSetting::AMP);
+      }
+      else {
+        overbumper.SetIntakeMotorSpeed(0);
+        ampmech.SetAmpMotorPercent(0);
+        ampmech.StopElevator();
+      }
+
+      overbumper.PIDWristToPoint(wristSetPoint);
+
+      // Keep flywheel ready for close shots
+      flywheel.SetFlywheelVelocity(3000);
+      flywheel.PIDAngler(0.8);
+
+      // Switching Driver Mode
+      if (xboxController2.GetXButtonPressed())
+      {
+        flywheelController.BeginAimAndFire(allianceColor);
+        currentDriverMode = DRIVER_MODE::AUTO_AIM_STATIONARY;
+      }
+
+      if (xboxController2.GetYButtonPressed())
+      {
+        flywheelController.BeginAimAndFire(allianceColor);
+        currentDriverMode = DRIVER_MODE::SHOOT_ON_THE_MOVE;
+      }
+
+      break;
+    }
+    case DRIVER_MODE::AUTO_AIM_STATIONARY:
+    {
+      bool doneShooting = flywheelController.AimAndFire(allianceColor);
+    
+      overbumper.PIDWristToPoint(Intake::SHOOT);
+
+      if (!xboxController2.GetXButton() || doneShooting)
+        currentDriverMode = DRIVER_MODE::BASIC;
+    
+      break;
+    }
+
+    case DRIVER_MODE::SHOOT_ON_THE_MOVE:
+    {
+      double fwdDriveSpeed = leftJoystickY * MAX_DRIVE_SPEED_SHOOT_ON_THE_MOVE;
+      double strafeDriveSpeed = leftJoystickX * MAX_DRIVE_SPEED_SHOOT_ON_THE_MOVE;
+
+      flywheelController.TurnToSpeakerWhileDriving(fwdDriveSpeed, strafeDriveSpeed, allianceColor);
+      flywheelController.SpinFlywheelForSpeaker(allianceColor);
+      flywheelController.AngleFlywheelToSpeaker(allianceColor);
+      flywheelController.ClearElevatorForShot();
+
+      if(xboxController2.GetLeftTriggerAxis() > 0.5)
+        overbumper.ShootNote();
+      else
+        overbumper.SetIntakeMotorSpeed(0);
+
+      if (!xboxController2.GetYButton())
+        currentDriverMode = DRIVER_MODE::BASIC;
+
+      break;
+    }
+
+    case DRIVER_MODE::AUTO_AMP:
+    {
+
+      break;
+    }
+  }
+
+
+  /* TESTINGGGGG */
 
   // Drive to a position for testing
   if (xboxController3.GetYButtonPressed())
@@ -223,81 +351,6 @@ void Robot::TeleopPeriodic()
     swerveAutoController.FollowTrajectory(PoseEstimationType::TagBased);
   }
 
-  /*                                            
-   _  _     _          ___         _           _ _         
-  | \| |___| |_ ___   / __|___ _ _| |_ _ _ ___| | |___ _ _ 
-  | .` / _ \  _/ -_) | (__/ _ \ ' \  _| '_/ _ \ | / -_) '_|
-  |_|\_\___/\__\___|  \___\___/_||_\__|_| \___/_|_\___|_|                                                     
-  */
-
-  wristSetPoint = Intake::SHOOT;
-
-  // These function calls "prepare" the true function calls below
-  if (xboxController2.GetRightBumperPressed()){
-    notecontroller.BeginFromElevatorToSelector();
-  }
-  if (xboxController2.GetBButtonPressed()){
-    notecontroller.BeginScoreNoteInPosition(Elevator::ElevatorSetting::AMP);
-  }
-  if (xboxController2.GetYButtonPressed()){
-    notecontroller.BeginScoreNoteInPosition(Elevator::ElevatorSetting::TRAP);
-  }
-  if (xboxController3.GetAButtonPressed())
-  {
-    flywheelController.BeginAimAndFire(allianceColor);
-  }
-
-  // This is the actual control scheme
-  if (xboxController3.GetAButton())
-  {
-    flywheelController.AimAndFire(allianceColor);
-  }
-  else if (xboxController.GetRightBumper())
-  {
-    bool done = notecontroller.IntakeNoteToSelector();
-    //lightStrip.SetLED(LEDLights::green);//TODO: actually impliment
-    if (!done)
-      wristSetPoint = Intake::LOW;
-  }
-  else if (xboxController.GetLeftBumper())
-  {
-    overbumper.OuttakeNote();
-  }
-  else if(xboxController2.GetRightTriggerAxis() > 0.5){
-    notecontroller.ToElevator();
-  }
-  else if(xboxController2.GetLeftTriggerAxis() > 0.5){
-    overbumper.ShootNote();
-    //lightStrip.SetLED(LEDLights::fire);//TODO: actually impliment
-  }
-  else if (xboxController2.GetRightBumper()){
-    notecontroller.FromElevatorToSelector();
-  }
-  else if (xboxController2.GetLeftBumper()){
-    ampmech.NoteFromSelector();
-  }
-  else if (xboxController2.GetXButton())
-  {
-    notecontroller.LiftNoteToPosition(Elevator::ElevatorSetting::TRAP);
-  }
-  else if (xboxController2.GetAButton())
-  {
-    notecontroller.LiftNoteToPosition(Elevator::ElevatorSetting::AMP);
-  }
-  else if (xboxController2.GetBButton())
-  {
-    notecontroller.ScoreNoteInPosition(Elevator::ElevatorSetting::AMP);
-  }
-  else if (xboxController2.GetYButton())
-  {
-    notecontroller.ScoreNoteInPosition(Elevator::ElevatorSetting::TRAP);
-  }
-  else {
-    overbumper.SetIntakeMotorSpeed(0);
-    ampmech.SetAmpMotorPercent(0);
-    ampmech.StopElevator();
-  }
-
 
   /*if (xboxController3.GetAButtonPressed())
     swerveAutoController.BeginDriveToNote();
@@ -319,63 +372,20 @@ void Robot::TeleopPeriodic()
     }
   }*/
 
-  
-  /*                                                      
-  ,------.,--.                    ,--.                   ,--. 
-  |  .---'|  |,--. ,--.,--.   ,--.|  ,---.  ,---.  ,---. |  | 
-  |  `--, |  | \  '  / |  |.'.|  ||  .-.  || .-. :| .-. :|  | 
-  |  |`   |  |  \   '  |   .'.   ||  | |  |\   --.\   --.|  | 
-  `--'    `--'.-'  /   '--'   '--'`--' `--' `----' `----'`--'                                          
-  */
-
-  if(xboxController2.GetBackButtonPressed()){
+  if(xboxController3.GetBackButtonPressed()){
     flywheel.SpinFlywheelPercent(0);
   }
-  else if (xboxController2.GetStartButtonPressed()){
+  else if (xboxController3.GetStartButtonPressed()){
     flywheel.SetFlywheelVelocity(SmartDashboard::GetNumber("Flywheel Setpoint", 0));
   }
 
 
-  /*if (xboxController2.GetPOV() == 0){
+  /*if (xboxController3.GetPOV() == 0){
     flywheel.PIDAngler(SmartDashboard::GetNumber("Angler Setpoint", M_PI / 2));
   }
   else{
     flywheel.MoveAnglerPercent(0);
   }*/
-
-
-  /*if(xboxController3.GetAButtonPressed()){
-    anglingToSpeaker = !anglingToSpeaker;
-  }
-
-  if (anglingToSpeaker){
-    flywheelController.AngleFlywheelToSpeaker();
-  }*/
-
-  //PID Intake wrist
-  overbumper.PIDWristToPoint(wristSetPoint);
-
-  /*                                                   
-  ,------.,--.                         ,--.                  /  //  /,---.                   ,--.   ,--.             ,--.      
-  |  .---'|  | ,---.,--.  ,--.,--,--.,-'  '-. ,---. ,--.--. /  //  //  O  \ ,--,--,--. ,---. |   `.'   | ,---.  ,---.|  ,---.  
-  |  `--, |  || .-. :\  `'  /' ,-.  |'-.  .-'| .-. ||  .--'/  //  /|  .-.  ||        || .-. ||  |'.'|  || .-. :| .--'|  .-.  | 
-  |  `---.|  |\   --. \    / \ '-'  |  |  |  ' '-' '|  |  /  //  / |  | |  ||  |  |  || '-' '|  |   |  |\   --.\ `--.|  | |  | 
-  `------'`--' `----'  `--'   `--`--'  `--'   `---' `--' /  //  /  `--' `--'`--`--`--'|  |-' `--'   `--' `----' `---'`--' `--'
-  */
-
-  //For testing - probably don't want to use this enum in final code and for sure not in this way
-  //We will need to add an (object in elevator) check
-  
-  /*if (xboxController.GetBButtonPressed()){
-    //This line of code cycles to the next value in a 3-value Enumerator (of elevator positions), or cycles back to the first if it's currently at the third
-    elevSetHeight = static_cast<Elevator::ElevatorSetting>((elevSetHeight + 1) % 4); 
-  }
-  if (xboxController.GetBButton())
-  {
-    ampmech.MoveToHeight(elevSetHeight);
-  }*/
-  
-
 
   /*
    ,-----.,--.,--.           ,--.    
