@@ -5,9 +5,11 @@ Climb::Climb(VisionSwerve* _swerveDrive)
     :leftClimbMotor{CLIMB_MOTOR_L, rev::CANSparkFlex::MotorType::kBrushless},
     rightClimbMotor(CLIMB_MOTOR_R, rev::CANSparkFlex::MotorType::kBrushless),
     robotSwerveDrive{_swerveDrive},
-    leftPID{ClimbConstants::m_linear_KP,ClimbConstants::m_linear_KI,ClimbConstants::m_linear_KD},
-    rightPID{ClimbConstants::m_linear_KP,ClimbConstants::m_linear_KI,ClimbConstants::m_linear_KD},
-    rollPID{ClimbConstants::m_rotation_KP,ClimbConstants::m_rotation_KI,ClimbConstants::m_rotation_KD},
+    m_linearconstraints{ClimbConstants::Linear::kMaxVelocity,ClimbConstants::Linear::kMaxAcceleration},
+    m_rotationconstraints{ClimbConstants::Rotation::kMaxVelocity,ClimbConstants::Rotation::kMaxAcceleration},
+    leftPID{ClimbConstants::Linear::m_KP,ClimbConstants::Linear::m_KI,ClimbConstants::Linear::m_KD, m_linearconstraints},
+    rightPID{ClimbConstants::Linear::m_KP,ClimbConstants::Linear::m_KI,ClimbConstants::Linear::m_KD, m_linearconstraints},
+    rollPID{ClimbConstants::Rotation::m_KP,ClimbConstants::Rotation::m_KI,ClimbConstants::Rotation::m_KD, m_rotationconstraints},
     leftEncoder{leftClimbMotor.GetEncoder(rev::SparkRelativeEncoder::Type::kHallSensor)},
     rightEncoder{rightClimbMotor.GetEncoder(rev::SparkRelativeEncoder::Type::kHallSensor)},
     leftStop{9},
@@ -17,8 +19,8 @@ Climb::Climb(VisionSwerve* _swerveDrive)
     rightClimbMotor.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
     leftEncoder.SetPositionConversionFactor(ClimbConstants::CLIMB_CONVERSION_FACTOR);
     rightEncoder.SetPositionConversionFactor(ClimbConstants::CLIMB_CONVERSION_FACTOR);
-    leftPID.SetTolerance(0.15);
-    rightPID.SetTolerance(0.15);
+    leftPID.SetTolerance(ClimbConstants::Linear::m_POS_ERROR);
+    rightPID.SetTolerance(ClimbConstants::Linear::m_POS_ERROR);
 }
 
 bool Climb::GetLStop(){
@@ -99,14 +101,23 @@ void Climb::HoldClimb(){
  * @param setpoint The setpoint in motor rotations 
  * @return True if both arms are at setpoint
 */
-bool Climb::ClimbPID(double setpoint){
+bool Climb::ClimbPID(units::meter_t setpoint){
     if(ZeroClimb()){
-        double left = leftPID.Calculate(leftEncoder.GetPosition(), setpoint*-1);
-        double right = rightPID.Calculate(rightEncoder.GetPosition(), setpoint)*-1;
-        SmartDashboard::PutNumber("left err",leftPID.GetPositionError());
-        SmartDashboard::PutNumber("left pos",leftEncoder.GetPosition());
+        leftPID.SetGoal(setpoint*-1);
+        rightPID.SetGoal(setpoint);
 
-        SetClimbMotors(left,right);
+        units::volt_t left = units::volt_t{leftPID.Calculate(units::meter_t{leftEncoder.GetPosition()})};
+        units::volt_t right = units::volt_t{rightPID.Calculate(units::meter_t{rightEncoder.GetPosition()})*-1};
+
+        SmartDashboard::PutNumber("Climb L Error",leftPID.GetPositionError().value());
+        SmartDashboard::PutNumber("Climb L Pos",leftEncoder.GetPosition());
+        SmartDashboard::PutNumber("Climb L Voltage Send", left.value());
+        SmartDashboard::PutNumber("Climb L Voltage Recv", leftClimbMotor.GetBusVoltage());
+        SmartDashboard::PutNumber("Climb L Current", leftClimbMotor.GetOutputCurrent());
+
+        leftClimbMotor.SetVoltage(left);
+        rightClimbMotor.SetVoltage(right);
+
         return (leftPID.AtSetpoint() && rightPID.AtSetpoint());
     }
     return false;
@@ -118,11 +129,15 @@ bool Climb::ClimbPID(double setpoint){
  * @return True if the robot is ~horizontal
 */
 bool Climb::BalanceAtPos(){
-    double rotation = robotSwerveDrive->GetIMURoll();
-    double error = rotation < 180 ? rotation : 360 - rotation;
 
-    double left = rollPID.Calculate(error,0)*-1;
-    double right = rollPID.Calculate(error,0);
+    rollPID.SetGoal(0_rad);
+
+    auto rotation = units::degree_t{robotSwerveDrive->GetIMURoll()};
+    units::radian_t error = rotation < 180_deg ? rotation : 360_deg - rotation;
+
+    double left = rollPID.Calculate(error)*-1;
+    double right = rollPID.Calculate(error);
+
     SetClimbMotors(left,right);
 
     return rollPID.AtSetpoint();
@@ -132,12 +147,17 @@ bool Climb::BalanceAtPos(){
  * @brief Climb at a defined speed while keeping the robot level
  * @return True if the robot is ~horizontal
 */
-bool Climb::BalanceWhileClimbing(){
-    double rotation = robotSwerveDrive->GetIMURoll();
-    double error = rotation < 180 ? rotation : 360 - rotation;
 
-    double left = rollPID.Calculate(error,0)*-1 + ClimbConstants::BasePctDown*-1;
-    double right = rollPID.Calculate(error,0) + ClimbConstants::BasePctDown*-1;
+bool Climb::BalanceWhileClimbing(){
+
+    rollPID.SetGoal(0_rad);
+
+    auto rotation = units::degree_t{robotSwerveDrive->GetIMURoll()};
+    units::radian_t error = rotation < 180_deg ? rotation : 360_deg - rotation;
+
+    double left = rollPID.Calculate(error)*-1 + ClimbConstants::BasePctDown*-1;
+    double right = rollPID.Calculate(error) + ClimbConstants::BasePctDown*-1;
+
     SetClimbMotors(left,right);
 
     return rollPID.AtSetpoint();
@@ -150,24 +170,31 @@ bool Climb::BalanceWhileClimbing(){
  * @brief PID Climb to a set point while keeping the robot level
  * @param setpoint The setpoint in motor rotations
 */
-bool Climb::BalanceWhileClimbing(double setpoint){
+bool Climb::BalanceWhileClimbing(units::meter_t setpoint){
     if(ZeroClimb()){
-        double rotation = robotSwerveDrive->GetIMURoll();
-        double error = rotation < 180 ? rotation : 360 - rotation;
 
-        double leftPIDOutput = 0;
-        double rightPIDOutput = 0;
+        rollPID.SetGoal(0_rad);
+        leftPID.SetGoal(setpoint*-1);
+        rightPID.SetGoal(setpoint);
+
+        auto rotation = units::degree_t{robotSwerveDrive->GetIMURoll()};
+        units::radian_t error = rotation < 180_deg ? rotation : 360_deg - rotation;
+
+        units::volt_t leftPIDOutput = 0_V;
+        units::volt_t rightPIDOutput = 0_V;
 
         if(!GetClimbAtPos()){
-            leftPIDOutput = leftPID.Calculate(leftEncoder.GetPosition(), setpoint);
-            rightPIDOutput = rightPID.Calculate(rightEncoder.GetPosition(), setpoint);
+            leftPIDOutput = units::volt_t{leftPID.Calculate(units::meter_t{leftEncoder.GetPosition()})};
+            rightPIDOutput = units::volt_t{rightPID.Calculate(units::meter_t{rightEncoder.GetPosition()})*-1};
         }
 
-        double rollPIDOutput = rollPID.Calculate(error,0);
+        units::volt_t rollPIDOutput = units::volt_t{rollPID.Calculate(error)};
         
-        double left = leftPIDOutput - rollPIDOutput;
-        double right = rightPIDOutput + rollPIDOutput;
-        SetClimbMotors(left,right);
+        units::volt_t left = leftPIDOutput - rollPIDOutput;
+        units::volt_t right = rightPIDOutput + rollPIDOutput;
+
+        leftClimbMotor.SetVoltage(left);
+        rightClimbMotor.SetVoltage(right);
 
         return GetClimbAtPos();
     }

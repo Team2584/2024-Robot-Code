@@ -44,7 +44,7 @@ bool anglingToSpeaker = false;
 
 AllianceColor allianceColor = AllianceColor::BLUE;
 
-enum DRIVER_MODE {BASIC, AUTO_AIM_STATIONARY, SHOOT_ON_THE_MOVE, AUTO_AMP, };
+enum DRIVER_MODE {BASIC, AUTO_AIM_STATIONARY, SHOOT_ON_THE_MOVE, AUTO_AMP, CLIMBING_TRAP};
 DRIVER_MODE currentDriverMode = DRIVER_MODE::BASIC;
 
 void Robot::RobotInit()
@@ -332,32 +332,6 @@ void Robot::TeleopPeriodic()
       flywheel.SpinFlywheelPercent(0);
       flywheel.PIDAngler(0.8); // change this to clear chain
 
-
-      if(xboxController.GetAButton()){
-        hang.ZeroClimb();
-      }
-      else if(xboxController.GetBButton()){
-        hang.ExtendClimb();
-      }
-      else if(xboxController.GetXButton()){
-        hang.RetractClimb();
-      }
-      else if(xboxController.GetPOV() == 180){
-        autoTrapController.PrepareClimb();
-        //flywheel.PIDAngler(M_PI * 3.0/4.0);
-      }
-      else if (xboxController.GetPOV() == 0){
-         if(autoTrapController.ClimbToTrap()){
-            notecontroller.ScoreNoteInPosition(Elevator::ElevatorSetting::TRAP);
-         }
-      }
-      else if(xboxController.GetBackButtonPressed()){
-        hang.ClimbPID(0);
-      }
-      else{
-        hang.HoldClimb();
-      }
-
       if(xboxController.GetStartButtonPressed()){
         hang.climbZeroed = false;
       }
@@ -375,11 +349,13 @@ void Robot::TeleopPeriodic()
         currentDriverMode = DRIVER_MODE::SHOOT_ON_THE_MOVE;
       }
 
-      
-
+      if(xboxController2.GetAButton() || xboxController.GetPOV() == 180 || xboxController.GetBButton() || xboxController.GetXButton() || xboxController.GetBackButton()){
+        currentDriverMode = DRIVER_MODE::CLIMBING_TRAP;
+      }
 
       break;
     }
+
     case DRIVER_MODE::AUTO_AIM_STATIONARY:
     {
       bool doneShooting = flywheelController.AimAndFire(allianceColor);
@@ -417,6 +393,46 @@ void Robot::TeleopPeriodic()
     {
 
       break;
+    }
+
+    case DRIVER_MODE::CLIMBING_TRAP:
+    {
+      double fwdDriveSpeed = leftJoystickY * MAX_DRIVE_SPEED_CLIMB;
+      double strafeDriveSpeed = leftJoystickX * MAX_DRIVE_SPEED_CLIMB;
+      double turnSpeed = rightJoystickX * MAX_SPIN_SPEED_CLIMB;
+
+      swerveDrive.DriveSwervePercent(fwdDriveSpeed, strafeDriveSpeed, turnSpeed);
+
+      flywheel.PIDAngler(M_PI/2);
+
+      if(xboxController.GetAButton()){
+        hang.ZeroClimb();
+      } 
+      else if(xboxController.GetPOV() == 0){
+        hang.ExtendClimb();
+      }
+      else if(xboxController.GetPOV() == 180){
+        hang.RetractClimb();
+      }
+      else if(xboxController.GetPOV() == 90 || xboxController.GetPOV() == 270){
+        if(xboxController.GetPOV() == 90){hang.leftClimbMotor.Set(ClimbConstants::BasePctDown*-1);}
+        if(xboxController.GetPOV() == 270){hang.rightClimbMotor.Set(ClimbConstants::BasePctDown);}
+      }
+      else if(xboxController.GetXButton()){
+        autoTrapController.PrepareClimb();
+      }
+      else if (xboxController.GetYButton()){
+         if(autoTrapController.ClimbToTrap()){
+            notecontroller.ScoreNoteInPosition(Elevator::ElevatorSetting::TRAP);
+         }
+      }
+      else{
+        hang.HoldClimb();
+      }
+
+      if (!xboxController2.GetAButton() && !(xboxController.GetPOV() != -1) && !xboxController.GetBButton() && !xboxController.GetXButton() && !xboxController.GetBackButton())
+        currentDriverMode = DRIVER_MODE::BASIC;
+
     }
   }
 
@@ -490,62 +506,6 @@ void Robot::TeleopPeriodic()
   }
   else{
     flywheel.MoveAnglerPercent(0);
-  }*/
-
-  /*
-   ,-----.,--.,--.           ,--.    
-  '  .--./|  |`--',--,--,--.|  |-.  
-  |  |    |  |,--.|        || .-. ' 
-  '  '--'\|  ||  ||  |  |  || `-' | 
-   `-----'`--'`--'`--`--`--' `---'  
-  */
-
-  /*if (controller2LeftJoystickY != 0 || controller2RightJoystickY != 0)
-    hang.SetClimbMotors(controller2LeftJoystickY, controller2RightJoystickY);
-  else if(xboxController.GetAButton()){
-    hang.ExtendClimb();
-  }
-  else if (xboxController.GetBButton()){
-    hang.RetractClimb();
-  }
-  else if (xboxController.GetXButton()){
-    hang.ZeroClimb();
-  }
-  else if (xboxController.GetPOV() == 90){
-    hang.ClimbPID(-0.6);
-  }else if (xboxController.GetPOV() == 270){
-    hang.ClimbPID(0);
-  }
-  else{
-    hang.HoldClimb();
-  }
-
-  if(xboxController.GetYButtonPressed()){
-    hang.climbZeroed = false;
-  }*/
-
-  //ONLY uncomment this when motors are found to be going the right directions and limits work properly
-  /*
-  if(!hang.climbZeroed){
-    hang.ZeroClimb();
-  }
-  */
-
-  /*if(xboxController2.GetAButton()){
-    hang.ExtendClimb();
-  }
-  else if (xboxController2.GetBButton()){
-    hang.RetractClimb();
-    
-  }
-  else if (xboxController2.GetXButton()){
-    hang.ZeroClimb();
-  }
-  else if (xboxController2.GetYButton()){
-    hang.BalanceWhileClimbing();
-  }
-  else{
-    hang.HoldClimb();
   }*/
 
   /*                                                                
