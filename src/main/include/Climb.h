@@ -11,17 +11,14 @@ class Climb {
 
         rev::CANSparkFlex leftClimbMotor, rightClimbMotor;
         VisionSwerve* robotSwerveDrive;
-        PID leftPID;
-        PID rightPID;
-        PID rollPID;
-
-        
+        frc::PIDController leftPID, rightPID, rollPID;
 
     public:
     bool climbZeroed = false;
         rev::SparkRelativeEncoder leftEncoder, rightEncoder;
         frc::DigitalInput leftStop;
-        frc::DigitalInput rightStop;
+        frc::
+        DigitalInput rightStop;
 
         Climb(VisionSwerve* _swerveDrive);
 

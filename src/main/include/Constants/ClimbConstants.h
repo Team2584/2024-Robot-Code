@@ -3,12 +3,12 @@
 
 namespace ClimbConstants {
 
-inline const double MaxHeight = 100;
-inline const double MinHeight = 0;
+inline const double MaxHeight = -0.56;
+inline const double MinHeight = 0.03;
 
 inline const double m_linear_KD  = 0;
-inline const double m_linear_KP  = 6;
-inline const double m_linear_KI  = 0.1;
+inline const double m_linear_KP  = 100;
+inline const double m_linear_KI  = 0;
 inline const double m_linear_KIMAX  = 0.4;
 inline const double m_linear_POS_ERROR  = 0.03;
 inline const double m_linear_VELOCITY_ERROR = 10000;

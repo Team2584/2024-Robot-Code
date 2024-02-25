@@ -5,9 +5,9 @@ Climb::Climb(VisionSwerve* _swerveDrive)
     :leftClimbMotor{CLIMB_MOTOR_L, rev::CANSparkFlex::MotorType::kBrushless},
     rightClimbMotor(CLIMB_MOTOR_R, rev::CANSparkFlex::MotorType::kBrushless),
     robotSwerveDrive{_swerveDrive},
-    leftPID{ClimbConstants::m_linear_KP,ClimbConstants::m_linear_KI,ClimbConstants::m_linear_KD,ClimbConstants::m_linear_KIMAX,ClimbConstants::m_linear_MIN_SPEED,ClimbConstants::m_linear_MAX_SPEED,ClimbConstants::m_linear_POS_ERROR,ClimbConstants::m_linear_VELOCITY_ERROR},
-    rightPID{ClimbConstants::m_linear_KP,ClimbConstants::m_linear_KI,ClimbConstants::m_linear_KD,ClimbConstants::m_linear_KIMAX,ClimbConstants::m_linear_MIN_SPEED,ClimbConstants::m_linear_MAX_SPEED,ClimbConstants::m_linear_POS_ERROR,ClimbConstants::m_linear_VELOCITY_ERROR},
-    rollPID{ClimbConstants::m_rotation_KP,ClimbConstants::m_rotation_KI,ClimbConstants::m_rotation_KD,ClimbConstants::m_rotation_KIMAX,ClimbConstants::m_rotation_MIN_SPEED,ClimbConstants::m_rotation_MAX_SPEED,ClimbConstants::m_rotation_ROT_ERROR,ClimbConstants::m_rotation_VELOCITY_ERROR},
+    leftPID{ClimbConstants::m_linear_KP,ClimbConstants::m_linear_KI,ClimbConstants::m_linear_KD},
+    rightPID{ClimbConstants::m_linear_KP,ClimbConstants::m_linear_KI,ClimbConstants::m_linear_KD},
+    rollPID{ClimbConstants::m_rotation_KP,ClimbConstants::m_rotation_KI,ClimbConstants::m_rotation_KD},
     leftEncoder{leftClimbMotor.GetEncoder(rev::SparkRelativeEncoder::Type::kHallSensor)},
     rightEncoder{rightClimbMotor.GetEncoder(rev::SparkRelativeEncoder::Type::kHallSensor)},
     leftStop{9},
@@ -17,6 +17,8 @@ Climb::Climb(VisionSwerve* _swerveDrive)
     rightClimbMotor.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
     leftEncoder.SetPositionConversionFactor(ClimbConstants::CLIMB_CONVERSION_FACTOR);
     rightEncoder.SetPositionConversionFactor(ClimbConstants::CLIMB_CONVERSION_FACTOR);
+    leftPID.SetTolerance(0.15);
+    rightPID.SetTolerance(0.15);
 }
 
 bool Climb::GetLStop(){
@@ -65,6 +67,7 @@ void Climb::SetClimbMotors(double Percentage){
 void Climb::SetClimbMotors(double LeftMotor, double RightMotor){
     leftClimbMotor.Set(LeftMotor);
     rightClimbMotor.Set(RightMotor*-1);
+
 }
 
 /**
@@ -100,11 +103,11 @@ bool Climb::ClimbPID(double setpoint){
     if(ZeroClimb()){
         double left = leftPID.Calculate(leftEncoder.GetPosition(), setpoint*-1);
         double right = rightPID.Calculate(rightEncoder.GetPosition(), setpoint)*-1;
-        SmartDashboard::PutNumber("left err",leftPID.pidController.GetPositionError());
+        SmartDashboard::PutNumber("left err",leftPID.GetPositionError());
         SmartDashboard::PutNumber("left pos",leftEncoder.GetPosition());
 
         SetClimbMotors(left,right);
-        return (leftPID.PIDFinished() && rightPID.PIDFinished());
+        return (leftPID.AtSetpoint() && rightPID.AtSetpoint());
     }
     return false;
 }
@@ -122,7 +125,7 @@ bool Climb::BalanceAtPos(){
     double right = rollPID.Calculate(error,0);
     SetClimbMotors(left,right);
 
-    return rollPID.PIDFinished();
+    return rollPID.AtSetpoint();
 }
 
 /**
@@ -137,7 +140,7 @@ bool Climb::BalanceWhileClimbing(){
     double right = rollPID.Calculate(error,0) + ClimbConstants::BasePctDown*-1;
     SetClimbMotors(left,right);
 
-    return rollPID.PIDFinished();
+    return rollPID.AtSetpoint();
 }
 
 
@@ -176,10 +179,12 @@ bool Climb::BalanceWhileClimbing(double setpoint){
  * @return True if the robot's most extended arm is at setpoint 
 */
 bool Climb::GetClimbAtPos(){
-    
+    /*
     double lowPos = leftEncoder.GetPosition() < rightEncoder.GetPosition() ? rightEncoder.GetPosition() : leftEncoder.GetPosition();
-    bool isAtPos =  abs(lowPos - rightPID.GetPIDSetpoint()) < rightPID.GetPIDAllowedError(); //if most extended arm ~= the set pos
+    bool isAtPos =  abs(lowPos - rightPID.GetSetpoint()) < rightPID.GetPositionTolerance(); //if most extended arm ~= the set pos
     return(isAtPos); 
+    */
+   return leftPID.AtSetpoint() && rightPID.AtSetpoint();
     
 }
 
@@ -187,7 +192,7 @@ bool Climb::GetClimbAtPos(){
  * @return If the robot is balanced
 */
 bool Climb::GetClimbBalanced(){
-    return rollPID.PIDFinished();
+    return rollPID.AtSetpoint();
 }
 
 /**

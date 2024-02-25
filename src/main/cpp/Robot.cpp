@@ -186,8 +186,8 @@ void Robot::TeleopInit()
   swerveDrive.ResetOdometry(Pose2d(0.74_m, 4.35_m, Rotation2d(120_deg)));
   swerveDrive.ResetTagOdometry(Pose2d(0_m, 0_m, Rotation2d(180_deg)));
   ampmech.ResetElevatorEncoder();  
-
   currentDriverMode = DRIVER_MODE::BASIC;
+  
 }
 
 void Robot::TeleopPeriodic()
@@ -330,7 +330,37 @@ void Robot::TeleopPeriodic()
       // Keep flywheel ready for close shots
       //flywheel.SetFlywheelVelocity(3000);
       flywheel.SpinFlywheelPercent(0);
-      flywheel.PIDAngler(0.8);
+      flywheel.PIDAngler(0.8); // change this to clear chain
+
+
+      if(xboxController.GetAButton()){
+        hang.ZeroClimb();
+      }
+      else if(xboxController.GetBButton()){
+        hang.ExtendClimb();
+      }
+      else if(xboxController.GetXButton()){
+        hang.RetractClimb();
+      }
+      else if(xboxController.GetPOV() == 180){
+        autoTrapController.PrepareClimb();
+        //flywheel.PIDAngler(M_PI * 3.0/4.0);
+      }
+      else if (xboxController.GetPOV() == 0){
+         if(autoTrapController.ClimbToTrap()){
+            notecontroller.ScoreNoteInPosition(Elevator::ElevatorSetting::TRAP);
+         }
+      }
+      else if(xboxController.GetBackButtonPressed()){
+        hang.ClimbPID(0);
+      }
+      else{
+        hang.HoldClimb();
+      }
+
+      if(xboxController.GetStartButtonPressed()){
+        hang.climbZeroed = false;
+      }
 
       // Switching Driver Mode
       if (xboxController2.GetXButtonPressed())
@@ -344,6 +374,9 @@ void Robot::TeleopPeriodic()
         flywheelController.BeginAimAndFire(allianceColor);
         currentDriverMode = DRIVER_MODE::SHOOT_ON_THE_MOVE;
       }
+
+      
+
 
       break;
     }
@@ -559,6 +592,9 @@ void Robot::TeleopPeriodic()
   SmartDashboard::PutNumber("Bottom FlyWheel RPM", flywheel.BottomFlywheel.GetMeasurement()*60.0);
 
   SmartDashboard::PutNumber("Driver Mode", currentDriverMode);
+
+  SmartDashboard::PutNumber("Climb r pos", hang.rightEncoder.GetPosition());
+  SmartDashboard::PutNumber("Climb l pos", hang.leftEncoder.GetPosition());
 
   //SmartDashboard::PutBoolean("climb l stop", hang.leftStop.Get());
   //SmartDashboard::PutNumber("climb l pos", hang.leftEncoder.GetPosition());
