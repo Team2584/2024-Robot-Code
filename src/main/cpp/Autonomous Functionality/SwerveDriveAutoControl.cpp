@@ -27,6 +27,7 @@ SwerveDriveAutonomousController::SwerveDriveAutonomousController(VisionSwerve *s
 {
     swerveDrive = swerveDrive_;
     rotationPIDController.EnableContinuousInput(-M_PI, M_PI);
+    trajRotationPIDController.EnableContinuousInput(-M_PI, M_PI);
 }
 
 /**
@@ -205,7 +206,13 @@ bool SwerveDriveAutonomousController::FollowTrajectory(PoseEstimationType poseEs
 
     units::second_t currentTime = trajectoryTimer.Get(); /* current time in the trajectory */
     pathplanner::PathPlannerTrajectory::State currentState  = currentTrajectory.sample(currentTime); /* current position estimated for the robot in an ideal world*/
-    Rotation2d currentHeading = Rotation2d(currentState.heading.Radians() * -1); /* Reverse the clockwise positive heading given by pathplanner */
+    Rotation2d currentHeading = Rotation2d(currentState.getTargetHolonomicPose().Rotation().Radians());
+
+    if (currentHeading.Radians() > 3.14_rad)
+        currentHeading = Rotation2d(currentHeading.Radians() - 6.28_rad);
+    else if (currentHeading.Radians() < -3.14_rad)
+        currentHeading = Rotation2d(currentHeading.Radians() + 6.28_rad);
+
     bool trajectoryFinished = currentTrajectory.getTotalTime() < currentTime; /* If the trajectory would be finished in the ideal world */
 
     /* Set Feed Forward Speeds*/
@@ -213,8 +220,8 @@ bool SwerveDriveAutonomousController::FollowTrajectory(PoseEstimationType poseEs
     units::meters_per_second_t xFeedForward, yFeedForward; /* the current velocity estimated for the robot in an ideal world*/
     units::radians_per_second_t rotationFeedForward; /* the current rotational velocity estimated for the robot in an ideal world*/
 
-    xFeedForward = currentState.velocity * currentHeading.Cos();
-    yFeedForward = -1 * currentState.velocity * currentHeading.Sin(); 
+    xFeedForward = currentState.velocity * currentState.heading.Cos();
+    yFeedForward = currentState.velocity * currentState.heading.Sin(); 
     rotationFeedForward = currentState.headingAngularVelocity;
 
     if (trajectoryFinished)
@@ -246,7 +253,6 @@ bool SwerveDriveAutonomousController::FollowTrajectory(PoseEstimationType poseEs
     {
         PIDSpeeds[0] = trajXPIDController.Calculate(swerveDrive->GetOdometryPose().X().value(), targetPose.X().value());
         PIDLoopsFinished[0] = trajXPIDController.PIDFinished();
-        PIDLoopsFinished[0] = trajXPIDController.PIDFinished();
         PIDSpeeds[1] = trajYPIDController.Calculate(swerveDrive->GetOdometryPose().Y().value(), targetPose.Y().value());
         PIDLoopsFinished[1] = trajYPIDController.PIDFinished();
         PIDSpeeds[2] = trajRotationPIDController.Calculate(swerveDrive->GetOdometryPose().Rotation().Radians().value(), targetPose.Rotation().Radians().value());
@@ -269,6 +275,10 @@ bool SwerveDriveAutonomousController::FollowTrajectory(PoseEstimationType poseEs
     SmartDashboard::PutNumber("Current State Angle", currentHeading.Degrees().value());
     SmartDashboard::PutBoolean("Trajectory Finished", trajectoryFinished);
 
+    SmartDashboard::PutNumber("Target Pose X", targetPose.X().value());
+    SmartDashboard::PutNumber("Target Pose Y", targetPose.Y().value());
+    SmartDashboard::PutNumber("Target Pose Angle", targetPose.Rotation().Degrees().value());
+
     SmartDashboard::PutNumber("Trajectory PID X", PIDSpeeds[0]);
     SmartDashboard::PutNumber("Trajectory PID Y", PIDSpeeds[1]);
     SmartDashboard::PutNumber("Trajectory PID Rotation", PIDSpeeds[2]);
@@ -285,7 +295,11 @@ bool SwerveDriveAutonomousController::FollowTrajectory(PoseEstimationType poseEs
     }
 
     /* Drive the Swerve */
-    swerveDrive->DriveSwerveMetersAndRadians(xFeedForward.value() + PIDSpeeds[0], yFeedForward.value() + PIDSpeeds[1], rotationFeedForward.value() + PIDSpeeds[2]);
+    if (poseEstimationType == PoseEstimationType::TagBased)
+        swerveDrive->DriveSwerveTagOrientedMetersAndRadians(xFeedForward.value() + PIDSpeeds[0], yFeedForward.value() + PIDSpeeds[1], /*rotationFeedForward.value() + */ PIDSpeeds[2]);
+    else
+        swerveDrive->DriveSwerveMetersAndRadians(xFeedForward.value() + PIDSpeeds[0], yFeedForward.value() + PIDSpeeds[1], /*rotationFeedForward.value() + */ PIDSpeeds[2]);
+    
     return false;
 }
 

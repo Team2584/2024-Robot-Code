@@ -1,3 +1,6 @@
+#ifndef CLIMB_CONSTANTS_H
+#define CLIMB_CONSTANTS_H
+
 namespace ClimbConstants {
 
 inline const double MaxHeight = 100;
@@ -37,3 +40,5 @@ inline constexpr double CLIMB_CONVERSION_FACTOR = gearRatioValue * (3.14159365 *
 
 //Convention: Up = motor spin positive
 //Right = positive
+
+#endif

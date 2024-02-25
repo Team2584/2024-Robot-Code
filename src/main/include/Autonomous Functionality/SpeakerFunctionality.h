@@ -3,6 +3,7 @@
 
 #include "Intake.h"
 #include "FlyWheel.h"
+#include "Elevator.h"
 #include "Autonomous Functionality/SwerveDriveAutoControl.h"
 #include "Constants/FieldConstants.h"
 
@@ -19,21 +20,22 @@ private:
     SwerveDriveAutonomousController *swerveDrive;
     FlywheelSystem *flyWheel;
     Intake *intake;
+    Elevator *elevator;
 
     Timer shotTimer;
     double targetAnglerAngle;
     bool shootingNote;
 
 public:
-    AutonomousShootingController(SwerveDriveAutonomousController *swerveDrive, FlywheelSystem *flyWheel_, Intake *intake_);
+    AutonomousShootingController(SwerveDriveAutonomousController *swerveDrive, FlywheelSystem *flyWheel_, Intake *intake_, Elevator *elevator_);
 
-    bool TurnToSpeaker();
-    void TurnToSpeakerWhileDriving(double xSpeed, double ySpeed);
-    bool AngleFlywheelToSpeaker();
-    bool SpinFlywheelForSpeaker();
+    bool TurnToSpeaker(AllianceColor allianceColor);
+    void TurnToSpeakerWhileDriving(double xSpeed, double ySpeed, AllianceColor allianceColor);
+    bool AngleFlywheelToSpeaker(AllianceColor allianceColor);
+    bool SpinFlywheelForSpeaker(AllianceColor allianceColor);
     bool ClearElevatorForShot();
-    void BeginAimAndFire();
-    bool AimAndFire();
+    void BeginAimAndFire(AllianceColor allianceColor);
+    bool AimAndFire(AllianceColor allianceColor);
 };
 
 #endif

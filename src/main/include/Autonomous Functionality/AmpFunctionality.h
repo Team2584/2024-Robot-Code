@@ -24,10 +24,10 @@ private:
 public:
     AutonomousAmpingController(SwerveDriveAutonomousController *swerveDrive_, NoteController *noteController_);
 
-    void BeginDriveToAmp();
-    bool DriveToAmp();
-    void BeginScoreInAmp();
-    bool ScoreInAmp();
+    void BeginDriveToAmp(AllianceColor allianceColor);
+    bool DriveToAmp(AllianceColor allianceColor);
+    void BeginScoreInAmp(AllianceColor allianceColor);
+    bool ScoreInAmp(AllianceColor allianceColor);
 };
 
 #endif

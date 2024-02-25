@@ -26,6 +26,7 @@
 #include <frc/XboxController.h>
 #include <frc/DutyCycleEncoder.h>
 #include <frc/DigitalInput.h>
+#include <frc/DriverStation.h>
 
 #include <frc/controller/ArmFeedforward.h>
 #include <frc/controller/ElevatorFeedforward.h>
@@ -68,6 +69,8 @@
 using namespace frc;
 using namespace std;
 
+enum AllianceColor{RED, BLUE};
+
 class Robot : public frc::TimedRobot {
  public:
   void RobotInit() override;
@@ -88,5 +91,11 @@ class Robot : public frc::TimedRobot {
   const std::string kAutoBCSI2S = "BLUE Center: Shoot -> Intake 2 -> Shoot";
   const std::string kAutoBLSI3S = "BLUE Left: Shoot -> Intake 3 -> Shoot";
   const std::string kAutoBRSI1S = "BLUE Right: Shoot -> Intake 1 -> Shoot";
+  const std::string kAutoRCSI10S = "RED Center: Shoot -> Intake 10 -> Shoot";
+  const std::string kAutoRLSI9S = "RED Left: Shoot -> Intake 9 -> Shoot";
+  const std::string kAutoRRSI11S = "RED Right: Shoot -> Intake 11 -> Shoot";
+  const std::string kAutoBR4CloseNotes = "BLUE Right: Shoot -> Intake 3 Close Notes -> Shoot";
+  const std::string kAutoBLSI3SI8S = "BLUE Left: Shoot -> Shoot 3 -> Shoot 8";
+  const std::string kAutoBLSS3S8TEST = "TESTTT BLUE Left: Shoot -> Shoot 3 -> Shoot 8";
   std::string m_autoSelected;
 };

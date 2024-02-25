@@ -7,15 +7,18 @@ AutonomousAmpingController::AutonomousAmpingController(SwerveDriveAutonomousCont
     noteController = noteController_;
 }
 
-void AutonomousAmpingController::BeginDriveToAmp(){
+void AutonomousAmpingController::BeginDriveToAmp(AllianceColor allianceColor){
     centeredOnAmp = false;
     drivingIntoAmp = false;
 }
 
-bool AutonomousAmpingController::DriveToAmp(){
+bool AutonomousAmpingController::DriveToAmp(AllianceColor allianceColor){
     if (!centeredOnAmp) 
     {
-        centeredOnAmp = swerveDrive->DriveToPose(ElevatorConstants::AMP_SCORING_POSITION, PoseEstimationType::TagBased);
+        if (allianceColor == AllianceColor::BLUE)
+            centeredOnAmp = swerveDrive->DriveToPose(ElevatorConstants::BLUE_AMP_SCORING_POSITION, PoseEstimationType::TagBased);
+        else 
+            centeredOnAmp = swerveDrive->DriveToPose(ElevatorConstants::RED_AMP_SCORING_POSITION, PoseEstimationType::TagBased);
         return false;
     }
 
@@ -27,7 +30,7 @@ bool AutonomousAmpingController::DriveToAmp(){
 
     if (ampTimer.Get() < ElevatorConstants::ampDriveTime)
     {
-        swerveDrive->swerveDrive->DriveSwervePercent(0, -0.3, 0);
+        swerveDrive->swerveDrive->DriveSwervePercentTagOriented(0, -0.3, 0);
         return false;
     }
     

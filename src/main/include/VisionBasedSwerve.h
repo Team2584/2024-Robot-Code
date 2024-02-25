@@ -40,6 +40,7 @@ public:
     Pose2d GetTagOdometryPose();
     void UpdateTagOdometry();
     void DriveSwervePercentTagOriented(double FwdDriveSpeed, double StrafeDriveSpeed, double TurnSpeed);
+    void DriveSwerveTagOrientedMetersAndRadians(double FwdDriveSpeed, double StrafeDriveSpeed, double TurnSpeed);
 
     void UpdateRaspiConnection();
     void PrintRaspiSanityCheck();

@@ -41,6 +41,9 @@ inline constexpr auto POS_TOLERANCE = 0.04;
 inline constexpr auto VELOCITY_TOLERANCE = 5; 
 inline constexpr auto MIN_SPEED = 0;
 inline constexpr auto MAX_SPEED = 10; 
+
+inline auto BLOCKED_LOW = M_PI/6;
+inline auto BLOCKED_HIGH = 0.65;
 }
 
 /* Autonomous Constants */
