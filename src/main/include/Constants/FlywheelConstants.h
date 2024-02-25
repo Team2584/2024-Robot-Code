@@ -43,7 +43,7 @@ inline constexpr auto MIN_SPEED = 0;
 inline constexpr auto MAX_SPEED = 10; 
 
 inline auto BLOCKED_LOW = M_PI/6;
-inline auto BLOCKED_HIGH = M_PI/4;
+inline auto BLOCKED_HIGH = 0.65;
 }
 
 /* Autonomous Constants */

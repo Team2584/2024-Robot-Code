@@ -80,7 +80,7 @@ bool AutonomousShootingController::ClearElevatorForShot()
     double angle = targetAnglerAngle;
 
     if(angle > FlywheelConstants::Angler::BLOCKED_LOW && angle < FlywheelConstants::Angler::BLOCKED_HIGH){
-        elevator->PIDElevator(ElevatorConstants::ELEV_TRAP);
+        elevator->PIDElevator(0.2);
         elevator->SetAmpMotorPercent(0);
         return elevator->GetElevatorSetpoint();
     }

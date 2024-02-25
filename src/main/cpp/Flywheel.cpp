@@ -11,6 +11,8 @@ FlywheelSystem::FlywheelSystem()
     FlywheelAnglerPID{FlywheelConstants::Angler::KP, FlywheelConstants::Angler::KI, FlywheelConstants::Angler::KD, FlywheelConstants::Angler::KI_MAX, 
                      FlywheelConstants::Angler::MIN_SPEED, FlywheelConstants::Angler::MAX_SPEED, FlywheelConstants::Angler::POS_TOLERANCE, FlywheelConstants::Angler::VELOCITY_TOLERANCE}
 {
+    FlywheelMotor2.SetIdleMode(rev::CANSparkBase::IdleMode::kCoast);
+    FlywheelMotor1.SetIdleMode(rev::CANSparkBase::IdleMode::kCoast);
 }
 
 /**

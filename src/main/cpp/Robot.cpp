@@ -329,7 +329,7 @@ void Robot::TeleopPeriodic()
 
       // Keep flywheel ready for close shots
       //flywheel.SetFlywheelVelocity(3000);
-      flywheel.SetFlywheelVelocity(0);
+      flywheel.SpinFlywheelPercent(0);
       flywheel.PIDAngler(0.8);
 
       // Switching Driver Mode
