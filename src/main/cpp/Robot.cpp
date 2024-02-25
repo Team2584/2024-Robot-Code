@@ -342,9 +342,13 @@ void Robot::TeleopPeriodic()
         flywheelController.BeginAimAndFire(allianceColor);
         currentDriverMode = DRIVER_MODE::AUTO_AIM_STATIONARY;
       }
-
+      if (xboxController2.GetStartButtonPressed()){
+        autoAmpController.BeginDriveToAmp(allianceColor);
+        currentDriverMode = DRIVER_MODE::AUTO_AMP;
+      }
       if (xboxController2.GetYButtonPressed())
       {
+        notecontroller.BeginScoreNoteInPosition(Elevator::ElevatorSetting::AMP);
         flywheelController.BeginAimAndFire(allianceColor);
         currentDriverMode = DRIVER_MODE::SHOOT_ON_THE_MOVE;
       }
@@ -391,6 +395,16 @@ void Robot::TeleopPeriodic()
 
     case DRIVER_MODE::AUTO_AMP:
     {
+      bool isAtAmp = autoAmpController.DriveToAmp(allianceColor);
+      bool scored = false;
+
+      if(isAtAmp){
+        scored = notecontroller.ScoreNoteInPosition(Elevator::ElevatorSetting::AMP);
+      }
+
+      if(!xboxController2.GetStartButton() || scored){
+        currentDriverMode = DRIVER_MODE::BASIC;
+      }
 
       break;
     }
