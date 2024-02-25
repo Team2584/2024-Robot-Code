@@ -85,9 +85,8 @@ bool AutonomousShootingController::ClearElevatorForShot()
         return elevator->GetElevatorSetpoint();
     }
     else{
-        elevator->StopElevator();
         elevator->SetAmpMotorPercent(0);
-        return true;
+        return elevator->MoveToHeight(Elevator::ElevatorSetting::LOW);
     }
 
     return true;
