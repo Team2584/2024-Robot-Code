@@ -24,6 +24,7 @@ private:
     Timer masterTimer;
     Timer safetyTimer;
     double splineSection = 0;
+    bool currentlyShooting = false;
 
 public:
     AutonomousController(VisionSwerve *swerveDrive_, Intake *intake_, FlywheelSystem *flywheel_, Elevator *ampMech_, SwerveDriveAutonomousController *swerveDriveController_, NoteController *noteController_, AutonomousShootingController *shootingController_, AutonomousAmpingController *ampingController_);

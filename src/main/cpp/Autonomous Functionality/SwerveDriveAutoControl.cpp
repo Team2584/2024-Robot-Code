@@ -134,7 +134,7 @@ bool SwerveDriveAutonomousController::DriveToPose(Pose2d target, PoseEstimationT
     return false;
 }
 
-void SwerveDriveAutonomousController::TurnToAngleWhileDriving(double xSpeed, double ySpeed, Rotation2d target, PoseEstimationType poseEstimationType)
+bool SwerveDriveAutonomousController::TurnToAngleWhileDriving(double xSpeed, double ySpeed, Rotation2d target, PoseEstimationType poseEstimationType)
 {
     double speeds[3] = {0, 0, 0};
     bool PIDFinished[3] = {false, false, false};
@@ -146,6 +146,7 @@ void SwerveDriveAutonomousController::TurnToAngleWhileDriving(double xSpeed, dou
     SmartDashboard::PutBoolean("Pose Rotation Done", PIDFinished[2]);
 
     swerveDrive->DriveSwervePercent(xSpeed, ySpeed, speeds[2]);
+    return PIDFinished[2];
 }
 
 /*
@@ -305,7 +306,7 @@ bool SwerveDriveAutonomousController::FollowTrajectory(PoseEstimationType poseEs
     return false;
 }
 
-bool SwerveDriveAutonomousController::CalcTrajecotryDriveValues(PoseEstimationType poseEstimationType, double scaleFactor, double finalSpeeds[3])
+bool SwerveDriveAutonomousController::CalcTrajectoryDriveValues(PoseEstimationType poseEstimationType, double scaleFactor, double finalSpeeds[3])
 {
      /* Find current state of robot in trajectory (i.e. where the robot should be)*/
     units::second_t timeDiff = Timer::GetFPGATimestamp() - lastFPGATime;

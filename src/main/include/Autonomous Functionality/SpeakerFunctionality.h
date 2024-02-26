@@ -30,7 +30,7 @@ public:
     AutonomousShootingController(SwerveDriveAutonomousController *swerveDrive, FlywheelSystem *flyWheel_, Intake *intake_, Elevator *elevator_);
 
     bool TurnToSpeaker(AllianceColor allianceColor);
-    void TurnToSpeakerWhileDriving(double xSpeed, double ySpeed, AllianceColor allianceColor);
+    bool TurnToSpeakerWhileDriving(double xSpeed, double ySpeed, AllianceColor allianceColor);
     bool AngleFlywheelToSpeaker(AllianceColor allianceColor);
     bool SpinFlywheelForSpeaker(AllianceColor allianceColor);
     bool ClearElevatorForShot();

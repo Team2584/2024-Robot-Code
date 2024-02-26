@@ -38,12 +38,12 @@ public:
     Pose2d GetTagPose();
     void BeginDriveToPose(PoseEstimationType poseEstimationType);
     bool DriveToPose(Pose2d target, PoseEstimationType poseEstimationType);
-    void TurnToAngleWhileDriving(double xSpeed, double ySpeed, Rotation2d target, PoseEstimationType poseEstimationType);
+    bool TurnToAngleWhileDriving(double xSpeed, double ySpeed, Rotation2d target, PoseEstimationType poseEstimationType);
     void ResetTrajectoryQueue();
     void LoadTrajectory(string trajectoryString);
     void BeginNextTrajectory();
     bool FollowTrajectory(PoseEstimationType poseEstimationType);
-    bool CalcTrajecotryDriveValues(PoseEstimationType poseEstimationType, double scaleFactor, double finalSpeeds[3]);
+    bool CalcTrajectoryDriveValues(PoseEstimationType poseEstimationType, double scaleFactor, double finalSpeeds[3]);
     void BeginDriveToNote();
     bool TurnToNote();
     bool DriveToNote();

@@ -557,9 +557,42 @@ void AutonomousController::SetupFastBlueRightShootIntake1ShootIntake2ShootIntake
 {
     SetupAuto(Pose2d(0.74_m, 4.35_m, Rotation2d(120_deg)));
     swerveDriveController->LoadTrajectory("BRTo1To2To3");
+    currentlyShooting = false;
 }
 
 void AutonomousController::FastBlueRightShootIntake1ShootIntake2ShootIntake3()
 {
-    
+    bool noteInIntake = noteController->IntakeNoteToSelector();
+    double finalSpeeds[2];
+
+    shootingController->AngleFlywheelToSpeaker(AllianceColor::BLUE);
+    shootingController->SpinFlywheelForSpeaker(AllianceColor::BLUE);
+    shootingController->ClearElevatorForShot();
+
+    if (!currentlyShooting && !noteInIntake)
+    {
+        intake->PIDWristToPoint(Intake::WristSetting::LOW);
+        swerveDriveController->CalcTrajectoryDriveValues(PoseEstimationType::TagBased, 1, finalSpeeds);
+        swerveDrive->DriveSwerveTagOrientedMetersAndRadians(finalSpeeds[0], finalSpeeds[1], finalSpeeds[2]);
+    }
+    else
+    {
+        intake->PIDWristToPoint(Intake::WristSetting::SHOOT);
+        swerveDriveController->CalcTrajectoryDriveValues(PoseEstimationType::TagBased, 0.5, finalSpeeds);
+        bool readyToFire = shootingController->TurnToSpeakerWhileDriving(finalSpeeds[0], finalSpeeds[1], AllianceColor::BLUE);    
+
+        if (readyToFire)
+        {
+            safetyTimer.Restart();
+            intake->ShootNote();
+            currentlyShooting = true;
+        }
+
+        if (currentlyShooting && safetyTimer.Get() > 0.75_s)
+        {
+            intake->SetIntakeMotorSpeed(0);
+            currentlyShooting = false;
+        }
+    }
+
 }
