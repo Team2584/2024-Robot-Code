@@ -563,26 +563,27 @@ void AutonomousController::SetupFastBlueRightShootIntake1ShootIntake2ShootIntake
 void AutonomousController::FastBlueRightShootIntake1ShootIntake2ShootIntake3()
 {
     bool noteInIntake = noteController->IntakeNoteToSelector();
+    intake->PIDWristToPoint(Intake::WristSetting::LOW);
     double finalSpeeds[2];
 
-    shootingController->AngleFlywheelToSpeaker(AllianceColor::BLUE);
-    shootingController->SpinFlywheelForSpeaker(AllianceColor::BLUE);
-    shootingController->ClearElevatorForShot();
+    bool angled = shootingController->AngleFlywheelToSpeaker(AllianceColor::BLUE);
+    bool spinning = shootingController->SpinFlywheelForSpeaker(AllianceColor::BLUE);
+    bool cleared = shootingController->ClearElevatorForShot();
 
     if (!currentlyShooting && !noteInIntake)
     {
-        intake->PIDWristToPoint(Intake::WristSetting::LOW);
         swerveDriveController->CalcTrajectoryDriveValues(PoseEstimationType::TagBased, 1, finalSpeeds);
         swerveDrive->DriveSwerveTagOrientedMetersAndRadians(finalSpeeds[0], finalSpeeds[1], finalSpeeds[2]);
     }
     else
     {
-        intake->PIDWristToPoint(Intake::WristSetting::SHOOT);
         swerveDriveController->CalcTrajectoryDriveValues(PoseEstimationType::TagBased, 0.5, finalSpeeds);
         bool readyToFire = shootingController->TurnToSpeakerWhileDriving(finalSpeeds[0], finalSpeeds[1], AllianceColor::BLUE);    
 
-        if (readyToFire)
+        if (!currentlyShooting && 
+            ((splineSection != 0 && readyToFire) || (splineSection == 0 && readyToFire && angled && spinning)))
         {
+            splineSection = 1;
             safetyTimer.Restart();
             intake->ShootNote();
             currentlyShooting = true;
