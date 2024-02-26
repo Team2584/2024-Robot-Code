@@ -22,8 +22,8 @@ inline const auto m_KP  = 4;
 inline const auto m_KI  = 0;
 inline const auto m_ROTATION_TOLERACE  = 0.3_m; 
 inline const auto m_VELOCITY_TOLERACE = INFINITY;
-inline units::meters_per_second_t kMaxVelocity = 2_mps;
-inline units::meters_per_second_squared_t kMaxAcceleration = 0.75_mps_sq;
+inline units::radians_per_second_t kMaxVelocity = units::radians_per_second_t{2};
+inline units::radians_per_second_squared_t kMaxAcceleration = units::radians_per_second_squared_t{0.75};
 }
 
 inline const auto BasePctUp = 0.3;
