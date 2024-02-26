@@ -552,3 +552,14 @@ void AutonomousController::BlueRightShootIntake1ShootIntake2ShootIntake3()
         swerveDrive->DriveSwervePercent(0,0,0);
     }
 }
+
+void AutonomousController::SetupFastBlueRightShootIntake1ShootIntake2ShootIntake3()
+{
+    SetupAuto(Pose2d(0.74_m, 4.35_m, Rotation2d(120_deg)));
+    swerveDriveController->LoadTrajectory("BRTo1To2To3");
+}
+
+void AutonomousController::FastBlueRightShootIntake1ShootIntake2ShootIntake3()
+{
+    
+}

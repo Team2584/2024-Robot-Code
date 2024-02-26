@@ -153,6 +153,11 @@ void Robot::AutonomousInit()
     autoController.SetupBlueRightShootIntake1ShootIntake2ShootIntake3();
     allianceColor = AllianceColor::BLUE;
   }
+  else if (m_autoSelected == kAutoFASTTEST)
+  {
+    autoController.SetupFastBlueRightShootIntake1ShootIntake2ShootIntake3();
+    allianceColor = AllianceColor::BLUE;  
+  }
 }
 
 void Robot::AutonomousPeriodic()
@@ -179,6 +184,8 @@ void Robot::AutonomousPeriodic()
     autoController.BlueLeftShootIntake3ShootIntake8ShootTESTING(); 
   else if (m_autoSelected == kAutoBR4CloseNotes)
     autoController.BlueRightShootIntake1ShootIntake2ShootIntake3();
+  else if (m_autoSelected == kAutoFASTTEST)
+    autoController.FastBlueRightShootIntake1ShootIntake2ShootIntake3();
 }
 
 void Robot::TeleopInit()

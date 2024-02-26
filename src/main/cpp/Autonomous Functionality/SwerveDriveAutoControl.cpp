@@ -189,6 +189,8 @@ void SwerveDriveAutonomousController::BeginNextTrajectory()
 
     // Resets timer so we know how long has passed in the current trajectory
     trajectoryTimer.Restart();
+    lastFPGATime = Timer::GetFPGATimestamp();
+    lastTrajectoryTime = 0_s;
 
     ResetPIDLoop();
 }
@@ -300,6 +302,111 @@ bool SwerveDriveAutonomousController::FollowTrajectory(PoseEstimationType poseEs
     else
         swerveDrive->DriveSwerveMetersAndRadians(xFeedForward.value() + PIDSpeeds[0], yFeedForward.value() + PIDSpeeds[1], /*rotationFeedForward.value() + */ PIDSpeeds[2]);
     
+    return false;
+}
+
+bool SwerveDriveAutonomousController::CalcTrajecotryDriveValues(PoseEstimationType poseEstimationType, double scaleFactor, double finalSpeeds[3])
+{
+     /* Find current state of robot in trajectory (i.e. where the robot should be)*/
+    units::second_t timeDiff = Timer::GetFPGATimestamp() - lastFPGATime;
+    lastFPGATime = Timer::GetFPGATimestamp();
+    units::second_t currentTime = lastTrajectoryTime + units::second_t{timeDiff.value() * scaleFactor}; 
+    lastTrajectoryTime = currentTime;
+
+    pathplanner::PathPlannerTrajectory::State currentState  = currentTrajectory.sample(currentTime); /* current position estimated for the robot in an ideal world*/
+    Rotation2d currentHeading = Rotation2d(currentState.getTargetHolonomicPose().Rotation().Radians());
+
+    if (currentHeading.Radians() > 3.14_rad)
+        currentHeading = Rotation2d(currentHeading.Radians() - 6.28_rad);
+    else if (currentHeading.Radians() < -3.14_rad)
+        currentHeading = Rotation2d(currentHeading.Radians() + 6.28_rad);
+
+    bool trajectoryFinished = currentTrajectory.getTotalTime() < currentTime; /* If the trajectory would be finished in the ideal world */
+
+    /* Set Feed Forward Speeds*/
+
+    units::meters_per_second_t xFeedForward, yFeedForward; /* the current velocity estimated for the robot in an ideal world*/
+    units::radians_per_second_t rotationFeedForward; /* the current rotational velocity estimated for the robot in an ideal world*/
+
+    xFeedForward = currentState.velocity * currentState.heading.Cos();
+    yFeedForward = currentState.velocity * currentState.heading.Sin(); 
+    rotationFeedForward = currentState.headingAngularVelocity;
+
+    if (trajectoryFinished)
+    {
+        xFeedForward = units::meters_per_second_t{0};
+        yFeedForward = units::meters_per_second_t{0};
+        rotationFeedForward = units::radians_per_second_t{0};
+    }
+
+    SmartDashboard::PutNumber("Trajectory FF X", xFeedForward.value());
+    SmartDashboard::PutNumber("Trajectory FF Y", yFeedForward.value());
+    SmartDashboard::PutNumber("Trajectory FF Rotation", rotationFeedForward.value());
+    SmartDashboard::PutNumber("Trajectory Total Time", currentTrajectory.getTotalTime().value());
+    SmartDashboard::PutNumber("Trajectory Current Time", currentTime.value());
+
+
+    /* Set PID Speeds */
+
+    Pose2d targetPose;
+    if (trajectoryFinished)
+        targetPose = currentTrajectory.getEndState().getTargetHolonomicPose();
+    else
+        targetPose = Pose2d(currentState.position, currentHeading);
+        
+    double PIDSpeeds[3] = {0, 0, 0};
+    bool PIDLoopsFinished[3] = {false, false, false};
+
+    if (poseEstimationType == PoseEstimationType::PureOdometry)
+    {
+        PIDSpeeds[0] = trajXPIDController.Calculate(swerveDrive->GetOdometryPose().X().value(), targetPose.X().value());
+        PIDLoopsFinished[0] = trajXPIDController.PIDFinished();
+        PIDSpeeds[1] = trajYPIDController.Calculate(swerveDrive->GetOdometryPose().Y().value(), targetPose.Y().value());
+        PIDLoopsFinished[1] = trajYPIDController.PIDFinished();
+        PIDSpeeds[2] = trajRotationPIDController.Calculate(swerveDrive->GetOdometryPose().Rotation().Radians().value(), targetPose.Rotation().Radians().value());
+        PIDLoopsFinished[2] = trajRotationPIDController.PIDFinished();
+    }
+    else 
+    {
+        PIDSpeeds[0] = trajXPIDController.Calculate(swerveDrive->GetTagOdometryPose().X().value(), targetPose.X().value());
+        PIDLoopsFinished[0] = trajXPIDController.PIDFinished();
+        PIDSpeeds[1] = trajYPIDController.Calculate(swerveDrive->GetTagOdometryPose().Y().value(), targetPose.Y().value());
+        PIDLoopsFinished[1] = trajYPIDController.PIDFinished();
+        PIDSpeeds[2] = trajRotationPIDController.Calculate(swerveDrive->GetTagOdometryPose().Rotation().Radians().value(), targetPose.Rotation().Radians().value());
+        PIDLoopsFinished[2] = trajRotationPIDController.PIDFinished();
+    }
+
+    bool PIDFinished = PIDLoopsFinished[0] && PIDLoopsFinished[1] && PIDLoopsFinished[2];
+
+    SmartDashboard::PutNumber("Current State X", currentState.position.X().value());
+    SmartDashboard::PutNumber("Current State Y", currentState.position.Y().value());
+    SmartDashboard::PutNumber("Current State Angle", currentHeading.Degrees().value());
+    SmartDashboard::PutBoolean("Trajectory Finished", trajectoryFinished);
+
+    SmartDashboard::PutNumber("Target Pose X", targetPose.X().value());
+    SmartDashboard::PutNumber("Target Pose Y", targetPose.Y().value());
+    SmartDashboard::PutNumber("Target Pose Angle", targetPose.Rotation().Degrees().value());
+
+    SmartDashboard::PutNumber("Trajectory PID X", PIDSpeeds[0]);
+    SmartDashboard::PutNumber("Trajectory PID Y", PIDSpeeds[1]);
+    SmartDashboard::PutNumber("Trajectory PID Rotation", PIDSpeeds[2]);
+
+    SmartDashboard::PutBoolean("Trajectory X Done", PIDLoopsFinished[0]);
+    SmartDashboard::PutBoolean("Trajectory Y Done", PIDLoopsFinished[1]);
+    SmartDashboard::PutBoolean("Trajectory Rotation Done", PIDLoopsFinished[2]);
+    
+    // If the trajectory and all PID loops are finished, stop driving the swerve.
+    if (trajectoryFinished && PIDFinished)
+    {
+        finalSpeeds[0] = 0;
+        finalSpeeds[1] = 0;
+        finalSpeeds[2] = 0;
+        return true;
+    }
+
+    finalSpeeds[0] = xFeedForward.value() * scaleFactor + PIDSpeeds[0];
+    finalSpeeds[1] = yFeedForward.value() * scaleFactor + PIDSpeeds[1];
+    finalSpeeds[2] = PIDSpeeds[2];
     return false;
 }
 

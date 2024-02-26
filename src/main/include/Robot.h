@@ -97,5 +97,6 @@ class Robot : public frc::TimedRobot {
   const std::string kAutoBR4CloseNotes = "BLUE Right: Shoot -> Intake 3 Close Notes -> Shoot";
   const std::string kAutoBLSI3SI8S = "BLUE Left: Shoot -> Shoot 3 -> Shoot 8";
   const std::string kAutoBLSS3S8TEST = "TESTTT BLUE Left: Shoot -> Shoot 3 -> Shoot 8";
+  const std::string kAutoFASTTEST = "Fast Blue Left Shoot -> Intake 3 Close Notes -> Shoot";
   std::string m_autoSelected;
 };
