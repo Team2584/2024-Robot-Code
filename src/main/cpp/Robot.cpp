@@ -353,7 +353,7 @@ void Robot::TeleopPeriodic()
         currentDriverMode = DRIVER_MODE::SHOOT_ON_THE_MOVE;
       }
 
-      if(xboxController2.GetAButton() || xboxController.GetPOV() == 180 || xboxController.GetBButton() || xboxController.GetXButton() || xboxController.GetBackButton()){
+      if(xboxController2.GetAButton() || xboxController.GetPOV() != -1 || xboxController.GetBButton() || xboxController.GetXButton() || xboxController.GetBackButton()){
         currentDriverMode = DRIVER_MODE::CLIMBING_TRAP;
       }
 

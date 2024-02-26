@@ -62,10 +62,18 @@ bool Climb::ZeroClimb(){
     return false;
 }
 
+/**
+ * @brief Set climb motor percentage. 
+ * @note A negative percentage brings the climb arms down, positive up
+*/
 void Climb::SetClimbMotors(double Percentage){
     SetClimbMotors(Percentage, Percentage);
 }
 
+/**
+ * @brief Set climb motor percentage. 
+ * @note A negative percentage brings the climb arms down, positive up
+*/
 void Climb::SetClimbMotors(double LeftMotor, double RightMotor){
     leftClimbMotor.Set(LeftMotor);
     rightClimbMotor.Set(RightMotor*-1);
@@ -124,7 +132,7 @@ bool Climb::ClimbPID(units::meter_t setpoint){
 }
 
 /** 
- * Use this function for tuning the climb PID
+ * @note Use this function for tuning the climb PID
  * @brief PID Balance at the current point. Moves both arms equal and opposite distances.
  * @return True if the robot is ~horizontal
 */
@@ -147,7 +155,6 @@ bool Climb::BalanceAtPos(){
  * @brief Climb at a defined speed while keeping the robot level
  * @return True if the robot is ~horizontal
 */
-
 bool Climb::BalanceWhileClimbing(){
 
     rollPID.SetGoal(0_rad);
@@ -203,7 +210,8 @@ bool Climb::BalanceWhileClimbing(units::meter_t setpoint){
 
 /**
  * @brief Check if the Climb PID is Finished
- * @return True if the robot's most extended arm is at setpoint 
+ * @return True if both arms are at the setpoint
+ * @note This should be later corrected for if the arms are at different heights but the robot is climbed enough
 */
 bool Climb::GetClimbAtPos(){
     /*
