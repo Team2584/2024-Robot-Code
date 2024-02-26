@@ -50,6 +50,8 @@
 #define WHEEL_SPIN_MIN_SPEED 0 // In percent power
 #define WHEEL_SPIN_MAX_SPEED 1.0 // In percent power
 
+#define DRIVE_VELOCITY_CONVERSION_FACTOR 1.0
+
 /*
  __     ___     _                ____                _              _       
  \ \   / (_)___(_) ___  _ __    / ___|___  _ __  ___| |_ __ _ _ __ | |_ ___ 

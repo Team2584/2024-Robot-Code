@@ -577,6 +577,10 @@ void Robot::TeleopPeriodic()
   SmartDashboard::PutNumber("Climb r pos", hang.rightEncoder.GetPosition());
   SmartDashboard::PutNumber("Climb l pos", hang.leftEncoder.GetPosition());
 
+  SmartDashboard::PutNumber("Swerve X Velocity (m/s)", swerveDrive.GetChassisVelocity().vx.value());
+  SmartDashboard::PutNumber("Swerve Y Velocity (m/s)", swerveDrive.GetChassisVelocity().vy.value());
+  SmartDashboard::PutNumber("Swerve Turn Velocity (rad)", swerveDrive.GetChassisVelocity().omega.value());
+
   //SmartDashboard::PutBoolean("climb l stop", hang.leftStop.Get());
   //SmartDashboard::PutNumber("climb l pos", hang.leftEncoder.GetPosition());
 }

@@ -30,9 +30,11 @@ class SwerveModule
         double GetMagEncoderValue();
         double GetModuleHeading();
         double GetDriveEncoder();
+        units::meters_per_second_t GetDriveMotorVelocity();
         double GetDriveEncoderMeters();
         double GetSpinEncoderRadians(); // TODO make this function work
         SwerveModulePosition GetSwerveModulePosition();
+        SwerveModuleState GetSwerveModuleState();
         void ResetEncoders(); 
         void StopSwerveModule();
         void DriveSwerveModulePercent(double driveSpeed, double targetAngle);
@@ -73,6 +75,14 @@ class SwerveDrive
         void DriveSwerveMetersAndRadians(double FWD_Drive_Speed, double STRAFE_Drive_Speed, double Turn_Speed);
         double GetIMURoll();
         double GetRollSpeed();
+        frc::ChassisSpeeds GetChassisVelocity(){
+            wpi::array<SwerveModuleState, 4> states = {FLModule.GetSwerveModuleState(),
+                                                     FRModule.GetSwerveModuleState(),
+                                                     BLModule.GetSwerveModuleState(),
+                                                     BRModule.GetSwerveModuleState()};
+            frc::ChassisSpeeds a = kinematics.ToChassisSpeeds(states);    
+            return a;
+        }
 
 };
 

@@ -29,7 +29,7 @@ SwerveModule::SwerveModule(int driveMotorPort, int spinMotorPort, int magneticEn
 {
     // Instantiates all variables needed for class
     encoderOffset = encoderOffset_;
-
+    driveRelativeEncoder.SetVelocityConversionFactor(DRIVE_VELOCITY_CONVERSION_FACTOR);
     ResetEncoders();
 }
 
@@ -94,6 +94,16 @@ SwerveModulePosition SwerveModule::GetSwerveModulePosition()
     position.distance = units::length::meter_t{GetDriveEncoderMeters()};
     position.angle = Rotation2d(units::degree_t{GetModuleHeading()});
     return position;
+}
+
+units::meters_per_second_t SwerveModule::GetDriveMotorVelocity(){
+    return units::meters_per_second_t{driveRelativeEncoder.GetVelocity()};
+}
+
+SwerveModuleState SwerveModule::GetSwerveModuleState(){
+    SwerveModuleState state = SwerveModuleState();
+    state.angle = Rotation2d(units::degree_t{GetModuleHeading()});
+    state.speed = GetDriveMotorVelocity();
 }
 
 /**
