@@ -59,6 +59,7 @@ void Robot::RobotInit()
   m_chooser.AddOption(kAutoBLSI3SI8S, kAutoBLSI3SI8S);
   m_chooser.AddOption(kAutoBLSS3S8TEST, kAutoBLSS3S8TEST);
   m_chooser.AddOption(kAutoFASTTEST, kAutoFASTTEST);
+  m_chooser.AddOption(kAutoBR5Note, kAutoBR5Note);
 
   frc::SmartDashboard::PutData("Auto Modes", &m_chooser);
   
@@ -161,6 +162,11 @@ void Robot::AutonomousInit()
     autoController.SetupFastBlueRightShootIntake1ShootIntake2ShootIntake3();
     allianceColor = AllianceColor::BLUE;  
   }
+  else if (m_autoSelected == kAutoBR5Note)
+  {
+    autoController.SetupBlueRightShootIntake1ShootIntake2ShootIntake3ShootIntake8Shoot();
+    allianceColor = AllianceColor::BLUE;
+  }
 }
 
 void Robot::AutonomousPeriodic()
@@ -189,11 +195,13 @@ void Robot::AutonomousPeriodic()
     autoController.BlueRightShootIntake1ShootIntake2ShootIntake3();
   else if (m_autoSelected == kAutoFASTTEST)
     autoController.FastBlueRightShootIntake1ShootIntake2ShootIntake3();
+  else if (m_autoSelected == kAutoBR5Note)
+    autoController.BlueRightShootIntake1ShootIntake2ShootIntake3ShootIntake8Shoot();
 }
 
 void Robot::TeleopInit()
 {
-  swerveDrive.ResetOdometry(Pose2d(0.74_m, 4.35_m, Rotation2d(120_deg)));
+  swerveDrive.ResetOdometry(Pose2d(0.74_m, 4.35_m, Rotation2d(180_deg)));
   swerveDrive.ResetTagOdometry(Pose2d(0_m, 0_m, Rotation2d(180_deg)));
   ampmech.ResetElevatorEncoder();  
   currentDriverMode = DRIVER_MODE::BASIC;

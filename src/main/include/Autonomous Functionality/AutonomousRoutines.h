@@ -51,4 +51,6 @@ public:
     void BlueRightShootIntake1ShootIntake2ShootIntake3();
     void SetupFastBlueRightShootIntake1ShootIntake2ShootIntake3();
     void FastBlueRightShootIntake1ShootIntake2ShootIntake3();
+    void SetupBlueRightShootIntake1ShootIntake2ShootIntake3ShootIntake8Shoot();
+    void BlueRightShootIntake1ShootIntake2ShootIntake3ShootIntake8Shoot();
 };

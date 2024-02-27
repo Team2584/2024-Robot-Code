@@ -604,5 +604,57 @@ void AutonomousController::FastBlueRightShootIntake1ShootIntake2ShootIntake3()
             currentlyShooting = false;
         }
     }
+}
 
+void AutonomousController::SetupBlueRightShootIntake1ShootIntake2ShootIntake3ShootIntake8Shoot()
+{
+    SetupAuto(Pose2d(0.74_m, 4.35_m, Rotation2d(120_deg)));
+    swerveDriveController->LoadTrajectory("BRTo1To2To3To8");
+    swerveDriveController->BeginNextTrajectory();
+    currentlyShooting = false;
+}
+
+void AutonomousController::BlueRightShootIntake1ShootIntake2ShootIntake3ShootIntake8Shoot()
+{
+    SmartDashboard::PutNumber("spline section", splineSection);
+    SmartDashboard::PutNumber("safety timer", safetyTimer.Get().value());
+    
+    bool noteInIntake = intake->GetObjectInIntake();
+    intake->PIDWristToPoint(Intake::WristSetting::LOW);
+    double finalSpeeds[3] = {0.0, 0.0, 0.0};
+
+    bool angled = shootingController->AngleFlywheelToSpeaker(AllianceColor::BLUE);
+    bool spinning = shootingController->SpinFlywheelForSpeaker(AllianceColor::BLUE);
+    bool cleared = shootingController->ClearElevatorForShot();
+
+    SmartDashboard::PutBoolean("currentlyShooting", currentlyShooting);
+    SmartDashboard::PutBoolean("noteInIntake", noteInIntake);
+    SmartDashboard::PutBoolean("Spinning", spinning);
+
+    if (!currentlyShooting && (!noteInIntake || swerveDrive->GetTagOdometryPose().X() > 2.5_m))
+    {
+        noteController->IntakeNoteToSelector();
+        swerveDriveController->CalcTrajectoryDriveValues(PoseEstimationType::TagBased, 1, finalSpeeds);
+        swerveDrive->DriveSwerveTagOrientedMetersAndRadians(finalSpeeds[0], finalSpeeds[1], finalSpeeds[2]);
+    }
+    else
+    {
+        swerveDriveController->CalcTrajectoryDriveValues(PoseEstimationType::TagBased, 0.25, finalSpeeds);
+        bool readyToFire = shootingController->TurnToSpeakerWhileDrivingMetersAndRadians(finalSpeeds[0], finalSpeeds[1], AllianceColor::BLUE);    
+        SmartDashboard::PutBoolean("Ready to fire", readyToFire);
+        if (!currentlyShooting && 
+            ((splineSection != 0 && readyToFire && cleared) || (splineSection == 0 && readyToFire && spinning && cleared)))
+        {
+            splineSection = 1;
+            safetyTimer.Restart();
+            intake->ShootNote();
+            currentlyShooting = true;
+        }
+
+        if (currentlyShooting && safetyTimer.Get() > 0.75_s)
+        {
+            intake->SetIntakeMotorSpeed(0);
+            currentlyShooting = false;
+        }
+    }
 }
