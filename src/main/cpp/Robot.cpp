@@ -58,6 +58,7 @@ void Robot::RobotInit()
   m_chooser.AddOption(kAutoBR4CloseNotes, kAutoBR4CloseNotes);
   m_chooser.AddOption(kAutoBLSI3SI8S, kAutoBLSI3SI8S);
   m_chooser.AddOption(kAutoBLSS3S8TEST, kAutoBLSS3S8TEST);
+  m_chooser.AddOption(kAutoFASTTEST, kAutoFASTTEST);
 
   frc::SmartDashboard::PutData("Auto Modes", &m_chooser);
   
@@ -107,6 +108,8 @@ void Robot::AutonomousInit()
   // m_autoSelected = SmartDashboard::GetString("Auto Selector",
   //     kAutoNameDefault);
   fmt::print("Auto selected: {}\n", m_autoSelected);
+
+  ampmech.ResetElevatorEncoder();  
 
   if (m_autoSelected == kAutoBCSI2S)
   {
@@ -474,16 +477,24 @@ void Robot::TeleopPeriodic()
   if (xboxController3.GetBButtonPressed())
   {
     swerveAutoController.ResetTrajectoryQueue();
-    swerveAutoController.LoadTrajectory("1To2");
+    swerveAutoController.LoadTrajectory("BRTo1To2To3");
     swerveAutoController.BeginNextTrajectory();
   }
-  if (xboxController3.GetBButton())
+  if (xboxController3.GetAButton())
   {
-    swerveAutoController.FollowTrajectory(PoseEstimationType::TagBased);
+    double finalSpeeds[2];
+    swerveAutoController.CalcTrajectoryDriveValues(PoseEstimationType::TagBased, 0.25, finalSpeeds);
+    swerveDrive.DriveSwerveTagOrientedMetersAndRadians(finalSpeeds[0], finalSpeeds[1], finalSpeeds[2]);
+  }
+  else if (xboxController3.GetBButton())
+  {
+    double finalSpeeds[2];
+    swerveAutoController.CalcTrajectoryDriveValues(PoseEstimationType::TagBased, 1, finalSpeeds);
+    swerveDrive.DriveSwerveTagOrientedMetersAndRadians(finalSpeeds[0], finalSpeeds[1], finalSpeeds[2]);
   }
 
   // Follow spline for testing
-  if (xboxController3.GetAButtonPressed())
+  /*if (xboxController3.GetAButtonPressed())
   {
     swerveAutoController.ResetTrajectoryQueue();
     swerveAutoController.LoadTrajectory("Test");
@@ -492,7 +503,7 @@ void Robot::TeleopPeriodic()
   if (xboxController3.GetAButton())
   {
     swerveAutoController.FollowTrajectory(PoseEstimationType::TagBased);
-  }
+  }*/
 
   /*if (xboxController3.GetAButtonPressed())
     swerveAutoController.BeginDriveToNote();
@@ -576,6 +587,11 @@ void Robot::TeleopPeriodic()
 
   SmartDashboard::PutNumber("Climb r pos", hang.rightEncoder.GetPosition());
   SmartDashboard::PutNumber("Climb l pos", hang.leftEncoder.GetPosition());
+
+  SmartDashboard::PutNumber("angler v", flywheel.FlywheelAnglingMotor.Get());
+
+  SmartDashboard::PutNumber("angler a", flywheel.FlywheelAnglingMotor.GetOutputCurrent());
+  SmartDashboard::PutNumber("angler temp", flywheel.FlywheelAnglingMotor.GetMotorTemperature());
 
   //SmartDashboard::PutBoolean("climb l stop", hang.leftStop.Get());
   //SmartDashboard::PutNumber("climb l pos", hang.leftEncoder.GetPosition());

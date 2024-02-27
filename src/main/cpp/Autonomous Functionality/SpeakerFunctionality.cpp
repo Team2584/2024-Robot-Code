@@ -29,6 +29,13 @@ bool AutonomousShootingController::TurnToSpeaker(AllianceColor allianceColor)
     return swerveDrive->DriveToPose(Pose2d(currentPose.Translation(), targetAngle), PoseEstimationType::TagBased); // Drive to current pose but at the target angle
 }
 
+bool AutonomousShootingController::TurnToSpeakerWhileDrivingMetersAndRadians(double xSpeed, double ySpeed, AllianceColor allianceColor)
+{
+    xSpeed = swerveDrive->swerveDrive->VelocityToPercent(xSpeed);
+    ySpeed = swerveDrive->swerveDrive->VelocityToPercent(ySpeed);
+    return TurnToSpeakerWhileDriving(xSpeed, ySpeed, allianceColor);
+}
+
 bool AutonomousShootingController::TurnToSpeakerWhileDriving(double xSpeed, double ySpeed, AllianceColor allianceColor)
 {
     Pose2d currentPose = swerveDrive->swerveDrive->GetTagOdometryPose();
@@ -62,7 +69,7 @@ bool AutonomousShootingController::AngleFlywheelToSpeaker(AllianceColor alliance
 
 
     if (distance <= 3_m)
-        targetAnglerAngle = 1.04 - 0.179* distance.value(); //Equation found by testing and getting data
+        targetAnglerAngle = 0.97 - 0.183* distance.value(); //Equation found by testing and getting data
     else
         targetAnglerAngle = 0.5;
 

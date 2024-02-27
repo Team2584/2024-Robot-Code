@@ -557,31 +557,40 @@ void AutonomousController::SetupFastBlueRightShootIntake1ShootIntake2ShootIntake
 {
     SetupAuto(Pose2d(0.74_m, 4.35_m, Rotation2d(120_deg)));
     swerveDriveController->LoadTrajectory("BRTo1To2To3");
+    swerveDriveController->BeginNextTrajectory();
     currentlyShooting = false;
 }
 
 void AutonomousController::FastBlueRightShootIntake1ShootIntake2ShootIntake3()
 {
-    bool noteInIntake = noteController->IntakeNoteToSelector();
+    SmartDashboard::PutNumber("spline section", splineSection);
+    SmartDashboard::PutNumber("safety timer", safetyTimer.Get().value());
+    
+    bool noteInIntake = intake->GetObjectInIntake();
     intake->PIDWristToPoint(Intake::WristSetting::LOW);
-    double finalSpeeds[2];
+    double finalSpeeds[3] = {0.0, 0.0, 0.0};
 
     bool angled = shootingController->AngleFlywheelToSpeaker(AllianceColor::BLUE);
     bool spinning = shootingController->SpinFlywheelForSpeaker(AllianceColor::BLUE);
     bool cleared = shootingController->ClearElevatorForShot();
 
+    SmartDashboard::PutBoolean("currentlyShooting", currentlyShooting);
+    SmartDashboard::PutBoolean("noteInIntake", noteInIntake);
+    SmartDashboard::PutBoolean("Spinning", spinning);
+
     if (!currentlyShooting && !noteInIntake)
     {
+        noteController->IntakeNoteToSelector();
         swerveDriveController->CalcTrajectoryDriveValues(PoseEstimationType::TagBased, 1, finalSpeeds);
         swerveDrive->DriveSwerveTagOrientedMetersAndRadians(finalSpeeds[0], finalSpeeds[1], finalSpeeds[2]);
     }
     else
     {
-        swerveDriveController->CalcTrajectoryDriveValues(PoseEstimationType::TagBased, 0.5, finalSpeeds);
-        bool readyToFire = shootingController->TurnToSpeakerWhileDriving(finalSpeeds[0], finalSpeeds[1], AllianceColor::BLUE);    
-
+        swerveDriveController->CalcTrajectoryDriveValues(PoseEstimationType::TagBased, 0.25, finalSpeeds);
+        bool readyToFire = shootingController->TurnToSpeakerWhileDrivingMetersAndRadians(finalSpeeds[0], finalSpeeds[1], AllianceColor::BLUE);    
+        SmartDashboard::PutBoolean("Ready to fire", readyToFire);
         if (!currentlyShooting && 
-            ((splineSection != 0 && readyToFire) || (splineSection == 0 && readyToFire && angled && spinning)))
+            ((splineSection != 0 && readyToFire && cleared) || (splineSection == 0 && readyToFire && spinning && cleared)))
         {
             splineSection = 1;
             safetyTimer.Restart();

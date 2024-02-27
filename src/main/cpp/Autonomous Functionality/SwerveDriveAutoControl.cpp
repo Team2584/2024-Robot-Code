@@ -145,7 +145,10 @@ bool SwerveDriveAutonomousController::TurnToAngleWhileDriving(double xSpeed, dou
     SmartDashboard::PutNumber("Pose Rotation Speed", speeds[2]);
     SmartDashboard::PutBoolean("Pose Rotation Done", PIDFinished[2]);
 
-    swerveDrive->DriveSwervePercent(xSpeed, ySpeed, speeds[2]);
+    if (PoseEstimationType::TagBased == poseEstimationType)
+        swerveDrive->DriveSwervePercentTagOriented(xSpeed, ySpeed, speeds[2]);
+    else
+        swerveDrive->DriveSwervePercent(xSpeed, ySpeed, speeds[2]);
     return PIDFinished[2];
 }
 
@@ -313,6 +316,7 @@ bool SwerveDriveAutonomousController::CalcTrajectoryDriveValues(PoseEstimationTy
     lastFPGATime = Timer::GetFPGATimestamp();
     units::second_t currentTime = lastTrajectoryTime + units::second_t{timeDiff.value() * scaleFactor}; 
     lastTrajectoryTime = currentTime;
+    SmartDashboard::PutNumber("Current Trajectory Time", currentTime.value());
 
     pathplanner::PathPlannerTrajectory::State currentState  = currentTrajectory.sample(currentTime); /* current position estimated for the robot in an ideal world*/
     Rotation2d currentHeading = Rotation2d(currentState.getTargetHolonomicPose().Rotation().Radians());
