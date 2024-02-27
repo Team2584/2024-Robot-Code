@@ -104,6 +104,7 @@ SwerveModuleState SwerveModule::GetSwerveModuleState(){
     SwerveModuleState state = SwerveModuleState();
     state.angle = Rotation2d(units::degree_t{GetModuleHeading()});
     state.speed = GetDriveMotorVelocity();
+    return state;
 }
 
 /**
