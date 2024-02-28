@@ -117,7 +117,7 @@ enum PoseEstimationType
 #define TRAJECTORY_TRANSLATION_TOLERANCE 0.02 // In meters
 #define TRAJECTORY_TRANSLATION_VELOCITY_TOLERANCE 0.5 // In meters per second
 #define TRAJECTORY_TRANSLATION_MIN_SPEED 0 // In meters per second
-#define TRAJECTORY_TRANSLATION_MAX_SPEED 1 // In meters per second
+#define TRAJECTORY_TRANSLATION_MAX_SPEED 2 // In meters per second
 // Rotational PID to correct robot heading 
 #define TRAJECTORY_ROTATION_KP 3
 #define TRAJECTORY_ROTATION_KI 0
@@ -126,7 +126,7 @@ enum PoseEstimationType
 #define TRAJECTORY_ROTATION_TOLERANCE 0.07 // In radians
 #define TRAJECTORY_ROTATION_VELOCITY_TOLERANCE 0.5 // In radians per second
 #define TRAJECTORY_ROTATION_MIN_SPEED 0 // In radians per second
-#define TRAJECTORY_ROTATION_MAX_SPEED 2 // In radians per second
+#define TRAJECTORY_ROTATION_MAX_SPEED 3 // In radians per second
 
 /* Automatically Picking Up Note PID Values */
 // Translational PID in the x direction

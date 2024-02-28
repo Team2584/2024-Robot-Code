@@ -16,6 +16,8 @@ private:
     queue<pathplanner::PathPlannerTrajectory> trajectoryQueue; /* Queue of trajectories initialized and prepared to run */
     pathplanner::PathPlannerTrajectory currentTrajectory;  /* current trajectory in use */
     Timer trajectoryTimer; /* tracks time spent in current trajectory*/
+    units::second_t lastTrajectoryTime;
+    units::second_t lastFPGATime;
 
     bool hasTurnedToNote = false;
     Rotation2d noteTargetAngle = Rotation2d(0_rad);
@@ -36,11 +38,12 @@ public:
     Pose2d GetTagPose();
     void BeginDriveToPose(PoseEstimationType poseEstimationType);
     bool DriveToPose(Pose2d target, PoseEstimationType poseEstimationType);
-    void TurnToAngleWhileDriving(double xSpeed, double ySpeed, Rotation2d target, PoseEstimationType poseEstimationType);
+    bool TurnToAngleWhileDriving(double xSpeed, double ySpeed, Rotation2d target, PoseEstimationType poseEstimationType);
     void ResetTrajectoryQueue();
     void LoadTrajectory(string trajectoryString);
     void BeginNextTrajectory();
     bool FollowTrajectory(PoseEstimationType poseEstimationType);
+    bool CalcTrajectoryDriveValues(PoseEstimationType poseEstimationType, double scaleFactor, double finalSpeeds[3]);
     void BeginDriveToNote();
     bool TurnToNote();
     bool DriveToNote();

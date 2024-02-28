@@ -94,8 +94,10 @@ class Robot : public frc::TimedRobot {
   const std::string kAutoRCSI10S = "RED Center: Shoot -> Intake 10 -> Shoot";
   const std::string kAutoRLSI9S = "RED Left: Shoot -> Intake 9 -> Shoot";
   const std::string kAutoRRSI11S = "RED Right: Shoot -> Intake 11 -> Shoot";
-  const std::string kAutoBR4CloseNotes = "BLUE Right: Shoot -> Intake 3 Close Notes -> Shoot";
+  const std::string kAutoBRSlow4CloseNotes = "SLOW BLUE Right: Shoot -> Intake and Shoot 3 Close Notes";
   const std::string kAutoBLSI3SI8S = "BLUE Left: Shoot -> Shoot 3 -> Shoot 8";
-  const std::string kAutoBLSS3S8TEST = "TESTTT BLUE Left: Shoot -> Shoot 3 -> Shoot 8";
+  const std::string kAutoBLSS3S8TEST = "TEST BLUE Left: Shoot -> Shoot 3 -> Shoot 8";
+  const std::string kAutoBR4CloseNotes = "BLUE Right: Shoot -> Intake and Shoot 3 Close Notes";
+  const std::string kAutoBR4CloseNotesAnd8 = "BLUE Right Shoot -> Intake and Shoot 3 Close Notes -> Intake and Shoot 8";
   std::string m_autoSelected;
 };

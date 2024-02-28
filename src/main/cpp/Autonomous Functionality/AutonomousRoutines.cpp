@@ -22,6 +22,13 @@ void AutonomousController::SetupAuto(Pose2d startingPose)
     splineSection = 0;
     masterTimer.Restart();
     safetyTimer.Restart();
+    currentlyShooting = false;
+}
+
+void AutonomousController::SetupBasicShootIntakeShoot(Pose2d startingPose, string trajectoryName)
+{
+    SetupAuto(startingPose);
+    swerveDriveController->LoadTrajectory(trajectoryName);
 }
 
 void AutonomousController::BasicShootIntakeShoot(AllianceColor allianceColor)
@@ -91,72 +98,6 @@ void AutonomousController::BasicShootIntakeShoot(AllianceColor allianceColor)
         intake->SetIntakeMotorSpeed(0);
         swerveDrive->DriveSwervePercent(0,0,0);
     }
-}
-
-void AutonomousController::SetupBlueCenterShootIntake2Shoot()
-{
-    SetupAuto(Pose2d(1.39_m, 5.51_m, Rotation2d(180_deg)));
-    swerveDriveController->LoadTrajectory("BCTo2");
-}
-
-void AutonomousController::BlueCenterShootIntake2Shoot()
-{
-    BasicShootIntakeShoot(AllianceColor::BLUE);
-}
-
-void AutonomousController::SetupBlueLeftShootIntake3Shoot()
-{
-    SetupAuto(Pose2d(0.76_m, 6.68_m, Rotation2d(-120_deg)));
-    swerveDriveController->LoadTrajectory("BLTo3");
-}
-
-void AutonomousController::BlueLeftShootIntake3Shoot()
-{
-    BasicShootIntakeShoot(AllianceColor::BLUE);
-}
-
-void AutonomousController::SetupBlueRightShootIntake1Shoot()
-{
-    SetupAuto(Pose2d(0.74_m, 4.35_m, Rotation2d(120_deg)));
-    swerveDriveController->LoadTrajectory("BRTo1");
-}
-
-void AutonomousController::BlueRightShootIntake1Shoot()
-{
-    BasicShootIntakeShoot(AllianceColor::BLUE);
-}
-
-void AutonomousController::SetupRedCenterShootIntake10Shoot()
-{
-    SetupAuto(Pose2d(15.22_m, 5.57_m, Rotation2d(0_deg)));
-    swerveDriveController->LoadTrajectory("RCTo10");
-}
-
-void AutonomousController::RedCenterShootIntake10Shoot()
-{
-    BasicShootIntakeShoot(AllianceColor::RED);
-}
-
-void AutonomousController::SetupRedLeftShootIntake9Shoot()
-{
-    SetupAuto(Pose2d(15.81_m, 4.43_m, Rotation2d(60_deg)));
-    swerveDriveController->LoadTrajectory("RLTo9");
-}
-
-void AutonomousController::RedLeftShootIntake9Shoot()
-{
-    BasicShootIntakeShoot(AllianceColor::RED);
-}
-
-void AutonomousController::SetupRedRightShootIntake11Shoot()
-{
-    SetupAuto(Pose2d(15.79_m, 6.7_m, Rotation2d(150_deg)));
-    swerveDriveController->LoadTrajectory("RRTo11");
-}
-
-void AutonomousController::RedRightShootIntake11Shoot()
-{
-    BasicShootIntakeShoot(AllianceColor::RED);
 }
 
 void AutonomousController::SetupBlueLeftShootIntake3ShootIntake8Shoot()
@@ -402,7 +343,7 @@ void AutonomousController::BlueLeftShootIntake3ShootIntake8ShootTESTING()
     }
 }
 
-void AutonomousController::SetupBlueRightShootIntake1ShootIntake2ShootIntake3()
+void AutonomousController::SetupSlowBlueRightShootIntake1ShootIntake2ShootIntake3()
 {
     SetupAuto(Pose2d(0.74_m, 4.35_m, Rotation2d(120_deg)));
     swerveDriveController->LoadTrajectory("BRTo1");
@@ -410,7 +351,7 @@ void AutonomousController::SetupBlueRightShootIntake1ShootIntake2ShootIntake3()
     swerveDriveController->LoadTrajectory("2To3");
 }
 
-void AutonomousController::BlueRightShootIntake1ShootIntake2ShootIntake3()
+void AutonomousController::SlowBlueRightShootIntake1ShootIntake2ShootIntake3()
 {
     SmartDashboard::PutNumber("spline section", splineSection);
     SmartDashboard::PutNumber("safety timer", safetyTimer.Get().value());
@@ -550,5 +491,58 @@ void AutonomousController::BlueRightShootIntake1ShootIntake2ShootIntake3()
         intake->PIDWristToPoint(Intake::WristSetting::SHOOT);
         intake->SetIntakeMotorSpeed(0);
         swerveDrive->DriveSwervePercent(0,0,0);
+    }
+}
+
+void AutonomousController::SetupFollowTrajectoryAndShoot(Pose2d startingPose, string trajectoryString, units::meter_t maxXShot_)
+{
+    SetupAuto(startingPose);
+    swerveDriveController->LoadTrajectory(trajectoryString);
+    swerveDriveController->BeginNextTrajectory();
+    maxXShot = maxXShot_;
+}
+
+void AutonomousController::FollowTrajectoryAndShoot(AllianceColor allianceColor)
+{
+    SmartDashboard::PutNumber("spline section", splineSection);
+    SmartDashboard::PutNumber("safety timer", safetyTimer.Get().value());
+    
+    bool noteInIntake = intake->GetObjectInIntake();
+    intake->PIDWristToPoint(Intake::WristSetting::LOW);
+    double finalSpeeds[3] = {0.0, 0.0, 0.0};
+
+    bool angled = shootingController->AngleFlywheelToSpeaker(allianceColor);
+    bool spinning = shootingController->SpinFlywheelForSpeaker(allianceColor);
+    bool cleared = shootingController->ClearElevatorForShot();
+
+    SmartDashboard::PutBoolean("currentlyShooting", currentlyShooting);
+    SmartDashboard::PutBoolean("noteInIntake", noteInIntake);
+    SmartDashboard::PutBoolean("Spinning", spinning);
+
+    if (!currentlyShooting && (!noteInIntake || swerveDrive->GetTagOdometryPose().X() > maxXShot))
+    {
+        noteController->IntakeNoteToSelector();
+        swerveDriveController->CalcTrajectoryDriveValues(PoseEstimationType::TagBased, 1, finalSpeeds);
+        swerveDrive->DriveSwerveTagOrientedMetersAndRadians(finalSpeeds[0], finalSpeeds[1], finalSpeeds[2]);
+    }
+    else
+    {
+        swerveDriveController->CalcTrajectoryDriveValues(PoseEstimationType::TagBased, 0.25, finalSpeeds);
+        bool readyToFire = shootingController->TurnToSpeakerWhileDrivingMetersAndRadians(finalSpeeds[0], finalSpeeds[1], allianceColor);    
+        SmartDashboard::PutBoolean("Ready to fire", readyToFire);
+        if (!currentlyShooting && 
+            ((splineSection != 0 && readyToFire && cleared) || (splineSection == 0 && readyToFire && spinning && cleared)))
+        {
+            splineSection = 1;
+            safetyTimer.Restart();
+            intake->ShootNote();
+            currentlyShooting = true;
+        }
+
+        if (currentlyShooting && safetyTimer.Get() > 0.75_s)
+        {
+            intake->SetIntakeMotorSpeed(0);
+            currentlyShooting = false;
+        }
     }
 }
