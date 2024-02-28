@@ -29,37 +29,34 @@ bool AutonomousShootingController::TurnToSpeaker(AllianceColor allianceColor)
     return swerveDrive->DriveToPose(Pose2d(currentPose.Translation(), targetAngle), PoseEstimationType::TagBased); // Drive to current pose but at the target angle
 }
 
-bool AutonomousShootingController::TurnToSpeakerWhileDriving(double xSpeed, double ySpeed, AllianceColor allianceColor)
+bool AutonomousShootingController::TurnToSpeakerWhileDriving(double xSpeed, double ySpeed, Translation2d speakerPose)
 {
     Pose2d currentPose = swerveDrive->swerveDrive->GetTagOdometryPose();
 
     // Determine what our target angle is
-    Translation2d diff;
-    
-    if (allianceColor == AllianceColor::BLUE)
-        diff = BLUE_SPEAKER_AIM_POSITION.ToTranslation2d() - currentPose.Translation(); 
-    else
-        diff = RED_SPEAKER_AIM_POSITION.ToTranslation2d() - currentPose.Translation(); 
+    Translation2d diff = speakerPose - currentPose.Translation(); 
 
     Rotation2d targetAngle = Rotation2d(units::radian_t{atan2(diff.Y().value(), diff.X().value())});
 
     SmartDashboard::PutNumber("Targe Speaker Swerve Angle", targetAngle.Degrees().value());
 
-    return swerveDrive->TurnToAngleWhileDriving(xSpeed, ySpeed, targetAngle, PoseEstimationType::TagBased); 
+    return swerveDrive->TurnToAngleWhileDriving(xSpeed, ySpeed, targetAngle, PoseEstimationType::TagBased);   
 }
 
-bool AutonomousShootingController::AngleFlywheelToSpeaker(AllianceColor allianceColor)
-{   
+bool AutonomousShootingController::TurnToSpeakerWhileDriving(double xSpeed, double ySpeed, AllianceColor allianceColor)
+{    
+    if (allianceColor == AllianceColor::BLUE)
+        return TurnToSpeakerWhileDriving(xSpeed, ySpeed, BLUE_SPEAKER_AIM_POSITION.ToTranslation2d());
+    else
+        return TurnToSpeakerWhileDriving(xSpeed, ySpeed, RED_SPEAKER_AIM_POSITION.ToTranslation2d());
+}
+
+bool AutonomousShootingController::AngleFlywheelToSpeaker(Translation2d speakerPose)
+{
     Translation2d currentPos = swerveDrive->swerveDrive->GetTagOdometryPose().Translation();
 
     // Determine what our target angle is
-    units::meter_t distance;
-    
-    if (allianceColor == AllianceColor::BLUE)
-        distance = currentPos.Distance(BLUE_SPEAKER_POSITION.ToTranslation2d());
-    else
-        distance = currentPos.Distance(RED_SPEAKER_POSITION.ToTranslation2d());
-
+    units::meter_t distance = currentPos.Distance(speakerPose);
 
     if (distance <= 3_m)
         targetAnglerAngle = 1.04 - 0.179* distance.value(); //Equation found by testing and getting data
@@ -68,6 +65,19 @@ bool AutonomousShootingController::AngleFlywheelToSpeaker(AllianceColor alliance
 
     SmartDashboard::PutNumber("Target Angler Angle", targetAnglerAngle);
     return flyWheel->PIDAngler(targetAnglerAngle);
+}
+
+bool AutonomousShootingController::AngleFlywheelToSpeaker(AllianceColor allianceColor)
+{   
+    if (allianceColor == AllianceColor::BLUE)
+        return AngleFlywheelToSpeaker(BLUE_SPEAKER_POSITION.ToTranslation2d());
+    else
+        return AngleFlywheelToSpeaker(RED_SPEAKER_POSITION.ToTranslation2d());
+}
+
+bool AutonomousShootingController::SpinFlywheelForSpeaker(Translation2d speakerPose)
+{
+    return flyWheel->SetFlywheelVelocity(3300);
 }
 
 bool AutonomousShootingController::SpinFlywheelForSpeaker(AllianceColor allianceColor)
@@ -127,3 +137,77 @@ bool AutonomousShootingController::AimAndFire(AllianceColor allianceColor)
     intake->SetIntakeMotorSpeed(0);
     return true;
 } 
+
+units::second_t AutonomousShootingController::TimeForShot(AllianceColor allianceColor)
+{
+    return 0.5_s;
+}
+
+bool AutonomousShootingController::BeginPredictiveShootOnTheMove(AllianceColor allianceColor)
+{
+    shootingNote = false;
+}
+
+bool AutonomousShootingController::PredictiveShootOnTheMove(double xSpeed, double ySpeed, AllianceColor allianceColor)
+{
+    frc::ChassisSpeeds chassisSpeed = swerveDrive->swerveDrive->GetChassisVelocity();
+
+    if (!shootingNote)
+    {
+        units::meter_t predictedXChange = chassisSpeed.vx * TimeForShot(allianceColor);
+        units::meter_t predictedYChange = chassisSpeed.vy * TimeForShot(allianceColor);
+        Translation2d predictedChange = Translation2d(predictedXChange, predictedYChange);
+
+        bool turnt;
+        if (allianceColor == AllianceColor::BLUE)
+            turnt =  TurnToSpeakerWhileDriving(xSpeed, ySpeed, BLUE_SPEAKER_AIM_POSITION.ToTranslation2d() + predictedChange);
+        else
+            turnt = TurnToSpeakerWhileDriving(xSpeed, ySpeed, RED_SPEAKER_AIM_POSITION.ToTranslation2d() + predictedChange);
+
+        bool angled;
+        if (allianceColor == AllianceColor::BLUE)
+            angled = AngleFlywheelToSpeaker(BLUE_SPEAKER_POSITION.ToTranslation2d() + predictedChange);
+        else
+            angled = AngleFlywheelToSpeaker(RED_SPEAKER_POSITION.ToTranslation2d() + predictedChange);
+
+        bool spinning = SpinFlywheelForSpeaker(allianceColor);
+        bool elevatorCleared = ClearElevatorForShot();
+
+        if (!(turnt && angled && spinning && elevatorCleared))
+            return false;
+        else
+        {
+            shootingNote = true;
+            shotTimer.Restart();
+        }
+    }
+    else
+    {
+        units::meter_t predictedXChange = chassisSpeed.vx * (TimeForShot(allianceColor) - shotTimer.Get());
+        units::meter_t predictedYChange = chassisSpeed.vy * (TimeForShot(allianceColor) - shotTimer.Get());
+        Translation2d predictedChange = Translation2d(predictedXChange, predictedYChange);
+
+        if (allianceColor == AllianceColor::BLUE)
+            TurnToSpeakerWhileDriving(xSpeed, ySpeed, BLUE_SPEAKER_AIM_POSITION.ToTranslation2d() + predictedChange);
+        else
+            TurnToSpeakerWhileDriving(xSpeed, ySpeed, RED_SPEAKER_AIM_POSITION.ToTranslation2d() + predictedChange);
+
+        if (allianceColor == AllianceColor::BLUE)
+            AngleFlywheelToSpeaker(BLUE_SPEAKER_POSITION.ToTranslation2d() + predictedChange);
+        else
+            AngleFlywheelToSpeaker(RED_SPEAKER_POSITION.ToTranslation2d() + predictedChange);
+
+        SpinFlywheelForSpeaker(allianceColor);
+        ClearElevatorForShot();
+
+        intake->ShootNote();
+
+        if (shotTimer.Get() < FlywheelConstants::shotTime) 
+            return false;
+        else
+        {
+            intake->SetIntakeMotorSpeed(0);
+            return true;
+        }
+    }
+}
