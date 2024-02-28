@@ -44,7 +44,7 @@ bool anglingToSpeaker = false;
 
 AllianceColor allianceColor = AllianceColor::BLUE;
 
-enum DRIVER_MODE {BASIC, AUTO_AIM_STATIONARY, SHOOT_ON_THE_MOVE, AUTO_AMP, };
+enum DRIVER_MODE {BASIC, AUTO_AIM_STATIONARY, SHOOT_ON_THE_MOVE, AUTO_AMP, CLIMBING_TRAP};
 DRIVER_MODE currentDriverMode = DRIVER_MODE::BASIC;
 
 void Robot::RobotInit()
@@ -186,8 +186,8 @@ void Robot::TeleopInit()
   swerveDrive.ResetOdometry(Pose2d(0.74_m, 4.35_m, Rotation2d(120_deg)));
   swerveDrive.ResetTagOdometry(Pose2d(0_m, 0_m, Rotation2d(180_deg)));
   ampmech.ResetElevatorEncoder();  
-
   currentDriverMode = DRIVER_MODE::BASIC;
+  
 }
 
 void Robot::TeleopPeriodic()
@@ -330,7 +330,11 @@ void Robot::TeleopPeriodic()
       // Keep flywheel ready for close shots
       //flywheel.SetFlywheelVelocity(3000);
       flywheel.SpinFlywheelPercent(0);
-      flywheel.PIDAngler(0.8);
+      flywheel.PIDAngler(0.8); // change this to clear chain
+
+      if(xboxController.GetStartButtonPressed()){
+        hang.climbZeroed = false;
+      }
 
       // Switching Driver Mode
       if (xboxController2.GetXButtonPressed())
@@ -338,15 +342,24 @@ void Robot::TeleopPeriodic()
         flywheelController.BeginAimAndFire(allianceColor);
         currentDriverMode = DRIVER_MODE::AUTO_AIM_STATIONARY;
       }
-
+      if (xboxController2.GetStartButtonPressed()){
+        autoAmpController.BeginDriveToAmp(allianceColor);
+        currentDriverMode = DRIVER_MODE::AUTO_AMP;
+      }
       if (xboxController2.GetYButtonPressed())
       {
+        notecontroller.BeginScoreNoteInPosition(Elevator::ElevatorSetting::AMP);
         flywheelController.BeginAimAndFire(allianceColor);
         currentDriverMode = DRIVER_MODE::SHOOT_ON_THE_MOVE;
       }
 
+      if(xboxController2.GetAButton() || xboxController.GetPOV() == 180 || xboxController.GetBButton() || xboxController.GetXButton() || xboxController.GetBackButton()){
+        currentDriverMode = DRIVER_MODE::CLIMBING_TRAP;
+      }
+
       break;
     }
+
     case DRIVER_MODE::AUTO_AIM_STATIONARY:
     {
       bool doneShooting = flywheelController.AimAndFire(allianceColor);
@@ -382,8 +395,58 @@ void Robot::TeleopPeriodic()
 
     case DRIVER_MODE::AUTO_AMP:
     {
+      bool isAtAmp = autoAmpController.DriveToAmp(allianceColor);
+      bool scored = false;
+
+      if(isAtAmp){
+        scored = notecontroller.ScoreNoteInPosition(Elevator::ElevatorSetting::AMP);
+      }
+
+      if(!xboxController2.GetStartButton() || scored){
+        currentDriverMode = DRIVER_MODE::BASIC;
+      }
 
       break;
+    }
+
+    case DRIVER_MODE::CLIMBING_TRAP:
+    {
+      double fwdDriveSpeed = leftJoystickY * MAX_DRIVE_SPEED_CLIMB;
+      double strafeDriveSpeed = leftJoystickX * MAX_DRIVE_SPEED_CLIMB;
+      double turnSpeed = rightJoystickX * MAX_SPIN_SPEED_CLIMB;
+
+      swerveDrive.DriveSwervePercent(fwdDriveSpeed, strafeDriveSpeed, turnSpeed);
+
+      flywheel.PIDAngler(M_PI/2);
+
+      if(xboxController.GetAButton()){
+        hang.ZeroClimb();
+      } 
+      else if(xboxController.GetPOV() == 0){
+        hang.ExtendClimb();
+      }
+      else if(xboxController.GetPOV() == 180){
+        hang.RetractClimb();
+      }
+      else if(xboxController.GetPOV() == 90 || xboxController.GetPOV() == 270){
+        if(xboxController.GetPOV() == 90){hang.leftClimbMotor.Set(ClimbConstants::BasePctDown*-1);}
+        if(xboxController.GetPOV() == 270){hang.rightClimbMotor.Set(ClimbConstants::BasePctDown);}
+      }
+      else if(xboxController.GetXButton()){
+        autoTrapController.PrepareClimb();
+      }
+      else if (xboxController.GetYButton()){
+         if(autoTrapController.ClimbToTrap()){
+            notecontroller.ScoreNoteInPosition(Elevator::ElevatorSetting::TRAP);
+         }
+      }
+      else{
+        hang.HoldClimb();
+      }
+
+      if (!xboxController2.GetAButton() && !(xboxController.GetPOV() != -1) && !xboxController.GetBButton() && !xboxController.GetXButton() && !xboxController.GetBackButton())
+        currentDriverMode = DRIVER_MODE::BASIC;
+
     }
   }
 
@@ -459,62 +522,6 @@ void Robot::TeleopPeriodic()
     flywheel.MoveAnglerPercent(0);
   }*/
 
-  /*
-   ,-----.,--.,--.           ,--.    
-  '  .--./|  |`--',--,--,--.|  |-.  
-  |  |    |  |,--.|        || .-. ' 
-  '  '--'\|  ||  ||  |  |  || `-' | 
-   `-----'`--'`--'`--`--`--' `---'  
-  */
-
-  /*if (controller2LeftJoystickY != 0 || controller2RightJoystickY != 0)
-    hang.SetClimbMotors(controller2LeftJoystickY, controller2RightJoystickY);
-  else if(xboxController.GetAButton()){
-    hang.ExtendClimb();
-  }
-  else if (xboxController.GetBButton()){
-    hang.RetractClimb();
-  }
-  else if (xboxController.GetXButton()){
-    hang.ZeroClimb();
-  }
-  else if (xboxController.GetPOV() == 90){
-    hang.ClimbPID(-0.6);
-  }else if (xboxController.GetPOV() == 270){
-    hang.ClimbPID(0);
-  }
-  else{
-    hang.HoldClimb();
-  }
-
-  if(xboxController.GetYButtonPressed()){
-    hang.climbZeroed = false;
-  }*/
-
-  //ONLY uncomment this when motors are found to be going the right directions and limits work properly
-  /*
-  if(!hang.climbZeroed){
-    hang.ZeroClimb();
-  }
-  */
-
-  /*if(xboxController2.GetAButton()){
-    hang.ExtendClimb();
-  }
-  else if (xboxController2.GetBButton()){
-    hang.RetractClimb();
-    
-  }
-  else if (xboxController2.GetXButton()){
-    hang.ZeroClimb();
-  }
-  else if (xboxController2.GetYButton()){
-    hang.BalanceWhileClimbing();
-  }
-  else{
-    hang.HoldClimb();
-  }*/
-
   /*                                                                
   ,------.         ,--.                         ,--.                
   |  .-.  \  ,---. |  |-. ,--.,--. ,---.  ,---. `--',--,--,  ,---.  
@@ -559,6 +566,9 @@ void Robot::TeleopPeriodic()
   SmartDashboard::PutNumber("Bottom FlyWheel RPM", flywheel.BottomFlywheel.GetMeasurement()*60.0);
 
   SmartDashboard::PutNumber("Driver Mode", currentDriverMode);
+
+  SmartDashboard::PutNumber("Climb r pos", hang.rightEncoder.GetPosition());
+  SmartDashboard::PutNumber("Climb l pos", hang.leftEncoder.GetPosition());
 
   //SmartDashboard::PutBoolean("climb l stop", hang.leftStop.Get());
   //SmartDashboard::PutNumber("climb l pos", hang.leftEncoder.GetPosition());

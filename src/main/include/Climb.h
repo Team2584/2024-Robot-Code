@@ -9,16 +9,17 @@ class Climb {
 
     private:
 
-        rev::CANSparkFlex leftClimbMotor, rightClimbMotor;
+       
         VisionSwerve* robotSwerveDrive;
-        PID leftPID;
-        PID rightPID;
-        PID rollPID;
-
-        
+        frc::TrapezoidProfile<units::meters>::Constraints m_linearconstraints;
+        frc::TrapezoidProfile<units::radians>::Constraints m_rotationconstraints;
+        frc::ProfiledPIDController<units::meters> leftPID, rightPID;
+        frc::ProfiledPIDController<units::radians> rollPID;
 
     public:
-    bool climbZeroed = false;
+
+        bool climbZeroed = false;
+        rev::CANSparkFlex leftClimbMotor, rightClimbMotor;
         rev::SparkRelativeEncoder leftEncoder, rightEncoder;
         frc::DigitalInput leftStop;
         frc::DigitalInput rightStop;
@@ -41,13 +42,13 @@ class Climb {
 
         void HoldClimb();
 
-        bool ClimbPID(double setpoint);
+        bool ClimbPID(units::meter_t setpoint);
 
         bool BalanceAtPos();
 
         bool BalanceWhileClimbing();
 
-        bool BalanceWhileClimbing(double setpoint);
+        bool BalanceWhileClimbing(units::meter_t setpoint);
 
         bool GetClimbAtPos();
         

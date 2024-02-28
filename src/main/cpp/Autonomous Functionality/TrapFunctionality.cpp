@@ -10,15 +10,15 @@ climb{climb_}
 bool AutonomousTrapController::PrepareClimb(){
     climb->ClimbPID(ClimbConstants::MaxHeight);
     elevator->MoveToHeight(Elevator::ElevatorSetting::LOW);
-    return climb->GetClimbAtPos() && elevator->GetElevatorAtSetpoint();
+    return climb->GetClimbAtPos();
 }
 
 bool AutonomousTrapController::ClimbToTrap(){
-    climb->ClimbPID(ClimbConstants::MinHeight);
+    climb->ClimbPID(0_m);
     noteController->BeginScoreNoteInPosition(Elevator::ElevatorSetting::TRAP);
-    return climb->GetClimbDone();
+    return climb->GetClimbAtPos();
 }
 
 bool AutonomousTrapController::ScoreInTrap(){
-    noteController->ScoreNoteInPosition(Elevator::ElevatorSetting::TRAP);
+    return noteController->ScoreNoteInPosition(Elevator::ElevatorSetting::TRAP);
 }

@@ -3,33 +3,35 @@
 
 namespace ClimbConstants {
 
-inline const double MaxHeight = 100;
-inline const double MinHeight = 0;
+inline const auto MaxHeight = -0.56_m;
+inline const auto MinHeight = 0.03_m;
 
-inline const double m_linear_KD  = 0;
-inline const double m_linear_KP  = 6;
-inline const double m_linear_KI  = 0.1;
-inline const double m_linear_KIMAX  = 0.4;
-inline const double m_linear_POS_ERROR  = 0.03;
-inline const double m_linear_VELOCITY_ERROR = 10000;
-inline const double m_linear_MAX_SPEED  = 0.5;
-inline const double m_linear_MIN_SPEED  = 0.05;
+namespace Linear{
+inline const auto m_KD  = 0;
+inline const auto m_KP  = 4;
+inline const auto m_KI  = 0;
+inline const auto m_POS_ERROR  = 0.03_m;
+inline const auto m_VELOCITY_ERROR = INFINITY;
+inline units::meters_per_second_t kMaxVelocity = 2_mps;
+inline units::meters_per_second_squared_t kMaxAcceleration = 0.75_mps_sq;
+}
 
-inline const double m_rotation_KD  = 0;
-inline const double m_rotation_KP  = 4;
-inline const double m_rotation_KI  = 0;
-inline const double m_rotation_KIMAX  = 0;
-inline const double m_rotation_ROT_ERROR  = 0.3; 
-inline const double m_rotation_VELOCITY_ERROR = 10000;
-inline const double m_rotation_MAX_SPEED  = 0.3;
-inline const double m_rotation_MIN_SPEED  = 0.05;
+namespace Rotation{
+inline const auto m_KD  = 0;
+inline const auto m_KP  = 4;
+inline const auto m_KI  = 0;
+inline const auto m_ROTATION_TOLERACE  = 0.3_m; 
+inline const auto m_VELOCITY_TOLERACE = INFINITY;
+inline units::radians_per_second_t kMaxVelocity = units::radians_per_second_t{2};
+inline units::radians_per_second_squared_t kMaxAcceleration = units::radians_per_second_squared_t{0.75};
+}
 
-inline const double BasePctUp = 0.3;
-inline const double BasePctDown =  0.3;
+inline const auto BasePctUp = 0.3;
+inline const auto BasePctDown =  0.3;
 
-inline constexpr double gearRatioValue = 1.0/16.0;
-inline constexpr double diameterValue = 0.0508; //meters (GUESS)
-inline constexpr double CLIMB_CONVERSION_FACTOR = gearRatioValue * (3.14159365 * diameterValue);
+inline constexpr auto gearRatioValue = 1.0/16.0;
+inline constexpr auto diameterValue = 0.0508; //meters (GUESS)
+inline constexpr auto CLIMB_CONVERSION_FACTOR = gearRatioValue * (3.14159365 * diameterValue);
 }
 
 #define CLIMB_MOTOR_L 23

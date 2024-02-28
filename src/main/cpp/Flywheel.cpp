@@ -68,7 +68,7 @@ void FlywheelSystem::MoveAnglerPercent(double percent)
 
 bool FlywheelSystem::PIDAngler(double point)
 {
-  if (point > M_PI / 2 || point < 0)
+  if (point > M_PI * 3.0/4.0 || point < 0)
   {
     FlywheelAnglingMotor.Set(0);
     return false;
