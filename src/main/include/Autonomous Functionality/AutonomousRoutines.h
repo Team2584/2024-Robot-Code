@@ -25,32 +25,20 @@ private:
     Timer safetyTimer;
     double splineSection = 0;
     bool currentlyShooting = false;
+    units::meter_t maxXShot = 100_m;
 
 public:
     AutonomousController(VisionSwerve *swerveDrive_, Intake *intake_, FlywheelSystem *flywheel_, Elevator *ampMech_, SwerveDriveAutonomousController *swerveDriveController_, NoteController *noteController_, AutonomousShootingController *shootingController_, AutonomousAmpingController *ampingController_);
 
     void SetupAuto(Pose2d startingPose);
+    void SetupBasicShootIntakeShoot(Pose2d startingPose, string TrajectoryName);
     void BasicShootIntakeShoot(AllianceColor allianceColor);
-    void SetupBlueCenterShootIntake2Shoot();
-    void BlueCenterShootIntake2Shoot();
-    void SetupBlueLeftShootIntake3Shoot();
-    void BlueLeftShootIntake3Shoot();
-    void SetupBlueRightShootIntake1Shoot();
-    void BlueRightShootIntake1Shoot();
-    void SetupRedCenterShootIntake10Shoot();
-    void RedCenterShootIntake10Shoot();
-    void SetupRedLeftShootIntake9Shoot();
-    void RedLeftShootIntake9Shoot();
-    void SetupRedRightShootIntake11Shoot();
-    void RedRightShootIntake11Shoot();
     void SetupBlueLeftShootIntake3ShootIntake8Shoot();
     void BlueLeftShootIntake3ShootIntake8Shoot();
     void SetupBlueLeftShootIntake3ShootIntake8ShootTESTING();
     void BlueLeftShootIntake3ShootIntake8ShootTESTING();
-    void SetupBlueRightShootIntake1ShootIntake2ShootIntake3();
-    void BlueRightShootIntake1ShootIntake2ShootIntake3();
-    void SetupFastBlueRightShootIntake1ShootIntake2ShootIntake3();
-    void FastBlueRightShootIntake1ShootIntake2ShootIntake3();
-    void SetupBlueRightShootIntake1ShootIntake2ShootIntake3ShootIntake8Shoot();
-    void BlueRightShootIntake1ShootIntake2ShootIntake3ShootIntake8Shoot();
+    void SetupSlowBlueRightShootIntake1ShootIntake2ShootIntake3();
+    void SlowBlueRightShootIntake1ShootIntake2ShootIntake3();
+    void SetupFollowTrajectoryAndShoot(Pose2d startingPose, string trajectoryName, units::meter_t maxXShot_);
+    void FollowTrajectoryAndShoot(AllianceColor allianceColor);
 };
