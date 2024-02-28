@@ -23,9 +23,10 @@ class Elevator
         frc::ProfiledPIDController<units::meters> m_controller;
         frc::ElevatorFeedforward m_feedforward;
 
-        bool PIDElevator(double setpoint);
         
     public:
+
+        bool PIDElevator(double setpoint);
 
         enum ElevatorSetting{LOW, OUTTAKE, AMP, TRAP};
 
@@ -47,7 +48,9 @@ class Elevator
         void NoteToSelector();
         void DepositNote();
 
-        ElevatorSetting GetElevatorSetpoint();
+        double GetElevatorSetpoint();
+
+
 
         bool GetElevatorAtSetpoint();
 

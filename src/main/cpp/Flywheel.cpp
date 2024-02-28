@@ -11,6 +11,9 @@ FlywheelSystem::FlywheelSystem()
     FlywheelAnglerPID{FlywheelConstants::Angler::KP, FlywheelConstants::Angler::KI, FlywheelConstants::Angler::KD, FlywheelConstants::Angler::KI_MAX, 
                      FlywheelConstants::Angler::MIN_SPEED, FlywheelConstants::Angler::MAX_SPEED, FlywheelConstants::Angler::POS_TOLERANCE, FlywheelConstants::Angler::VELOCITY_TOLERANCE}
 {
+    FlywheelMotor2.SetIdleMode(rev::CANSparkBase::IdleMode::kCoast);
+    FlywheelMotor1.SetIdleMode(rev::CANSparkBase::IdleMode::kCoast);
+    FlywheelAnglerPID.EnableContinuousInput(-M_PI, M_PI);
 }
 
 /**
@@ -66,7 +69,7 @@ void FlywheelSystem::MoveAnglerPercent(double percent)
 
 bool FlywheelSystem::PIDAngler(double point)
 {
-  if (point > M_PI / 2 || point < 0)
+  if (point > M_PI * 3.0/4.0 || point < 0)
   {
     FlywheelAnglingMotor.Set(0);
     return false;

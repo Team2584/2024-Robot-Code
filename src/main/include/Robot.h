@@ -26,6 +26,7 @@
 #include <frc/XboxController.h>
 #include <frc/DutyCycleEncoder.h>
 #include <frc/DigitalInput.h>
+#include <frc/DriverStation.h>
 
 #include <frc/controller/ArmFeedforward.h>
 #include <frc/controller/ElevatorFeedforward.h>
@@ -54,6 +55,8 @@
 #include <rev/CANSparkMax.h>
 #include <rev/AbsoluteEncoder.h>
 
+#include <frc/PWM.h>
+
 #include <frc/controller/SimpleMotorFeedforward.h>
 #include <frc/controller/PIDController.h>
 
@@ -65,6 +68,8 @@
 
 using namespace frc;
 using namespace std;
+
+enum AllianceColor{RED, BLUE};
 
 class Robot : public frc::TimedRobot {
  public:
@@ -83,7 +88,16 @@ class Robot : public frc::TimedRobot {
 
  private:
   frc::SendableChooser<std::string> m_chooser;
-  const std::string kAutoNameDefault = "Default";
-  const std::string kAutoNameCustom = "My Auto";
+  const std::string kAutoBCSI2S = "BLUE Center: Shoot -> Intake 2 -> Shoot";
+  const std::string kAutoBLSI3S = "BLUE Left: Shoot -> Intake 3 -> Shoot";
+  const std::string kAutoBRSI1S = "BLUE Right: Shoot -> Intake 1 -> Shoot";
+  const std::string kAutoRCSI10S = "RED Center: Shoot -> Intake 10 -> Shoot";
+  const std::string kAutoRLSI9S = "RED Left: Shoot -> Intake 9 -> Shoot";
+  const std::string kAutoRRSI11S = "RED Right: Shoot -> Intake 11 -> Shoot";
+  const std::string kAutoBRSlow4CloseNotes = "SLOW BLUE Right: Shoot -> Intake and Shoot 3 Close Notes";
+  const std::string kAutoBLSI3SI8S = "BLUE Left: Shoot -> Shoot 3 -> Shoot 8";
+  const std::string kAutoBLSS3S8TEST = "TEST BLUE Left: Shoot -> Shoot 3 -> Shoot 8";
+  const std::string kAutoBR4CloseNotes = "BLUE Right: Shoot -> Intake and Shoot 3 Close Notes";
+  const std::string kAutoBR4CloseNotesAnd8 = "BLUE Right Shoot -> Intake and Shoot 3 Close Notes -> Intake and Shoot 8";
   std::string m_autoSelected;
 };

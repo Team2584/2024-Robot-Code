@@ -130,9 +130,18 @@ void VisionSwerve::DriveSwervePercentTagOriented(double FwdDriveSpeed, double St
     DriveSwervePercentNonFieldOriented(FwdDriveSpeed, StrafeDriveSpeed, TurnSpeed);
 }
 
+void VisionSwerve::DriveSwerveTagOrientedMetersAndRadians(double FwdDriveSpeed, double StrafeDriveSpeed, double TurnSpeed)
+{
+    DriveSwervePercentTagOriented(VelocityToPercent(FwdDriveSpeed), VelocityToPercent(StrafeDriveSpeed), AngularVelocityToPercent(TurnSpeed));
+}
+
+
 void VisionSwerve::UpdateRaspiConnection()
 {
-    connectedEntry.Set(true);
+    if (sanityEntry.Get() == -1)
+        connectedEntry.Set(false);
+    else
+        connectedEntry.Set(true);
 }
 
 void VisionSwerve::PrintRaspiSanityCheck()

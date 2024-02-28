@@ -1,20 +1,25 @@
 #include "Robot.h"
 #include "constants/ClimbConstants.h"
+#include "VisionBasedSwerve.h" 
+
+#ifndef CLIMB_H
+#define CLIMB_H
 
 class Climb {
 
     private:
 
-        rev::CANSparkFlex leftClimbMotor, rightClimbMotor;
+       
         VisionSwerve* robotSwerveDrive;
-        PID leftPID;
-        PID rightPID;
-        PID rollPID;
+        frc::TrapezoidProfile<units::meters>::Constraints m_linearconstraints;
+        frc::TrapezoidProfile<units::radians>::Constraints m_rotationconstraints;
+        frc::ProfiledPIDController<units::meters> leftPID, rightPID;
+        frc::ProfiledPIDController<units::radians> rollPID;
 
     public:
 
         bool climbZeroed = false;
-
+        rev::CANSparkFlex leftClimbMotor, rightClimbMotor;
         rev::SparkRelativeEncoder leftEncoder, rightEncoder;
         rev::SparkLimitSwitch leftHallSensor, rightHallSensor;
 
@@ -38,13 +43,13 @@ class Climb {
 
         void HoldClimb();
 
-        bool ClimbPID(double setpoint);
+        bool ClimbPID(units::meter_t setpoint);
 
         bool BalanceAtPos();
 
         bool BalanceWhileClimbing();
 
-        bool BalanceWhileClimbing(double setpoint);
+        bool BalanceWhileClimbing(units::meter_t setpoint);
 
         bool GetClimbAtPos();
         
@@ -53,3 +58,5 @@ class Climb {
         bool GetClimbDone();
 
 };
+
+#endif
