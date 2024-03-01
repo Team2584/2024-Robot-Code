@@ -13,6 +13,7 @@ FlywheelSystem::FlywheelSystem()
 {
     FlywheelMotor2.SetIdleMode(rev::CANSparkBase::IdleMode::kCoast);
     FlywheelMotor1.SetIdleMode(rev::CANSparkBase::IdleMode::kCoast);
+    FlywheelAnglingMotor.SetIdleMode(rev::CANSparkBase::IdleMode::kBrake);
     FlywheelAnglerPID.EnableContinuousInput(-M_PI, M_PI);
 }
 

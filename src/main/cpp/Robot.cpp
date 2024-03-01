@@ -563,10 +563,6 @@ void Robot::TeleopPeriodic()
   SmartDashboard::PutNumber("FR Module Heading", swerveDrive.FRModule.GetMagEncoderValue());
   SmartDashboard::PutNumber("BL Module Heading", swerveDrive.BLModule.GetMagEncoderValue());
   SmartDashboard::PutNumber("BR Module Heading", swerveDrive.BRModule.GetMagEncoderValue());
-  
-  SmartDashboard::PutNumber("FL Drive Encoder", swerveDrive.FLModule.GetDriveEncoder());
-    SmartDashboard::PutNumber("FR Drive Encoder", swerveDrive.FRModule.GetDriveEncoder());
-  SmartDashboard::PutNumber("BL Drive Encoder", swerveDrive.BLModule.GetDriveEncoder());
 
   SmartDashboard::PutNumber("Odometry X Position", swerveDrive.GetOdometryPose().X().value());
   SmartDashboard::PutNumber("Odometry Y Position", swerveDrive.GetOdometryPose().Y().value());
@@ -613,23 +609,69 @@ void Robot::DisabledPeriodic() {}
 
 void Robot::TestInit() {
     ampmech.ResetElevatorEncoder();  
-
+    flywheel.FlywheelAnglerPID.SetupConstantTuning("Angler");
+    overbumper.m_WristPID.SetupConstantTuning("Intake");
+    SmartDashboard::PutNumber("Angler Setpoint", M_PI / 2);
 }
 
 void Robot::TestPeriodic() {
-  
-  SmartDashboard::PutNumber("Flywheel Encoder", flywheel.GetAnglerEncoderReading());
+  flywheel.FlywheelAnglerPID.UpdateConstantTuning("Angler");
+    overbumper.m_WristPID.UpdateConstantTuning("Intake");
 
-  SmartDashboard::PutBoolean("in intake", overbumper.GetObjectInIntake());
-  SmartDashboard::PutBoolean("in mech", ampmech.GetObjectInMech());
-  
+  if (xboxController.GetPOV() == 0){
+    flywheel.PIDAngler(SmartDashboard::GetNumber("Angler Setpoint", M_PI / 2));
+  }
+  else{
+    flywheel.MoveAnglerPercent(0);
+  }
+
+  if (xboxController.GetAButton()){
+    overbumper.PIDWristToPoint(Intake::WristSetting::HIGH);
+  }
+  else if (xboxController.GetBButton()){
+    overbumper.PIDWristToPoint(Intake::WristSetting::LOW);
+  }
+  else if (xboxController.GetXButton()){
+    overbumper.PIDWristToPoint(Intake::WristSetting::LOW);
+  }
+  else {
+    overbumper.MoveWristPercent(0);
+  }
+
+  if (xboxController.GetRightTriggerAxis() > 0.5)
+    overbumper.IntakeNote();
+  else if (xboxController.GetLeftTriggerAxis() > 0.5)
+    overbumper.ShootNote();
+  else
+    overbumper.SetIntakeMotorSpeed(0);
+
   SmartDashboard::PutNumber("FL Module Heading", swerveDrive.FLModule.GetMagEncoderValue());
   SmartDashboard::PutNumber("FR Module Heading", swerveDrive.FRModule.GetMagEncoderValue());
   SmartDashboard::PutNumber("BL Module Heading", swerveDrive.BLModule.GetMagEncoderValue());
   SmartDashboard::PutNumber("BR Module Heading", swerveDrive.BRModule.GetMagEncoderValue());
+  SmartDashboard::PutNumber("Flywheel Magencoder Heading", flywheel.magEncoder.GetAbsolutePosition());
 
-  SmartDashboard::PutNumber("elev pos", ampmech.GetWinchEncoderReading());
-  SmartDashboard::PutNumber("angler mag encoder", flywheel.magEncoder.GetAbsolutePosition());
+  SmartDashboard::PutNumber("Odometry X Position", swerveDrive.GetOdometryPose().X().value());
+  SmartDashboard::PutNumber("Odometry Y Position", swerveDrive.GetOdometryPose().Y().value());
+  SmartDashboard::PutNumber("Odometry Heading", swerveDrive.GetOdometryPose().Rotation().Degrees().value());
+  
+  SmartDashboard::PutBoolean("Tag in View", swerveDrive.TagInView());
+  SmartDashboard::PutNumber("Tag Odometry X", swerveDrive.GetTagOdometryPose().X().value());
+  SmartDashboard::PutNumber("Tag Odometry Y", swerveDrive.GetTagOdometryPose().Y().value());
+  SmartDashboard::PutNumber("Tag Odometry Heading", swerveDrive.GetTagOdometryPose().Rotation().Degrees().value());
+
+  SmartDashboard::PutBoolean("Note in View", swerveDrive.NoteInView());
+  SmartDashboard::PutNumber("Note Odometry X", swerveDrive.GetNoteOdometryPose().X().value());
+  SmartDashboard::PutNumber("Note Odometry Y", swerveDrive.GetNoteOdometryPose().Y().value());
+  SmartDashboard::PutNumber("Note Odometry Heading", swerveDrive.GetNoteOdometryPose().Rotation().Degrees().value());
+
+  SmartDashboard::PutNumber("Elevator Encoder", ampmech.GetWinchEncoderReading());
+  SmartDashboard::PutNumber("Wrist Encoder", overbumper.GetWristEncoderReading());
+  SmartDashboard::PutNumber("Flywheel Encoder", flywheel.GetAnglerEncoderReading());
+
+  SmartDashboard::PutBoolean("in intake", overbumper.GetObjectInIntake());
+  SmartDashboard::PutBoolean("in mech", ampmech.GetObjectInMech());
+  SmartDashboard::PutBoolean("in tunnel", overbumper.GetObjectInTunnel());
 }
 
 void Robot::SimulationInit() {}
