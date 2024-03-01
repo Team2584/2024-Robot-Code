@@ -354,6 +354,8 @@ void Robot::TeleopPeriodic()
         hang.climbZeroed = false;
       }
 
+      hang.SetClimbMotors(controller2LeftJoystickY, controller2RightJoystickY);
+
       // Switching Driver Mode
       if (xboxController2.GetXButtonPressed())
       {
@@ -371,7 +373,7 @@ void Robot::TeleopPeriodic()
         currentDriverMode = DRIVER_MODE::SHOOT_ON_THE_MOVE;
       }
 
-      if(xboxController2.GetAButton() || xboxController.GetPOV() == 180 || xboxController.GetBButton() || xboxController.GetXButton() || xboxController.GetBackButton()){
+      if(xboxController.GetAButton() || xboxController.GetPOV() != -1 || xboxController.GetBButton() || xboxController.GetXButton() || xboxController.GetBackButton() || xboxController.GetYButton()){
         currentDriverMode = DRIVER_MODE::CLIMBING_TRAP;
       }
 
@@ -462,7 +464,7 @@ void Robot::TeleopPeriodic()
         hang.HoldClimb();
       }
 
-      if (!xboxController2.GetAButton() && !(xboxController.GetPOV() != -1) && !xboxController.GetBButton() && !xboxController.GetXButton() && !xboxController.GetBackButton())
+      if (!xboxController.GetYButton() && !xboxController.GetAButton() && !(xboxController.GetPOV() != -1) && !xboxController.GetBButton() && !xboxController.GetXButton() && !xboxController.GetBackButton())
         currentDriverMode = DRIVER_MODE::BASIC;
 
     }

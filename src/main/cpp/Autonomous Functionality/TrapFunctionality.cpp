@@ -14,7 +14,7 @@ bool AutonomousTrapController::PrepareClimb(){
 }
 
 bool AutonomousTrapController::ClimbToTrap(){
-    climb->ClimbPID(0_m);
+    climb->ClimbPID(ClimbConstants::MinHeight);
     noteController->BeginScoreNoteInPosition(Elevator::ElevatorSetting::TRAP);
     return climb->GetClimbAtPos();
 }

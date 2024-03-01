@@ -3,16 +3,16 @@
 
 namespace ClimbConstants {
 
-inline const auto MaxHeight = -0.56_m;
+inline const auto MaxHeight = 0.56_m;
 inline const auto MinHeight = 0.03_m;
 
 namespace Linear{
 inline const auto m_KD  = 0;
-inline const auto m_KP  = 4;
+inline const auto m_KP  = 30;
 inline const auto m_KI  = 0;
 inline const auto m_POS_ERROR  = 0.03_m;
 inline const auto m_VELOCITY_ERROR = INFINITY;
-inline units::meters_per_second_t kMaxVelocity = 2_mps;
+inline units::meters_per_second_t kMaxVelocity = 0.1_mps;
 inline units::meters_per_second_squared_t kMaxAcceleration = 0.75_mps_sq;
 }
 
