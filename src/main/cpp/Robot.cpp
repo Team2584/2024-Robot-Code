@@ -611,9 +611,26 @@ void Robot::DisabledInit() {}
 
 void Robot::DisabledPeriodic() {}
 
-void Robot::TestInit() {}
+void Robot::TestInit() {
+    ampmech.ResetElevatorEncoder();  
 
-void Robot::TestPeriodic() {}
+}
+
+void Robot::TestPeriodic() {
+  
+  SmartDashboard::PutNumber("Flywheel Encoder", flywheel.GetAnglerEncoderReading());
+
+  SmartDashboard::PutBoolean("in intake", overbumper.GetObjectInIntake());
+  SmartDashboard::PutBoolean("in mech", ampmech.GetObjectInMech());
+  
+  SmartDashboard::PutNumber("FL Module Heading", swerveDrive.FLModule.GetMagEncoderValue());
+  SmartDashboard::PutNumber("FR Module Heading", swerveDrive.FRModule.GetMagEncoderValue());
+  SmartDashboard::PutNumber("BL Module Heading", swerveDrive.BLModule.GetMagEncoderValue());
+  SmartDashboard::PutNumber("BR Module Heading", swerveDrive.BRModule.GetMagEncoderValue());
+
+  SmartDashboard::PutNumber("elev pos", ampmech.GetWinchEncoderReading());
+  SmartDashboard::PutNumber("angler mag encoder", flywheel.magEncoder.GetAbsolutePosition());
+}
 
 void Robot::SimulationInit() {}
 

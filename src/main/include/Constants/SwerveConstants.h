@@ -26,10 +26,10 @@
 #define PIGEON_IMU_PORT 6
 
 // Find offsets with bevel gears on the right side of the drive train
-#define FL_WHEEL_OFFSET 0.2103 //0.121462
-#define FR_WHEEL_OFFSET 0.5000 //0.229792
-#define BL_WHEEL_OFFSET 0.7116 //0.007819
-#define BR_WHEEL_OFFSET 0.6294 //0.717629
+#define FL_WHEEL_OFFSET 0.863  //0.2103 
+#define FR_WHEEL_OFFSET 0.461  //0.5000 
+#define BL_WHEEL_OFFSET 0.3605 //0.7116 
+#define BR_WHEEL_OFFSET 0.386  //0.6294 
 
 // Assuming a rectangular drive train (input distance between center of wheels)
 #define DRIVE_LENGTH 0.5906_m 

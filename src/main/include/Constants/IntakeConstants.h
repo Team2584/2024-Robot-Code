@@ -22,14 +22,14 @@ inline const double SELECTOR_SPEED_ELEVATOR = 0.7;
 inline const double SELECTOR_SPEED_SHOOTER = -0.9;
 
 namespace Wrist{
-inline const double WRIST_HIGH = 0.22;
-inline const double WRIST_LOW = 0.0;
+inline const double WRIST_HIGH = 0.195; ///0.538
+inline const double WRIST_LOW = 0;
 inline const double WRIST_SHOOT = 0.17;
 inline constexpr auto KS = 0_V;
-inline constexpr auto KG = 0.34_V;
-inline constexpr auto KV = 0.4_V * 1_s / 1_rad; //0.88
+inline constexpr auto KG = 0.3_V; //0.34
+inline constexpr auto KV = 0.33_V * 1_s / 1_rad; //0.88
 inline double KD  = 0;
-inline double KP  = 25;
+inline double KP  = 5;
 inline double KI  = 0;
 inline double KIMAX  = 0.1;
 inline double POS_ERROR  = 0.015; //~3deg

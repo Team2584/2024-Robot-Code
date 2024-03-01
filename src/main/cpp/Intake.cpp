@@ -13,6 +13,7 @@ Intake::Intake()
   magEncoder = new rev::SparkAbsoluteEncoder(wristMotor.GetAbsoluteEncoder(rev::SparkAbsoluteEncoder::Type::kDutyCycle));
   wristMotor.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
   m_WristPID.EnableContinuousInput(0, 1);
+  wristMotor.SetInverted(true);
 }
 
 void Intake::SetIntakeMotorSpeed(double percent)
@@ -83,10 +84,10 @@ void Intake::MoveWristPercent(double percent)
 bool Intake::PIDWrist(double point)
 {  
   units::volt_t PID = units::volt_t{m_WristPID.Calculate(GetWristEncoderReading(), point)};
-  units::volt_t FF = m_WristFF.Calculate(units::radian_t{GetWristEncoderReading()}, 0_rad / 1_s);
+  units::volt_t FF = m_WristFF.Calculate(units::radian_t{GetWristEncoderReading() * 2 * M_PI}, 0_rad / 1_s);
   SmartDashboard::PutNumber("Wrist PID", PID.value());
   SmartDashboard::PutNumber("Wrist FF", FF.value());
-  wristMotor.SetVoltage(PID + FF);
+  wristMotor.SetVoltage((PID + FF));
   return m_WristPID.PIDFinished();
 }
 

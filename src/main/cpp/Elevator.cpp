@@ -57,6 +57,7 @@ bool Elevator::PIDElevator(double setpoint){
     m_controller.SetGoal(goal);
 
     //winchMotor.SetVoltage((units::volt_t{m_controller.Calculate(units::meter_t{winchEncoder->GetPosition()}, goal)} + m_feedforward.Calculate(m_controller.GetSetpoint().velocity))*-1);
+    
     winchMotor.SetVoltage(units::volt_t{m_controller.Calculate(units::meter_t{GetWinchEncoderReading()}, goal)} *-1);
 
     auto elevv = m_controller.Calculate(units::meter_t{GetWinchEncoderReading()}, goal);
