@@ -111,17 +111,25 @@ void Climb::HoldClimb(){
 */
 bool Climb::ClimbPID(units::meter_t setpoint){
     if(ZeroClimb()){
-        leftPID.SetGoal(setpoint*-1);
-        rightPID.SetGoal(setpoint);
+        leftPID.SetGoal(setpoint);
+        rightPID.SetGoal(setpoint*-1);
+
+                SmartDashboard::PutNumber("Climb setpoint", leftPID.GetGoal().position.value());
 
         units::volt_t left = units::volt_t{leftPID.Calculate(units::meter_t{leftEncoder.GetPosition()})};
-        units::volt_t right = units::volt_t{rightPID.Calculate(units::meter_t{rightEncoder.GetPosition()})*-1};
+        units::volt_t right = units::volt_t{rightPID.Calculate(units::meter_t{rightEncoder.GetPosition()})};
 
         SmartDashboard::PutNumber("Climb L Error",leftPID.GetPositionError().value());
         SmartDashboard::PutNumber("Climb L Pos",leftEncoder.GetPosition());
         SmartDashboard::PutNumber("Climb L Voltage Send", left.value());
         SmartDashboard::PutNumber("Climb L Voltage Recv", leftClimbMotor.GetBusVoltage());
         SmartDashboard::PutNumber("Climb L Current", leftClimbMotor.GetOutputCurrent());
+
+        SmartDashboard::PutNumber("Climb r Error",rightPID.GetPositionError().value());
+        SmartDashboard::PutNumber("Climb r Pos",rightEncoder.GetPosition());
+        SmartDashboard::PutNumber("Climb r Voltage Send", right.value());
+        SmartDashboard::PutNumber("Climb r Voltage Recv", rightClimbMotor.GetBusVoltage());
+        SmartDashboard::PutNumber("Climb r Current", rightClimbMotor.GetOutputCurrent());
 
         leftClimbMotor.SetVoltage(left);
         rightClimbMotor.SetVoltage(right);
@@ -181,7 +189,7 @@ bool Climb::BalanceWhileClimbing(units::meter_t setpoint){
     if(ZeroClimb()){
 
         rollPID.SetGoal(0_rad);
-        leftPID.SetGoal(setpoint*-1);
+        leftPID.SetGoal(setpoint);
         rightPID.SetGoal(setpoint);
 
         auto rotation = units::degree_t{robotSwerveDrive->GetIMURoll()};
@@ -192,7 +200,7 @@ bool Climb::BalanceWhileClimbing(units::meter_t setpoint){
 
         if(!GetClimbAtPos()){
             leftPIDOutput = units::volt_t{leftPID.Calculate(units::meter_t{leftEncoder.GetPosition()})};
-            rightPIDOutput = units::volt_t{rightPID.Calculate(units::meter_t{rightEncoder.GetPosition()})*-1};
+            rightPIDOutput = units::volt_t{rightPID.Calculate(units::meter_t{rightEncoder.GetPosition()*-1})*-1};
         }
 
         units::volt_t rollPIDOutput = units::volt_t{rollPID.Calculate(error)};
