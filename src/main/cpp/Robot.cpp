@@ -612,11 +612,20 @@ void Robot::TestInit() {
     flywheel.FlywheelAnglerPID.SetupConstantTuning("Angler");
     overbumper.m_WristPID.SetupConstantTuning("Intake");
     SmartDashboard::PutNumber("Angler Setpoint", M_PI / 2);
+    SmartDashboard::PutNumber("Flywheel Setpoint", 0);
 }
 
 void Robot::TestPeriodic() {
   flywheel.FlywheelAnglerPID.UpdateConstantTuning("Angler");
     overbumper.m_WristPID.UpdateConstantTuning("Intake");
+
+  if(xboxController.GetBackButtonPressed()){
+    flywheel.SpinFlywheelPercent(0);
+  }
+  else if (xboxController.GetStartButtonPressed()){
+    flywheel.SetFlywheelVelocity(SmartDashboard::GetNumber("Flywheel Setpoint", 0));
+  }
+
 
   if (xboxController.GetPOV() == 0){
     flywheel.PIDAngler(SmartDashboard::GetNumber("Angler Setpoint", M_PI / 2));
