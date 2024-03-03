@@ -86,7 +86,7 @@ bool Intake::PIDWrist(double point)
   units::volt_t FF = m_WristFF.Calculate(units::radian_t{GetWristEncoderReading()}, 0_rad / 1_s);
   SmartDashboard::PutNumber("Wrist PID", PID.value());
   SmartDashboard::PutNumber("Wrist FF", FF.value());
-  wristMotor.SetVoltage(PID + FF);
+  wristMotor.SetVoltage(-1 * (PID + FF));
   return m_WristPID.PIDFinished();
 }
 

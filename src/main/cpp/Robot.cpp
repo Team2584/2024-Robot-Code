@@ -611,9 +611,23 @@ void Robot::DisabledInit() {}
 
 void Robot::DisabledPeriodic() {}
 
-void Robot::TestInit() {}
+void Robot::TestInit() {
+  SmartDashboard::PutNumber("Angler Setpoint", M_PI / 2);
+}
 
-void Robot::TestPeriodic() {}
+void Robot::TestPeriodic() {
+
+  SmartDashboard::PutNumber("Flywheel Magnet", flywheel.magEncoder.GetAbsolutePosition());
+  SmartDashboard::PutNumber("Flywheel Encoder", flywheel.GetAnglerEncoderReading());
+
+
+  if (xboxController.GetPOV() == 0){
+    flywheel.PIDAngler(SmartDashboard::GetNumber("Angler Setpoint", M_PI / 2));
+  }
+  else{
+    flywheel.MoveAnglerPercent(0);
+  }
+}
 
 void Robot::SimulationInit() {}
 
