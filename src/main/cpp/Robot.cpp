@@ -340,7 +340,7 @@ void Robot::TeleopPeriodic()
       else {
         overbumper.SetIntakeMotorSpeed(0);
         ampmech.SetAmpMotorPercent(0);
-        ampmech.StopElevator();
+        ampmech.MoveToHeight(Elevator::ElevatorSetting::LOW);
       }
 
       //overbumper.PIDWristToPoint(wristSetPoint);
@@ -611,21 +611,29 @@ void Robot::TestInit() {
     ampmech.ResetElevatorEncoder();  
     flywheel.FlywheelAnglerPID.SetupConstantTuning("Angler");
     overbumper.m_WristPID.SetupConstantTuning("Intake");
+    SmartDashboard::PutNumber("Elevator Max Velocity", 0.7);
+    SmartDashboard::PutNumber("Elevator Max Acceleration", 0.35);
+    SmartDashboard::PutNumber("Elevator kP", 10);
+    SmartDashboard::PutNumber("Elevator kI", 0.05);
     SmartDashboard::PutNumber("Angler Setpoint", M_PI / 2);
     SmartDashboard::PutNumber("Flywheel Setpoint", 0);
+    SmartDashboard::PutNumber("Elevator kG", 0.5);
 }
 
 void Robot::TestPeriodic() {
   flywheel.FlywheelAnglerPID.UpdateConstantTuning("Angler");
-    overbumper.m_WristPID.UpdateConstantTuning("Intake");
-
+  overbumper.m_WristPID.UpdateConstantTuning("Intake");
+  ampmech.m_controller.SetP(SmartDashboard::GetNumber("Elevator kP", 10));
+  ampmech.m_controller.SetI(SmartDashboard::GetNumber("Elevator kI", 0.05));
+  ampmech.m_controller.SetConstraints(frc::ProfiledPIDController<units::length::meters>::Constraints{units::meters_per_second_t{SmartDashboard::GetNumber("Elevator Max Velocity", 0.7)}, units::meters_per_second_squared_t{SmartDashboard::GetNumber("Elevator Max Acceleration", 0.35)}});
+  
+  
   if(xboxController.GetBackButtonPressed()){
     flywheel.SpinFlywheelPercent(0);
   }
   else if (xboxController.GetStartButtonPressed()){
-    flywheel.SetFlywheelVelocity(SmartDashboard::GetNumber("Flywheel Setpoint", 0));
+      SmartDashboard::PutBoolean("Flywheel PID Done", flywheel.SetFlywheelVelocity(SmartDashboard::GetNumber("Flywheel Setpoint", 0)));
   }
-
 
   if (xboxController.GetPOV() == 0){
     flywheel.PIDAngler(SmartDashboard::GetNumber("Angler Setpoint", M_PI / 2));
@@ -650,11 +658,20 @@ void Robot::TestPeriodic() {
     overbumper.MoveWristPercent(0);
   }
 
+  if (xboxController2.GetAButtonPressed())
+    ampmech.BeginPIDElevator();
+
   if (xboxController2.GetAButton()){
     ampmech.MoveToHeight(Elevator::ElevatorSetting::LOW);
   }
   else if (xboxController2.GetXButton()){
     ampmech.MoveToHeight(Elevator::ElevatorSetting::AMP);
+  }
+  else if (xboxController2.GetYButton()){
+    ampmech.MoveToHeight(Elevator::ElevatorSetting::TRAP);
+  }
+  else if (xboxController2.GetBButton()){
+    ampmech.winchMotor.SetVoltage(units::volt_t{SmartDashboard::GetNumber("Elevator kG", 0.5)});
   }
   else {
     ampmech.StopElevator();
@@ -691,6 +708,9 @@ void Robot::TestPeriodic() {
   SmartDashboard::PutNumber("Wrist Encoder", overbumper.GetWristEncoderReading());
   SmartDashboard::PutNumber("Flywheel Encoder", flywheel.GetAnglerEncoderReading());
 
+  SmartDashboard::PutNumber("Top FlyWheel RPM", flywheel.TopFlywheel.GetMeasurement()*60.0);
+  SmartDashboard::PutNumber("Bottom FlyWheel RPM", flywheel.BottomFlywheel.GetMeasurement()*60.0);
+  
   SmartDashboard::PutBoolean("in intake", overbumper.GetObjectInIntake());
   SmartDashboard::PutBoolean("in mech", ampmech.GetObjectInMech());
 }

@@ -47,6 +47,10 @@ void Elevator::MoveElevatorPercent(double percent)
     winchMotor.Set(percent*-1);
 }
 
+void Elevator::BeginPIDElevator(){
+    m_controller.Reset(units::meter_t{GetWinchEncoderReading()});
+}
+
 /**
  * @brief PIDs Elevator to a setpoint (in meters)
  * @param setpoint Setpoint in meters for the elevator
@@ -58,14 +62,24 @@ bool Elevator::PIDElevator(double setpoint){
 
     //winchMotor.SetVoltage((units::volt_t{m_controller.Calculate(units::meter_t{winchEncoder->GetPosition()}, goal)} + m_feedforward.Calculate(m_controller.GetSetpoint().velocity))*-1);
     
-    winchMotor.SetVoltage(units::volt_t{m_controller.Calculate(units::meter_t{GetWinchEncoderReading()}, goal)} *-1);
+    units::volt_t PID = units::volt_t{m_controller.Calculate(units::meter_t{GetWinchEncoderReading()}, goal)};
+    units::volt_t FF = ElevatorConstants::m_kG;
+
+    if (m_controller.AtGoal())
+    {
+        PID = 0_V;
+        if (setpoint == ElevatorSetting::LOW)
+            FF = 0_V;
+    }
+
+    winchMotor.SetVoltage((PID + FF) * -1);
 
     auto elevv = m_controller.Calculate(units::meter_t{GetWinchEncoderReading()}, goal);
-    SmartDashboard::PutNumber("elev pid out", elevv);
+    SmartDashboard::PutNumber("Elev pid out", elevv);
     auto elevf = m_controller.GetSetpoint().velocity;
-    SmartDashboard::PutNumber("elev setpoint", elevf.value());
+    SmartDashboard::PutNumber("Elev setpoint", elevf.value());
     auto elevpose = m_controller.GetPositionError();
-    SmartDashboard::PutNumber("elev error", elevpose.value());    
+    SmartDashboard::PutNumber("Elev error", elevpose.value());    
     SmartDashboard::PutBoolean("Elev PID Done", m_controller.AtGoal());
     return m_controller.AtGoal();
 }
@@ -110,6 +124,9 @@ bool Elevator::MoveToHeight(ElevatorSetting Height) {
     }
     else if (Height == OUTTAKE){
         return PIDElevator(ElevatorConstants::ELEV_OUTTAKE);
+    }
+    else if (Height == INTAKE){
+        return PIDElevator(ElevatorConstants::ELEV_INTAKE);   
     }
     return false;
 }

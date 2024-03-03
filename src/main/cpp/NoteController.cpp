@@ -26,7 +26,7 @@ bool NoteController::ToElevator(){
         return true;
     }
 
-    bool elevatorPrepared = elevator->MoveToHeight(Elevator::ElevatorSetting::LOW);
+    bool elevatorPrepared = elevator->MoveToHeight(Elevator::ElevatorSetting::INTAKE);
 
     if (!elevatorPrepared)
     {

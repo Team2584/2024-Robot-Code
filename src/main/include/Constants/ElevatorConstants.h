@@ -7,18 +7,19 @@
 #define AMP_MECH_PORT 26
 
 namespace ElevatorConstants {
-inline units::meters_per_second_t kMaxVelocity = 0.70_mps;
-inline units::meters_per_second_squared_t kMaxAcceleration = 0.35_mps_sq;
-inline double m_kP = 20.0;
+inline units::meters_per_second_t kMaxVelocity = 1_mps;
+inline units::meters_per_second_squared_t kMaxAcceleration = 0.7_mps_sq;
+inline double m_kP = 30.0;
 inline double m_kI = 0.05;
 inline double m_kD = 0.0;
 inline units::volt_t m_kS = 0_V;
-inline units::volt_t m_kG = 0_V;
+inline units::volt_t m_kG = 0.3_V;
 inline auto m_kV = 1.3_V / 1_mps;
 inline auto ALLOWABLE_ERROR_POS = 0.04_m;
 
 inline auto ELEV_AMP = 0.53;
 inline auto ELEV_LOW = 0;
+inline auto ELEV_INTAKE = 0.05;
 inline auto ELEV_OUTTAKE = 0.1;
 inline auto ELEV_TRAP = 0.65;
 
