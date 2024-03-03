@@ -79,9 +79,18 @@ void Intake::MoveWristPercent(double percent)
 bool Intake::PIDWrist(double point)
 {  
   units::volt_t PID = units::volt_t{m_WristPID.Calculate(GetWristEncoderReading(), point)};
-  units::volt_t FF = m_WristFF.Calculate(units::radian_t{GetWristEncoderReading() * 2 * M_PI}, 0_rad / 1_s);
+  units::volt_t FF = m_WristFF.Calculate(units::radian_t{GetWristEncoderReading() * 2 * M_PI - 0.2617}, 0_rad / 1_s);
+
+  // If wrist is down, stop feedforward
+  if (point == IntakeConstants::Wrist::WRIST_LOW && m_WristPID.PIDFinished())
+  {
+    FF = 0_V;
+  }
+
   SmartDashboard::PutNumber("Wrist PID", PID.value());
   SmartDashboard::PutNumber("Wrist FF", FF.value());
+  SmartDashboard::PutBoolean("Wrist PID Complete",  m_WristPID.PIDFinished());
+
   wristMotor.SetVoltage((PID + FF));
   return m_WristPID.PIDFinished();
 }

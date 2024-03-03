@@ -641,7 +641,10 @@ void Robot::TestPeriodic() {
     overbumper.PIDWristToPoint(Intake::WristSetting::LOW);
   }
   else if (xboxController.GetXButton()){
-    overbumper.PIDWristToPoint(Intake::WristSetting::LOW);
+    overbumper.PIDWristToPoint(Intake::WristSetting::SHOOT);
+  }
+  else if (xboxController.GetYButton()){
+    overbumper.PIDWrist(overbumper.GetWristEncoderReading());
   }
   else {
     overbumper.MoveWristPercent(0);

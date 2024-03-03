@@ -16,8 +16,6 @@ class Intake
         rev::SparkAbsoluteEncoder *magEncoder;
         frc::DigitalInput m_mainSensor;
 
-        bool PIDWrist(double point);
-
     public:
 
         ArmFeedforward m_WristFF;
@@ -45,6 +43,8 @@ class Intake
         bool GetObjectInIntake();
 
         void MoveWristPercent(double percent);
+        
+        bool PIDWrist(double point);
 
         bool PIDWristToPoint(WristSetting Point);
 
