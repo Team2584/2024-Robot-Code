@@ -6,7 +6,6 @@ Intake::Intake()
     mainFixedMotor{MAIN_FIXED_INTAKE_MOTOR_PORT, rev::CANSparkMax::MotorType::kBrushless},
     selectorFixedMotor{SELECTOR_FIXED_INTAKE_MOTOR_PORT, rev::CANSparkMax::MotorType::kBrushless},
     m_mainSensor{INTAKE_IR_SENSOR_PORT},
-    m_tunnelSensor{TUNNEL_IR_SENSOR_PORT},
     m_WristFF{IntakeConstants::Wrist::KS, IntakeConstants::Wrist::KG, IntakeConstants::Wrist::KV},
     m_WristPID{IntakeConstants::Wrist::KP,IntakeConstants::Wrist::KI,IntakeConstants::Wrist::KD,IntakeConstants::Wrist::KIMAX,IntakeConstants::Wrist::MIN_SPEED,IntakeConstants::Wrist::MAX_SPEED,IntakeConstants::Wrist::POS_ERROR,IntakeConstants::Wrist::VELOCITY_ERROR}
 {
@@ -70,10 +69,6 @@ double Intake::GetWristEncoderReading()
 
 bool Intake::GetObjectInIntake(){
   return (!m_mainSensor.Get());
-}
-
-bool Intake::GetObjectInTunnel(){
-  return (!m_tunnelSensor.Get());
 }
 
 void Intake::MoveWristPercent(double percent)

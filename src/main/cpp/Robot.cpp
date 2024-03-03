@@ -201,7 +201,7 @@ void Robot::AutonomousPeriodic()
 
 void Robot::TeleopInit()
 {
-  swerveDrive.ResetOdometry(Pose2d(0.74_m, 4.35_m, Rotation2d(180_deg)));
+  swerveDrive.ResetOdometry(Pose2d(0_m, 0_m, Rotation2d(180_deg)));
   swerveDrive.ResetTagOdometry(Pose2d(0_m, 0_m, Rotation2d(180_deg)));
   ampmech.ResetElevatorEncoder();  
   currentDriverMode = DRIVER_MODE::BASIC;
@@ -344,6 +344,7 @@ void Robot::TeleopPeriodic()
       }
 
       //overbumper.PIDWristToPoint(wristSetPoint);
+      overbumper.MoveWristPercent(0);
 
       // Keep flywheel ready for close shots
       //flywheel.SetFlywheelVelocity(3000);
@@ -584,7 +585,6 @@ void Robot::TeleopPeriodic()
 
   SmartDashboard::PutBoolean("in intake", overbumper.GetObjectInIntake());
   SmartDashboard::PutBoolean("in mech", ampmech.GetObjectInMech());
-  SmartDashboard::PutBoolean("in tunnel", overbumper.GetObjectInTunnel());
 
   SmartDashboard::PutNumber("Top FlyWheel RPM", flywheel.TopFlywheel.GetMeasurement()*60.0);
   SmartDashboard::PutNumber("Bottom FlyWheel RPM", flywheel.BottomFlywheel.GetMeasurement()*60.0);
@@ -647,6 +647,16 @@ void Robot::TestPeriodic() {
     overbumper.MoveWristPercent(0);
   }
 
+  if (xboxController2.GetAButton()){
+    ampmech.MoveToHeight(Elevator::ElevatorSetting::LOW);
+  }
+  else if (xboxController2.GetXButton()){
+    ampmech.MoveToHeight(Elevator::ElevatorSetting::AMP);
+  }
+  else {
+    ampmech.StopElevator();
+  }
+
   if (xboxController.GetRightTriggerAxis() > 0.5)
     overbumper.IntakeNote();
   else if (xboxController.GetLeftTriggerAxis() > 0.5)
@@ -680,7 +690,6 @@ void Robot::TestPeriodic() {
 
   SmartDashboard::PutBoolean("in intake", overbumper.GetObjectInIntake());
   SmartDashboard::PutBoolean("in mech", ampmech.GetObjectInMech());
-  SmartDashboard::PutBoolean("in tunnel", overbumper.GetObjectInTunnel());
 }
 
 void Robot::SimulationInit() {}

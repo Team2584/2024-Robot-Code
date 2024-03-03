@@ -15,7 +15,6 @@ class Intake
         rev::CANSparkMax selectorFixedMotor;
         rev::SparkAbsoluteEncoder *magEncoder;
         frc::DigitalInput m_mainSensor;
-        frc::DigitalInput m_tunnelSensor;
 
         bool PIDWrist(double point);
 
@@ -44,8 +43,6 @@ class Intake
         double GetWristEncoderReading();
 
         bool GetObjectInIntake();
-
-        bool GetObjectInTunnel();
 
         void MoveWristPercent(double percent);
 
