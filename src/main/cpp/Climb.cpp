@@ -24,11 +24,11 @@ Climb::Climb(VisionSwerve* _swerveDrive)
 }
 
 bool Climb::GetLStop(){
-    return !leftHallSensor.Get();
+    return leftHallSensor.Get();
 }
 
 bool Climb::GetRStop(){
-    return !rightHallSensor.Get();
+    return rightHallSensor.Get();
 }
 
 void Climb::SetClimbZero(){
