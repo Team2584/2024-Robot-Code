@@ -608,9 +608,15 @@ void Robot::DisabledInit() {}
 void Robot::DisabledPeriodic() {}
 
 void Robot::TestInit() {
+    swerveDrive.ResetOdometry(Pose2d(0_m, 0_m, Rotation2d(180_deg)));
+    swerveDrive.ResetTagOdometry(Pose2d(0_m, 0_m, Rotation2d(180_deg)));
     ampmech.ResetElevatorEncoder();  
     flywheel.FlywheelAnglerPID.SetupConstantTuning("Angler");
     overbumper.m_WristPID.SetupConstantTuning("Intake");
+    swerveAutoController.xPIDController.SetupConstantTuning("DTP X");
+    swerveAutoController.yPIDController.SetupConstantTuning("DTP Y");
+    swerveAutoController.rotationPIDController.SetupConstantTuning("DTP Rot");
+
     SmartDashboard::PutNumber("Elevator Max Velocity", 0.7);
     SmartDashboard::PutNumber("Elevator Max Acceleration", 0.35);
     SmartDashboard::PutNumber("Elevator kP", 10);
@@ -618,6 +624,8 @@ void Robot::TestInit() {
     SmartDashboard::PutNumber("Angler Setpoint", M_PI / 2);
     SmartDashboard::PutNumber("Flywheel Setpoint", 0);
     SmartDashboard::PutNumber("Elevator kG", 0.5);
+    SmartDashboard::PutNumber("Max Drive Speed", 0.4);
+    SmartDashboard::PutNumber("Max Spin Speed", 0.4);
 }
 
 void Robot::TestPeriodic() {
@@ -626,8 +634,46 @@ void Robot::TestPeriodic() {
   ampmech.m_controller.SetP(SmartDashboard::GetNumber("Elevator kP", 10));
   ampmech.m_controller.SetI(SmartDashboard::GetNumber("Elevator kI", 0.05));
   ampmech.m_controller.SetConstraints(frc::ProfiledPIDController<units::length::meters>::Constraints{units::meters_per_second_t{SmartDashboard::GetNumber("Elevator Max Velocity", 0.7)}, units::meters_per_second_squared_t{SmartDashboard::GetNumber("Elevator Max Acceleration", 0.35)}});
-  
-  
+  swerveAutoController.xPIDController.UpdateConstantTuning("DTP X");
+  swerveAutoController.yPIDController.UpdateConstantTuning("DTP Y");
+  swerveAutoController.rotationPIDController.UpdateConstantTuning("DTP Rot");
+  swerveDrive.Update();
+
+
+// Find controller input (*-1 converts values to fwd/left/counterclockwise positive)
+  double leftJoystickX, leftJoystickY, rightJoystickX, rightJoystickY;
+  leftJoystickY = xboxController.GetLeftY();
+  leftJoystickX = xboxController.GetLeftX();
+  if (allianceColor == AllianceColor::BLUE)
+  {
+    leftJoystickY *= -1;
+    leftJoystickX *= -1;
+  }
+
+  rightJoystickX = xboxController.GetRightX() * -1;
+  rightJoystickY = xboxController.GetRightY() * -1;
+
+  // Remove ghost movement by making sure joystick is moved a certain amount
+  double leftJoystickDistance = sqrt(pow(leftJoystickX, 2.0) + pow(leftJoystickY, 2.0));
+  double rightJoystickDistance = sqrt(pow(rightJoystickX, 2.0) + pow(rightJoystickY, 2.0));
+
+  if (leftJoystickDistance < CONTROLLER_DEADBAND)
+  {
+    leftJoystickX = 0;
+    leftJoystickY = 0;
+  }
+
+  if (abs(rightJoystickDistance) < CONTROLLER_DEADBAND)
+  {
+    rightJoystickX = 0;
+    rightJoystickY = 0;
+  }
+
+  double fwdDriveSpeed = leftJoystickY * SmartDashboard::GetNumber("Max Drive Speed", 0.4);
+  double strafeDriveSpeed = leftJoystickX * SmartDashboard::GetNumber("Max Drive Speed", 0.4);
+  double turnSpeed = rightJoystickX * SmartDashboard::GetNumber("Max Spin Speed", 0.4);
+
+
   if(xboxController.GetBackButtonPressed()){
     flywheel.SpinFlywheelPercent(0);
   }
@@ -642,7 +688,15 @@ void Robot::TestPeriodic() {
     flywheel.MoveAnglerPercent(0);
   }
 
-  if (xboxController.GetAButton()){
+  if (xboxController.GetAButtonPressed())
+    swerveAutoController.BeginDriveToPose(PoseEstimationType::PureOdometry);
+
+  if (xboxController.GetAButton())
+    swerveAutoController.DriveToPose(Pose2d(0_m, 0_m, Rotation2d(0_deg)), PoseEstimationType::PureOdometry);
+  else  
+    swerveDrive.DriveSwervePercent(fwdDriveSpeed, strafeDriveSpeed, turnSpeed);
+
+  /*if (xboxController.GetAButton()){
     overbumper.PIDWristToPoint(Intake::WristSetting::HIGH);
   }
   else if (xboxController.GetBButton()){
@@ -656,7 +710,7 @@ void Robot::TestPeriodic() {
   }
   else {
     overbumper.MoveWristPercent(0);
-  }
+  }*/
 
   if (xboxController2.GetAButtonPressed())
     ampmech.BeginPIDElevator();
@@ -710,7 +764,7 @@ void Robot::TestPeriodic() {
 
   SmartDashboard::PutNumber("Top FlyWheel RPM", flywheel.TopFlywheel.GetMeasurement()*60.0);
   SmartDashboard::PutNumber("Bottom FlyWheel RPM", flywheel.BottomFlywheel.GetMeasurement()*60.0);
-  
+
   SmartDashboard::PutBoolean("in intake", overbumper.GetObjectInIntake());
   SmartDashboard::PutBoolean("in mech", ampmech.GetObjectInMech());
 }

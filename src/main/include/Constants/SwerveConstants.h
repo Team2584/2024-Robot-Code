@@ -36,7 +36,7 @@
 #define DRIVE_WIDTH 0.489_m 
 
 // Encoder constants
-#define DRIVE_MOTOR_GEAR_RATIO 7.36 * 1.4145
+#define DRIVE_MOTOR_GEAR_RATIO 7.36 * 1.3908
 #define DRIVE_MOTOR_CIRCUMFERENCE 0.11280562 * M_PI
 #define SPIN_MOTOR_GEAR_RATIO 15.43
 
@@ -59,7 +59,7 @@
                                                                             
 */
 
-#define CAMERA_ONE_NAME "photonvision"
+#define CAMERA_ONE_NAME "top camera"
 #define CAMERA_ONE_X 11.626_in // Distance in meters from camera to center of robot forward/backward, forward positive
 #define CAMERA_ONE_Y -11.25_in // Distance in meters from camera to center of robot left/right, left positive
 #define CAMERA_ONE_Z 17.625_in // Camera's distance from ground in meters
@@ -67,7 +67,7 @@
 #define CAMERA_ONE_Y_ROTATION -45_deg // Camera's Rotation around robot's Y axis (rotated clockwise/counterclocwise)
 #define CAMERA_ONE_Z_ROTATION 0_deg // Camera's Rotation around robot's Z axis (tilted left/right)
 
-#define CAMERA_TWO_NAME "photonvision2"
+#define CAMERA_TWO_NAME "bottom camera"
 #define CAMERA_TWO_X 11.626_in // Distance in meters from camera to center of robot forward/backward, forward positive
 #define CAMERA_TWO_Y -11.25_in // Distance in meters from camera to center of robot left/right, left positive
 #define CAMERA_TWO_Z 17.625_in // Camera's distance from ground in meters
@@ -98,23 +98,23 @@ enum PoseEstimationType
 
 /* Drive to Pose PID Values */
 // Translational PID in the x and y direction
-#define DTP_TRANSLATION_KP 0.55
+#define DTP_TRANSLATION_KP 0.3
 #define DTP_TRANSLATION_KI 0
 #define DTP_TRANSLATION_KI_MAX 0 // In percent power
 #define DTP_TRANSLATION_KD 0
-#define DTP_TRANSLATION_TOLERANCE 0.02 // In meters
+#define DTP_TRANSLATION_TOLERANCE 0.03 // In meters
 #define DTP_TRANSLATION_VELOCITY_TOLERANCE 0.5 // In percent power
-#define DTP_TRANSLATION_MIN_SPEED 0 // In percent power
-#define DTP_TRANSLATION_MAX_SPEED 0.2 // In percent power
+#define DTP_TRANSLATION_MIN_SPEED 0.015 // In percent power
+#define DTP_TRANSLATION_MAX_SPEED 0.6 // In percent power
 // Rotational PID to correct robot heading
-#define DTP_ROTATION_KP 0.8
+#define DTP_ROTATION_KP 0.6
 #define DTP_ROTATION_KI 0
 #define DTP_ROTATION_KI_MAX 0 // In percent power
 #define DTP_ROTATION_KD 0
 #define DTP_ROTATION_TOLERANCE 0.07 // In radians
 #define DTP_ROTATION_VELOCITY_TOLERANCE 0.5 // In percent power
-#define DTP_ROTATION_MIN_SPEED 0 // In percent powerw
-#define DTP_ROTATION_MAX_SPEED 0.2 // In percent power
+#define DTP_ROTATION_MIN_SPEED 0.015 // In percent powerw
+#define DTP_ROTATION_MAX_SPEED 0.6 // In percent power
 
 /* Trajectory following PID Values */
 // Translational PID in the x and y direction
