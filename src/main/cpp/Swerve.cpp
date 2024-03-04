@@ -319,9 +319,9 @@ double SwerveDrive::VelocityToPercent(double velocity)
     // Then we found the line of best fit (aka Velocity), and its equation is below.
     // TLDR: We did a mini physics experiment.
     if (velocity > 0)
-        return std::max((velocity + 0.0562) / 4.38, 0.0);
+        return std::max((velocity - 0.0751) / 5.9, 0.0);
     else
-        return std::min((velocity - 0.0562) / 4.38, 0.0);
+        return std::min((velocity + 0.0751) / 5.9, 0.0);
 }
 
 /**
@@ -331,9 +331,9 @@ double SwerveDrive::PercentToVelocity(double percent)
 {
     // The Reverse of the Equation Above
     if (percent > 0)
-        return std::max(4.38 * percent - 0.0562, 0.0) * 2 * M_PI;
+        return std::max(5.9 * percent + 0.0751, 0.0) * 2 * M_PI;
     else
-        return std::min(4.38 * percent + 0.0562, 0.0) * 2 * M_PI;
+        return std::min(5.9 * percent - 0.0751, 0.0) * 2 * M_PI;
 }
 
 /**
