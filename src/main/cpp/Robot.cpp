@@ -343,8 +343,7 @@ void Robot::TeleopPeriodic()
         ampmech.MoveToHeight(Elevator::ElevatorSetting::LOW);
       }
 
-      //overbumper.PIDWristToPoint(wristSetPoint);
-      overbumper.MoveWristPercent(0);
+      overbumper.PIDWristToPoint(wristSetPoint);
 
       // Keep flywheel ready for close shots
       //flywheel.SetFlywheelVelocity(3000);
