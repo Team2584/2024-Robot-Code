@@ -7,62 +7,63 @@
 #include <string>
 #include <queue>
 
+//Custom Tools
 #include "Tools/PID.h"
 #include "Tools/Math.h"
 
+//General
+#include <wpi/array.h>
+#include <fmt/core.h>
+#include <frc/TimedRobot.h>
+#include <frc/smartdashboard/SendableChooser.h>
+#include <frc/smartdashboard/SmartDashboard.h>
+#include <frc/Timer.h>
+#include <frc/XboxController.h>
+#include <frc/DriverStation.h>
+
+//Units & Math
 #include <numbers>
 #include <units/length.h>
 #include <units/angle.h>
 #include <units/time.h>
 #include <units/voltage.h>
 
-#include <fmt/core.h>
-
-#include <frc/TimedRobot.h>
-#include <frc/smartdashboard/SendableChooser.h>
-#include <frc/smartdashboard/SmartDashboard.h>
-
-#include <frc/Timer.h>
-#include <frc/XboxController.h>
-#include <frc/DutyCycleEncoder.h>
-#include <frc/DigitalInput.h>
-#include <frc/DriverStation.h>
-
-#include <frc/controller/ArmFeedforward.h>
-#include <frc/controller/ElevatorFeedforward.h>
-#include <frc/controller/ProfiledPIDController.h>
-
+//Swerve
+#include <frc/estimator/SwerveDrivePoseEstimator.h>
+#include <frc/kinematics/SwerveModulePosition.h>
+#include <frc/kinematics/SwerveDriveKinematics.h>
+#include <frc/kinematics/SwerveDriveOdometry.h>
 #include <frc/geometry/Transform2d.h>
 #include <frc/geometry/Rotation2d.h>
 #include <frc/geometry/Pose2d.h>
 
-#include <frc/kinematics/SwerveModulePosition.h>
-#include <frc/kinematics/SwerveDriveKinematics.h>
-#include <frc/kinematics/SwerveDriveOdometry.h>
-
-#include <frc/estimator/SwerveDrivePoseEstimator.h>
-
+//Vision & Apriltags
 #include <frc/apriltag/AprilTag.h>
 #include <frc/apriltag/AprilTagFieldLayout.h>
-
-#include <wpi/array.h>
-
-#include <ctre/phoenix6/TalonFX.hpp>
-#include <ctre/phoenix6/Pigeon2.hpp>
-
-#include <rev/CANSparkBase.h>
-#include <rev/CANSparkFlex.h>
-#include <rev/CANSparkMax.h>
-#include <rev/AbsoluteEncoder.h>
-
-#include <frc/PWM.h>
-
-#include <frc/controller/SimpleMotorFeedforward.h>
-#include <frc/controller/PIDController.h>
-
 #include <photon/PhotonCamera.h>
 #include <photon/PhotonPoseEstimator.h>
 
+//Sensors & Encoders
+#include <ctre/phoenix6/Pigeon2.hpp>
+#include <frc/DigitalInput.h>
+#include <frc/DutyCycleEncoder.h>
+#include <rev/AbsoluteEncoder.h>
+
+//Motors
+#include <rev/CANSparkBase.h>
+#include <rev/CANSparkFlex.h>
+#include <rev/CANSparkMax.h>
+#include <frc/PWM.h>
+#include <ctre/phoenix6/TalonFX.hpp>
+
+//System Controllers
+#include <frc/controller/PIDController.h>
+#include <frc/controller/ProfiledPIDController.h>
+#include <frc/controller/SimpleMotorFeedforward.h>
+#include <frc/controller/ArmFeedforward.h>
+#include <frc/controller/ElevatorFeedforward.h>
+
+//Pathplanner
 #include <pathplanner/lib/path/PathPlannerPath.h>
 #include <pathplanner/lib/path/PathPlannerTrajectory.h>
 
