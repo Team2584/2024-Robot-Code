@@ -39,7 +39,7 @@ inline constexpr auto KI_MAX = 0;
 inline constexpr auto KD = 0;
 inline constexpr auto POS_TOLERANCE = 0.02;
 inline constexpr auto VELOCITY_TOLERANCE = 5; 
-inline constexpr auto MIN_SPEED = 0.4;
+inline constexpr auto MIN_SPEED = 0.3;
 inline constexpr auto MAX_SPEED = 10; 
 
 inline auto BLOCKED_LOW = 0.4;
