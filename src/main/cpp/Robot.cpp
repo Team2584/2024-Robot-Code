@@ -687,12 +687,20 @@ void Robot::TestPeriodic() {
     flywheel.MoveAnglerPercent(0);
   }
 
-  if (xboxController.GetAButtonPressed())
+  if (xboxController.GetAButton())
+    overbumper.ShootNote();
+  else if (xboxController.GetBButton())
+    notecontroller.IntakeNoteToSelector();
+  else
+    overbumper.SetIntakeMotorSpeed(0);
+  
+
+  /*if (xboxController.GetAButtonPressed())
     swerveAutoController.BeginDriveToPose(PoseEstimationType::PureOdometry);
 
   if (xboxController.GetAButton())
     swerveAutoController.DriveToPose(Pose2d(0_m, 0_m, Rotation2d(0_deg)), PoseEstimationType::PureOdometry);
-  else  
+  else  */
     swerveDrive.DriveSwervePercent(fwdDriveSpeed, strafeDriveSpeed, turnSpeed);
 
   /*if (xboxController.GetAButton()){
@@ -730,12 +738,6 @@ void Robot::TestPeriodic() {
     ampmech.StopElevator();
   }
 
-  if (xboxController.GetRightTriggerAxis() > 0.5)
-    overbumper.IntakeNote();
-  else if (xboxController.GetLeftTriggerAxis() > 0.5)
-    overbumper.ShootNote();
-  else
-    overbumper.SetIntakeMotorSpeed(0);
 
   SmartDashboard::PutNumber("FL Module Heading", swerveDrive.FLModule.GetMagEncoderValue());
   SmartDashboard::PutNumber("FR Module Heading", swerveDrive.FRModule.GetMagEncoderValue());
