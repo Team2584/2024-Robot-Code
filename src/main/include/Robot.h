@@ -9,6 +9,7 @@
 
 #include "Tools/PID.h"
 #include "Tools/Math.h"
+#include "Tools/RumbleController.h"
 
 #include <numbers>
 #include <units/length.h>
