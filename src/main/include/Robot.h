@@ -35,6 +35,7 @@
 #include <frc/geometry/Transform2d.h>
 #include <frc/geometry/Rotation2d.h>
 #include <frc/geometry/Pose2d.h>
+#include <frc/PowerDistribution.h>
 
 #include <frc/kinematics/SwerveModulePosition.h>
 #include <frc/kinematics/SwerveDriveKinematics.h>
@@ -48,7 +49,9 @@
 #include <wpi/array.h>
 
 #include <ctre/phoenix6/TalonFX.hpp>
+#include <ctre/phoenix/platform/Platform.hpp>
 #include <ctre/phoenix6/Pigeon2.hpp>
+#include <ctre/phoenix/led/CANdle.h>
 
 #include <rev/CANSparkBase.h>
 #include <rev/CANSparkFlex.h>
@@ -65,6 +68,8 @@
 
 #include <pathplanner/lib/path/PathPlannerPath.h>
 #include <pathplanner/lib/path/PathPlannerTrajectory.h>
+
+#include <frc/MathUtil.h>
 
 using namespace frc;
 using namespace std;

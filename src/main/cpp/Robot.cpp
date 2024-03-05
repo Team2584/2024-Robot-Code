@@ -17,9 +17,10 @@
 #include "FlyWheel.h"
 #include "Elevator.h"
 #include "Climb.h"
-#include "LEDs.h"
 #include "NoteController.h"
+#include "CANdleLED.h"
 
+PowerDistribution m_pdh{34, frc::PowerDistribution::ModuleType::kRev};
 VisionSwerve swerveDrive{};
 XboxController xboxController{0};
 XboxController xboxController2{1};
@@ -29,7 +30,7 @@ FlywheelSystem flywheel{};
 Elevator ampmech{};
 Climb hang{&swerveDrive};
 NoteController notecontroller{&overbumper, &flywheel, &ampmech};
-LEDLights lightStrip{0};
+LightsSubsystem lights{&m_pdh};
 
 SwerveDriveAutonomousController swerveAutoController{&swerveDrive};
 AutonomousShootingController flywheelController{&swerveAutoController, &flywheel, &overbumper, &ampmech};
@@ -41,6 +42,7 @@ AutonomousController autoController{&swerveDrive, &overbumper, &flywheel, &ampme
 Elevator::ElevatorSetting elevSetHeight = Elevator::LOW;
 Intake::WristSetting wristSetPoint = Intake::HIGH;
 bool anglingToSpeaker = false;
+
 
 AllianceColor allianceColor = AllianceColor::BLUE;
 
@@ -65,6 +67,9 @@ void Robot::RobotInit()
   
   SmartDashboard::PutNumber("Flywheel Setpoint", 0);
   SmartDashboard::PutNumber("Angler Setpoint", M_PI / 2);
+
+  lights.m_LEDController.MainLEDStrip.setFlowAnimation(red, 0.6);
+
 }
 
 
@@ -86,6 +91,7 @@ void Robot::RobotPeriodic() {
     else
       allianceColor = AllianceColor::BLUE;
   }
+
   
   allianceColor = AllianceColor::BLUE;
   SmartDashboard::PutBoolean("In Match", DriverStation::GetMatchType() != DriverStation::MatchType::kNone);

@@ -1,1 +1,8 @@
-#define LED_MOTOR_1 1
+namespace LightsConstants{
+
+    inline constexpr auto CANDLE_PORT = 33;
+        inline constexpr auto STRIP_LENGTH = 300;
+
+
+
+}
