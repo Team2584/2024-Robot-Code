@@ -19,7 +19,7 @@ inline auto ALLOWABLE_ERROR_POS = 0.04_m;
 
 inline auto ELEV_AMP = 0.53;
 inline auto ELEV_LOW = 0;
-inline auto ELEV_INTAKE = 0.05;
+inline auto ELEV_INTAKE = 0.07;
 inline auto ELEV_OUTTAKE = 0.1;
 inline auto ELEV_TRAP = 0.65;
 

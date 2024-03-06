@@ -346,8 +346,11 @@ void Robot::TeleopPeriodic()
       overbumper.PIDWristToPoint(wristSetPoint);
 
       // Keep flywheel ready for close shots
-      //flywheel.SetFlywheelVelocity(3000);
-      flywheel.SpinFlywheelPercent(0);
+      if (xboxController2.GetStartButtonPressed())
+        flywheel.SetFlywheelVelocity(3000);
+      else if (xboxController2.GetBackButton())
+        flywheel.SpinFlywheelPercent(0);
+
       flywheel.PIDAngler(0.8); // change this to clear chain
 
       if(xboxController.GetStartButtonPressed()){
@@ -620,8 +623,8 @@ void Robot::TestInit() {
     SmartDashboard::PutNumber("Elevator Max Acceleration", 0.35);
     SmartDashboard::PutNumber("Elevator kP", 10);
     SmartDashboard::PutNumber("Elevator kI", 0.05);
-    SmartDashboard::PutNumber("Angler Setpoint", M_PI / 2);
-    SmartDashboard::PutNumber("Flywheel Setpoint", 0);
+    SmartDashboard::PutNumber("Angler Setpoint", 0.8);
+    SmartDashboard::PutNumber("Flywheel Setpoint", 3000);
     SmartDashboard::PutNumber("Elevator kG", 0.5);
     SmartDashboard::PutNumber("Max Drive Speed", 0.4);
     SmartDashboard::PutNumber("Max Spin Speed", 0.4);
