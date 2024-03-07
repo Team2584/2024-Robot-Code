@@ -22,7 +22,7 @@
 
 PowerDistribution m_pdh{34, frc::PowerDistribution::ModuleType::kRev};
 VisionSwerve swerveDrive{};
-XboxController xboxController{0};
+RumbleXboxController xboxController{0};
 XboxController xboxController2{1};
 XboxController xboxController3{2};
 Intake overbumper{};
@@ -325,7 +325,8 @@ void Robot::TeleopPeriodic()
         bool done = notecontroller.IntakeNoteToSelector();
         if (!done){
           wristSetPoint = Intake::LOW;
-        }
+        else
+          xboxController.rumble(3, 250, 200);
       }
       else if (xboxController.GetRightTriggerAxis() > 0.5)
       {
