@@ -68,7 +68,7 @@ void Robot::RobotInit()
   SmartDashboard::PutNumber("Flywheel Setpoint", 0);
   SmartDashboard::PutNumber("Angler Setpoint", M_PI / 2);
 
-  lights.SetIdle();
+  lights.FullClear();
 
 }
 
@@ -82,7 +82,9 @@ void Robot::RobotInit()
  * LiveWindow and SmartDashboard integrated updating.
  */
 void Robot::RobotPeriodic() {
+  lights.UpdateSubsystemLEDS();
   swerveDrive.UpdateRaspiConnection();
+  
 
   if (DriverStation::GetMatchType() != DriverStation::MatchType::kNone)
   {
@@ -219,7 +221,6 @@ void Robot::TeleopPeriodic()
   /* UPDATES */
 
   swerveDrive.Update();
-  lights.UpdateSubsystemLEDS();
 
   /* Controller Data */
 
@@ -316,7 +317,6 @@ void Robot::TeleopPeriodic()
 
       if(overbumper.GetObjectInIntake()){
         lights.SetHaveNote();
-        xboxController.rumble(3, 150, 200);
       }
       else{
         lights.NoLongerHaveNote();
@@ -328,6 +328,9 @@ void Robot::TeleopPeriodic()
         bool done = notecontroller.IntakeNoteToSelector();
         if (!done){
           wristSetPoint = Intake::LOW;
+        }
+        else {
+          xboxController.rumble(3, 150, 200);
         }
       }
       else if (xboxController.GetRightTriggerAxis() > 0.5)
@@ -623,7 +626,15 @@ void Robot::TeleopPeriodic()
 void Robot::DisabledInit() {}
 
 void Robot::DisabledPeriodic() {
-  lights.SetIdle();
+  if(DriverStation::IsDSAttached()){
+    lights.SetIdle();
+  }
+  else if(DriverStation::IsEStopped()){
+    lights.SetEstopped();
+  }
+  else{
+    lights.SetStopped();
+  }
 }
 
 void Robot::TestInit() {
@@ -645,13 +656,9 @@ void Robot::TestInit() {
     SmartDashboard::PutNumber("Elevator kG", 0.5);
     SmartDashboard::PutNumber("Max Drive Speed", 0.4);
     SmartDashboard::PutNumber("Max Spin Speed", 0.4);
-      swerveDrive.orchestra.LoadMusic("output.chrp");
-
 }
 
-void Robot::TestPeriodic() {
-  swerveDrive.orchestra.Play();
-}
+void Robot::TestPeriodic() {}
 
 void Robot::SimulationInit() {}
 

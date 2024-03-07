@@ -217,12 +217,20 @@ class LightsSubsystem : public CandleController {
         MainLEDStrip.setStrobeAnimation(green, 0.4);
     }
 
+    void SetStopped(){
+        MainLEDStrip.setColor(red);
+    }
+
+    void SetEstopped(){
+        MainLEDStrip.setSingleFadeAnimation(white, 0.2);
+    }
+
     void SetHaveNote(){
         if(!didStrobeGreen){
             didStrobeGreen = true;
             notePickUpTimer.Restart();
         }
-        if(notePickUpTimer.HasElapsed(LightsConstants::notePickupTime)){
+        if(notePickUpTimer.HasElapsed(LightsConstants::STROBE_TIME)){
             SetDriving();
         }
         else{
