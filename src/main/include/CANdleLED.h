@@ -220,8 +220,7 @@ class LightsSubsystem : public CandleController {
     void SetHaveNote(){
         if(!didStrobeGreen){
             didStrobeGreen = true;
-            notePickUpTimer.Reset();
-            notePickUpTimer.Start();
+            notePickUpTimer.Restart();
         }
         if(notePickUpTimer.HasElapsed(LightsConstants::notePickupTime)){
             SetDriving();
