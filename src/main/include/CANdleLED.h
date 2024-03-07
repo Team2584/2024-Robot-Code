@@ -141,8 +141,8 @@ public:
             setAnimation(RainbowAnimation(1, speed, segmentSize, false, startIndex));
         }
 
-        void setFireAnimation(double speed, double burnspeed, double coolspeed){
-            setAnimation(FireAnimation(1, speed, segmentSize, burnspeed, coolspeed, startIndex));
+        void setFireAnimation(double speed, double burnspeed, double coolspeed, bool isreversed){
+            setAnimation(FireAnimation(1, speed, segmentSize, burnspeed, coolspeed, isreversed, startIndex));
         }
 
         void setTwinkleAnimation(Color color, double speed){
