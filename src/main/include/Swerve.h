@@ -10,9 +10,12 @@
  */
 class SwerveModule
 {
+    public:
+            ctre::phoenix6::hardware::TalonFX driveMotor; /* The motor responsible for actually driving the wheel*/
+
     private:
         // Instance Variables for each swerve module
-        ctre::phoenix6::hardware::TalonFX driveMotor; /* The motor responsible for actually driving the wheel*/
+        
         rev::CANSparkMax spinMotor; /* The motor responsible for "spinning" the wheel left to right to change direction*/
         rev::SparkRelativeEncoder spinRelativeEncoder; /* The relative encoder built into the spinMotor */
         frc::DutyCycleEncoder magEncoder; /* The magnetic absolute encoder tracking swerve heading. */
@@ -44,6 +47,8 @@ class SwerveModule
 class SwerveDrive
 {
     public:
+   
+    ctre::phoenix6::Orchestra orchestra;
         SwerveModule FLModule, FRModule, BLModule, BRModule; /* The four swerve modules at each corner of the robot */
     protected:
         ctre::phoenix6::hardware::Pigeon2 pigeonIMU;

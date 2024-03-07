@@ -1,7 +1,7 @@
 namespace LightsConstants{
 
-    inline constexpr auto CANDLE_PORT = 33;
-        inline constexpr auto STRIP_LENGTH = 300;
+    inline constexpr auto CANDLE_PORT = 34;
+        inline constexpr auto STRIP_LENGTH = 24;
 
 
 

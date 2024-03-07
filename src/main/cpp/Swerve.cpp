@@ -240,6 +240,13 @@ SwerveDrive::SwerveDrive()
       kinematics{wheelTranslationArray},
       odometry{kinematics, Rotation2d(0_deg), GetSwerveModulePositions()}
 {
+    orchestra.AddInstrument(FLModule.driveMotor);
+        orchestra.AddInstrument(FRModule.driveMotor);
+
+    orchestra.AddInstrument(BLModule.driveMotor);
+
+    orchestra.AddInstrument(BRModule.driveMotor);
+
 }
 
 /**
