@@ -1,13 +1,22 @@
-#include <ctre/phoenix/led/Animation.h>
+//Candle Control 
 #include <ctre/phoenix/led/CANdleLedStripType.h>
 #include <ctre/phoenix/led/VBatOutputMode.h>
 #include <ctre/phoenix/led/CANdleConfiguration.h>
+
+//Animations
+#include <ctre/phoenix/led/Animation.h>
 #include <ctre/phoenix/led/ColorFlowAnimation.h>
 #include <ctre/phoenix/led/LarsonAnimation.h>
 #include <ctre/phoenix/led/RainbowAnimation.h>
 #include <ctre/phoenix/led/SingleFadeAnimation.h>
 #include <ctre/phoenix/led/StrobeAnimation.h>
 #include "ctre/phoenix/led/BaseTwoSizeAnimation.h"
+#include <ctre/phoenix/led/FireAnimation.h>
+#include <ctre/phoenix/led/TwinkleAnimation.h>
+#include <ctre/phoenix/led/TwinkleOffAnimation.h>
+#include <ctre/phoenix/led/RgbFadeAnimation.h>
+#include <ctre/phoenix/led/SingleFadeAnimation.h>
+
 
 #include "Robot.h"
 #include "Constants/LEDConstants.h"
@@ -131,6 +140,23 @@ public:
         void setRainbowAnimation(double speed) {
             setAnimation(RainbowAnimation(1, speed, segmentSize, false, startIndex));
         }
+
+        void setFireAnimation(double speed, double burnspeed, double coolspeed){
+            setAnimation(FireAnimation(1, speed, segmentSize, burnspeed, coolspeed, startIndex));
+        }
+
+        void setTwinkleAnimation(Color color, double speed){
+            setAnimation(TwinkleAnimation(color.red, color.green, color.blue,0,speed,segmentSize,ctre::phoenix::led::TwinkleAnimation::Percent100,startIndex));
+        }
+
+        void setRGBFadeAnimation(double speed){
+            setAnimation(RgbFadeAnimation(1,speed,segmentSize,startIndex));
+        }
+
+        void setSingleFadeAnimation(Color color, double speed){
+            setAnimation(SingleFadeAnimation(color.red, color.green, color.blue,0,speed,segmentSize,startIndex));
+        }
+
     };
 
     LEDSegment BatteryIndicator{0,4,0, &candle};
@@ -158,21 +184,55 @@ public:
 
 };
 
-class LightsSubsystem {
+class LightsSubsystem : public CandleController {
 
     public:
 
-    CandleController m_LEDController{};
     frc::PowerDistribution *m_PDH;
 
+    Timer notePickUpTimer;
+    bool didStrobeGreen = false;
+
     LightsSubsystem(frc::PowerDistribution *_m_PDH)
-    :m_PDH{_m_PDH}
+    :   CandleController(),
+        m_PDH{_m_PDH}
     {
-        m_LEDController.FullClear();
+        FullClear();
     }
 
     void UpdateSubsystemLEDS(){
-        m_LEDController.BatteryIndicator.setColor((m_PDH->GetVoltage() > 11.5 ? green : red));
+       BatteryIndicator.setColor((m_PDH->GetVoltage() > 11.5 ? green : red));
+       DriverStationIndicator.setColor((DriverStation::IsDSAttached() ? green : red));
+    }
+
+    void SetIdle(){
+        MainLEDStrip.setFlowAnimation(red, 0.4);
+    }
+
+    void SetDriving(){
+        MainLEDStrip.setFadeAnimation(red, 0.8);
+    }
+
+    void SetStrobe(){
+        MainLEDStrip.setStrobeAnimation(green, 0.4);
+    }
+
+    void SetHaveNote(){
+        if(!didStrobeGreen){
+            didStrobeGreen = true;
+            notePickUpTimer.Reset();
+            notePickUpTimer.Start();
+        }
+        if(notePickUpTimer.HasElapsed(LightsConstants::notePickupTime)){
+            SetDriving();
+        }
+        else{
+            SetStrobe();
+        }
+    }
+
+    void NoLongerHaveNote(){
+        didStrobeGreen = false;
     }
 
 };

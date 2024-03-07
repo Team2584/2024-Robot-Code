@@ -31,7 +31,6 @@ Elevator ampmech{};
 Climb hang{&swerveDrive};
 NoteController notecontroller{&overbumper, &flywheel, &ampmech};
 LightsSubsystem lights{&m_pdh};
-//ctre::led::CANdle candle{};
 
 SwerveDriveAutonomousController swerveAutoController{&swerveDrive};
 AutonomousShootingController flywheelController{&swerveAutoController, &flywheel, &overbumper, &ampmech};
@@ -68,6 +67,8 @@ void Robot::RobotInit()
   
   SmartDashboard::PutNumber("Flywheel Setpoint", 0);
   SmartDashboard::PutNumber("Angler Setpoint", M_PI / 2);
+
+  lights.SetIdle();
 
 }
 
@@ -314,10 +315,12 @@ void Robot::TeleopPeriodic()
       wristSetPoint = Intake::SHOOT;
 
       if(overbumper.GetObjectInIntake()){
-        lights.m_LEDController.MainLEDStrip.setStrobeAnimation(green, 0.7);
+        lights.SetHaveNote();
+        xboxController.rumble(3, 150, 200);
       }
       else{
-        lights.m_LEDController.MainLEDStrip.setBandAnimation(red, 0.7);
+        lights.NoLongerHaveNote();
+        lights.SetDriving();
       }
 
       if (xboxController.GetRightBumper())
@@ -325,8 +328,7 @@ void Robot::TeleopPeriodic()
         bool done = notecontroller.IntakeNoteToSelector();
         if (!done){
           wristSetPoint = Intake::LOW;
-        else
-          xboxController.rumble(3, 250, 200);
+        }
       }
       else if (xboxController.GetRightTriggerAxis() > 0.5)
       {
@@ -621,7 +623,7 @@ void Robot::TeleopPeriodic()
 void Robot::DisabledInit() {}
 
 void Robot::DisabledPeriodic() {
-  lights.m_LEDController.MainLEDStrip.setFlowAnimation(red, 0.3);
+  lights.SetIdle();
 }
 
 void Robot::TestInit() {
