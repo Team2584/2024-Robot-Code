@@ -68,10 +68,12 @@ bool AutonomousShootingController::AngleFlywheelToSpeaker(AllianceColor alliance
         distance = currentPos.Distance(RED_SPEAKER_POSITION.ToTranslation2d());
 
 
-    if (distance <= 3_m)
-        targetAnglerAngle = 1.13 - 0.338 * distance.value() + 0.0429 * (distance.value() * distance.value()); //Equation found by testing and getting data
+    if (distance >= 3_m)
+        targetAnglerAngle = 0.6;
+    else if (distance >= 1.85_m)
+        targetAnglerAngle = lerpVal(1.85, 3, 0.65, 0.6, distance.value());
     else
-        targetAnglerAngle = 0.5;
+        targetAnglerAngle = lerpVal(0.8, 0.65, 1.45, 1.85, distance.value());
 
     SmartDashboard::PutNumber("Target Angler Angle", targetAnglerAngle);
     return flyWheel->PIDAngler(targetAnglerAngle);
@@ -79,7 +81,25 @@ bool AutonomousShootingController::AngleFlywheelToSpeaker(AllianceColor alliance
 
 bool AutonomousShootingController::SpinFlywheelForSpeaker(AllianceColor allianceColor)
 {
-    return flyWheel->SetFlywheelVelocity(3300);
+    Translation2d currentPos = swerveDrive->swerveDrive->GetTagOdometryPose().Translation();
+
+    // Determine what our target angle is
+    units::meter_t distance;
+    
+    if (allianceColor == AllianceColor::BLUE)
+        distance = currentPos.Distance(BLUE_SPEAKER_POSITION.ToTranslation2d());
+    else
+        distance = currentPos.Distance(RED_SPEAKER_POSITION.ToTranslation2d());
+    
+    if (distance > 2_m)
+    {
+        double velocity = lerpVal(2, 3.5, 3500, 5500, distance.value());
+        if (velocity > 6000)
+            velocity = 6000;
+        return flyWheel->SetFlywheelVelocity(velocity);
+    }
+    else
+        return flyWheel->SetFlywheelVelocity(3500);
 }
 
 bool AutonomousShootingController::ClearElevatorForShot()

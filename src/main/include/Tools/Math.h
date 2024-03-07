@@ -15,4 +15,9 @@ inline int sgn(double num)
         return 0;
 }
 
+inline double lerpVal(double xInitial, double xFinal, double yInitial, double yFinal, double value)
+{
+    return (xFinal - xInitial) / (yFinal - yInitial) * (value - xInitial) + xInitial;
+}
+
 #endif // MATH_H

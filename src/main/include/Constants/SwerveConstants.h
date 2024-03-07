@@ -104,7 +104,7 @@ enum PoseEstimationType
 #define DTP_TRANSLATION_KD 0
 #define DTP_TRANSLATION_TOLERANCE 0.03 // In meters
 #define DTP_TRANSLATION_VELOCITY_TOLERANCE 0.5 // In percent power
-#define DTP_TRANSLATION_MIN_SPEED 0.015 // In percent power
+#define DTP_TRANSLATION_MIN_SPEED 0.02 // In percent power
 #define DTP_TRANSLATION_MAX_SPEED 0.6 // In percent power
 // Rotational PID to correct robot heading
 #define DTP_ROTATION_KP 0.25

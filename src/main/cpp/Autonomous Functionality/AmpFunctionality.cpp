@@ -30,7 +30,7 @@ bool AutonomousAmpingController::DriveToAmp(AllianceColor allianceColor){
 
     if (ampTimer.Get() < ElevatorConstants::ampDriveTime)
     {
-        swerveDrive->swerveDrive->DriveSwervePercentTagOriented(0, -0.3, 0);
+        swerveDrive->swerveDrive->DriveSwervePercentTagOriented(0, 0.3, 0);
         return false;
     }
     

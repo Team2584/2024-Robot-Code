@@ -326,9 +326,6 @@ void Robot::TeleopPeriodic()
       else if (xboxController2.GetRightBumper()){
         notecontroller.FromElevatorToSelector();
       }
-      else if (xboxController2.GetLeftBumper()){
-        ampmech.NoteFromSelector();
-      }
       else if (xboxController2.GetAButton())
       {
         notecontroller.LiftNoteToPosition(Elevator::ElevatorSetting::AMP);
@@ -365,8 +362,9 @@ void Robot::TeleopPeriodic()
         flywheelController.BeginAimAndFire(allianceColor);
         currentDriverMode = DRIVER_MODE::AUTO_AIM_STATIONARY;
       }
-      if (xboxController2.GetStartButtonPressed()){
+      if (xboxController2.GetLeftBumperPressed()){
         autoAmpController.BeginDriveToAmp(allianceColor);
+        notecontroller.BeginScoreNoteInPosition(Elevator::ElevatorSetting::AMP);
         currentDriverMode = DRIVER_MODE::AUTO_AMP;
       }
       if (xboxController2.GetYButtonPressed())
@@ -424,8 +422,11 @@ void Robot::TeleopPeriodic()
       if(isAtAmp){
         scored = notecontroller.ScoreNoteInPosition(Elevator::ElevatorSetting::AMP);
       }
+      else{
+        notecontroller.LiftNoteToPosition(Elevator::ElevatorSetting::AMP);
+      }
 
-      if(!xboxController2.GetStartButton() || scored){
+      if(!xboxController2.GetLeftBumper() || scored){
         currentDriverMode = DRIVER_MODE::BASIC;
       }
 
@@ -671,6 +672,29 @@ void Robot::TestPeriodic() {
     rightJoystickY = 0;
   }
 
+  // Find controller input (*-1 converts values to fwd/left/counterclockwise positive)
+  double controller2LeftJoystickX, controller2LeftJoystickY, controller2RightJoystickX, controller2RightJoystickY;
+  controller2LeftJoystickY = xboxController2.GetLeftY() * -1;
+  controller2LeftJoystickX = xboxController2.GetLeftX() * -1;
+  controller2RightJoystickX = xboxController2.GetRightX() * -1;
+  controller2RightJoystickY = xboxController2.GetRightY();
+
+  // Remove ghost movement by making sure joystick is moved a certain amount
+  double controller2leftJoystickDistance = sqrt(pow(controller2LeftJoystickX, 2.0) + pow(controller2LeftJoystickY, 2.0));
+  double controller2rightJoystickDistance = sqrt(pow(controller2RightJoystickX, 2.0) + pow(controller2RightJoystickY, 2.0));
+
+  if (controller2leftJoystickDistance < CONTROLLER_DEADBAND)
+  {
+    controller2LeftJoystickX = 0;
+    controller2LeftJoystickY = 0;
+  }
+
+  if (abs(controller2rightJoystickDistance) < CONTROLLER_DEADBAND)
+  {
+    controller2RightJoystickX = 0;
+    controller2RightJoystickY = 0;
+  }
+
   double fwdDriveSpeed = leftJoystickY * SmartDashboard::GetNumber("Max Drive Speed", 0.4);
   double strafeDriveSpeed = leftJoystickX * SmartDashboard::GetNumber("Max Drive Speed", 0.4);
   double turnSpeed = rightJoystickX * SmartDashboard::GetNumber("Max Spin Speed", 0.4);
@@ -722,7 +746,7 @@ void Robot::TestPeriodic() {
     overbumper.MoveWristPercent(0);
   }*/
 
-  if (xboxController2.GetAButtonPressed())
+  if (xboxController2.GetAButtonPressed() || xboxController2.GetBButtonPressed() || xboxController2.GetYButtonPressed())
     ampmech.BeginPIDElevator();
 
   if (xboxController2.GetAButton()){
