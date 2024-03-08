@@ -47,6 +47,12 @@ public:
 
     void UpdateRaspiConnection();
     void PrintRaspiSanityCheck();
+    bool GetRaspiConnected(){
+        if(connectedEntry.Exists())
+            return connectedEntry.Get();
+        else    
+            return false;
+    }
     bool NoteInView();
     void ResetNoteOdometry();
     void ResetNoteOdometry(Pose2d position);

@@ -101,6 +101,12 @@ public:
             candle->SetLEDs(color.red, color.green, color.blue, 0, startIndex, segmentSize);
         }
 
+        void setColor(vector<Color> colors){
+            for(int i=0; i < segmentSize; i++){
+                candle->SetLEDs(colors[i].red, colors[i].green, colors[i].blue, 0, startIndex+i, startIndex+i+1);
+            }
+        }
+
         void setAnimation(BaseStandardAnimation animation) {
             candle->Animate(animation, animationSlot);
         }
@@ -201,8 +207,41 @@ class LightsSubsystem : public CandleController {
     }
 
     void UpdateSubsystemLEDS(){
-       BatteryIndicator.setColor((m_PDH->GetVoltage() > 11.5 ? green : red));
-       DriverStationIndicator.setColor((DriverStation::IsDSAttached() ? green : red));
+
+        double voltage = m_PDH->GetVoltage();
+
+        vector<Color> colors;
+
+        int decimalPart = static_cast<int>(voltage * 100) % 100;
+        int value = decimalPart / 25 + 1;
+        if (value > 4) {
+            value = 4;
+        }
+
+        if(voltage >= 12){
+            for(int i = 0; i < 4; i++){
+                colors.push_back((i <= value ? green : black));
+            }
+        }
+        else if(voltage >= 11){
+            for(int i = 0; i < 4; i++){
+                colors.push_back((i <= value ? orange : black));
+            }
+        }
+        else if(voltage >= 10){
+            for(int i = 0; i < 4; i++){
+                colors.push_back((i <= value ? red : black));
+            }
+        }
+        else{
+            for(int i = 0; i < 4; i++){
+                colors.push_back(white);
+            }
+        }
+    
+        BatteryIndicator.setColor(colors);
+        DriverStationIndicator.setColor((DriverStation::IsDSAttached() ? green : red));
+        VisionIndicator.setColor((swerveDrive.GetRaspiConnected() ? green : red));
     }
 
     void SetIdle(){
