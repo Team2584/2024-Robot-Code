@@ -15,6 +15,7 @@ class Intake
         rev::CANSparkMax selectorFixedMotor;
         rev::SparkAbsoluteEncoder *magEncoder;
         frc::DigitalInput m_mainSensor;
+        frc::Timer shotTimer;
 
     public:
 
@@ -34,6 +35,7 @@ class Intake
         void IntakeNote();
         void OuttakeNote();
 
+        void BeginShootNote();
         void ShootNote();
         void NoteToElevator();
         void NoteFromElevator();

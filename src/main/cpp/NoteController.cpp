@@ -66,6 +66,9 @@ bool NoteController::FromElevatorToSelector(){
         noteBackInSelector = true;
 
     bool noteInPosition = noteBackInSelector && !intake->GetObjectInIntake();
+    SmartDashboard::PutNumber("note back in selector", noteBackInSelector);
+    SmartDashboard::PutNumber("note in position", noteInPosition);
+    
     if (!noteInPosition)
     {
         intake->NoteFromElevator();

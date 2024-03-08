@@ -60,19 +60,19 @@
 */
 
 #define CAMERA_ONE_NAME "Top Camera"
-#define CAMERA_ONE_X 11.626_in // Distance in meters from camera to center of robot forward/backward, forward positive
-#define CAMERA_ONE_Y -11.25_in // Distance in meters from camera to center of robot left/right, left positive
-#define CAMERA_ONE_Z 17.625_in // Camera's distance from ground in meters
+#define CAMERA_ONE_X 11_in // Distance in meters from camera to center of robot forward/backward, forward positive
+#define CAMERA_ONE_Y 11.625_in // Distance in meters from camera to center of robot left/right, left positive
+#define CAMERA_ONE_Z 26.875_in // Camera's distance from ground in meters
 #define CAMERA_ONE_X_ROTATION 0_deg // Camera's Rotation around robot's X axis (tilted up/down)
-#define CAMERA_ONE_Y_ROTATION -45_deg // Camera's Rotation around robot's Y axis (rotated clockwise/counterclocwise)
+#define CAMERA_ONE_Y_ROTATION -57_deg // Camera's Rotation around robot's Y axis (rotated clockwise/counterclocwise)
 #define CAMERA_ONE_Z_ROTATION 0_deg // Camera's Rotation around robot's Z axis (tilted left/right)
 
 #define CAMERA_TWO_NAME "Bottom Camera"
-#define CAMERA_TWO_X 11.626_in // Distance in meters from camera to center of robot forward/backward, forward positive
-#define CAMERA_TWO_Y -11.25_in // Distance in meters from camera to center of robot left/right, left positive
-#define CAMERA_TWO_Z 17.625_in // Camera's distance from ground in meters
+#define CAMERA_TWO_X 12.5_in // Distance in meters from camera to center of robot forward/backward, forward positive
+#define CAMERA_TWO_Y 11.625_in // Distance in meters from camera to center of robot left/right, left positive
+#define CAMERA_TWO_Z 25.25_in // Camera's distance from ground in meters
 #define CAMERA_TWO_X_ROTATION 0_deg // Camera's Rotation around robot's X axis (tilted up/down)
-#define CAMERA_TWO_Y_ROTATION -45_deg // Camera's Rotation around robot's Y axis (rotated clockwise/counterclocwise)
+#define CAMERA_TWO_Y_ROTATION -27_deg // Camera's Rotation around robot's Y axis (rotated clockwise/counterclocwise)
 #define CAMERA_TWO_Z_ROTATION 0_deg // Camera's Rotation around robot's Z axis (tilted left/right)
 
 #define APRILTAG_CONFIDENCE_X 0.1
@@ -104,16 +104,16 @@ enum PoseEstimationType
 #define DTP_TRANSLATION_KD 0
 #define DTP_TRANSLATION_TOLERANCE 0.03 // In meters
 #define DTP_TRANSLATION_VELOCITY_TOLERANCE 0.5 // In percent power
-#define DTP_TRANSLATION_MIN_SPEED 0.015 // In percent power
+#define DTP_TRANSLATION_MIN_SPEED 0.02 // In percent power
 #define DTP_TRANSLATION_MAX_SPEED 0.6 // In percent power
 // Rotational PID to correct robot heading
-#define DTP_ROTATION_KP 0.6
+#define DTP_ROTATION_KP 0.25
 #define DTP_ROTATION_KI 0
 #define DTP_ROTATION_KI_MAX 0 // In percent power
 #define DTP_ROTATION_KD 0
 #define DTP_ROTATION_TOLERANCE 0.07 // In radians
 #define DTP_ROTATION_VELOCITY_TOLERANCE 0.5 // In percent power
-#define DTP_ROTATION_MIN_SPEED 0.015 // In percent powerw
+#define DTP_ROTATION_MIN_SPEED 0.02 // In percent powerw
 #define DTP_ROTATION_MAX_SPEED 0.6 // In percent power
 
 /* Trajectory following PID Values */

@@ -24,11 +24,11 @@ Climb::Climb(VisionSwerve* _swerveDrive)
 }
 
 bool Climb::GetLStop(){
-    return !leftHallSensor.Get();
+    return leftHallSensor.Get();
 }
 
 bool Climb::GetRStop(){
-    return !rightHallSensor.Get();
+    return rightHallSensor.Get();
 }
 
 void Climb::SetClimbZero(){
@@ -43,6 +43,10 @@ void Climb::SetClimbZero(){
 */
 bool Climb::ZeroClimb(){
     if(!climbZeroed){
+        leftClimbMotor.EnableSoftLimit(rev::CANSparkBase::SoftLimitDirection::kForward, false);
+        leftClimbMotor.EnableSoftLimit(rev::CANSparkBase::SoftLimitDirection::kReverse, false);          
+        leftClimbMotor.EnableSoftLimit(rev::CANSparkBase::SoftLimitDirection::kReverse, false);
+        leftClimbMotor.EnableSoftLimit(rev::CANSparkBase::SoftLimitDirection::kForward, false);
         if(!GetLStop()){
             leftClimbMotor.Set(ClimbConstants::BasePctDown*-0.6);
         }
@@ -139,7 +143,7 @@ bool Climb::ClimbPID(units::meter_t setpoint){
         leftClimbMotor.SetVoltage(left);
         rightClimbMotor.SetVoltage(right);
 
-        return (leftPID.AtSetpoint() && rightPID.AtSetpoint());
+        return (leftPID.AtGoal() && rightPID.AtGoal());
     }
     return false;
 }
@@ -161,7 +165,7 @@ bool Climb::BalanceAtPos(){
 
     SetClimbMotors(left,right);
 
-    return rollPID.AtSetpoint();
+    return rollPID.AtGoal();
 }
 
 /**
@@ -180,7 +184,7 @@ bool Climb::BalanceWhileClimbing(){
 
     SetClimbMotors(left,right);
 
-    return rollPID.AtSetpoint();
+    return rollPID.AtGoal();
 }
 
 
@@ -232,7 +236,7 @@ bool Climb::GetClimbAtPos(){
     bool isAtPos =  abs(lowPos - rightPID.GetSetpoint()) < rightPID.GetPositionTolerance(); //if most extended arm ~= the set pos
     return(isAtPos); 
     */
-   return leftPID.AtSetpoint() && rightPID.AtSetpoint();
+   return leftPID.AtGoal() && rightPID.AtGoal();
     
 }
 
@@ -240,7 +244,7 @@ bool Climb::GetClimbAtPos(){
  * @return If the robot is balanced
 */
 bool Climb::GetClimbBalanced(){
-    return rollPID.AtSetpoint();
+    return rollPID.AtGoal();
 }
 
 /**

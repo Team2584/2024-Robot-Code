@@ -49,6 +49,8 @@ AllianceColor allianceColor = AllianceColor::BLUE;
 enum DRIVER_MODE {BASIC, AUTO_AIM_STATIONARY, SHOOT_ON_THE_MOVE, AUTO_AMP, CLIMBING_TRAP};
 DRIVER_MODE currentDriverMode = DRIVER_MODE::BASIC;
 
+bool begunShooting = false;
+
 void Robot::RobotInit()
 {
   m_chooser.SetDefaultOption(kAutoBCSI2S, kAutoBCSI2S);
@@ -213,7 +215,7 @@ void Robot::TeleopInit()
   swerveDrive.ResetTagOdometry(Pose2d(0_m, 0_m, Rotation2d(180_deg)));
   ampmech.ResetElevatorEncoder();  
   currentDriverMode = DRIVER_MODE::BASIC;
-  
+  begunShooting = false;
 }
 
 void Robot::TeleopPeriodic()
@@ -322,6 +324,16 @@ void Robot::TeleopPeriodic()
         lights.NoLongerHaveNote();
         lights.SetDriving();
       }
+      
+      if (!begunShooting && xboxController2.GetLeftTriggerAxis() > 0.5)
+      {
+        begunShooting = true;
+        overbumper.BeginShootNote();
+      }
+      else if (begunShooting && xboxController2.GetLeftTriggerAxis() < 0.3)
+      {
+        begunShooting = false;
+      }
 
       if (xboxController.GetRightBumper())
       {
@@ -346,9 +358,6 @@ void Robot::TeleopPeriodic()
       else if (xboxController2.GetRightBumper()){
         notecontroller.FromElevatorToSelector();
       }
-      else if (xboxController2.GetLeftBumper()){
-        ampmech.NoteFromSelector();
-      }
       else if (xboxController2.GetAButton())
       {
         notecontroller.LiftNoteToPosition(Elevator::ElevatorSetting::AMP);
@@ -363,12 +372,14 @@ void Robot::TeleopPeriodic()
         ampmech.MoveToHeight(Elevator::ElevatorSetting::LOW);
       }
 
-      //overbumper.PIDWristToPoint(wristSetPoint);
-      overbumper.MoveWristPercent(0);
+      overbumper.PIDWristToPoint(wristSetPoint);
 
       // Keep flywheel ready for close shots
-      //flywheel.SetFlywheelVelocity(3000);
-      flywheel.SpinFlywheelPercent(0);
+      if (flywheel.TopFlywheel.GetMeasurement() * 60.0 > 1500 || flywheel.BottomFlywheel.GetMeasurement() * 60.0 > 1500)
+        flywheel.SpinFlywheelPercent(0);
+      else
+        flywheel.SetFlywheelVelocity(1500);
+
       flywheel.PIDAngler(0.8); // change this to clear chain
 
       if(xboxController.GetStartButtonPressed()){
@@ -383,8 +394,9 @@ void Robot::TeleopPeriodic()
         flywheelController.BeginAimAndFire(allianceColor);
         currentDriverMode = DRIVER_MODE::AUTO_AIM_STATIONARY;
       }
-      if (xboxController2.GetStartButtonPressed()){
+      if (xboxController2.GetLeftBumperPressed()){
         autoAmpController.BeginDriveToAmp(allianceColor);
+        notecontroller.BeginScoreNoteInPosition(Elevator::ElevatorSetting::AMP);
         currentDriverMode = DRIVER_MODE::AUTO_AMP;
       }
       if (xboxController2.GetYButtonPressed())
@@ -423,6 +435,16 @@ void Robot::TeleopPeriodic()
       flywheelController.AngleFlywheelToSpeaker(allianceColor);
       flywheelController.ClearElevatorForShot();
 
+      if (!begunShooting && xboxController2.GetLeftTriggerAxis() > 0.5)
+      {
+        begunShooting = true;
+        overbumper.BeginShootNote();
+      }
+      else if (begunShooting && xboxController2.GetLeftTriggerAxis() < 0.3)
+      {
+        begunShooting = false;
+      }
+
       if(xboxController2.GetLeftTriggerAxis() > 0.5)
         overbumper.ShootNote();
       else
@@ -442,8 +464,11 @@ void Robot::TeleopPeriodic()
       if(isAtAmp){
         scored = notecontroller.ScoreNoteInPosition(Elevator::ElevatorSetting::AMP);
       }
+      else{
+        notecontroller.LiftNoteToPosition(Elevator::ElevatorSetting::AMP);
+      }
 
-      if(!xboxController2.GetStartButton() || scored){
+      if(!xboxController2.GetLeftBumper() || scored){
         currentDriverMode = DRIVER_MODE::BASIC;
       }
 
@@ -651,8 +676,8 @@ void Robot::TestInit() {
     SmartDashboard::PutNumber("Elevator Max Acceleration", 0.35);
     SmartDashboard::PutNumber("Elevator kP", 10);
     SmartDashboard::PutNumber("Elevator kI", 0.05);
-    SmartDashboard::PutNumber("Angler Setpoint", M_PI / 2);
-    SmartDashboard::PutNumber("Flywheel Setpoint", 0);
+    SmartDashboard::PutNumber("Angler Setpoint", 0.8);
+    SmartDashboard::PutNumber("Flywheel Setpoint", 3000);
     SmartDashboard::PutNumber("Elevator kG", 0.5);
     SmartDashboard::PutNumber("Max Drive Speed", 0.4);
     SmartDashboard::PutNumber("Max Spin Speed", 0.4);
@@ -699,6 +724,29 @@ void Robot::TestPeriodic() {
     rightJoystickY = 0;
   }
 
+  // Find controller input (*-1 converts values to fwd/left/counterclockwise positive)
+  double controller2LeftJoystickX, controller2LeftJoystickY, controller2RightJoystickX, controller2RightJoystickY;
+  controller2LeftJoystickY = xboxController2.GetLeftY() * -1;
+  controller2LeftJoystickX = xboxController2.GetLeftX() * -1;
+  controller2RightJoystickX = xboxController2.GetRightX() * -1;
+  controller2RightJoystickY = xboxController2.GetRightY();
+
+  // Remove ghost movement by making sure joystick is moved a certain amount
+  double controller2leftJoystickDistance = sqrt(pow(controller2LeftJoystickX, 2.0) + pow(controller2LeftJoystickY, 2.0));
+  double controller2rightJoystickDistance = sqrt(pow(controller2RightJoystickX, 2.0) + pow(controller2RightJoystickY, 2.0));
+
+  if (controller2leftJoystickDistance < CONTROLLER_DEADBAND)
+  {
+    controller2LeftJoystickX = 0;
+    controller2LeftJoystickY = 0;
+  }
+
+  if (abs(controller2rightJoystickDistance) < CONTROLLER_DEADBAND)
+  {
+    controller2RightJoystickX = 0;
+    controller2RightJoystickY = 0;
+  }
+
   double fwdDriveSpeed = leftJoystickY * SmartDashboard::GetNumber("Max Drive Speed", 0.4);
   double strafeDriveSpeed = leftJoystickX * SmartDashboard::GetNumber("Max Drive Speed", 0.4);
   double turnSpeed = rightJoystickX * SmartDashboard::GetNumber("Max Spin Speed", 0.4);
@@ -719,11 +767,22 @@ void Robot::TestPeriodic() {
   }
 
   if (xboxController.GetAButtonPressed())
+    overbumper.BeginShootNote();
+
+  if (xboxController.GetAButton())
+    overbumper.ShootNote();
+  else if (xboxController.GetBButton())
+    notecontroller.IntakeNoteToSelector();
+  else
+    overbumper.SetIntakeMotorSpeed(0);
+  
+
+  /*if (xboxController.GetAButtonPressed())
     swerveAutoController.BeginDriveToPose(PoseEstimationType::PureOdometry);
 
   if (xboxController.GetAButton())
     swerveAutoController.DriveToPose(Pose2d(0_m, 0_m, Rotation2d(0_deg)), PoseEstimationType::PureOdometry);
-  else  
+  else  */
     swerveDrive.DriveSwervePercent(fwdDriveSpeed, strafeDriveSpeed, turnSpeed);
 
   /*if (xboxController.GetAButton()){
@@ -742,7 +801,7 @@ void Robot::TestPeriodic() {
     overbumper.MoveWristPercent(0);
   }*/
 
-  if (xboxController2.GetAButtonPressed())
+  if (xboxController2.GetAButtonPressed() || xboxController2.GetBButtonPressed() || xboxController2.GetYButtonPressed())
     ampmech.BeginPIDElevator();
 
   if (xboxController2.GetAButton()){
@@ -761,12 +820,6 @@ void Robot::TestPeriodic() {
     ampmech.StopElevator();
   }
 
-  if (xboxController.GetRightTriggerAxis() > 0.5)
-    overbumper.IntakeNote();
-  else if (xboxController.GetLeftTriggerAxis() > 0.5)
-    overbumper.ShootNote();
-  else
-    overbumper.SetIntakeMotorSpeed(0);
 
   SmartDashboard::PutNumber("FL Module Heading", swerveDrive.FLModule.GetMagEncoderValue());
   SmartDashboard::PutNumber("FR Module Heading", swerveDrive.FRModule.GetMagEncoderValue());
@@ -794,6 +847,8 @@ void Robot::TestPeriodic() {
 
   SmartDashboard::PutNumber("Top FlyWheel RPM", flywheel.TopFlywheel.GetMeasurement()*60.0);
   SmartDashboard::PutNumber("Bottom FlyWheel RPM", flywheel.BottomFlywheel.GetMeasurement()*60.0);
+  SmartDashboard::PutBoolean("Top FlyWheel Done", flywheel.TopFlywheel.AtSetpoint());
+  SmartDashboard::PutBoolean("Bottom FlyWheel Done", flywheel.BottomFlywheel.AtSetpoint());
 
   SmartDashboard::PutBoolean("in intake", overbumper.GetObjectInIntake());
   SmartDashboard::PutBoolean("in mech", ampmech.GetObjectInMech());
