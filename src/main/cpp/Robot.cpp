@@ -672,6 +672,8 @@ void Robot::TestInit() {
     swerveAutoController.yPIDController.SetupConstantTuning("DTP Y");
     swerveAutoController.rotationPIDController.SetupConstantTuning("DTP Rot");
 
+    flywheel.SpinFlywheelPercent(0);
+
     SmartDashboard::PutNumber("Elevator Max Velocity", 0.7);
     SmartDashboard::PutNumber("Elevator Max Acceleration", 0.35);
     SmartDashboard::PutNumber("Elevator kP", 10);
