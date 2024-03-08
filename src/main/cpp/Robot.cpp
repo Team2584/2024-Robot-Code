@@ -779,6 +779,9 @@ void Robot::TestInit() {
     swerveAutoController.xPIDController.SetupConstantTuning("DTP X");
     swerveAutoController.yPIDController.SetupConstantTuning("DTP Y");
     swerveAutoController.rotationPIDController.SetupConstantTuning("DTP Rot");
+    swerveAutoController.noteXPIDController.SetupConstantTuning("NOTE X");
+    swerveAutoController.noteYPIDController.SetupConstantTuning("NOTE Y");
+    swerveAutoController.noteRotationPIDController.SetupConstantTuning("NOTE Rot");
 
     flywheel.SpinFlywheelPercent(0);
 
@@ -802,6 +805,9 @@ void Robot::TestPeriodic() {
   swerveAutoController.xPIDController.UpdateConstantTuning("DTP X");
   swerveAutoController.yPIDController.UpdateConstantTuning("DTP Y");
   swerveAutoController.rotationPIDController.UpdateConstantTuning("DTP Rot");
+  swerveAutoController.noteXPIDController.UpdateConstantTuning("DTP X");
+  swerveAutoController.noteYPIDController.UpdateConstantTuning("DTP Y");
+  swerveAutoController.noteRotationPIDController.UpdateConstantTuning("DTP Rot");
   swerveDrive.Update();
 
 
@@ -886,6 +892,17 @@ void Robot::TestPeriodic() {
   else
     overbumper.SetIntakeMotorSpeed(0);
   
+  if (xboxController.GetXButtonPressed())
+    swerveAutoController.BeginDriveToNote();
+  if (xboxController.GetXButton())
+  {
+    swerveAutoController.DriveToNote();
+    bool done = notecontroller.IntakeNoteToSelector();
+    if (!done)
+      overbumper.PIDWristToPoint(Intake::WristSetting::LOW);
+    else
+      overbumper.PIDWristToPoint(Intake::WristSetting::HIGH);
+  }
 
   /*if (xboxController.GetAButtonPressed())
     swerveAutoController.BeginDriveToPose(PoseEstimationType::PureOdometry);
