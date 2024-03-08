@@ -221,12 +221,20 @@ class LightsSubsystem : public CandleController {
         MainLEDStrip.setStrobeAnimation(blue, 0.02);
     }
 
+    void SetFadeOrange(){
+        MainLEDStrip.setFadeAnimation(orange, 0.7);
+    }
+
     void SetStopped(){
         MainLEDStrip.setColor(red);
     }
 
     void SetEstopped(){
         MainLEDStrip.setSingleFadeAnimation(white, 0.2);
+    }
+
+    void SetClimbing(){
+        MainLEDStrip.setRainbowAnimation(0.8);
     }
 
     void SetHaveNote(){

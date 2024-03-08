@@ -454,7 +454,13 @@ void Robot::TeleopPeriodic()
     
       overbumper.PIDWristToPoint(Intake::SHOOT);
 
-      lights.SetStrobeBlue();
+      if(doneShooting){
+        lights.SetStrobeGreen();
+        xboxController.ShotNoteRumble();
+      }
+      else{
+        lights.SetFadeOrange();
+      }
 
       if (!xboxController2.GetLeftBumperPressed() || doneShooting)
         currentDriverMode = DRIVER_MODE::BASIC;
@@ -476,10 +482,12 @@ void Robot::TeleopPeriodic()
         xboxController.HaveNoteRumble();
       }
 
-      lights.SetStrobeBlue();
-
       if(done){
         xboxController.HaveNoteRumble();
+        lights.SetStrobeGreen();
+      }
+      else{
+        lights.SetFadeOrange();
       }
 
       if (!xboxController.GetBButton() || done)
@@ -513,10 +521,15 @@ void Robot::TeleopPeriodic()
       else
         overbumper.SetIntakeMotorSpeed(0);
 
-      lights.SetStrobeBlue();
-      if (turnt && spinning && cleared)
+      
+      if (turnt && spinning && cleared){
         xboxController2.ReadyActionRumble();
-
+        lights.SetStrobeBlue();
+      }
+      else{
+        lights.SetFadeOrange();
+      }
+        
       if (xboxController2.GetLeftTriggerAxis() < TRIGGER_DEACTIVATION_POINT)
         currentDriverMode = DRIVER_MODE::BASIC;
 
@@ -535,9 +548,16 @@ void Robot::TeleopPeriodic()
         notecontroller.LiftNoteToPosition(Elevator::ElevatorSetting::AMP);
       }
 
-      lights.SetStrobeBlue();
-      if(isAtAmp){
+      if(scored){
+        xboxController.ShotNoteRumble();
+        lights.SetStrobeGreen();
+      }
+      else if(isAtAmp){
+        lights.SetStrobeBlue();
         xboxController2.ReadyActionRumble();
+      }
+      else{
+        lights.SetFadeOrange();
       }
       
       if(!xboxController.GetLeftBumper() || scored){
@@ -549,6 +569,9 @@ void Robot::TeleopPeriodic()
 
     case DRIVER_MODE::CLIMBING_TRAP:
     {
+
+      lights.SetClimbing();
+
       double fwdDriveSpeed = leftJoystickY * MAX_DRIVE_SPEED_CLIMB;
       double strafeDriveSpeed = leftJoystickX * MAX_DRIVE_SPEED_CLIMB;
       double turnSpeed = rightJoystickX * MAX_SPIN_SPEED_CLIMB;
