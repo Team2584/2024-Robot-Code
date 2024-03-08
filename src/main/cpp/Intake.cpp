@@ -7,7 +7,8 @@ Intake::Intake()
     selectorFixedMotor{SELECTOR_FIXED_INTAKE_MOTOR_PORT, rev::CANSparkMax::MotorType::kBrushless},
     m_mainSensor{INTAKE_IR_SENSOR_PORT},
     m_WristFF{IntakeConstants::Wrist::KS, IntakeConstants::Wrist::KG, IntakeConstants::Wrist::KV},
-    m_WristPID{IntakeConstants::Wrist::KP,IntakeConstants::Wrist::KI,IntakeConstants::Wrist::KD,IntakeConstants::Wrist::KIMAX,IntakeConstants::Wrist::MIN_SPEED,IntakeConstants::Wrist::MAX_SPEED,IntakeConstants::Wrist::POS_ERROR,IntakeConstants::Wrist::VELOCITY_ERROR}
+    m_WristPID{IntakeConstants::Wrist::KP,IntakeConstants::Wrist::KI,IntakeConstants::Wrist::KD,IntakeConstants::Wrist::KIMAX,IntakeConstants::Wrist::MIN_SPEED,IntakeConstants::Wrist::MAX_SPEED,IntakeConstants::Wrist::POS_ERROR,IntakeConstants::Wrist::VELOCITY_ERROR},
+    shotTimer{}
 {
   magEncoder = new rev::SparkAbsoluteEncoder(wristMotor.GetAbsoluteEncoder(rev::SparkAbsoluteEncoder::Type::kDutyCycle));
   wristMotor.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
@@ -46,9 +47,18 @@ void Intake::OuttakeNote()
   SetIntakeMotorSpeed(IntakeConstants::INTAKE_SPEED_OUT, IntakeConstants::FIXED_INTAKE_SPEED_OUT, IntakeConstants::SELECTOR_SPEED_SHOOTER);
 }
 
+void Intake::BeginShootNote()
+{
+  shotTimer.Restart();
+  SetIntakeMotorSpeed(0, 0, IntakeConstants::SELECTOR_SPEED_SHOOTER);
+}
+
 void Intake::ShootNote()
 {
-  SetIntakeMotorSpeed(0, IntakeConstants::FIXED_INTAKE_SPEED_IN, IntakeConstants::SELECTOR_SPEED_SHOOTER);
+  if (shotTimer.Get() < IntakeConstants::SHOT_INTAKE_TIME)
+    SetIntakeMotorSpeed(0, 0, IntakeConstants::SELECTOR_SPEED_SHOOTER);
+  else
+    SetIntakeMotorSpeed(0, IntakeConstants::INTAKE_SPEED_SHOOTER, IntakeConstants::SELECTOR_SPEED_SHOOTER);
 }
 
 void Intake::NoteToElevator()
@@ -58,7 +68,7 @@ void Intake::NoteToElevator()
 
 void Intake::NoteFromElevator()
 {
-  SetIntakeMotorSpeed(IntakeConstants::INTAKE_SPEED_BACK_TO_SELECTOR, IntakeConstants::SELECTOR_SPEED_SHOOTER);
+  SetIntakeMotorSpeed(0, IntakeConstants::INTAKE_SPEED_BACK_TO_SELECTOR, IntakeConstants::SELECTOR_SPEED_SHOOTER);
 }
 
 double Intake::GetWristEncoderReading()

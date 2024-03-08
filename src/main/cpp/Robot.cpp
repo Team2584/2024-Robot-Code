@@ -47,6 +47,8 @@ AllianceColor allianceColor = AllianceColor::BLUE;
 enum DRIVER_MODE {BASIC, AUTO_AIM_STATIONARY, SHOOT_ON_THE_MOVE, AUTO_AMP, CLIMBING_TRAP};
 DRIVER_MODE currentDriverMode = DRIVER_MODE::BASIC;
 
+bool begunShooting = false;
+
 void Robot::RobotInit()
 {
   m_chooser.SetDefaultOption(kAutoBCSI2S, kAutoBCSI2S);
@@ -205,7 +207,7 @@ void Robot::TeleopInit()
   swerveDrive.ResetTagOdometry(Pose2d(0_m, 0_m, Rotation2d(180_deg)));
   ampmech.ResetElevatorEncoder();  
   currentDriverMode = DRIVER_MODE::BASIC;
-  
+  begunShooting = false;
 }
 
 void Robot::TeleopPeriodic()
@@ -307,6 +309,16 @@ void Robot::TeleopPeriodic()
       // Note Controller Stuff
       wristSetPoint = Intake::SHOOT;
 
+      if (!begunShooting && xboxController2.GetLeftTriggerAxis() > 0.5)
+      {
+        begunShooting = true;
+        overbumper.BeginShootNote();
+      }
+      else if (begunShooting && xboxController2.GetLeftTriggerAxis() < 0.3)
+      {
+        begunShooting = false;
+      }
+
       if (xboxController.GetRightBumper())
       {
         bool done = notecontroller.IntakeNoteToSelector();
@@ -343,10 +355,10 @@ void Robot::TeleopPeriodic()
       overbumper.PIDWristToPoint(wristSetPoint);
 
       // Keep flywheel ready for close shots
-      if (xboxController2.GetStartButtonPressed())
-        flywheel.SetFlywheelVelocity(3000);
-      else if (xboxController2.GetBackButton())
+      if (flywheel.TopFlywheel.GetMeasurement() * 60.0 > 1500 || flywheel.BottomFlywheel.GetMeasurement() * 60.0 > 1500)
         flywheel.SpinFlywheelPercent(0);
+      else
+        flywheel.SetFlywheelVelocity(1500);
 
       flywheel.PIDAngler(0.8); // change this to clear chain
 
@@ -402,6 +414,16 @@ void Robot::TeleopPeriodic()
       flywheelController.SpinFlywheelForSpeaker(allianceColor);
       flywheelController.AngleFlywheelToSpeaker(allianceColor);
       flywheelController.ClearElevatorForShot();
+
+      if (!begunShooting && xboxController2.GetLeftTriggerAxis() > 0.5)
+      {
+        begunShooting = true;
+        overbumper.BeginShootNote();
+      }
+      else if (begunShooting && xboxController2.GetLeftTriggerAxis() < 0.3)
+      {
+        begunShooting = false;
+      }
 
       if(xboxController2.GetLeftTriggerAxis() > 0.5)
         overbumper.ShootNote();
@@ -714,6 +736,9 @@ void Robot::TestPeriodic() {
     flywheel.MoveAnglerPercent(0);
   }
 
+  if (xboxController.GetAButtonPressed())
+    overbumper.BeginShootNote();
+
   if (xboxController.GetAButton())
     overbumper.ShootNote();
   else if (xboxController.GetBButton())
@@ -792,6 +817,8 @@ void Robot::TestPeriodic() {
 
   SmartDashboard::PutNumber("Top FlyWheel RPM", flywheel.TopFlywheel.GetMeasurement()*60.0);
   SmartDashboard::PutNumber("Bottom FlyWheel RPM", flywheel.BottomFlywheel.GetMeasurement()*60.0);
+  SmartDashboard::PutBoolean("Top FlyWheel Done", flywheel.TopFlywheel.AtSetpoint());
+  SmartDashboard::PutBoolean("Bottom FlyWheel Done", flywheel.BottomFlywheel.AtSetpoint());
 
   SmartDashboard::PutBoolean("in intake", overbumper.GetObjectInIntake());
   SmartDashboard::PutBoolean("in mech", ampmech.GetObjectInMech());
