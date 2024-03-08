@@ -19,6 +19,8 @@ bool AutonomousShootingController::TurnToSpeaker(AllianceColor allianceColor)
     if (allianceColor == AllianceColor::BLUE)
     {
         diff = BLUE_SPEAKER_AIM_POSITION.ToTranslation2d() - currentPose.Translation(); 
+        SmartDashboard::PutNumber("DIFF X", diff.X().value());
+        SmartDashboard::PutNumber("DIFF Y", diff.Y().value());
 
         if (diff.X() > -1.5_m)
             newSpeakerPos = Translation2d{units::meter_t{lerpVal(-0.5, -1.5, 0.2, 0.05, diff.X().value())}, BLUE_SPEAKER_AIM_POSITION.Y()};
@@ -73,7 +75,7 @@ bool AutonomousShootingController::TurnToSpeakerWhileDriving(double xSpeed, doub
 
     // Determine what our target angle is
    // Determine what our target angle is
-       Translation2d diff;
+    Translation2d diff;
     Translation2d newSpeakerPos;
     if (allianceColor == AllianceColor::BLUE)
     {
