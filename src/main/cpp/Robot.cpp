@@ -302,7 +302,7 @@ void Robot::TeleopPeriodic()
       }
 
       // Reset Swerve Heading and Elevator Encoder
-      if (xboxController.GetStartButton() && xboxController.GetBackButtonPressed() || xboxController.GetStartButtonPressed() && xboxController.GetBackButton())
+      if ((xboxController.GetStartButton() && xboxController.GetBackButtonPressed()) || (xboxController.GetStartButtonPressed() && xboxController.GetBackButton()))
       {
         ampmech.ResetElevatorEncoder();
         if(allianceColor == AllianceColor::BLUE)
