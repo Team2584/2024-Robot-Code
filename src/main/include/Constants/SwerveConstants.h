@@ -26,22 +26,22 @@
 #define PIGEON_IMU_PORT 6
 
 // Find offsets with bevel gears on the right side of the drive train
-#define FL_WHEEL_OFFSET 0.2103 //0.121462
-#define FR_WHEEL_OFFSET 0.5000 //0.229792
-#define BL_WHEEL_OFFSET 0.7116 //0.007819
-#define BR_WHEEL_OFFSET 0.6294 //0.717629
+#define FL_WHEEL_OFFSET 0.863  //0.2103 
+#define FR_WHEEL_OFFSET 0.461  //0.5000 
+#define BL_WHEEL_OFFSET 0.3605 //0.7116 
+#define BR_WHEEL_OFFSET 0.386  //0.6294 
 
 // Assuming a rectangular drive train (input distance between center of wheels)
 #define DRIVE_LENGTH 0.5906_m 
 #define DRIVE_WIDTH 0.489_m 
 
 // Encoder constants
-#define DRIVE_MOTOR_GEAR_RATIO 7.36 
+#define DRIVE_MOTOR_GEAR_RATIO 7.36 * 1.3908
 #define DRIVE_MOTOR_CIRCUMFERENCE 0.11280562 * M_PI
 #define SPIN_MOTOR_GEAR_RATIO 15.43
 
 // Swerve Module Wheel Spin PID Values
-#define WHEEL_SPIN_KP 0.007
+#define WHEEL_SPIN_KP 0.008
 #define WHEEL_SPIN_KI 0
 #define WHEEL_SPIN_KI_MAX 0 // In percent power
 #define WHEEL_SPIN_KD 0
@@ -59,13 +59,21 @@
                                                                             
 */
 
-#define CAMERA_ONE_NAME "photonvision"
-#define CAMERA_ONE_X 11.626_in // Distance in meters from camera to center of robot forward/backward, forward positive
-#define CAMERA_ONE_Y -11.25_in // Distance in meters from camera to center of robot left/right, left positive
-#define CAMERA_ONE_Z 17.625_in // Camera's distance from ground in meters
+#define CAMERA_ONE_NAME "Top Camera"
+#define CAMERA_ONE_X 11_in // Distance in meters from camera to center of robot forward/backward, forward positive
+#define CAMERA_ONE_Y 11.625_in // Distance in meters from camera to center of robot left/right, left positive
+#define CAMERA_ONE_Z 26.875_in // Camera's distance from ground in meters
 #define CAMERA_ONE_X_ROTATION 0_deg // Camera's Rotation around robot's X axis (tilted up/down)
-#define CAMERA_ONE_Y_ROTATION -45_deg // Camera's Rotation around robot's Y axis (rotated clockwise/counterclocwise)
+#define CAMERA_ONE_Y_ROTATION -57_deg // Camera's Rotation around robot's Y axis (rotated clockwise/counterclocwise)
 #define CAMERA_ONE_Z_ROTATION 0_deg // Camera's Rotation around robot's Z axis (tilted left/right)
+
+#define CAMERA_TWO_NAME "Bottom Camera"
+#define CAMERA_TWO_X 12.5_in // Distance in meters from camera to center of robot forward/backward, forward positive
+#define CAMERA_TWO_Y 11.625_in // Distance in meters from camera to center of robot left/right, left positive
+#define CAMERA_TWO_Z 25.25_in // Camera's distance from ground in meters
+#define CAMERA_TWO_X_ROTATION 0_deg // Camera's Rotation around robot's X axis (tilted up/down)
+#define CAMERA_TWO_Y_ROTATION -27_deg // Camera's Rotation around robot's Y axis (rotated clockwise/counterclocwise)
+#define CAMERA_TWO_Z_ROTATION 0_deg // Camera's Rotation around robot's Z axis (tilted left/right)
 
 #define APRILTAG_CONFIDENCE_X 0.1
 #define APRILTAG_CONFIDENCE_Y 0.1
@@ -90,23 +98,23 @@ enum PoseEstimationType
 
 /* Drive to Pose PID Values */
 // Translational PID in the x and y direction
-#define DTP_TRANSLATION_KP 0.55
+#define DTP_TRANSLATION_KP 0.3
 #define DTP_TRANSLATION_KI 0
 #define DTP_TRANSLATION_KI_MAX 0 // In percent power
 #define DTP_TRANSLATION_KD 0
-#define DTP_TRANSLATION_TOLERANCE 0.02 // In meters
+#define DTP_TRANSLATION_TOLERANCE 0.03 // In meters
 #define DTP_TRANSLATION_VELOCITY_TOLERANCE 0.5 // In percent power
-#define DTP_TRANSLATION_MIN_SPEED 0 // In percent power
-#define DTP_TRANSLATION_MAX_SPEED 0.2 // In percent power
+#define DTP_TRANSLATION_MIN_SPEED 0.02 // In percent power
+#define DTP_TRANSLATION_MAX_SPEED 0.6 // In percent power
 // Rotational PID to correct robot heading
-#define DTP_ROTATION_KP 0.8
+#define DTP_ROTATION_KP 0.25
 #define DTP_ROTATION_KI 0
 #define DTP_ROTATION_KI_MAX 0 // In percent power
 #define DTP_ROTATION_KD 0
 #define DTP_ROTATION_TOLERANCE 0.07 // In radians
 #define DTP_ROTATION_VELOCITY_TOLERANCE 0.5 // In percent power
-#define DTP_ROTATION_MIN_SPEED 0 // In percent powerw
-#define DTP_ROTATION_MAX_SPEED 0.2 // In percent power
+#define DTP_ROTATION_MIN_SPEED 0.02 // In percent powerw
+#define DTP_ROTATION_MAX_SPEED 0.6 // In percent power
 
 /* Trajectory following PID Values */
 // Translational PID in the x and y direction

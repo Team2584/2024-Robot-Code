@@ -21,10 +21,11 @@ class Climb {
         bool climbZeroed = false;
         rev::CANSparkFlex leftClimbMotor, rightClimbMotor;
         rev::SparkRelativeEncoder leftEncoder, rightEncoder;
-        frc::DigitalInput leftStop;
-        frc::DigitalInput rightStop;
+        rev::SparkLimitSwitch leftHallSensor, rightHallSensor;
 
         Climb(VisionSwerve* _swerveDrive);
+
+        void SetClimbZero();
 
         bool GetLStop();
 

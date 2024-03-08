@@ -14,22 +14,21 @@ class Elevator
         bool lastSensorValue = false;
         int timesPassed = 0;
 
-        rev::CANSparkMax winchMotor;
-        rev::SparkRelativeEncoder *winchEncoder;
         rev::CANSparkMax ampMotor;
-    
         rev::SparkLimitSwitch ampMechSensor;
+        
+    public:
+
+        ctre::phoenix6::hardware::TalonFX winchMotor;
 
         frc::TrapezoidProfile<units::meters>::Constraints m_constraints;
         frc::ProfiledPIDController<units::meters> m_controller;
         frc::ElevatorFeedforward m_feedforward;
 
-        
-    public:
-
+        void BeginPIDElevator();
         bool PIDElevator(double setpoint);
 
-        enum ElevatorSetting{LOW, OUTTAKE, AMP, TRAP};
+        enum ElevatorSetting{LOW, INTAKE, OUTTAKE, AMP, TRAP};
 
         Elevator();
 

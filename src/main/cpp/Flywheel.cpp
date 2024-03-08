@@ -13,6 +13,7 @@ FlywheelSystem::FlywheelSystem()
 {
     FlywheelMotor2.SetIdleMode(rev::CANSparkBase::IdleMode::kCoast);
     FlywheelMotor1.SetIdleMode(rev::CANSparkBase::IdleMode::kCoast);
+    FlywheelAnglingMotor.SetIdleMode(rev::CANSparkBase::IdleMode::kBrake);
     FlywheelAnglerPID.EnableContinuousInput(-M_PI, M_PI);
 }
 
@@ -64,12 +65,12 @@ double FlywheelSystem::GetAnglerEncoderReading()
 
 void FlywheelSystem::MoveAnglerPercent(double percent)
 {
-  FlywheelAnglingMotor.Set(percent);
+  FlywheelAnglingMotor.Set(percent * -1);
 }
 
 bool FlywheelSystem::PIDAngler(double point)
 {
-  if (point > M_PI * 3.0/4.0 || point < 0)
+  if (point > 1.4 || point < 0)
   {
     FlywheelAnglingMotor.Set(0);
     return false;
@@ -79,7 +80,8 @@ bool FlywheelSystem::PIDAngler(double point)
   units::volt_t FF = FlywheelAnglerFF.Calculate(units::radian_t{GetAnglerEncoderReading()}, 0_rad / 1_s);
   SmartDashboard::PutNumber("Angler PID", PID.value());
   SmartDashboard::PutNumber("Angler FF", FF.value());
-  FlywheelAnglingMotor.SetVoltage(PID + FF);
+  SmartDashboard::PutBoolean("Angler PID Complete", FlywheelAnglerPID.PIDFinished());
+  FlywheelAnglingMotor.SetVoltage(-1 * (PID + FF));
   return FlywheelAnglerPID.PIDFinished();
 }
 

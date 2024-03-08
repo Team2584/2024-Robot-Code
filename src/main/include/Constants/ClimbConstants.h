@@ -29,7 +29,7 @@ inline units::radians_per_second_squared_t kMaxAcceleration = units::radians_per
 inline const auto BasePctUp = 0.3;
 inline const auto BasePctDown =  0.3;
 
-inline constexpr auto gearRatioValue = 1.0/16.0;
+inline constexpr auto gearRatioValue = 1.0/25.0;
 inline constexpr auto diameterValue = 0.0508; //meters (GUESS)
 inline constexpr auto CLIMB_CONVERSION_FACTOR = gearRatioValue * (3.14159365 * diameterValue);
 }

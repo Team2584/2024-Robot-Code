@@ -18,11 +18,15 @@ bool NoteController::IntakeNoteToSelector(){
 }
 
 bool NoteController::ToElevator(){
-    bool noteInPosition = elevator->GetObjectInMech() && !intake->GetObjectInTunnel();
+    bool noteInPosition = elevator->GetObjectInMech();
     if (noteInPosition)
+    {        
+        intake->SetIntakeMotorSpeed(0);
+        elevator->SetAmpMotorPercent(0);
         return true;
+    }
 
-    bool elevatorPrepared = elevator->MoveToHeight(Elevator::ElevatorSetting::LOW);
+    bool elevatorPrepared = elevator->MoveToHeight(Elevator::ElevatorSetting::INTAKE);
 
     if (!elevatorPrepared)
     {
@@ -62,6 +66,9 @@ bool NoteController::FromElevatorToSelector(){
         noteBackInSelector = true;
 
     bool noteInPosition = noteBackInSelector && !intake->GetObjectInIntake();
+    SmartDashboard::PutNumber("note back in selector", noteBackInSelector);
+    SmartDashboard::PutNumber("note in position", noteInPosition);
+    
     if (!noteInPosition)
     {
         intake->NoteFromElevator();

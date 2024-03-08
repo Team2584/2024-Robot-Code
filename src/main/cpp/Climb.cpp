@@ -12,8 +12,8 @@ Climb::Climb(VisionSwerve* _swerveDrive)
     rollPID{ClimbConstants::Rotation::m_KP,ClimbConstants::Rotation::m_KI,ClimbConstants::Rotation::m_KD, m_rotationconstraints},
     leftEncoder{leftClimbMotor.GetEncoder(rev::SparkRelativeEncoder::Type::kHallSensor)},
     rightEncoder{rightClimbMotor.GetEncoder(rev::SparkRelativeEncoder::Type::kHallSensor)},
-    leftStop{9},
-    rightStop{6}
+    leftHallSensor{leftClimbMotor.GetForwardLimitSwitch(rev::SparkLimitSwitch::Type::kNormallyOpen)},
+    rightHallSensor{rightClimbMotor.GetForwardLimitSwitch(rev::SparkLimitSwitch::Type::kNormallyOpen)}
 {
     leftClimbMotor.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
     rightClimbMotor.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
@@ -24,11 +24,17 @@ Climb::Climb(VisionSwerve* _swerveDrive)
 }
 
 bool Climb::GetLStop(){
-    return !leftStop.Get();
+    return leftHallSensor.Get();
 }
 
 bool Climb::GetRStop(){
-    return !rightStop.Get();
+    return rightHallSensor.Get();
+}
+
+void Climb::SetClimbZero(){
+    leftEncoder.SetPosition(0);
+    rightEncoder.SetPosition(0);
+    //add soft limits
 }
 
 /**
@@ -54,16 +60,7 @@ bool Climb::ZeroClimb(){
             rightClimbMotor.Disable();
         }
         if (GetRStop() && GetLStop()){
-            leftEncoder.SetPosition(0);
-            rightEncoder.SetPosition(0);
-            leftClimbMotor.SetSoftLimit(rev::CANSparkBase::SoftLimitDirection::kForward, ClimbConstants::MaxHeight);
-            leftClimbMotor.SetSoftLimit(rev::CANSparkBase::SoftLimitDirection::kReverse, ClimbConstants::MaxHeight*-1);
-            leftClimbMotor.EnableSoftLimit(rev::CANSparkBase::SoftLimitDirection::kForward, true);
-            leftClimbMotor.EnableSoftLimit(rev::CANSparkBase::SoftLimitDirection::kReverse, true);
-            rightClimbMotor.SetSoftLimit(rev::CANSparkBase::SoftLimitDirection::kReverse, ClimbConstants::MinHeight*-1);
-            rightClimbMotor.SetSoftLimit(rev::CANSparkBase::SoftLimitDirection::kForward, ClimbConstants::MinHeight);
-            rightClimbMotor.EnableSoftLimit(rev::CANSparkBase::SoftLimitDirection::kReverse, true);
-            rightClimbMotor.EnableSoftLimit(rev::CANSparkBase::SoftLimitDirection::kForward, true);
+            SetClimbZero();
             climbZeroed = true;
             return true;
         }
@@ -107,7 +104,7 @@ void Climb::RetractClimb(){
 }
 
 /**
- * @brief Stop Climb in Place (Disables motor until next .Set)
+ * @brief HallSensor Climb in Place (Disables motor until next .Set)
  * @note Disables so there aren't any issues end of match
 */
 void Climb::HoldClimb(){
@@ -146,7 +143,7 @@ bool Climb::ClimbPID(units::meter_t setpoint){
         leftClimbMotor.SetVoltage(left);
         rightClimbMotor.SetVoltage(right);
 
-        return (leftPID.AtSetpoint() && rightPID.AtSetpoint());
+        return (leftPID.AtGoal() && rightPID.AtGoal());
     }
     return false;
 }
@@ -168,7 +165,7 @@ bool Climb::BalanceAtPos(){
 
     SetClimbMotors(left,right);
 
-    return rollPID.AtSetpoint();
+    return rollPID.AtGoal();
 }
 
 /**
@@ -187,7 +184,7 @@ bool Climb::BalanceWhileClimbing(){
 
     SetClimbMotors(left,right);
 
-    return rollPID.AtSetpoint();
+    return rollPID.AtGoal();
 }
 
 
@@ -239,7 +236,7 @@ bool Climb::GetClimbAtPos(){
     bool isAtPos =  abs(lowPos - rightPID.GetSetpoint()) < rightPID.GetPositionTolerance(); //if most extended arm ~= the set pos
     return(isAtPos); 
     */
-   return leftPID.AtSetpoint() && rightPID.AtSetpoint();
+   return leftPID.AtGoal() && rightPID.AtGoal();
     
 }
 
@@ -247,7 +244,7 @@ bool Climb::GetClimbAtPos(){
  * @return If the robot is balanced
 */
 bool Climb::GetClimbBalanced(){
-    return rollPID.AtSetpoint();
+    return rollPID.AtGoal();
 }
 
 /**

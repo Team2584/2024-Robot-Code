@@ -34,13 +34,13 @@ class FlywheelSystem
 
         rev::CANSparkFlex FlywheelMotor1;
         rev::CANSparkFlex FlywheelMotor2;
-        frc::DutyCycleEncoder magEncoder;
         
         ArmFeedforward FlywheelAnglerFF;
         
     public:
         rev::CANSparkFlex FlywheelAnglingMotor;
 
+        frc::DutyCycleEncoder magEncoder;
 
         FlywheelSpeedController TopFlywheel;
         FlywheelSpeedController BottomFlywheel;

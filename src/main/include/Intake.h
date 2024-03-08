@@ -15,9 +15,7 @@ class Intake
         rev::CANSparkMax selectorFixedMotor;
         rev::SparkAbsoluteEncoder *magEncoder;
         frc::DigitalInput m_mainSensor;
-        frc::DigitalInput m_tunnelSensor;
-
-        bool PIDWrist(double point);
+        frc::Timer shotTimer;
 
     public:
 
@@ -37,6 +35,7 @@ class Intake
         void IntakeNote();
         void OuttakeNote();
 
+        void BeginShootNote();
         void ShootNote();
         void NoteToElevator();
         void NoteFromElevator();
@@ -45,9 +44,9 @@ class Intake
 
         bool GetObjectInIntake();
 
-        bool GetObjectInTunnel();
-
         void MoveWristPercent(double percent);
+        
+        bool PIDWrist(double point);
 
         bool PIDWristToPoint(WristSetting Point);
 
