@@ -368,7 +368,7 @@ void Robot::TeleopPeriodic()
           wristSetPoint = Intake::LOW;
         }
         else {
-          xboxController.rumble(3, 150, 200);
+          xboxController.HaveNoteRumble();
         }
       }
       else if (xboxController.GetLeftTriggerAxis() > TRIGGER_ACTIVATION_POINT)
@@ -471,7 +471,7 @@ void Robot::TeleopPeriodic()
       else
       {
         overbumper.PIDWristToPoint(Intake::WristSetting::HIGH);
-        xboxController.rumble(3, 150, 200);
+        xboxController.HaveNoteRumble();
       }
 
       if (!xboxController.GetBButton() || done)
@@ -491,7 +491,7 @@ void Robot::TeleopPeriodic()
       bool cleared = flywheelController.ClearElevatorForShot();
 
       if (turnt && spinning && cleared)
-        xboxController2.rumble(3, 150, 200);
+        xboxController2.ReadyActionRumble();
 
       if (!begunShooting && xboxController2.GetRightTriggerAxis() > TRIGGER_ACTIVATION_POINT)
       {

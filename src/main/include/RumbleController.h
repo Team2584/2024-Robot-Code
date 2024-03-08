@@ -14,7 +14,16 @@ public:
     RumbleXboxController(int port) 
     : XboxController(port)
     { 
+    }
 
+    void HaveNoteRumble(){
+        rumble(2,200,100);
+    }
+    void ShotNoteRumble(){
+        rumble(2,200,100);
+    }
+    void ReadyActionRumble(){
+        rumble(2,200,100);
     }
 
     void rumble(int times, int mscdelay, int strengthpct) {
