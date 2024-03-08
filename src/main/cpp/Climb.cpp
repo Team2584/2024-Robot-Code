@@ -43,6 +43,10 @@ void Climb::SetClimbZero(){
 */
 bool Climb::ZeroClimb(){
     if(!climbZeroed){
+        leftClimbMotor.EnableSoftLimit(rev::CANSparkBase::SoftLimitDirection::kForward, false);
+        leftClimbMotor.EnableSoftLimit(rev::CANSparkBase::SoftLimitDirection::kReverse, false);          
+        leftClimbMotor.EnableSoftLimit(rev::CANSparkBase::SoftLimitDirection::kReverse, false);
+        leftClimbMotor.EnableSoftLimit(rev::CANSparkBase::SoftLimitDirection::kForward, false);
         if(!GetLStop()){
             leftClimbMotor.Set(ClimbConstants::BasePctDown*-0.6);
         }
