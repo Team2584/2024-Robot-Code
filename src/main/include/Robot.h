@@ -10,6 +10,7 @@
 //Custom Tools
 #include "Tools/PID.h"
 #include "Tools/Math.h"
+#include "Tools/RumbleController.h"
 
 //General
 #include <wpi/array.h>
@@ -49,12 +50,13 @@
 #include <frc/DutyCycleEncoder.h>
 #include <rev/AbsoluteEncoder.h>
 
-//Motors
+//Motors & LEDs
 #include <rev/CANSparkBase.h>
 #include <rev/CANSparkFlex.h>
 #include <rev/CANSparkMax.h>
 #include <frc/PWM.h>
 #include <ctre/phoenix6/TalonFX.hpp>
+#include <ctre/phoenix/led/CANdle.h>
 
 //System Controllers
 #include <frc/controller/PIDController.h>
@@ -66,6 +68,8 @@
 //Pathplanner
 #include <pathplanner/lib/path/PathPlannerPath.h>
 #include <pathplanner/lib/path/PathPlannerTrajectory.h>
+
+#include <frc/MathUtil.h>
 
 using namespace frc;
 using namespace std;

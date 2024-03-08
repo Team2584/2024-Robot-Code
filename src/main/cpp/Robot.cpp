@@ -17,11 +17,12 @@
 #include "FlyWheel.h"
 #include "Elevator.h"
 #include "Climb.h"
-#include "LEDs.h"
 #include "NoteController.h"
+#include "CANdleLED.h"
 
+PowerDistribution m_pdh{34, frc::PowerDistribution::ModuleType::kRev};
 VisionSwerve swerveDrive{};
-XboxController xboxController{0};
+RumbleXboxController xboxController{0};
 XboxController xboxController2{1};
 XboxController xboxController3{2};
 Intake overbumper{};
@@ -29,7 +30,7 @@ FlywheelSystem flywheel{};
 Elevator ampmech{};
 Climb hang{&swerveDrive};
 NoteController notecontroller{&overbumper, &flywheel, &ampmech};
-LEDLights lightStrip{0};
+LightsSubsystem lights{&m_pdh};
 
 SwerveDriveAutonomousController swerveAutoController{&swerveDrive};
 AutonomousShootingController flywheelController{&swerveAutoController, &flywheel, &overbumper, &ampmech};
@@ -41,6 +42,7 @@ AutonomousController autoController{&swerveDrive, &overbumper, &flywheel, &ampme
 Elevator::ElevatorSetting elevSetHeight = Elevator::LOW;
 Intake::WristSetting wristSetPoint = Intake::HIGH;
 bool anglingToSpeaker = false;
+
 
 AllianceColor allianceColor = AllianceColor::BLUE;
 
@@ -67,6 +69,9 @@ void Robot::RobotInit()
   
   SmartDashboard::PutNumber("Flywheel Setpoint", 0);
   SmartDashboard::PutNumber("Angler Setpoint", M_PI / 2);
+
+  lights.FullClear();
+
 }
 
 
@@ -79,7 +84,9 @@ void Robot::RobotInit()
  * LiveWindow and SmartDashboard integrated updating.
  */
 void Robot::RobotPeriodic() {
+  lights.UpdateSubsystemLEDS();
   swerveDrive.UpdateRaspiConnection();
+  
 
   if (DriverStation::GetMatchType() != DriverStation::MatchType::kNone)
   {
@@ -88,6 +95,7 @@ void Robot::RobotPeriodic() {
     else
       allianceColor = AllianceColor::BLUE;
   }
+
   
   allianceColor = AllianceColor::BLUE;
   SmartDashboard::PutBoolean("In Match", DriverStation::GetMatchType() != DriverStation::MatchType::kNone);
@@ -309,6 +317,14 @@ void Robot::TeleopPeriodic()
       // Note Controller Stuff
       wristSetPoint = Intake::SHOOT;
 
+      if(overbumper.GetObjectInIntake()){
+        lights.SetHaveNote();
+      }
+      else{
+        lights.NoLongerHaveNote();
+        lights.SetDriving();
+      }
+      
       if (!begunShooting && xboxController2.GetLeftTriggerAxis() > 0.5)
       {
         begunShooting = true;
@@ -322,8 +338,12 @@ void Robot::TeleopPeriodic()
       if (xboxController.GetRightBumper())
       {
         bool done = notecontroller.IntakeNoteToSelector();
-        if (!done)
+        if (!done){
           wristSetPoint = Intake::LOW;
+        }
+        else {
+          xboxController.rumble(3, 150, 200);
+        }
       }
       else if (xboxController.GetRightTriggerAxis() > 0.5)
       {
@@ -630,7 +650,17 @@ void Robot::TeleopPeriodic()
 
 void Robot::DisabledInit() {}
 
-void Robot::DisabledPeriodic() {}
+void Robot::DisabledPeriodic() {
+  if(DriverStation::IsEStopped()){
+    lights.SetEstopped();
+  }
+  else if(DriverStation::IsDSAttached()){
+    lights.SetIdle();
+  }
+  else{
+    lights.SetStopped();
+  }
+}
 
 void Robot::TestInit() {
     swerveDrive.ResetOdometry(Pose2d(0_m, 0_m, Rotation2d(180_deg)));
