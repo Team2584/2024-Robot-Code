@@ -478,6 +478,10 @@ void Robot::TeleopPeriodic()
 
       lights.SetStrobeBlue();
 
+      if(done){
+        xboxController.HaveNoteRumble();
+      }
+
       if (!xboxController.GetBButton() || done)
         currentDriverMode = DRIVER_MODE::BASIC;
 
@@ -493,9 +497,6 @@ void Robot::TeleopPeriodic()
       bool spinning = flywheelController.SpinFlywheelForSpeaker(allianceColor);
       bool angled = flywheelController.AngleFlywheelToSpeaker(allianceColor);
       bool cleared = flywheelController.ClearElevatorForShot();
-
-      if (turnt && spinning && cleared)
-        xboxController2.ReadyActionRumble();
 
       if (!begunShooting && xboxController2.GetRightTriggerAxis() > TRIGGER_ACTIVATION_POINT)
       {
@@ -513,6 +514,8 @@ void Robot::TeleopPeriodic()
         overbumper.SetIntakeMotorSpeed(0);
 
       lights.SetStrobeBlue();
+      if (turnt && spinning && cleared)
+        xboxController2.ReadyActionRumble();
 
       if (xboxController2.GetLeftTriggerAxis() < TRIGGER_DEACTIVATION_POINT)
         currentDriverMode = DRIVER_MODE::BASIC;
@@ -533,6 +536,9 @@ void Robot::TeleopPeriodic()
       }
 
       lights.SetStrobeBlue();
+      if(isAtAmp){
+        xboxController2.ReadyActionRumble();
+      }
       
       if(!xboxController.GetLeftBumper() || scored){
         currentDriverMode = DRIVER_MODE::BASIC;
