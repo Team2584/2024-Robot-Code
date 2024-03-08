@@ -392,6 +392,12 @@ void Robot::TeleopPeriodic()
       {
         notecontroller.ScoreNoteInPosition(Elevator::ElevatorSetting::AMP);
       }
+      else if (controller2LeftJoystickY != 0)
+      {
+        overbumper.SetIntakeMotorSpeed(0);
+        ampmech.SetAmpMotorPercent(0);
+        ampmech.MoveElevatorPercent(controller2LeftJoystickY);
+      }
       else {
         overbumper.SetIntakeMotorSpeed(0);
         ampmech.SetAmpMotorPercent(0);
