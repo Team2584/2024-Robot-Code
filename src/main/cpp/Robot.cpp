@@ -626,11 +626,11 @@ void Robot::TeleopPeriodic()
 void Robot::DisabledInit() {}
 
 void Robot::DisabledPeriodic() {
-  if(DriverStation::IsDSAttached()){
-    lights.SetIdle();
-  }
-  else if(DriverStation::IsEStopped()){
+  if(DriverStation::IsEStopped()){
     lights.SetEstopped();
+  }
+  else if(DriverStation::IsDSAttached()){
+    lights.SetIdle();
   }
   else{
     lights.SetStopped();

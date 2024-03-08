@@ -214,7 +214,7 @@ class LightsSubsystem : public CandleController {
     }
 
     void SetStrobe(){
-        MainLEDStrip.setStrobeAnimation(green, 0.4);
+        MainLEDStrip.setStrobeAnimation(green, 0.1);
     }
 
     void SetStopped(){
