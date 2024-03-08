@@ -541,6 +541,7 @@ void Robot::TeleopPeriodic()
       }
         
       if (xboxController2.GetLeftTriggerAxis() < TRIGGER_DEACTIVATION_POINT || (shotTimer.Get() > SHOT_TIME && begunShooting))
+      {
         flywheelSetpoint = FLYWHEEL_IDLE_RPM;
         currentDriverMode = DRIVER_MODE::BASIC;
       }
