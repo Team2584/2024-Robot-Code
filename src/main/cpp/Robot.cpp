@@ -306,9 +306,9 @@ void Robot::TeleopPeriodic()
       {
         ampmech.ResetElevatorEncoder();
         if(allianceColor == AllianceColor::BLUE)
-          swerveDrive.ResetOdometry(Pose2d(0_m, 0_m, Rotation2d(180_deg)))
+          swerveDrive.ResetOdometry(Pose2d(0_m, 0_m, Rotation2d(180_deg)));
         else
-          swerveDrive.ResetOdometry(Pose2d(0_m, 0_m, Rotation2d(0_deg)))
+          swerveDrive.ResetOdometry(Pose2d(0_m, 0_m, Rotation2d(0_deg)));
       }
 
       // Drive Swerve and Lock to a certain cardinal direction if x or y is pressed
@@ -316,18 +316,18 @@ void Robot::TeleopPeriodic()
       {
         Rotation2d target;
         if (swerveDrive.GetOdometryPose().Rotation().Degrees() < 0_deg)
-          target = -90_deg
+          target = -90_deg;
         else
-          target = 90_deg
+          target = 90_deg;
         swerveAutoController.TurnToAngleWhileDriving(fwdDriveSpeed, strafeDriveSpeed, target, PoseEstimationType::PureOdometry);
       }
       else if (xboxController.GetYButton())
       {
         Rotation2d target;
         if (swerveDrive.GetOdometryPose().Rotation().Degrees() < 90_deg && swerveDrive.GetOdometryPose().Rotation().Degrees() > -90_deg)
-          target = 0_deg
+          target = 0_deg;
         else
-          target = 180_deg
+          target = 180_deg;
         swerveAutoController.TurnToAngleWhileDriving(fwdDriveSpeed, strafeDriveSpeed, target, PoseEstimationType::PureOdometry);
       }
       else
@@ -462,15 +462,15 @@ void Robot::TeleopPeriodic()
 
     case DRIVER_MODE::AUTO_INTAKE:
     {
-      swerveDriveController->DriveToNote();
-      bool done = noteController->IntakeNoteToSelector();
+      swerveAutoController.DriveToNote();
+      bool done = notecontroller.IntakeNoteToSelector();
       if (!done)
       {
-        intake->PIDWristToPoint(Intake::WristSetting::LOW);
+        overbumper.PIDWristToPoint(Intake::WristSetting::LOW);
       }
       else
       {
-        intake->PIDWristToPoint(Intake::WristSetting::HIGH);
+        overbumper.PIDWristToPoint(Intake::WristSetting::HIGH);
         xboxController.rumble(3, 150, 200);
       }
 
@@ -568,7 +568,7 @@ void Robot::TeleopPeriodic()
         hang.HoldClimb();
       }
 
-      if (xboxController.GetPOV() == -1 && xboxController2.GetPOV == -1)
+      if (xboxController.GetPOV() == -1 && xboxController2.GetPOV() == -1)
         currentDriverMode = DRIVER_MODE::BASIC;
 
     }
