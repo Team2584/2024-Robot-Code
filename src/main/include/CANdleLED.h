@@ -213,8 +213,12 @@ class LightsSubsystem : public CandleController {
         MainLEDStrip.setFadeAnimation(red, 0.8);
     }
 
-    void SetStrobe(){
+    void SetStrobeGreen(){
         MainLEDStrip.setStrobeAnimation(green, 0.1);
+    }
+
+    void SetStrobeBlue(){
+        MainLEDStrip.setStrobeAnimation(blue, 0.02);
     }
 
     void SetStopped(){
@@ -234,13 +238,17 @@ class LightsSubsystem : public CandleController {
             SetDriving();
         }
         else{
-            SetStrobe();
+            SetStrobeGreen();
         }
     }
+
+
 
     void NoLongerHaveNote(){
         didStrobeGreen = false;
     }
+
+    
 
 };
 

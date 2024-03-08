@@ -454,6 +454,8 @@ void Robot::TeleopPeriodic()
     
       overbumper.PIDWristToPoint(Intake::SHOOT);
 
+      lights.SetStrobeBlue();
+
       if (!xboxController2.GetLeftBumperPressed() || doneShooting)
         currentDriverMode = DRIVER_MODE::BASIC;
     
@@ -473,6 +475,8 @@ void Robot::TeleopPeriodic()
         overbumper.PIDWristToPoint(Intake::WristSetting::HIGH);
         xboxController.HaveNoteRumble();
       }
+
+      lights.SetStrobeBlue();
 
       if (!xboxController.GetBButton() || done)
         currentDriverMode = DRIVER_MODE::BASIC;
@@ -508,6 +512,8 @@ void Robot::TeleopPeriodic()
       else
         overbumper.SetIntakeMotorSpeed(0);
 
+      lights.SetStrobeBlue();
+
       if (xboxController2.GetLeftTriggerAxis() < TRIGGER_DEACTIVATION_POINT)
         currentDriverMode = DRIVER_MODE::BASIC;
 
@@ -526,6 +532,8 @@ void Robot::TeleopPeriodic()
         notecontroller.LiftNoteToPosition(Elevator::ElevatorSetting::AMP);
       }
 
+      lights.SetStrobeBlue();
+      
       if(!xboxController.GetLeftBumper() || scored){
         currentDriverMode = DRIVER_MODE::BASIC;
       }
