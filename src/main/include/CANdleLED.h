@@ -222,7 +222,7 @@ class LightsSubsystem : public CandleController {
     }
 
     void SetFadeOrange(){
-        MainLEDStrip.setFadeAnimation(orange, 0.7);
+        MainLEDStrip.setFadeAnimation(purple, 0.7);
     }
 
     void SetStopped(){

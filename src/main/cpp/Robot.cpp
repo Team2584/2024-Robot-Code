@@ -289,18 +289,18 @@ void Robot::TeleopPeriodic()
       double strafeDriveSpeed = leftJoystickX * MAX_DRIVE_SPEED;
       double turnSpeed = rightJoystickX * MAX_SPIN_SPEED;
 
-      if (allianceColor == AllianceColor::BLUE)
-      {
-        fwdDriveSpeed *= -1;
-        strafeDriveSpeed *= -1;
-      }
-
       // SPEED BOOST
       if (xboxController.GetRightBumper())
       {
         fwdDriveSpeed = leftJoystickY * SPEED_BOOST_DRIVE;
         strafeDriveSpeed = leftJoystickX * SPEED_BOOST_DRIVE;
         turnSpeed = rightJoystickX * SPEED_BOOST_SPIN;      
+      }
+
+      if (allianceColor == AllianceColor::BLUE)
+      {
+        fwdDriveSpeed *= -1;
+        strafeDriveSpeed *= -1;
       }
 
       // Reset Swerve Heading and Elevator Encoder
@@ -424,7 +424,7 @@ void Robot::TeleopPeriodic()
         hang.climbZeroed = false;
       }
 
-      hang.SetClimbMotors(controller2LeftJoystickY, controller2RightJoystickY);
+      //hang.SetClimbMotors(controller2LeftJoystickY, controller2RightJoystickY);
 
       // Switching Driver Mode
       if (xboxController2.GetLeftBumperPressed())
@@ -468,7 +468,7 @@ void Robot::TeleopPeriodic()
         lights.SetFadeOrange();
       }
 
-      if (!xboxController2.GetLeftBumperPressed() || doneShooting)
+      if (!xboxController2.GetLeftBumper() || doneShooting)
       {
         flywheelSetpoint = FLYWHEEL_IDLE_RPM;
         currentDriverMode = DRIVER_MODE::BASIC;
@@ -805,9 +805,9 @@ void Robot::TestPeriodic() {
   swerveAutoController.xPIDController.UpdateConstantTuning("DTP X");
   swerveAutoController.yPIDController.UpdateConstantTuning("DTP Y");
   swerveAutoController.rotationPIDController.UpdateConstantTuning("DTP Rot");
-  swerveAutoController.noteXPIDController.UpdateConstantTuning("DTP X");
-  swerveAutoController.noteYPIDController.UpdateConstantTuning("DTP Y");
-  swerveAutoController.noteRotationPIDController.UpdateConstantTuning("DTP Rot");
+  swerveAutoController.noteXPIDController.UpdateConstantTuning("NOTE X");
+  swerveAutoController.noteYPIDController.UpdateConstantTuning("NOTE Y");
+  swerveAutoController.noteRotationPIDController.UpdateConstantTuning("NOTE Rot");
   swerveDrive.Update();
 
 
@@ -903,6 +903,10 @@ void Robot::TestPeriodic() {
     else
       overbumper.PIDWristToPoint(Intake::WristSetting::HIGH);
   }
+  else
+  {
+    swerveDrive.DriveSwervePercent(fwdDriveSpeed, strafeDriveSpeed, turnSpeed);
+  }
 
   /*if (xboxController.GetAButtonPressed())
     swerveAutoController.BeginDriveToPose(PoseEstimationType::PureOdometry);
@@ -910,8 +914,6 @@ void Robot::TestPeriodic() {
   if (xboxController.GetAButton())
     swerveAutoController.DriveToPose(Pose2d(0_m, 0_m, Rotation2d(0_deg)), PoseEstimationType::PureOdometry);
   else  */
-    swerveDrive.DriveSwervePercent(fwdDriveSpeed, strafeDriveSpeed, turnSpeed);
-
   /*if (xboxController.GetAButton()){
     overbumper.PIDWristToPoint(Intake::WristSetting::HIGH);
   }

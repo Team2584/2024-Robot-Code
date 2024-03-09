@@ -26,7 +26,7 @@ inline const units::second_t SHOT_INTAKE_TIME = 0.1_s;
 namespace Wrist{
 inline const double WRIST_HIGH = 0.195; ///0.538
 inline const double WRIST_LOW = 0;
-inline const double WRIST_SHOOT = 0.17;
+inline const double WRIST_SHOOT = 0.19;
 inline constexpr auto KS = 0_V;
 inline constexpr auto KG = 0.42_V;
 inline constexpr auto KV = 0.4_V * 1_s / 1_rad; //0.88

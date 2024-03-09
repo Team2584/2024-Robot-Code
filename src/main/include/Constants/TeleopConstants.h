@@ -1,5 +1,5 @@
 //Customization Variabes (all in percent so the driver's weak brain don't get confused)
-#define CONTROLLER_DEADBAND 0.1
+#define CONTROLLER_DEADBAND 0.125
 #define TRIGGER_ACTIVATION_POINT 0.3
 #define TRIGGER_DEACTIVATION_POINT 0.1
 
