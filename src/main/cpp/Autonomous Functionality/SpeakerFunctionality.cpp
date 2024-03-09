@@ -165,7 +165,7 @@ bool AutonomousShootingController::SpinFlywheelForSpeaker(AllianceColor alliance
     double velocity;
     if (distance > 2_m)
     {
-        velocity = lerpVal(2, 3.5, 3500, 5500, distance.value());
+        velocity = lerpVal(2, 3, 3500, 5500, distance.value());
         if (velocity > 6000)
             velocity = 6000;
     }
