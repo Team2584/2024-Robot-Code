@@ -39,7 +39,9 @@ bool AutonomousShootingController::TurnToSpeaker(AllianceColor allianceColor)
     else
     {
         diff = RED_SPEAKER_AIM_POSITION.ToTranslation2d() - currentPose.Translation(); 
-
+        SmartDashboard::PutNumber("DIFF X", diff.X().value());
+        SmartDashboard::PutNumber("DIFF Y", diff.Y().value());
+        
         if (diff.X() < 1.5_m)
             newSpeakerPos = Translation2d{units::meter_t{lerpVal(-0.5, -1.5, -0.2, -0.05, diff.X().value())}, BLUE_SPEAKER_AIM_POSITION.Y()};
 
@@ -100,6 +102,8 @@ bool AutonomousShootingController::TurnToSpeakerWhileDriving(double xSpeed, doub
     else
     {
         diff = RED_SPEAKER_AIM_POSITION.ToTranslation2d() - currentPose.Translation(); 
+        SmartDashboard::PutNumber("DIFF X", diff.X().value());
+        SmartDashboard::PutNumber("DIFF Y", diff.Y().value());
 
         if (diff.X() < 1.5_m)
             newSpeakerPos = Translation2d{units::meter_t{lerpVal(-0.5, -1.5, -0.2, -0.05, diff.X().value())}, BLUE_SPEAKER_AIM_POSITION.Y()};
@@ -139,9 +143,11 @@ bool AutonomousShootingController::AngleFlywheelToSpeaker(AllianceColor alliance
     if (distance > 6_m)
         targetAnglerAngle = 0.45;
     else if (distance >= 3_m)
-        targetAnglerAngle = lerpVal(3, 6, 0.6, 0.45, distance.value());
+        targetAnglerAngle = lerpVal(3, 6, 0.56, 0.45, distance.value());
+    else if (distance >= 2.1_m)
+        targetAnglerAngle = lerpVal(2.1, 3, 0.67, 0.56, distance.value());
     else if (distance >= 1.85_m)
-        targetAnglerAngle = lerpVal(1.85, 3, 0.68, 0.6, distance.value());
+        targetAnglerAngle = lerpVal(1.85, 2.1, 0.68, 0.67, distance.value());
     else
         targetAnglerAngle = lerpVal(1.85, 1.45, 0.68, 0.8, distance.value());
 

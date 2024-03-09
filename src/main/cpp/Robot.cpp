@@ -105,16 +105,11 @@ void Robot::RobotPeriodic() {
   swerveDrive.UpdateRaspiConnection();
   
 
-  if (DriverStation::GetMatchType() != DriverStation::MatchType::kNone)
-  {
-    if (DriverStation::GetAlliance() == DriverStation::kRed)
-      allianceColor = AllianceColor::RED;
-    else
-      allianceColor = AllianceColor::BLUE;
-  }
+  if (DriverStation::GetAlliance() == DriverStation::kRed)
+    allianceColor = AllianceColor::RED;
+  else
+    allianceColor = AllianceColor::BLUE;
 
-  
-  allianceColor = AllianceColor::BLUE;
   SmartDashboard::PutBoolean("In Match", DriverStation::GetMatchType() != DriverStation::MatchType::kNone);
   SmartDashboard::PutBoolean("Is Blue Alliance", allianceColor == AllianceColor::BLUE);
 }
@@ -685,16 +680,16 @@ void Robot::TeleopPeriodic()
       bool isAtAmp = autoAmpController.DriveToAmp(allianceColor);
       bool scored = false;
 
-      if (xboxController2.GetRightBumperPressed())
+      if ((xboxController2.GetRightBumperPressed() && !xboxController2.GetAButton()) || (xboxController2.GetAButtonPressed() && !xboxController2.GetRightBumper()))
         notecontroller.BeginScoreNoteInPosition(Elevator::ElevatorSetting::AMP);
 
-      if (xboxController2.GetAButton())
-      {
-        notecontroller.LiftNoteToPosition(Elevator::ElevatorSetting::AMP);
-      }
-      else if (xboxController2.GetRightBumper())
+      if (xboxController2.GetRightBumper())
       {
         scored = notecontroller.ScoreNoteInPosition(Elevator::ElevatorSetting::AMP);
+      }
+      else if (xboxController2.GetAButton())
+      {
+        notecontroller.LiftNoteToPosition(Elevator::ElevatorSetting::AMP);
       }
       else {
         overbumper.SetIntakeMotorSpeed(0);
@@ -903,6 +898,12 @@ void Robot::TeleopPeriodic()
   SmartDashboard::PutNumber("angler a", flywheel.FlywheelAnglingMotor.GetOutputCurrent());
   SmartDashboard::PutNumber("angler temp", flywheel.FlywheelAnglingMotor.GetMotorTemperature());
 
+  SmartDashboard::PutNumber("Top Flywheel Amperage", flywheel.TopFlywheel.m_flywheelMotor->GetOutputCurrent());
+  SmartDashboard::PutNumber("Bottom Flywheel Amperage", flywheel.BottomFlywheel.m_flywheelMotor->GetOutputCurrent());
+  SmartDashboard::PutNumber("Angler Amperage", flywheel.FlywheelAnglingMotor.GetOutputCurrent());
+  SmartDashboard::PutNumber("Wirst Amperage", overbumper.wristMotor.GetOutputCurrent());
+  SmartDashboard::PutNumber("Elevator Amperage", ampmech.winchMotor.GetSupplyCurrent().GetValue().value());
+  SmartDashboard::PutNumber("FL Drive Amperage", swerveDrive.FLModule.driveMotor.GetSupplyCurrent().GetValue().value());
   //SmartDashboard::PutBoolean("climb l stop", hang.leftStop.Get());
   //SmartDashboard::PutNumber("climb l pos", hang.leftEncoder.GetPosition());
 }
