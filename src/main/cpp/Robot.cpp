@@ -52,9 +52,9 @@ bool anglingToSpeaker = false;
 bool begunShooting = false;
 double flywheelSetpoint = FLYWHEEL_IDLE_RPM;
 
-//SlewRateLimiter<units::meters_per_second_t> swerveXSlewLimiter = SlewRateLimiter{DRIVE_SLEW_RATE};
-//SlewRateLimiter<units::meters_per_second_t> swerveYSlewLimiter = SlewRateLimiter{DRIVE_SLEW_RATE};
-//SlewRateLimiter<units::meters_per_second_t> swerveRotSlewLimiter = SlewRateLimiter{SPIN_SLEW_RATE};
+SlewRateLimiter<units::meters_per_second_t> swerveXSlewLimiter{DRIVE_SLEW_RATE};
+SlewRateLimiter<units::meters_per_second_t> swerveYSlewLimiter{DRIVE_SLEW_RATE};
+SlewRateLimiter<units::meters_per_second_t> swerveRotSlewLimiter{SPIN_SLEW_RATE};
 
 void Robot::RobotInit()
 {
@@ -356,9 +356,9 @@ void Robot::TeleopPeriodic()
   }
 
   // Slew rate limit joystics
-  //leftJoystickY = swerveXSlewLimiter.Calculate(units::meters_per_second_t{leftJoystickY}).value();
-  //leftJoystickX = swerveYSlewLimiter.Calculate(units::meters_per_second_t{leftJoystickX}).value();
-  //rightJoystickX = swerveRotSlewLimiter.Calculate(units::meters_per_second_t{rightJoystickX}).value();
+  leftJoystickY = swerveXSlewLimiter.Calculate(units::meters_per_second_t{leftJoystickY}).value();
+  leftJoystickX = swerveYSlewLimiter.Calculate(units::meters_per_second_t{leftJoystickX}).value();
+  rightJoystickX = swerveRotSlewLimiter.Calculate(units::meters_per_second_t{rightJoystickX}).value();
 
   // Find controller input (*-1 converts values to fwd/left/counterclockwise positive)
   double controller2LeftJoystickX, controller2LeftJoystickY, controller2RightJoystickX, controller2RightJoystickY;
