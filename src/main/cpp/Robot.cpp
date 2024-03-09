@@ -687,7 +687,7 @@ void Robot::TeleopPeriodic()
       bool scored = false;
 
       if (xboxController2.GetRightBumperPressed())
-        notecontroller.BeginScoreNoteInPosition();
+        notecontroller.BeginScoreNoteInPosition(Elevator::ElevatorSetting::AMP);
 
       if (xboxController2.GetAButton())
       {
@@ -703,7 +703,10 @@ void Robot::TeleopPeriodic()
         ampmech.MoveToHeight(Elevator::ElevatorSetting::LOW);
       }
 
-      /*if(isAtAmp || xboxController2.GetRightBumper()){
+
+      // Complete Auto Amping Code (takes control of amp mech from tyler)
+
+      /*if(isAtAmp || xboxController2.GetRightBumper()){ 
         scored = notecontroller.ScoreNoteInPosition(Elevator::ElevatorSetting::AMP);
       }
       else{
