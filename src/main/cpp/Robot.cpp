@@ -221,42 +221,42 @@ void Robot::AutonomousInit()
   }
   else if (m_autoSelected == kAutoBL3267)
   {
-    autoController.SetupFollowTrajectoryAndShoot(Pose2d(1.06_m, 4.35_m, Rotation2d(138.81_deg)), "BRTo1To2To3To8", 2.5_m);
+    autoController.SetupFollowTrajectoryAndShoot(Pose2d(1.18_m, 6.7_m, Rotation2d(-145.78_deg)), "BLTo3To2To6To7", 2.5_m);
     allianceColor = AllianceColor::BLUE;
   }
   else if (m_autoSelected == kAutoRR111067)
   {
-    autoController.SetupFollowTrajectoryAndShoot(Pose2d(1.06_m, 4.35_m, Rotation2d(138.81_deg)), "BRTo1To2To3To8", 2.5_m);
+    autoController.SetupFollowTrajectoryAndShoot(Pose2d(15.34_m, 6.58_m, Rotation2d(83.66_deg)), "RRTo11To10To6To7", 2.5_m);
     allianceColor = AllianceColor::RED;
   }
   else if (m_autoSelected == kAutoBR146)
   {
-    autoController.SetupFollowTrajectoryAndShoot(Pose2d(1.06_m, 4.35_m, Rotation2d(138.81_deg)), "BRTo1To2To3To8", 2.5_m);
+    autoController.SetupFollowTrajectoryAndShoot(Pose2d(1.29_m, 4.47_m, Rotation2d(150.75_deg)), "BRTo1To4To6", 2.5_m);
     allianceColor = AllianceColor::BLUE;
   }
   else if (m_autoSelected == kAutoRL946)
   {
-    autoController.SetupFollowTrajectoryAndShoot(Pose2d(1.06_m, 4.35_m, Rotation2d(138.81_deg)), "BRTo1To2To3To8", 2.5_m);
+    autoController.SetupFollowTrajectoryAndShoot(Pose2d(15.37_m, 4.59_m, Rotation2d(27.9_deg)), "RLTo9To4To6", 2.5_m);
     allianceColor = AllianceColor::RED;
   }
   else if (m_autoSelected == kAutoBR45)
   {
-    autoController.SetupFollowTrajectoryAndShoot(Pose2d(1.06_m, 4.35_m, Rotation2d(138.81_deg)), "BRTo1To2To3To8", 2.5_m);
+    autoController.SetupFollowTrajectoryAndShoot(Pose2d(1.1_m, 4.37_m, Rotation2d(137.29_deg)), "BRTo4To5", 2.5_m);
     allianceColor = AllianceColor::BLUE;
   }
   else if (m_autoSelected == kAutoRL45)
   {
-    autoController.SetupFollowTrajectoryAndShoot(Pose2d(1.06_m, 4.35_m, Rotation2d(138.81_deg)), "BRTo1To2To3To8", 2.5_m);
+    autoController.SetupFollowTrajectoryAndShoot(Pose2d(15.35_m, 4.46_m, Rotation2d(37.57_deg)), "RLTo4To5", 2.5_m);
     allianceColor = AllianceColor::RED;
   }
   else if (m_autoSelected == kAutoBL387)
   {
-    autoController.SetupFollowTrajectoryAndShoot(Pose2d(1.06_m, 4.35_m, Rotation2d(138.81_deg)), "BRTo1To2To3To8", 2.5_m);
+    autoController.SetupFollowTrajectoryAndShoot(Pose2d(1.01_m, 6.73_m, Rotation2d(-144.64_deg)), "BLTo3To8To7", 2.5_m);
     allianceColor = AllianceColor::BLUE;
   }
   else if (m_autoSelected == kAutoRR1187)
   {
-    autoController.SetupFollowTrajectoryAndShoot(Pose2d(1.06_m, 4.35_m, Rotation2d(138.81_deg)), "BRTo1To2To3To8", 2.5_m);
+    autoController.SetupFollowTrajectoryAndShoot(Pose2d(15.35_m, 6.64_m, Rotation2d(-34.59_deg)), "RRTo11To8To7", 2.5_m);
     allianceColor = AllianceColor::RED;
   }
 }
@@ -891,6 +891,8 @@ void Robot::TeleopPeriodic()
 void Robot::DisabledInit() {}
 
 void Robot::DisabledPeriodic() {
+  swerveDrive.Update();
+
   if(DriverStation::IsEStopped()){
     lights.SetEstopped();
   }
