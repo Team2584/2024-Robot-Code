@@ -16,7 +16,7 @@ AutonomousController::AutonomousController(VisionSwerve *swerveDrive_, Intake *i
 
 void AutonomousController::SetupAuto(Pose2d startingPose)
 {
-    if (!swerveDrive->NoteInView())
+    if (!swerveDrive->TagInView())
     {
         swerveDrive->ResetOdometry(startingPose);
         swerveDrive->ResetTagOdometry(startingPose);
@@ -25,7 +25,7 @@ void AutonomousController::SetupAuto(Pose2d startingPose)
     {
         swerveDrive->ResetOdometry(swerveDrive->GetTagOdometryPose());
     }
-    
+
     swerveDriveController->ResetTrajectoryQueue();
     splineSection = 0;
     masterTimer.Restart();
