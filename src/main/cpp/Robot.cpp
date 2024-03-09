@@ -510,6 +510,12 @@ void Robot::TeleopPeriodic()
       double fwdDriveSpeed = leftJoystickY * MAX_DRIVE_SPEED_SHOOT_ON_THE_MOVE;
       double strafeDriveSpeed = leftJoystickX * MAX_DRIVE_SPEED_SHOOT_ON_THE_MOVE;
 
+      if (allianceColor == AllianceColor::BLUE)
+      {
+        fwdDriveSpeed *= -1;
+        strafeDriveSpeed *= -1;
+      }
+
       bool turnt = flywheelController.TurnToSpeakerWhileDriving(fwdDriveSpeed, strafeDriveSpeed, allianceColor);
       bool spinning = flywheelController.SpinFlywheelForSpeaker(allianceColor);
       bool angled = flywheelController.AngleFlywheelToSpeaker(allianceColor);

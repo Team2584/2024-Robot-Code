@@ -213,6 +213,10 @@ class LightsSubsystem : public CandleController {
         MainLEDStrip.setFadeAnimation(red, 0.8);
     }
 
+    void SetDrivingWithNote(){
+        MainLEDStrip.setFadeAnimation(green, 0.8);
+    }
+
     void SetStrobeGreen(){
         MainLEDStrip.setStrobeAnimation(green, 0.1);
     }
@@ -243,7 +247,7 @@ class LightsSubsystem : public CandleController {
             notePickUpTimer.Restart();
         }
         if(notePickUpTimer.HasElapsed(LightsConstants::STROBE_TIME)){
-            SetDriving();
+            SetDrivingWithNote();
         }
         else{
             SetStrobeGreen();

@@ -141,9 +141,9 @@ bool AutonomousShootingController::AngleFlywheelToSpeaker(AllianceColor alliance
     else if (distance >= 3_m)
         targetAnglerAngle = lerpVal(3, 6, 0.6, 0.45, distance.value());
     else if (distance >= 1.85_m)
-        targetAnglerAngle = lerpVal(1.85, 3, 0.65, 0.6, distance.value());
+        targetAnglerAngle = lerpVal(1.85, 3, 0.68, 0.6, distance.value());
     else
-        targetAnglerAngle = lerpVal(1.85, 1.45, 0.65, 0.8, distance.value());
+        targetAnglerAngle = lerpVal(1.85, 1.45, 0.68, 0.8, distance.value());
 
     SmartDashboard::PutNumber("Target Angler Angle", targetAnglerAngle);
     
