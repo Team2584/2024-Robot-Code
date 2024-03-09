@@ -10,7 +10,7 @@
 //Custom Tools
 #include "Tools/PID.h"
 #include "Tools/Math.h"
-#include "Tools/RumbleController.h"
+#include "RumbleController.h"
 
 //General
 #include <wpi/array.h>
@@ -21,6 +21,7 @@
 #include <frc/Timer.h>
 #include <frc/XboxController.h>
 #include <frc/DriverStation.h>
+#include <frc/PowerDistribution.h>
 
 //Units & Math
 #include <numbers>

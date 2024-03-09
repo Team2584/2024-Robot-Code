@@ -27,6 +27,7 @@ SwerveDriveAutonomousController::SwerveDriveAutonomousController(VisionSwerve *s
 {
     swerveDrive = swerveDrive_;
     rotationPIDController.EnableContinuousInput(-M_PI, M_PI);
+    noteRotationPIDController.EnableContinuousInput(-M_PI, M_PI);
     trajRotationPIDController.EnableContinuousInput(-M_PI, M_PI);
 }
 
@@ -428,8 +429,8 @@ bool SwerveDriveAutonomousController::TurnToNote()
     Rotation2d noteAngleDifference = Rotation2d(-1 * currentPose.X().value(), -1 * currentPose.Y().value());
     noteTargetAngle = currentPose.Rotation() + noteAngleDifference;
 
-    SmartDashboard::PutNumber("Targe Note Angle Diff", noteAngleDifference.Degrees().value());
-    SmartDashboard::PutNumber("Targe Note Angle", noteTargetAngle.Degrees().value());
+    SmartDashboard::PutNumber("Targe Note Angle Diff", noteAngleDifference.Radians().value());
+    SmartDashboard::PutNumber("Targe Note Angle", noteTargetAngle.Radians().value());
 
     return DriveToPose(Pose2d(currentPose.Translation(), noteTargetAngle), PoseEstimationType::NoteBased); // Drive to current pose but at the target angle
 }

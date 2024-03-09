@@ -213,8 +213,20 @@ class LightsSubsystem : public CandleController {
         MainLEDStrip.setFadeAnimation(red, 0.8);
     }
 
-    void SetStrobe(){
+    void SetDrivingWithNote(){
+        MainLEDStrip.setFadeAnimation(green, 0.8);
+    }
+
+    void SetStrobeGreen(){
         MainLEDStrip.setStrobeAnimation(green, 0.1);
+    }
+
+    void SetStrobeBlue(){
+        MainLEDStrip.setStrobeAnimation(blue, 0.02);
+    }
+
+    void SetFadeOrange(){
+        MainLEDStrip.setFadeAnimation(purple, 0.7);
     }
 
     void SetStopped(){
@@ -225,22 +237,30 @@ class LightsSubsystem : public CandleController {
         MainLEDStrip.setSingleFadeAnimation(white, 0.2);
     }
 
+    void SetClimbing(){
+        MainLEDStrip.setRainbowAnimation(0.8);
+    }
+
     void SetHaveNote(){
         if(!didStrobeGreen){
             didStrobeGreen = true;
             notePickUpTimer.Restart();
         }
         if(notePickUpTimer.HasElapsed(LightsConstants::STROBE_TIME)){
-            SetDriving();
+            SetDrivingWithNote();
         }
         else{
-            SetStrobe();
+            SetStrobeGreen();
         }
     }
+
+
 
     void NoLongerHaveNote(){
         didStrobeGreen = false;
     }
+
+    
 
 };
 
