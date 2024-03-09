@@ -52,6 +52,10 @@ bool anglingToSpeaker = false;
 bool begunShooting = false;
 double flywheelSetpoint = FLYWHEEL_IDLE_RPM;
 
+SlewRateLimiter swerveXSlewLimiter = SlewRateLimiter{DRIVE_SLEW_RATE};
+SlewRateLimiter swerveYSlewLimiter = SlewRateLimiter{DRIVE_SLEW_RATE};
+SlewRateLimiter swerveRotSlewLimiter = SlewRateLimiter{SPIN_SLEW_RATE}
+
 void Robot::RobotInit()
 {
   m_chooser.SetDefaultOption(kAutoBCSI2S, kAutoBCSI2S);
@@ -247,7 +251,12 @@ void Robot::TeleopPeriodic()
     rightJoystickX = 0;
     rightJoystickY = 0;
   }
-  
+
+  // Slew rate limit joystics
+  leftJoystickY = swerveXSlewLimiter.Calculate(leftJoystickY);
+  leftJoystickX = swerveYSlewLimiter.Calculate(leftJoystickX);
+  rightJoystickX = swerveRotSlewLimiter.Calculate(rightJoystickX);
+
   // Find controller input (*-1 converts values to fwd/left/counterclockwise positive)
   double controller2LeftJoystickX, controller2LeftJoystickY, controller2RightJoystickX, controller2RightJoystickY;
   controller2LeftJoystickY = xboxController2.GetLeftY() * -1;

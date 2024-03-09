@@ -60,6 +60,7 @@
 #include <ctre/phoenix/led/CANdle.h>
 
 //System Controllers
+#include <frc/filter/SlewRateLimiter.h>
 #include <frc/controller/PIDController.h>
 #include <frc/controller/ProfiledPIDController.h>
 #include <frc/controller/SimpleMotorFeedforward.h>

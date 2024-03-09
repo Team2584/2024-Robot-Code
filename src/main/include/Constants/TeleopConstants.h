@@ -10,6 +10,8 @@
 #define MAX_DRIVE_SPEED_SHOOT_ON_THE_MOVE 0.1
 #define MAX_DRIVE_SPEED_CLIMB 0.3
 #define MAX_SPIN_SPEED_CLIMB 0.3
+#define DRIVE_SLEW_RATE 4 // Maximum change in drive percentage per second (i.e '2' means the drive will go from fully forward to fully reverse in 1 second)
+#define SPIN_SLEW_RATE 4
 
 const inline auto SHOT_TIME = 1_s;
 #define FLYWHEEL_IDLE_RPM 1500.0;
