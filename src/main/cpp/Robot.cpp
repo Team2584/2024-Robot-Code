@@ -79,7 +79,7 @@ void Robot::RobotInit()
   m_chooser.AddOption(kAutoBR146, kAutoBR146);
   m_chooser.AddOption(kAutoRL946, kAutoRL946);
   m_chooser.AddOption(kAutoBR45, kAutoBR45);
-  m_chooser.AddOption(kAutoRL45, kAutoRL45)
+  m_chooser.AddOption(kAutoRL45, kAutoRL45);
   m_chooser.AddOption(kAutoBL387, kAutoBL387);
   m_chooser.AddOption(kAutoRR1187, kAutoRR1187);
   frc::SmartDashboard::PutData("Auto Modes", &m_chooser);
@@ -206,17 +206,17 @@ void Robot::AutonomousInit()
   }
   else if (m_autoSelected == kAutoRC1067)
   {
-    autoController.SetupFollowTrajectoryAndShoot(Pose2d(1.06_m, 4.35_m, Rotation2d(138.81_deg)), "RCTo10To6To7", 2.5_m);
+    autoController.SetupFollowTrajectoryAndShoot(Pose2d(15.19_m, 5.59_m, Rotation2d(0.81_deg)), "RCTo10To6To7", 2.5_m);
     allianceColor = AllianceColor::RED;
   }
   else if (m_autoSelected == kAutoBR145)
   {
-    autoController.SetupFollowTrajectoryAndShoot(Pose2d(1.06_m, 4.35_m, Rotation2d(138.81_deg)), "BRTo1To2To3To8", 2.5_m);
+    autoController.SetupFollowTrajectoryAndShoot(Pose2d(1.22_m, 4.47_m, Rotation2d(-98.13_deg)), "BRTo1To4To5", 2.5_m);
     allianceColor = AllianceColor::BLUE;
   }
   else if (m_autoSelected == kAutoRL945)
   {
-    autoController.SetupFollowTrajectoryAndShoot(Pose2d(1.06_m, 4.35_m, Rotation2d(138.81_deg)), "BRTo1To2To3To8", 2.5_m);
+    autoController.SetupFollowTrajectoryAndShoot(Pose2d(1.06_m, 4.35_m, Rotation2d(138.81_deg)), "RLTo9To4To5", 2.5_m);
     allianceColor = AllianceColor::RED;
   }
   else if (m_autoSelected == kAutoBL3267)
