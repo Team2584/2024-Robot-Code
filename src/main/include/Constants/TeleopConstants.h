@@ -13,7 +13,7 @@
 #define DRIVE_SLEW_RATE 4_mps // Maximum change in drive percentage per second (i.e '2' means the drive will go from fully forward to fully reverse in 1 second)
 #define SPIN_SLEW_RATE 4_mps // Not actually meters per second
 
-const inline auto SHOT_TIME = 1_s;
+const inline auto SHOT_TIME = 1.25_s;
 #define FLYWHEEL_IDLE_RPM 1500.0;
 
 #define STARTING_DRIVE_HEADING  0.0

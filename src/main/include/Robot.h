@@ -106,5 +106,18 @@ class Robot : public frc::TimedRobot {
   const std::string kAutoBLSS3S8TEST = "TEST BLUE Left: Shoot -> Shoot 3 -> Shoot 8";
   const std::string kAutoBR4CloseNotes = "BLUE Right: Shoot -> Intake and Shoot 3 Close Notes";
   const std::string kAutoBR4CloseNotesAnd8 = "BLUE Right Shoot -> Intake and Shoot 3 Close Notes -> Intake and Shoot 8";
+  const std::string kAutoRL4CloseNotesAnd8 = "RED Left Shoot -> Intake and Shoot 3 Close Notes -> Intake and Shoot 8";
+  const std::string kAutoBC267 = "BLUE Center Shoot -> Shoot 2 -> Shoot 6 -> Shoot 7";
+  const std::string kAutoRC267 = "RED Center Shoot -> Shoot 10 -> Shoot 6 -> Shoot 7";
+  const std::string kAutoBR145 = "BLUE Right Shoot -> Shoot 1 -> Shoot 4 -> Shoot 5";
+  const std::string kAutoRL945 = "RED Left Shoot -> Shoot 9 -> Shoot 4 -> Shoot 5";
+  const std::string kAutoBL3267 = "BLUE Left Shoot -> Shoot 3 -> Shoot 2 -> Shoot 6 -> Intake 7";
+  const std::string kAutoRR111067 = "RED Right Shoot -> Shoot 11 -> Shoot 10 -> Shoot 6 -> Intake 7";
+  const std::string kAutoBR146 = "BLUE Right Shoot -> Shoot 1 -> Shoot 4 -> Shoot 6";
+  const std::string kAutoRL946 = "RED Left Shoot -> Shoot 8 -> Shoot 4 -> Shoot 6";
+  const std::string kAutoBR145 = "BLUE Right Shoot -> Shoot 1 -> Shoot 4 -> Shoot 5";
+  const std::string kAutoRL945 = "RED Left Shoot -> Shoot 8 -> Shoot 4 -> Shoot 5";
+  const std::string kAutoBL387 = "BLUE Right Shoot -> Shoot 3 -> Shoot 8 -> Shoot 7";
+  const std::string kAutoRR1187 = "RED Left Shoot -> Shoot 11 -> Shoot 8 -> Shoot 7";
   std::string m_autoSelected;
 };

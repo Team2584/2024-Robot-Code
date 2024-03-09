@@ -52,9 +52,9 @@ bool anglingToSpeaker = false;
 bool begunShooting = false;
 double flywheelSetpoint = FLYWHEEL_IDLE_RPM;
 
-SlewRateLimiter<units::meters_per_second_t> swerveXSlewLimiter = SlewRateLimiter{DRIVE_SLEW_RATE};
-SlewRateLimiter<units::meters_per_second_t> swerveYSlewLimiter = SlewRateLimiter{DRIVE_SLEW_RATE};
-SlewRateLimiter<units::meters_per_second_t> swerveRotSlewLimiter = SlewRateLimiter{SPIN_SLEW_RATE};
+//SlewRateLimiter<units::meters_per_second_t> swerveXSlewLimiter = SlewRateLimiter{DRIVE_SLEW_RATE};
+//SlewRateLimiter<units::meters_per_second_t> swerveYSlewLimiter = SlewRateLimiter{DRIVE_SLEW_RATE};
+//SlewRateLimiter<units::meters_per_second_t> swerveRotSlewLimiter = SlewRateLimiter{SPIN_SLEW_RATE};
 
 void Robot::RobotInit()
 {
@@ -69,7 +69,19 @@ void Robot::RobotInit()
   m_chooser.AddOption(kAutoBLSS3S8TEST, kAutoBLSS3S8TEST);
   m_chooser.AddOption(kAutoBR4CloseNotes, kAutoBR4CloseNotes);
   m_chooser.AddOption(kAutoBR4CloseNotesAnd8, kAutoBR4CloseNotesAnd8);
-
+  m_chooser.AddOption(kAutoRL4CloseNotesAnd8, kAutoRL4CloseNotesAnd8);
+  m_chooser.AddOption(kAutoBC267, kAutoBC267);
+  m_chooser.AddOption(kAutoRC267, kAutoRC267);
+  m_chooser.AddOption(kAutoBR145, kAutoBR145);
+  m_chooser.AddOption(kAutoRL945, kAutoRL945);
+  m_chooser.AddOption(kAutoBL3267, kAutoBL3267);
+  m_chooser.AddOption(kAutoRR111067, kAutoRR111067);
+  m_chooser.AddOption(kAutoBR146, kAutoBR146);
+  m_chooser.AddOption(kAutoRL946, kAutoRL946);
+  m_chooser.AddOption(kAutoBR145, kAutoBR145);
+  m_chooser.AddOption(kAutoRL945, kAutoRL945)
+  m_chooser.AddOption(kAutoBL387, kAutoBL387);
+  m_chooser.AddOption(kAutoRR1187, kAutoRR1187);
   frc::SmartDashboard::PutData("Auto Modes", &m_chooser);
   
   SmartDashboard::PutNumber("Flywheel Setpoint", 0);
@@ -174,12 +186,12 @@ void Robot::AutonomousInit()
   }
   else if (m_autoSelected == kAutoBR4CloseNotes)
   {
-    autoController.SetupFollowTrajectoryAndShoot(Pose2d(0.74_m, 4.35_m, Rotation2d(120_deg)), "BRTo1To2To3", 100_m);
+    autoController.SetupFollowTrajectoryAndShoot(Pose2d(1.06_m, 4.35_m, Rotation2d(138.81_deg)), "BRTo1To2To3", 100_m);
     allianceColor = AllianceColor::BLUE;  
   }
   else if (m_autoSelected == kAutoBR4CloseNotesAnd8)
   {
-    autoController.SetupFollowTrajectoryAndShoot(Pose2d(0.74_m, 4.35_m, Rotation2d(120_deg)), "BRTo1To2To3To8", 2.5_m);
+    autoController.SetupFollowTrajectoryAndShoot(Pose2d(1.06_m, 4.35_m, Rotation2d(138.81_deg)), "BRTo1To2To3To8", 2.5_m);
     allianceColor = AllianceColor::BLUE;
   }
 }
@@ -212,6 +224,28 @@ void Robot::AutonomousPeriodic()
     autoController.FollowTrajectoryAndShoot(AllianceColor::BLUE);
   else if (m_autoSelected == kAutoBR4CloseNotesAnd8)
     autoController.FollowTrajectoryAndShoot(AllianceColor::BLUE);
+  else if (m_autoSelected == kAutoRL4CloseNotesAnd8)
+    autoController.FollowTrajectoryAndShoot(AllianceColor::RED);
+  else if (m_autoSelected == kAutoBC267)
+      autoController.FollowTrajectoryAndShoot(AllianceColor::BLUE);
+  else if (m_autoSelected == kAutoRC267)
+      autoController.FollowTrajectoryAndShoot(AllianceColor::RED);
+  else if (m_autoSelected == kAutoBR145)
+      autoController.FollowTrajectoryAndShoot(AllianceColor::BLUE);
+  else if (m_autoSelected == kAutoRL945)
+      autoController.FollowTrajectoryAndShoot(AllianceColor::RED);
+  else if (m_autoSelected == kAutoBL3267)
+      autoController.FollowTrajectoryAndShoot(AllianceColor::BLUE);
+  else if (m_autoSelected == kAutoRR111067)
+      autoController.FollowTrajectoryAndShoot(AllianceColor::RED);
+  else if (m_autoSelected == kAutoBR146)
+      autoController.FollowTrajectoryAndShoot(AllianceColor::BLUE);
+  else if (m_autoSelected == kAutoRL945)
+      autoController.FollowTrajectoryAndShoot(AllianceColor::RED);
+  else if (m_autoSelected == kAutoBL387)
+      autoController.FollowTrajectoryAndShoot(AllianceColor::BLUE);
+  else if (m_autoSelected == kAutoRR1187)
+      autoController.FollowTrajectoryAndShoot(AllianceColor::RED);
 }
 
 void Robot::TeleopInit()
@@ -253,9 +287,9 @@ void Robot::TeleopPeriodic()
   }
 
   // Slew rate limit joystics
-  leftJoystickY = swerveXSlewLimiter.Calculate(units::meters_per_second_t{leftJoystickY}).value();
-  leftJoystickX = swerveYSlewLimiter.Calculate(units::meters_per_second_t{leftJoystickX}).value();
-  rightJoystickX = swerveRotSlewLimiter.Calculate(units::meters_per_second_t{rightJoystickX}).value();
+  //leftJoystickY = swerveXSlewLimiter.Calculate(units::meters_per_second_t{leftJoystickY}).value();
+  //leftJoystickX = swerveYSlewLimiter.Calculate(units::meters_per_second_t{leftJoystickX}).value();
+  //rightJoystickX = swerveRotSlewLimiter.Calculate(units::meters_per_second_t{rightJoystickX}).value();
 
   // Find controller input (*-1 converts values to fwd/left/counterclockwise positive)
   double controller2LeftJoystickX, controller2LeftJoystickY, controller2RightJoystickX, controller2RightJoystickY;
