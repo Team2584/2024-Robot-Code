@@ -686,12 +686,29 @@ void Robot::TeleopPeriodic()
       bool isAtAmp = autoAmpController.DriveToAmp(allianceColor);
       bool scored = false;
 
-      if(isAtAmp || xboxController2.GetRightBumper()){
+      if (xboxController2.GetRightBumperPressed())
+        notecontroller.BeginScoreNoteInPosition();
+
+      if (xboxController2.GetAButton())
+      {
+        notecontroller.LiftNoteToPosition(Elevator::ElevatorSetting::AMP);
+      }
+      else if (xboxController2.GetRightBumper())
+      {
+        scored = notecontroller.ScoreNoteInPosition(Elevator::ElevatorSetting::AMP);
+      }
+      else {
+        overbumper.SetIntakeMotorSpeed(0);
+        ampmech.SetAmpMotorPercent(0);
+        ampmech.MoveToHeight(Elevator::ElevatorSetting::LOW);
+      }
+
+      /*if(isAtAmp || xboxController2.GetRightBumper()){
         scored = notecontroller.ScoreNoteInPosition(Elevator::ElevatorSetting::AMP);
       }
       else{
         notecontroller.LiftNoteToPosition(Elevator::ElevatorSetting::AMP);
-      }
+      }*/
 
       if(scored){
         xboxController.ShotNoteRumble();
