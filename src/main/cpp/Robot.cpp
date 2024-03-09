@@ -56,10 +56,6 @@ double lastX = 0;
 double lastY = 0;
 double lastRot = 0;
 
-//SlewRateLimiter<units::meter_t> swerveXSlewLimiter{DRIVE_SLEW_RATE};
-//SlewRateLimiter<units::meter_t> swerveYSlewLimiter{DRIVE_SLEW_RATE};
-//SlewRateLimiter<units::meter_t> swerveRotSlewLimiter{SPIN_SLEW_RATE};
-
 void Robot::RobotInit()
 {
   m_chooser.SetDefaultOption(kAutoBCSI2S, kAutoBCSI2S);
@@ -359,15 +355,25 @@ void Robot::TeleopPeriodic()
   }
 
   // Slew rate limit joystics
-  //if (leftJoystickY > (lastX + DRIVE_SLEW_RATE )
-
+  if (leftJoystickY > lastX + DRIVE_SLEW_RATE * (Timer::GetFPGATimestamp() - lastTime).value())
+    leftJoystickY = lastX + DRIVE_SLEW_RATE * (Timer::GetFPGATimestamp() - lastTime).value();
+  else if (leftJoystickY < lastX - DRIVE_SLEW_RATE * (Timer::GetFPGATimestamp() - lastTime).value())
+      leftJoystickY = lastX - DRIVE_SLEW_RATE * (Timer::GetFPGATimestamp() - lastTime).value();
+ 
+  if (leftJoystickX > lastY + DRIVE_SLEW_RATE * (Timer::GetFPGATimestamp() - lastTime).value())
+    leftJoystickX = lastY + DRIVE_SLEW_RATE * (Timer::GetFPGATimestamp() - lastTime).value();
+  else if (leftJoystickX < lastY - DRIVE_SLEW_RATE * (Timer::GetFPGATimestamp() - lastTime).value())
+      leftJoystickX = lastY - DRIVE_SLEW_RATE * (Timer::GetFPGATimestamp() - lastTime).value();
+ 
+ if (rightJoystickX > lastRot + SPIN_SLEW_RATE * (Timer::GetFPGATimestamp() - lastTime).value())
+    rightJoystickX = lastRot + SPIN_SLEW_RATE * (Timer::GetFPGATimestamp() - lastTime).value();
+  else if (rightJoystickX < lastRot - SPIN_SLEW_RATE * (Timer::GetFPGATimestamp() - lastTime).value())
+      rightJoystickX = lastRot - SPIN_SLEW_RATE * (Timer::GetFPGATimestamp() - lastTime).value();
 
   lastX = leftJoystickY;
   lastY = leftJoystickX;
   lastRot = rightJoystickX;
-  //leftJoystickY = swerveXSlewLimiter.Calculate(units::meter_t{leftJoystickY}).value();
-  //leftJoystickX = swerveYSlewLimiter.Calculate(units::meter_t{leftJoystickX}).value();
-  //rightJoystickX = swerveRotSlewLimiter.Calculate(units::meter_t{rightJoystickX}).value();
+  lastTime = Timer::GetFPGATimestamp();
 
   // Find controller input (*-1 converts values to fwd/left/counterclockwise positive)
   double controller2LeftJoystickX, controller2LeftJoystickY, controller2RightJoystickX, controller2RightJoystickY;
@@ -534,11 +540,11 @@ void Robot::TeleopPeriodic()
       double anglerSetpoint = 0.8;
       // Spin up flywheel to various presets
       if (xboxController2.GetStartButtonPressed())
-        flywheelSetpoint = 3500;
-      else if(xboxController2.GetXButtonPressed())
-        flywheelSetpoint = 3500;
-      else if (xboxController2.GetYButtonPressed())
         flywheelSetpoint = 4000;
+      else if(xboxController2.GetXButtonPressed())
+        flywheelSetpoint = 4000;
+      else if (xboxController2.GetYButtonPressed())
+        flywheelSetpoint = 4500;
 
       if (xboxController2.GetXButton())
         anglerSetpoint = 0.8;
@@ -855,9 +861,6 @@ void Robot::TeleopPeriodic()
   else if (xboxController3.GetStartButtonPressed()){
     flywheel.SetFlywheelVelocity(SmartDashboard::GetNumber("Flywheel Setpoint", 0));
   }
-
-  lastTime = Timer::GetFPGATimestamp();
-
 
   /*if (xboxController3.GetPOV() == 0){
     flywheel.PIDAngler(SmartDashboard::GetNumber("Angler Setpoint", M_PI / 2));
