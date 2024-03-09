@@ -28,6 +28,8 @@ FlywheelSystem flywheel{};
 Elevator ampmech{};
 Climb hang{&swerveDrive};
 NoteController notecontroller{&overbumper, &flywheel, &ampmech};
+std::shared_ptr<nt::NetworkTable> table = nt::NetworkTableInstance::GetDefault().GetTable("limelight");
+Limelight limelight{table};
 
 SwerveDriveAutonomousController swerveAutoController{&swerveDrive};
 AutonomousShootingController flywheelController{&swerveAutoController, &flywheel, &overbumper};
@@ -468,9 +470,13 @@ void Robot::DisabledInit() {}
 
 void Robot::DisabledPeriodic() {}
 
-void Robot::TestInit() {}
+void Robot::TestInit() {
+  SmartDashboard::PutNumber("tx", limelight.notePosSubscriber_x.Get());
+}
 
-void Robot::TestPeriodic() {}
+void Robot::TestPeriodic() {
+
+}
 
 void Robot::SimulationInit() {}
 
