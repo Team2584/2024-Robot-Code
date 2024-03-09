@@ -5,7 +5,7 @@
 #define FLYWHEEL_MOTOR_2 16
 #define FLYWHEEL_ANGLING_MOTOR 30
 #define FLYWHEEL_MAG_ENCODER_PORT 8
-#define FLYWHEEL_MAG_ENCODER_OFFSET 0.866;
+#define FLYWHEEL_MAG_ENCODER_OFFSET 0.71;
 
 namespace FlywheelConstants {
 
@@ -43,7 +43,7 @@ inline constexpr auto MIN_SPEED = 0.3;
 inline constexpr auto MAX_SPEED = 10; 
 
 inline auto BLOCKED_LOW = 0.4;
-inline auto BLOCKED_HIGH = 0.6;
+inline auto BLOCKED_HIGH = 0.9;
 }
 
 /* Autonomous Constants */

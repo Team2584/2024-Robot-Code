@@ -543,7 +543,7 @@ void AutonomousController::FollowTrajectoryAndShoot(AllianceColor allianceColor)
         {
             splineSection = 1;
             safetyTimer.Restart();
-            intake->ShootNote();
+            intake->BeginShootNote();
             currentlyShooting = true;
         }
 
@@ -551,6 +551,10 @@ void AutonomousController::FollowTrajectoryAndShoot(AllianceColor allianceColor)
         {
             intake->SetIntakeMotorSpeed(0);
             currentlyShooting = false;
+        }
+        else if (currentlyShooting)
+        {
+            intake->ShootNote();
         }
     }
 }

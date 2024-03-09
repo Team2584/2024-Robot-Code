@@ -55,7 +55,6 @@ units::second_t lastTime = 0_s;
 double lastX = 0;
 double lastY = 0;
 double lastRot = 0;
-
 void Robot::RobotInit()
 {
   m_chooser.SetDefaultOption(kAutoBCSI2S, kAutoBCSI2S);
@@ -757,7 +756,7 @@ void Robot::TeleopPeriodic()
 
       swerveDrive.DriveSwervePercent(fwdDriveSpeed, strafeDriveSpeed, turnSpeed);
 
-      flywheel.PIDAngler(M_PI/2);
+      flywheel.PIDAngler(1.399);
 
       if(xboxController2.GetPOV() == 180){
         hang.ZeroClimb();
@@ -773,7 +772,8 @@ void Robot::TeleopPeriodic()
         if(xboxController.GetPOV() == 270){hang.rightClimbMotor.Set(ClimbConstants::BasePctDown);}
       }
       else if(xboxController2.GetPOV() == 90){
-        autoTrapController.PrepareClimb();
+        //autoTrapController.PrepareClimb();
+        hang.BalanceWhileClimbing();
       }
       else if (xboxController2.GetPOV() == 270){
          if(autoTrapController.ClimbToTrap()){

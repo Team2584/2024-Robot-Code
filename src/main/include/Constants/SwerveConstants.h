@@ -118,7 +118,7 @@ enum PoseEstimationType
 
 /* Trajectory following PID Values */
 // Translational PID in the x and y direction
-#define TRAJECTORY_TRANSLATION_KP 2
+#define TRAJECTORY_TRANSLATION_KP 2.5
 #define TRAJECTORY_TRANSLATION_KI 0
 #define TRAJECTORY_TRANSLATION_KI_MAX 0 // In percent power
 #define TRAJECTORY_TRANSLATION_KD 0
