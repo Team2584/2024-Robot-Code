@@ -52,9 +52,9 @@ bool anglingToSpeaker = false;
 bool begunShooting = false;
 double flywheelSetpoint = FLYWHEEL_IDLE_RPM;
 
-SlewRateLimiter swerveXSlewLimiter = SlewRateLimiter{DRIVE_SLEW_RATE};
-SlewRateLimiter swerveYSlewLimiter = SlewRateLimiter{DRIVE_SLEW_RATE};
-SlewRateLimiter swerveRotSlewLimiter = SlewRateLimiter{SPIN_SLEW_RATE}
+SlewRateLimiter<units::meters_per_second_t> swerveXSlewLimiter = SlewRateLimiter{DRIVE_SLEW_RATE};
+SlewRateLimiter<units::meters_per_second_t> swerveYSlewLimiter = SlewRateLimiter{DRIVE_SLEW_RATE};
+SlewRateLimiter<units::meters_per_second_t> swerveRotSlewLimiter = SlewRateLimiter{SPIN_SLEW_RATE};
 
 void Robot::RobotInit()
 {
@@ -253,9 +253,9 @@ void Robot::TeleopPeriodic()
   }
 
   // Slew rate limit joystics
-  leftJoystickY = swerveXSlewLimiter.Calculate(leftJoystickY);
-  leftJoystickX = swerveYSlewLimiter.Calculate(leftJoystickX);
-  rightJoystickX = swerveRotSlewLimiter.Calculate(rightJoystickX);
+  leftJoystickY = swerveXSlewLimiter.Calculate(units::meters_per_second_t{leftJoystickY}).value();
+  leftJoystickX = swerveYSlewLimiter.Calculate(units::meters_per_second_t{leftJoystickX}).value();
+  rightJoystickX = swerveRotSlewLimiter.Calculate(units::meters_per_second_t{rightJoystickX}).value();
 
   // Find controller input (*-1 converts values to fwd/left/counterclockwise positive)
   double controller2LeftJoystickX, controller2LeftJoystickY, controller2RightJoystickX, controller2RightJoystickY;
@@ -418,16 +418,21 @@ void Robot::TeleopPeriodic()
 
       overbumper.PIDWristToPoint(wristSetPoint);
 
-      // Keep flywheel ready for close shots
+
+      double anglerSetpoint = 0.8;
+      // Spin up flywheel to various presets
       if (xboxController2.GetStartButtonPressed())
         flywheelSetpoint = 3500;
+      else if(xboxController2.)
+      else
+        anglerSetpoint = 0.8;
 
       if (flywheel.TopFlywheel.GetMeasurement() * 60.0 > flywheelSetpoint || flywheel.BottomFlywheel.GetMeasurement() * 60.0 > flywheelSetpoint)
         flywheel.SpinFlywheelPercent(0);
       else
         flywheel.SetFlywheelVelocity(flywheelSetpoint);
 
-      flywheel.PIDAngler(0.8); // change this to clear chain
+      flywheel.PIDAngler(anglerSetpoint); // change this to clear chain
 
       if(xboxController.GetStartButtonPressed()){
         hang.climbZeroed = false;
