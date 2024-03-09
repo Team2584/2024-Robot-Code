@@ -51,10 +51,14 @@ Timer shotTimer = Timer{};
 bool anglingToSpeaker = false;
 bool begunShooting = false;
 double flywheelSetpoint = FLYWHEEL_IDLE_RPM;
+units::second_t lastTime = 0_s;
+double lastX = 0;
+double lastY = 0;
+double lastRot = 0;
 
-SlewRateLimiter<units::meters_per_second_t> swerveXSlewLimiter{DRIVE_SLEW_RATE};
-SlewRateLimiter<units::meters_per_second_t> swerveYSlewLimiter{DRIVE_SLEW_RATE};
-SlewRateLimiter<units::meters_per_second_t> swerveRotSlewLimiter{SPIN_SLEW_RATE};
+//SlewRateLimiter<units::meter_t> swerveXSlewLimiter{DRIVE_SLEW_RATE};
+//SlewRateLimiter<units::meter_t> swerveYSlewLimiter{DRIVE_SLEW_RATE};
+//SlewRateLimiter<units::meter_t> swerveRotSlewLimiter{SPIN_SLEW_RATE};
 
 void Robot::RobotInit()
 {
@@ -317,6 +321,10 @@ void Robot::TeleopInit()
   currentDriverMode = DRIVER_MODE::BASIC;
   begunShooting = false;
   flywheelSetpoint = FLYWHEEL_IDLE_RPM;
+  lastTime = Timer::GetFPGATimestamp();
+  lastX = 0;
+  lastY = 0;
+  lastRot = 0;
 }
 
 void Robot::TeleopPeriodic()
@@ -351,9 +359,15 @@ void Robot::TeleopPeriodic()
   }
 
   // Slew rate limit joystics
-  leftJoystickY = swerveXSlewLimiter.Calculate(units::meters_per_second_t{leftJoystickY}).value();
-  leftJoystickX = swerveYSlewLimiter.Calculate(units::meters_per_second_t{leftJoystickX}).value();
-  rightJoystickX = swerveRotSlewLimiter.Calculate(units::meters_per_second_t{rightJoystickX}).value();
+  //if (leftJoystickY > (lastX + DRIVE_SLEW_RATE )
+
+
+  lastX = leftJoystickY;
+  lastY = leftJoystickX;
+  lastRot = rightJoystickX;
+  //leftJoystickY = swerveXSlewLimiter.Calculate(units::meter_t{leftJoystickY}).value();
+  //leftJoystickX = swerveYSlewLimiter.Calculate(units::meter_t{leftJoystickX}).value();
+  //rightJoystickX = swerveRotSlewLimiter.Calculate(units::meter_t{rightJoystickX}).value();
 
   // Find controller input (*-1 converts values to fwd/left/counterclockwise positive)
   double controller2LeftJoystickX, controller2LeftJoystickY, controller2RightJoystickX, controller2RightJoystickY;
@@ -457,7 +471,7 @@ void Robot::TeleopPeriodic()
       wristSetPoint = Intake::SHOOT;
       
       // These function calls "prepare" the true function calls below
-      if (xboxController2.GetRightBumperPressed()){
+      if ((xboxController2.GetRightBumperPressed() && !xboxController2.GetAButton()) || (xboxController2.GetAButtonPressed() && !xboxController2.GetRightBumper())){
         notecontroller.BeginScoreNoteInPosition(Elevator::ElevatorSetting::AMP);
       }
       if (!begunShooting && xboxController2.GetRightTriggerAxis() > TRIGGER_ACTIVATION_POINT)
@@ -494,13 +508,13 @@ void Robot::TeleopPeriodic()
       else if (xboxController2.GetRightBumper()){
         notecontroller.FromElevatorToSelector();
       }
-      else if (xboxController2.GetAButton())
-      {
-        notecontroller.LiftNoteToPosition(Elevator::ElevatorSetting::AMP);
-      }
       else if (xboxController2.GetRightBumper())
       {
         notecontroller.ScoreNoteInPosition(Elevator::ElevatorSetting::AMP);
+      }
+      else if (xboxController2.GetAButton())
+      {
+        notecontroller.LiftNoteToPosition(Elevator::ElevatorSetting::AMP);
       }
       else if (controller2LeftJoystickY != 0)
       {
@@ -842,6 +856,8 @@ void Robot::TeleopPeriodic()
     flywheel.SetFlywheelVelocity(SmartDashboard::GetNumber("Flywheel Setpoint", 0));
   }
 
+  lastTime = Timer::GetFPGATimestamp();
+
 
   /*if (xboxController3.GetPOV() == 0){
     flywheel.PIDAngler(SmartDashboard::GetNumber("Angler Setpoint", M_PI / 2));
@@ -1061,6 +1077,8 @@ void Robot::TestPeriodic() {
   {
     swerveDrive.DriveSwervePercent(fwdDriveSpeed, strafeDriveSpeed, turnSpeed);
   }
+
+  overbumper.SetIntakeMotorSpeed(0);
 
   /*if (xboxController.GetAButtonPressed())
     swerveAutoController.BeginDriveToPose(PoseEstimationType::PureOdometry);
