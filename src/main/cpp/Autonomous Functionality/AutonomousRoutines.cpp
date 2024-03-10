@@ -530,6 +530,7 @@ void AutonomousController::FollowTrajectoryAndShoot(AllianceColor allianceColor)
     if (!currentlyShooting && (!noteInIntake || swerveDrive->GetTagOdometryPose().X() > maxXShot))
     {
         noteController->IntakeNoteToSelector();
+        elevator->MoveToHeight(Elevator::ElevatorSetting::LOW);
         swerveDriveController->CalcTrajectoryDriveValues(PoseEstimationType::TagBased, 1, finalSpeeds);
         swerveDrive->DriveSwerveTagOrientedMetersAndRadians(finalSpeeds[0], finalSpeeds[1], finalSpeeds[2]);
     }
