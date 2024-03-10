@@ -101,7 +101,7 @@ void Robot::RobotInit()
  */
 void Robot::RobotPeriodic() {
   lights.UpdateSubsystemLEDS();
-  swerveDrive.UpdateRaspiConnection();
+  //swerveDrive.UpdateRaspiConnection();
   
 
   if (DriverStation::GetAlliance() == DriverStation::kRed)

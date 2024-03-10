@@ -2,6 +2,7 @@
 #define VISION_SWERVE_H
 
 #include "Swerve.h"
+#include "Limelight.h"
 #include "Constants/FieldConstants.h"
 
 /**
@@ -22,14 +23,7 @@ private:
     SwerveDriveOdometry<4> noteOdometry; /* An odometry class which returns the position of the robot using wheel encoder ticks */ 
     nt::NetworkTableInstance networkTableInstance;
     std::shared_ptr<nt::NetworkTable> visionTable;
-    nt::DoubleTopic sanityTopic;
-    nt::DoubleEntry sanityEntry;
-    nt::BooleanTopic connectedTopic;
-    nt::BooleanEntry connectedEntry;
-    nt::BooleanTopic noteInViewTopic;
-    nt::BooleanSubscriber noteInViewSubscriber;    
-    nt::DoubleArrayTopic notePosTopic;
-    nt::DoubleArraySubscriber notePoseSubscriber;
+    Limelight limelight;
 
 public:
     VisionSwerve();
@@ -45,8 +39,8 @@ public:
     void DriveSwervePercentTagOriented(double FwdDriveSpeed, double StrafeDriveSpeed, double TurnSpeed);
     void DriveSwerveTagOrientedMetersAndRadians(double FwdDriveSpeed, double StrafeDriveSpeed, double TurnSpeed);
 
-    void UpdateRaspiConnection();
-    void PrintRaspiSanityCheck();
+    void UpdateLimelightConnection();
+    void PrintLimelightSanityCheck();
     bool NoteInView();
     void ResetNoteOdometry();
     void ResetNoteOdometry(Pose2d position);
