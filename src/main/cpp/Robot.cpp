@@ -510,9 +510,6 @@ void Robot::TeleopPeriodic()
       else if(xboxController2.GetRightTriggerAxis() > TRIGGER_ACTIVATION_POINT){
         overbumper.ShootNote();
       }
-      else if (xboxController2.GetRightBumper()){
-        notecontroller.FromElevatorToSelector();
-      }
       else if (xboxController2.GetRightBumper())
       {
         notecontroller.ScoreNoteInPosition(Elevator::ElevatorSetting::AMP);
@@ -780,9 +777,21 @@ void Robot::TeleopPeriodic()
             notecontroller.ScoreNoteInPosition(Elevator::ElevatorSetting::TRAP);
          }
       }
+      else if (controller2LeftJoystickY != 0)
+      {
+        ampmech.MoveElevatorPercent(controller2LeftJoystickY);
+        hang.HoldClimb();
+      }
       else{
         hang.HoldClimb();
       }
+
+      if (xboxController2.GetRightBumper())
+        ampmech.DepositNote();
+      else
+        ampmech.SetAmpMotorPercent(0);
+
+      overbumper.SetIntakeMotorSpeed(0);
 
       if (xboxController.GetPOV() == -1 && xboxController2.GetPOV() == -1)
         currentDriverMode = DRIVER_MODE::BASIC;
@@ -932,7 +941,8 @@ void Robot::DisabledInit() {}
 void Robot::DisabledPeriodic() {
   swerveDrive.Update();
 
-  if(DriverStation::IsEStopped()){
+  //if(DriverStation::IsEStopped()){ 
+  if(swerveDrive.TagInView()){
     lights.SetEstopped();
   }
   else if(DriverStation::IsDSAttached()){

@@ -521,7 +521,7 @@ void AutonomousController::FollowTrajectoryAndShoot(AllianceColor allianceColor)
 
     bool angled = shootingController->AngleFlywheelToSpeaker(allianceColor);
     bool spinning = shootingController->SpinFlywheelForSpeaker(allianceColor);
-    bool cleared = shootingController->ClearElevatorForShot();
+    bool cleared = false;
 
     SmartDashboard::PutBoolean("currentlyShooting", currentlyShooting);
     SmartDashboard::PutBoolean("noteInIntake", noteInIntake);
@@ -530,14 +530,15 @@ void AutonomousController::FollowTrajectoryAndShoot(AllianceColor allianceColor)
     if (!currentlyShooting && (!noteInIntake || swerveDrive->GetTagOdometryPose().X() > maxXShot))
     {
         noteController->IntakeNoteToSelector();
-        elevator->MoveToHeight(Elevator::ElevatorSetting::LOW);
+        ampMech->MoveToHeight(Elevator::ElevatorSetting::LOW);
         swerveDriveController->CalcTrajectoryDriveValues(PoseEstimationType::TagBased, 1, finalSpeeds);
         swerveDrive->DriveSwerveTagOrientedMetersAndRadians(finalSpeeds[0], finalSpeeds[1], finalSpeeds[2]);
     }
     else
     {
         swerveDriveController->CalcTrajectoryDriveValues(PoseEstimationType::TagBased, 0.25, finalSpeeds);
-        bool readyToFire = shootingController->TurnToSpeakerWhileDrivingMetersAndRadians(finalSpeeds[0], finalSpeeds[1], allianceColor);    
+        bool readyToFire = shootingController->TurnToSpeakerWhileDrivingMetersAndRadians(finalSpeeds[0], finalSpeeds[1], allianceColor); 
+        cleared = shootingController->ClearElevatorForShot();   
         SmartDashboard::PutBoolean("Ready to fire", readyToFire);
         if (!currentlyShooting && 
             ((splineSection != 0 && readyToFire && cleared) || (splineSection == 0 && readyToFire && spinning && cleared)))

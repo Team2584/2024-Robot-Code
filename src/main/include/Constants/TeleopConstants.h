@@ -7,7 +7,7 @@
 #define MAX_SPIN_SPEED 0.6
 #define SPEED_BOOST_DRIVE 0.9
 #define SPEED_BOOST_SPIN 0.9
-#define MAX_DRIVE_SPEED_SHOOT_ON_THE_MOVE 0.1
+#define MAX_DRIVE_SPEED_SHOOT_ON_THE_MOVE 0.25 //was .1, .25
 #define MAX_DRIVE_SPEED_CLIMB 0.3
 #define MAX_SPIN_SPEED_CLIMB 0.3
 inline constexpr auto DRIVE_SLEW_RATE  = 2.0; // Maximum change in drive percentage per second (i.e '2' means the drive will go from fully forward to fully reverse in 1 second)

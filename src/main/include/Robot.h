@@ -117,7 +117,7 @@ class Robot : public frc::TimedRobot {
   const std::string kAutoRL946 = "RED Left Shoot -> Shoot 8 -> Shoot 4 -> Shoot 6";
   const std::string kAutoBR45 = "BLUE Right Shoot -> Shoot 4 -> Shoot 5";
   const std::string kAutoRL45 = "RED Left Shoot -> Shoot 4 -> Shoot 5";
-  const std::string kAutoBL387 = "BLUE Right Shoot -> Shoot 3 -> Shoot 8 -> Shoot 7";
-  const std::string kAutoRR1187 = "RED Left Shoot -> Shoot 11 -> Shoot 8 -> Shoot 7";
+  const std::string kAutoBL387 = "BLUE Left Shoot -> Shoot 3 -> Shoot 8 -> Shoot 7";
+  const std::string kAutoRR1187 = "RED Right Shoot -> Shoot 11 -> Shoot 8 -> Shoot 7";
   std::string m_autoSelected;
 };
