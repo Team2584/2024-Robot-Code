@@ -804,10 +804,10 @@ void Robot::TeleopPeriodic()
       }
 
 
-      if (climb->leftEncoder.GetPosition() < 0.2)
-          intake->PIDWrist(Intake::WristSetting::SHOOT);
+      if (hang.leftEncoder.GetPosition() < 0.2)
+          overbumper.PIDWrist(Intake::WristSetting::SHOOT);
       else
-          intake->PIDWristToPoint(Intake::WristSetting::LOW);
+          overbumper.PIDWristToPoint(Intake::WristSetting::LOW);
 
       overbumper.SetIntakeMotorSpeed(0);
 
