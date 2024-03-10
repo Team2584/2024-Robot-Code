@@ -32,6 +32,7 @@ public:
     bool AttachHooks();
     bool ClimbToTrap();
     bool ScoreInTrap();
+    bool LockRotationToNearestClimbPose(AllianceColor allianceColor, double xSpeed, double ySpeed);
     bool DriveToNearestClimbPose(AllianceColor allianceColor);
 };
 

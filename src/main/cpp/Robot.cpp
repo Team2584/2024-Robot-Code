@@ -585,7 +585,7 @@ void Robot::TeleopPeriodic()
         flywheelController.BeginAimAndFire(allianceColor);
         currentDriverMode = DRIVER_MODE::SHOOT_ON_THE_MOVE;
       }
-      if(xboxController2.GetPOV() != -1 || xboxController.GetPOV() != -1){
+      if(xboxController.GetAButtonPressed() || xboxController2.GetPOV() != -1 || xboxController.GetPOV() != -1){
         currentDriverMode = DRIVER_MODE::CLIMBING_TRAP;
       }
 
@@ -753,7 +753,10 @@ void Robot::TeleopPeriodic()
       double strafeDriveSpeed = leftJoystickX * MAX_DRIVE_SPEED_CLIMB;
       double turnSpeed = rightJoystickX * MAX_SPIN_SPEED_CLIMB;
 
-      swerveDrive.DriveSwervePercent(fwdDriveSpeed, strafeDriveSpeed, turnSpeed);
+      if (xboxController.GetAButton())
+        autoTrapController.LockRotationToNearestClimbPose(allianceColor, fwdDriveSpeed, strafeDriveSpeed);
+      else
+        swerveDrive.DriveSwervePercent(fwdDriveSpeed, strafeDriveSpeed, turnSpeed);
 
       flywheel.PIDAngler(1.399);
 
@@ -850,8 +853,9 @@ void Robot::TeleopPeriodic()
 
       overbumper.SetIntakeMotorSpeed(0); */
 
-      if (xboxController.GetRightBumper() || xboxController.GetLeftBumper() || xboxController.GetRightTriggerAxis() > TRIGGER_ACTIVATION_POINT 
-      || xboxController2.GetRightTriggerAxis() > TRIGGER_ACTIVATION_POINT || xboxController2.GetLeftTriggerAxis() > TRIGGER_ACTIVATION_POINT)
+      if (!xboxController.GetAButton() && 
+      (xboxController.GetRightBumper() || xboxController.GetLeftBumper() || xboxController.GetRightTriggerAxis() > TRIGGER_ACTIVATION_POINT 
+      || xboxController2.GetRightTriggerAxis() > TRIGGER_ACTIVATION_POINT || xboxController2.GetLeftTriggerAxis() > TRIGGER_ACTIVATION_POINT))
         currentDriverMode = DRIVER_MODE::BASIC;
 
     }

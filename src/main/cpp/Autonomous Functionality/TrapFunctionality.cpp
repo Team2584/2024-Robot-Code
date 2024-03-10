@@ -36,6 +36,28 @@ bool AutonomousTrapController::ScoreInTrap(){
     return noteController->ScoreNoteInPosition(Elevator::ElevatorSetting::TRAP);
 }
 
+bool AutonomousTrapController::LockRotationToNearestClimbPose(AllianceColor allianceColor, double xSpeed, double ySpeed){
+    Rotation2d heading = swerveController->swerveDrive->GetOdometryPose().Rotation();
+    if (allianceColor == AllianceColor::BLUE)
+    {
+        if (fabs((heading - Rotation2d(180_deg)).Degrees().value()) <= 60)
+            swerveController->TurnToAngleWhileDriving(xSpeed, ySpeed, Rotation2d(180_deg), PoseEstimationType::PureOdometry);
+        else if(fabs((heading - Rotation2d(300_deg)).Degrees().value()) <= 60)   
+            swerveController->TurnToAngleWhileDriving(xSpeed, ySpeed, Rotation2d(300_deg), PoseEstimationType::PureOdometry);
+        else
+            swerveController->TurnToAngleWhileDriving(xSpeed, ySpeed, Rotation2d(60_deg), PoseEstimationType::PureOdometry);
+    }
+    else
+    {
+        if (fabs((heading - Rotation2d(0_deg)).Degrees().value()) <= 60)
+            swerveController->TurnToAngleWhileDriving(xSpeed, ySpeed, Rotation2d(0_deg), PoseEstimationType::PureOdometry);
+        else if(fabs((heading - Rotation2d(120_deg)).Degrees().value()) <= 60)   
+            swerveController->TurnToAngleWhileDriving(xSpeed, ySpeed, Rotation2d(120_deg), PoseEstimationType::PureOdometry);
+        else
+            swerveController->TurnToAngleWhileDriving(xSpeed, ySpeed, Rotation2d(240_deg), PoseEstimationType::PureOdometry);
+    }
+}
+
 bool AutonomousTrapController::DriveToNearestClimbPose(AllianceColor allianceColor)
 {   
     return true;
