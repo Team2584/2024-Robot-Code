@@ -20,11 +20,12 @@ private:
     NoteController *noteController;
     Elevator *elevator;
     Climb *climb;
+    Intake *intake;
     Timer climbTimer;
 
 public:
 
-    AutonomousTrapController(NoteController *noteController_, Elevator *elevator_, Climb *climb_);
+    AutonomousTrapController(NoteController *noteController_, Elevator *elevator_, Climb *climb_, Intake *intake_);
 
     bool PrepareClimb();
     bool ClimbToTrap();

@@ -35,12 +35,13 @@ LightsSubsystem lights{&m_pdh};
 SwerveDriveAutonomousController swerveAutoController{&swerveDrive};
 AutonomousShootingController flywheelController{&swerveAutoController, &flywheel, &overbumper, &ampmech};
 AutonomousAmpingController autoAmpController{&swerveAutoController, &notecontroller};
-AutonomousTrapController autoTrapController{&notecontroller, &ampmech, &hang};
+AutonomousTrapController autoTrapController{&notecontroller, &ampmech, &hang, &intake};
 
 AutonomousController autoController{&swerveDrive, &overbumper, &flywheel, &ampmech, &swerveAutoController, &notecontroller, &flywheelController, &autoAmpController};
 
 Elevator::ElevatorSetting elevSetHeight = Elevator::LOW;
 Intake::WristSetting wristSetPoint = Intake::HIGH;
+
 
 AllianceColor allianceColor = AllianceColor::BLUE;
 
@@ -55,6 +56,9 @@ units::second_t lastTime = 0_s;
 double lastX = 0;
 double lastY = 0;
 double lastRot = 0;
+
+bool lockingAnglerForClimb = false;
+
 void Robot::RobotInit()
 {
   m_chooser.SetDefaultOption(kAutoBCSI2S, kAutoBCSI2S);
@@ -554,9 +558,19 @@ void Robot::TeleopPeriodic()
       else
         flywheel.SetFlywheelVelocity(flywheelSetpoint);
 
-      flywheel.PIDAngler(anglerSetpoint); // change this to clear chain
 
-      if(xboxController.GetStartButtonPressed()){
+      if(xboxController.GetRightTriggerAxis() > TRIGGER_ACTIVATION_POINT || xboxController2.GetBackButtonPressed()){
+        lockingAnglerForClimb = false;
+      }
+
+      if(!lockingAnglerForClimb){
+        flywheel.PIDAngler(anglerSetpoint); 
+      }
+      else{
+        flywheel.PIDAngler(1.399);
+      }
+
+      if(xboxController2.GetStartButtonPressed()){
         hang.climbZeroed = false;
       }
 
@@ -753,6 +767,7 @@ void Robot::TeleopPeriodic()
 
       swerveDrive.DriveSwervePercent(fwdDriveSpeed, strafeDriveSpeed, turnSpeed);
 
+      lockingAnglerForClimb = true;
       flywheel.PIDAngler(1.399);
 
       if(xboxController2.GetPOV() == 180){
