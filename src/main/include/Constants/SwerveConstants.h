@@ -50,6 +50,9 @@
 #define WHEEL_SPIN_MIN_SPEED 0 // In percent power
 #define WHEEL_SPIN_MAX_SPEED 1.0 // In percent power
 
+//TalonFX Kraken Current Limits
+#define SWERVE_TALON_STATOR_CURRENTLIMIT 60.0
+
 /*
  __     ___     _                ____                _              _       
  \ \   / (_)___(_) ___  _ __    / ___|___  _ __  ___| |_ __ _ _ __ | |_ ___ 

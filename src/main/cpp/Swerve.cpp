@@ -28,6 +28,12 @@ SwerveModule::SwerveModule(int driveMotorPort, int spinMotorPort, int magneticEn
 {
     // Instantiates all variables needed for class
     encoderOffset = encoderOffset_;
+    
+    //TalonFX Current Limiting
+    ctre::phoenix6::configs::TalonFXConfiguration toConfigure{};
+    toConfigure.CurrentLimits.StatorCurrentLimit = SWERVE_TALON_STATOR_CURRENTLIMIT;
+    toConfigure.CurrentLimits.StatorCurrentLimitEnable = true; // And enable it
+    driveMotor.GetConfigurator().Apply(toConfigure);
 
     ResetEncoders();
 }
