@@ -128,6 +128,8 @@ void Robot::RobotPeriodic() {
  */
 void Robot::AutonomousInit()
 {
+  swerveDrive.SetDriveNeutralMode(ctre::phoenix6::signals::NeutralModeValue::Coast);
+
   m_autoSelected = m_chooser.GetSelected();
   // m_autoSelected = SmartDashboard::GetString("Auto Selector",
   //     kAutoNameDefault);
@@ -315,6 +317,7 @@ void Robot::AutonomousPeriodic()
 
 void Robot::TeleopInit()
 {
+  swerveDrive.SetDriveNeutralMode(ctre::phoenix6::signals::NeutralModeValue::Coast);
   currentDriverMode = DRIVER_MODE::BASIC;
   begunShooting = false;
   flywheelSetpoint = FLYWHEEL_IDLE_RPM;
@@ -998,7 +1001,9 @@ void Robot::TeleopPeriodic()
   //SmartDashboard::PutNumber("climb l pos", hang.leftEncoder.GetPosition());
 }
 
-void Robot::DisabledInit() {}
+void Robot::DisabledInit() {
+  swerveDrive.SetDriveNeutralMode(ctre::phoenix6::signals::NeutralModeValue::Brake);
+}
 
 void Robot::DisabledPeriodic() {
   swerveDrive.Update();

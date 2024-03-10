@@ -27,6 +27,7 @@ class SwerveModule
         SwerveModule(int driveMotorPort, int spinMotorPort, int magneticEncoderPort,
                     double encoderOffset_);
 
+        void SetModuleNeutralMode(ctre::phoenix6::signals::NeutralModeValue neutralMode);
         double GetMagEncoderValue();
         double GetModuleHeading();
         double GetDriveEncoder();
@@ -56,8 +57,8 @@ class SwerveDrive
    public:
         SwerveDrive();
 
+        void SetDriveNeutralMode(ctre::phoenix6::signals::NeutralModeValue neutralMode);
         double GetIMUHeading();
-        
         void ResetHeading();
         wpi::array<SwerveModulePosition, 4> GetSwerveModulePositions();
         void ResetOdometry();
