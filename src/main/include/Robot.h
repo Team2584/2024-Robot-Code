@@ -50,6 +50,7 @@
 #include <frc/DigitalInput.h>
 #include <frc/DutyCycleEncoder.h>
 #include <rev/AbsoluteEncoder.h>
+#include <TimeOfFlight.h>
 
 //Motors & LEDs
 #include <rev/CANSparkBase.h>

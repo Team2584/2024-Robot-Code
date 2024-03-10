@@ -7,33 +7,18 @@ Elevator::Elevator()
     ampMechSensor{ampMotor.GetForwardLimitSwitch(rev::SparkLimitSwitch::Type::kNormallyOpen)},
     m_constraints{ElevatorConstants::kMaxVelocity, ElevatorConstants::kMaxAcceleration},
     m_controller{ElevatorConstants::m_kP, ElevatorConstants::m_kI, ElevatorConstants::m_kD, m_constraints},
-    m_feedforward{ElevatorConstants::m_kS, ElevatorConstants::m_kG, ElevatorConstants::m_kV}
+    m_feedforward{ElevatorConstants::m_kS, ElevatorConstants::m_kG, ElevatorConstants::m_kV},
+    m_timeOfFlight{ElevatorConstants::TimeOfFlight::tofCANID,ElevatorConstants::TimeOfFlight::tofOffset, ElevatorConstants::TimeOfFlight::tofAllowedSigma}
 {
     winchMotor.SetNeutralMode(ctre::phoenix6::signals::NeutralModeValue::Brake);
     winchMotor.SetPosition(0_tr);
     m_controller.SetTolerance(ElevatorConstants::ALLOWABLE_ERROR_POS);
-  //  m_timeofflight.SetRangingMode(frc::TimeOfFlight::RangingMode::kShort, 24);
-   // m_timeofflight.SetRangeOfInterest(4,4,12,12);
-}
-/*
-double Elevator::GetTof(){
-    double tofreading = m_timeofflight.GetRange();
-    double toferror = m_timeofflight.GetRangeSigma();
 
-    if(toferror <= ElevatorConstants::TimeOfFlight::AllowedSigma)
-        return tofreading;
-    else {
-        return 0;
-    }
 }
 
 bool Elevator::ZeroElevatorTOF(){
-    if(elevatorZeroed){
-        return true;
-    }
-    if(GetTof() != 0 && !elevatorZeroed){
-        winchEncoder->SetPosition((GetTof() + ElevatorConstants::TimeOfFlight::Offset)*1000);
-        elevatorZeroed = true;
+    if(m_timeOfFlight.GetTof() != 0_m){
+        winchMotor.SetPosition(m_timeOfFlight.GetTof().value() / ElevatorConstants::ELEV_CONVERSION_FACTOR * -1_tr);
         return true;
     }
     else{
@@ -41,7 +26,6 @@ bool Elevator::ZeroElevatorTOF(){
     }
 }
 
-*/
 /**
  * @brief Sets the winch motor's built-in encoer reading to zero
 */

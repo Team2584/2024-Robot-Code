@@ -33,6 +33,12 @@ namespace AmpMech{
     inline constexpr double AMP_SPEED_DEPOSIT = -0.75;
 }
 
+namespace TimeOfFlight{
+    inline constexpr double tofAllowedSigma = 1.75;
+    inline constexpr auto tofOffset = 0.05_m;
+    inline constexpr int tofCANID = 27;
+}
+
 // Autonomously Score Amp Constants
 inline const Pose2d BLUE_AMP_SCORING_POSITION = {1.8415_m, 7.7_m, Rotation2d(90_deg)};
 inline const Pose2d RED_AMP_SCORING_POSITION = {14.7_m, 7.7_m, Rotation2d(90_deg)};

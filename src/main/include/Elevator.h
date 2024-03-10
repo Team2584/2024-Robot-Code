@@ -1,4 +1,5 @@
 #include "Robot.h"
+#include "Tools/DistanceOffsetTOF.h"
 #include "constants/ElevatorConstants.h"
 
 #ifndef ELEVATOR_H
@@ -8,8 +9,7 @@ class Elevator
 {
     private:
 
-        double toflastSpeed = 0;
-        double toflastHeight = 0;
+        
 
         bool lastSensorValue = false;
         int timesPassed = 0;
@@ -18,6 +18,8 @@ class Elevator
         rev::SparkLimitSwitch ampMechSensor;
         
     public:
+
+        DistanceOffsetTOF m_timeOfFlight;
 
         ctre::phoenix6::hardware::TalonFX winchMotor;
 
@@ -31,6 +33,8 @@ class Elevator
         enum ElevatorSetting{LOW, INTAKE, OUTTAKE, AMP, TRAP};
 
         Elevator();
+
+        bool ZeroElevatorTOF();
 
         void SetAmpMotorPercent(double percent);
 
