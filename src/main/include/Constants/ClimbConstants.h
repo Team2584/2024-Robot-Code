@@ -4,6 +4,7 @@
 namespace ClimbConstants {
 
 inline const auto MaxHeight = 0.56_m;
+inline const auto AttatchingHeight = 0.53_m;
 inline const auto MinHeight = 0.03_m;
 
 namespace Linear{
