@@ -9,8 +9,6 @@ class Intake
 
     private:
 
-        rev::CANSparkMax wristMotor;
-        rev::CANSparkFlex onWristIntakeMotor;
         rev::CANSparkMax mainFixedMotor;
         rev::CANSparkMax selectorFixedMotor;
         rev::SparkAbsoluteEncoder *magEncoder;
@@ -18,6 +16,9 @@ class Intake
         frc::Timer shotTimer;
 
     public:
+
+        rev::CANSparkMax wristMotor;
+        rev::CANSparkFlex onWristIntakeMotor;
 
         ArmFeedforward m_WristFF;
         PID m_WristPID;

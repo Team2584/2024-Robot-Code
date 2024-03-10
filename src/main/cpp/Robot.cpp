@@ -51,7 +51,10 @@ Timer shotTimer = Timer{};
 bool anglingToSpeaker = false;
 bool begunShooting = false;
 double flywheelSetpoint = FLYWHEEL_IDLE_RPM;
-
+units::second_t lastTime = 0_s;
+double lastX = 0;
+double lastY = 0;
+double lastRot = 0;
 void Robot::RobotInit()
 {
   m_chooser.SetDefaultOption(kAutoBCSI2S, kAutoBCSI2S);
@@ -65,7 +68,19 @@ void Robot::RobotInit()
   m_chooser.AddOption(kAutoBLSS3S8TEST, kAutoBLSS3S8TEST);
   m_chooser.AddOption(kAutoBR4CloseNotes, kAutoBR4CloseNotes);
   m_chooser.AddOption(kAutoBR4CloseNotesAnd8, kAutoBR4CloseNotesAnd8);
-
+  m_chooser.AddOption(kAutoRL4CloseNotesAnd8, kAutoRL4CloseNotesAnd8);
+  m_chooser.AddOption(kAutoBC267, kAutoBC267);
+  m_chooser.AddOption(kAutoRC1067, kAutoRC1067);
+  m_chooser.AddOption(kAutoBR145, kAutoBR145);
+  m_chooser.AddOption(kAutoRL945, kAutoRL945);
+  m_chooser.AddOption(kAutoBL3267, kAutoBL3267);
+  m_chooser.AddOption(kAutoRR111067, kAutoRR111067);
+  m_chooser.AddOption(kAutoBR146, kAutoBR146);
+  m_chooser.AddOption(kAutoRL946, kAutoRL946);
+  m_chooser.AddOption(kAutoBR45, kAutoBR45);
+  m_chooser.AddOption(kAutoRL45, kAutoRL45);
+  m_chooser.AddOption(kAutoBL387, kAutoBL387);
+  m_chooser.AddOption(kAutoRR1187, kAutoRR1187);
   frc::SmartDashboard::PutData("Auto Modes", &m_chooser);
   
   SmartDashboard::PutNumber("Flywheel Setpoint", 0);
@@ -89,16 +104,11 @@ void Robot::RobotPeriodic() {
   swerveDrive.UpdateRaspiConnection();
   
 
-  if (DriverStation::GetMatchType() != DriverStation::MatchType::kNone)
-  {
-    if (DriverStation::GetAlliance() == DriverStation::kRed)
-      allianceColor = AllianceColor::RED;
-    else
-      allianceColor = AllianceColor::BLUE;
-  }
+  if (DriverStation::GetAlliance() == DriverStation::kRed)
+    allianceColor = AllianceColor::RED;
+  else
+    allianceColor = AllianceColor::BLUE;
 
-  
-  allianceColor = AllianceColor::BLUE;
   SmartDashboard::PutBoolean("In Match", DriverStation::GetMatchType() != DriverStation::MatchType::kNone);
   SmartDashboard::PutBoolean("Is Blue Alliance", allianceColor == AllianceColor::BLUE);
 }
@@ -170,13 +180,78 @@ void Robot::AutonomousInit()
   }
   else if (m_autoSelected == kAutoBR4CloseNotes)
   {
-    autoController.SetupFollowTrajectoryAndShoot(Pose2d(0.74_m, 4.35_m, Rotation2d(120_deg)), "BRTo1To2To3", 100_m);
+    autoController.SetupFollowTrajectoryAndShoot(Pose2d(1.06_m, 4.35_m, Rotation2d(138.81_deg)), "BRTo1To2To3", 100_m);
     allianceColor = AllianceColor::BLUE;  
   }
   else if (m_autoSelected == kAutoBR4CloseNotesAnd8)
   {
-    autoController.SetupFollowTrajectoryAndShoot(Pose2d(0.74_m, 4.35_m, Rotation2d(120_deg)), "BRTo1To2To3To8", 2.5_m);
+    autoController.SetupFollowTrajectoryAndShoot(Pose2d(1.06_m, 4.35_m, Rotation2d(138.81_deg)), "BRTo1To2To3To8", 2.5_m);
     allianceColor = AllianceColor::BLUE;
+  }
+  else if (m_autoSelected == kAutoRL4CloseNotesAnd8)
+  {
+    autoController.SetupFollowTrajectoryAndShoot(Pose2d(15.48_m, 4.4_m, Rotation2d(34.93_deg)), "RLTo9To10To11To8", 2.5_m);
+    allianceColor = AllianceColor::RED;
+  }
+  else if (m_autoSelected == kAutoBC267)
+  {
+    autoController.SetupFollowTrajectoryAndShoot(Pose2d(1.38_m, 5.51_m, Rotation2d(180_deg)), "BCTo2To6To7", 2.5_m);
+    allianceColor = AllianceColor::BLUE;
+  }
+  else if (m_autoSelected == kAutoRC1067)
+  {
+    autoController.SetupFollowTrajectoryAndShoot(Pose2d(15.19_m, 5.59_m, Rotation2d(0.81_deg)), "RCTo10To6To7", 2.5_m);
+    allianceColor = AllianceColor::RED;
+  }
+  else if (m_autoSelected == kAutoBR145)
+  {
+    autoController.SetupFollowTrajectoryAndShoot(Pose2d(1.22_m, 4.47_m, Rotation2d(-98.13_deg)), "BRTo1To4To5", 2.5_m);
+    allianceColor = AllianceColor::BLUE;
+  }
+  else if (m_autoSelected == kAutoRL945)
+  {
+    autoController.SetupFollowTrajectoryAndShoot(Pose2d(1.06_m, 4.35_m, Rotation2d(138.81_deg)), "RLTo9To4To5", 2.5_m);
+    allianceColor = AllianceColor::RED;
+  }
+  else if (m_autoSelected == kAutoBL3267)
+  {
+    autoController.SetupFollowTrajectoryAndShoot(Pose2d(1.18_m, 6.7_m, Rotation2d(-145.78_deg)), "BLTo3To2To6To7", 2.5_m);
+    allianceColor = AllianceColor::BLUE;
+  }
+  else if (m_autoSelected == kAutoRR111067)
+  {
+    autoController.SetupFollowTrajectoryAndShoot(Pose2d(15.34_m, 6.58_m, Rotation2d(83.66_deg)), "RRTo11To10To6To7", 2.5_m);
+    allianceColor = AllianceColor::RED;
+  }
+  else if (m_autoSelected == kAutoBR146)
+  {
+    autoController.SetupFollowTrajectoryAndShoot(Pose2d(1.29_m, 4.47_m, Rotation2d(150.75_deg)), "BRTo1To4To6", 2.5_m);
+    allianceColor = AllianceColor::BLUE;
+  }
+  else if (m_autoSelected == kAutoRL946)
+  {
+    autoController.SetupFollowTrajectoryAndShoot(Pose2d(15.37_m, 4.59_m, Rotation2d(27.9_deg)), "RLTo9To4To6", 2.5_m);
+    allianceColor = AllianceColor::RED;
+  }
+  else if (m_autoSelected == kAutoBR45)
+  {
+    autoController.SetupFollowTrajectoryAndShoot(Pose2d(1.1_m, 4.37_m, Rotation2d(137.29_deg)), "BRTo4To5", 2.5_m);
+    allianceColor = AllianceColor::BLUE;
+  }
+  else if (m_autoSelected == kAutoRL45)
+  {
+    autoController.SetupFollowTrajectoryAndShoot(Pose2d(15.35_m, 4.46_m, Rotation2d(37.57_deg)), "RLTo4To5", 2.5_m);
+    allianceColor = AllianceColor::RED;
+  }
+  else if (m_autoSelected == kAutoBL387)
+  {
+    autoController.SetupFollowTrajectoryAndShoot(Pose2d(1.01_m, 6.73_m, Rotation2d(-144.64_deg)), "BLTo3To8To7", 2.5_m);
+    allianceColor = AllianceColor::BLUE;
+  }
+  else if (m_autoSelected == kAutoRR1187)
+  {
+    autoController.SetupFollowTrajectoryAndShoot(Pose2d(15.35_m, 6.64_m, Rotation2d(-34.59_deg)), "RRTo11To8To7", 2.5_m);
+    allianceColor = AllianceColor::RED;
   }
 }
 
@@ -208,6 +283,32 @@ void Robot::AutonomousPeriodic()
     autoController.FollowTrajectoryAndShoot(AllianceColor::BLUE);
   else if (m_autoSelected == kAutoBR4CloseNotesAnd8)
     autoController.FollowTrajectoryAndShoot(AllianceColor::BLUE);
+  else if (m_autoSelected == kAutoRL4CloseNotesAnd8)
+    autoController.FollowTrajectoryAndShoot(AllianceColor::RED);
+  else if (m_autoSelected == kAutoBC267)
+      autoController.FollowTrajectoryAndShoot(AllianceColor::BLUE);
+  else if (m_autoSelected == kAutoRC1067)
+      autoController.FollowTrajectoryAndShoot(AllianceColor::RED);
+  else if (m_autoSelected == kAutoBR145)
+      autoController.FollowTrajectoryAndShoot(AllianceColor::BLUE);
+  else if (m_autoSelected == kAutoRL945)
+      autoController.FollowTrajectoryAndShoot(AllianceColor::RED);
+  else if (m_autoSelected == kAutoBL3267)
+      autoController.FollowTrajectoryAndShoot(AllianceColor::BLUE);
+  else if (m_autoSelected == kAutoRR111067)
+      autoController.FollowTrajectoryAndShoot(AllianceColor::RED);
+  else if (m_autoSelected == kAutoBR146)
+      autoController.FollowTrajectoryAndShoot(AllianceColor::BLUE);
+  else if (m_autoSelected == kAutoRL946)
+      autoController.FollowTrajectoryAndShoot(AllianceColor::RED);
+  else if (m_autoSelected == kAutoBR45)
+      autoController.FollowTrajectoryAndShoot(AllianceColor::BLUE);
+  else if (m_autoSelected == kAutoRL45)
+      autoController.FollowTrajectoryAndShoot(AllianceColor::RED);
+  else if (m_autoSelected == kAutoBL387)
+      autoController.FollowTrajectoryAndShoot(AllianceColor::BLUE);
+  else if (m_autoSelected == kAutoRR1187)
+      autoController.FollowTrajectoryAndShoot(AllianceColor::RED);
 }
 
 void Robot::TeleopInit()
@@ -215,6 +316,10 @@ void Robot::TeleopInit()
   currentDriverMode = DRIVER_MODE::BASIC;
   begunShooting = false;
   flywheelSetpoint = FLYWHEEL_IDLE_RPM;
+  lastTime = Timer::GetFPGATimestamp();
+  lastX = 0;
+  lastY = 0;
+  lastRot = 0;
 }
 
 void Robot::TeleopPeriodic()
@@ -247,7 +352,28 @@ void Robot::TeleopPeriodic()
     rightJoystickX = 0;
     rightJoystickY = 0;
   }
-  
+
+  // Slew rate limit joystics
+  if (leftJoystickY > lastX + DRIVE_SLEW_RATE * (Timer::GetFPGATimestamp() - lastTime).value())
+    leftJoystickY = lastX + DRIVE_SLEW_RATE * (Timer::GetFPGATimestamp() - lastTime).value();
+  else if (leftJoystickY < lastX - DRIVE_SLEW_RATE * (Timer::GetFPGATimestamp() - lastTime).value())
+      leftJoystickY = lastX - DRIVE_SLEW_RATE * (Timer::GetFPGATimestamp() - lastTime).value();
+ 
+  if (leftJoystickX > lastY + DRIVE_SLEW_RATE * (Timer::GetFPGATimestamp() - lastTime).value())
+    leftJoystickX = lastY + DRIVE_SLEW_RATE * (Timer::GetFPGATimestamp() - lastTime).value();
+  else if (leftJoystickX < lastY - DRIVE_SLEW_RATE * (Timer::GetFPGATimestamp() - lastTime).value())
+      leftJoystickX = lastY - DRIVE_SLEW_RATE * (Timer::GetFPGATimestamp() - lastTime).value();
+ 
+ if (rightJoystickX > lastRot + SPIN_SLEW_RATE * (Timer::GetFPGATimestamp() - lastTime).value())
+    rightJoystickX = lastRot + SPIN_SLEW_RATE * (Timer::GetFPGATimestamp() - lastTime).value();
+  else if (rightJoystickX < lastRot - SPIN_SLEW_RATE * (Timer::GetFPGATimestamp() - lastTime).value())
+      rightJoystickX = lastRot - SPIN_SLEW_RATE * (Timer::GetFPGATimestamp() - lastTime).value();
+
+  lastX = leftJoystickY;
+  lastY = leftJoystickX;
+  lastRot = rightJoystickX;
+  lastTime = Timer::GetFPGATimestamp();
+
   // Find controller input (*-1 converts values to fwd/left/counterclockwise positive)
   double controller2LeftJoystickX, controller2LeftJoystickY, controller2RightJoystickX, controller2RightJoystickY;
   controller2LeftJoystickY = xboxController2.GetLeftY() * -1;
@@ -350,7 +476,7 @@ void Robot::TeleopPeriodic()
       wristSetPoint = Intake::SHOOT;
       
       // These function calls "prepare" the true function calls below
-      if (xboxController2.GetRightBumperPressed()){
+      if ((xboxController2.GetRightBumperPressed() && !xboxController2.GetAButton()) || (xboxController2.GetAButtonPressed() && !xboxController2.GetRightBumper())){
         notecontroller.BeginScoreNoteInPosition(Elevator::ElevatorSetting::AMP);
       }
       if (!begunShooting && xboxController2.GetRightTriggerAxis() > TRIGGER_ACTIVATION_POINT)
@@ -384,16 +510,13 @@ void Robot::TeleopPeriodic()
       else if(xboxController2.GetRightTriggerAxis() > TRIGGER_ACTIVATION_POINT){
         overbumper.ShootNote();
       }
-      else if (xboxController2.GetRightBumper()){
-        notecontroller.FromElevatorToSelector();
+      else if (xboxController2.GetRightBumper())
+      {
+        notecontroller.ScoreNoteInPosition(Elevator::ElevatorSetting::AMP);
       }
       else if (xboxController2.GetAButton())
       {
         notecontroller.LiftNoteToPosition(Elevator::ElevatorSetting::AMP);
-      }
-      else if (xboxController2.GetRightBumper())
-      {
-        notecontroller.ScoreNoteInPosition(Elevator::ElevatorSetting::AMP);
       }
       else if (controller2LeftJoystickY != 0)
       {
@@ -409,16 +532,29 @@ void Robot::TeleopPeriodic()
 
       overbumper.PIDWristToPoint(wristSetPoint);
 
-      // Keep flywheel ready for close shots
+
+      double anglerSetpoint = 0.8;
+      // Spin up flywheel to various presets
       if (xboxController2.GetStartButtonPressed())
-        flywheelSetpoint = 3500;
+        flywheelSetpoint = 4000;
+      else if(xboxController2.GetXButtonPressed())
+        flywheelSetpoint = 4000;
+      else if (xboxController2.GetYButtonPressed())
+        flywheelSetpoint = 4500;
+
+      if (xboxController2.GetXButton())
+        anglerSetpoint = 0.8;
+      else if (xboxController2.GetYButton())
+        anglerSetpoint = 0.65;
+      else
+        anglerSetpoint = 0.8;
 
       if (flywheel.TopFlywheel.GetMeasurement() * 60.0 > flywheelSetpoint || flywheel.BottomFlywheel.GetMeasurement() * 60.0 > flywheelSetpoint)
         flywheel.SpinFlywheelPercent(0);
       else
         flywheel.SetFlywheelVelocity(flywheelSetpoint);
 
-      flywheel.PIDAngler(0.8); // change this to clear chain
+      flywheel.PIDAngler(anglerSetpoint); // change this to clear chain
 
       if(xboxController.GetStartButtonPressed()){
         hang.climbZeroed = false;
@@ -560,12 +696,32 @@ void Robot::TeleopPeriodic()
       bool isAtAmp = autoAmpController.DriveToAmp(allianceColor);
       bool scored = false;
 
-      if(isAtAmp || xboxController2.GetRightBumper()){
+      if ((xboxController2.GetRightBumperPressed() && !xboxController2.GetAButton()) || (xboxController2.GetAButtonPressed() && !xboxController2.GetRightBumper()))
+        notecontroller.BeginScoreNoteInPosition(Elevator::ElevatorSetting::AMP);
+
+      if (xboxController2.GetRightBumper())
+      {
+        scored = notecontroller.ScoreNoteInPosition(Elevator::ElevatorSetting::AMP);
+      }
+      else if (xboxController2.GetAButton())
+      {
+        notecontroller.LiftNoteToPosition(Elevator::ElevatorSetting::AMP);
+      }
+      else {
+        overbumper.SetIntakeMotorSpeed(0);
+        ampmech.SetAmpMotorPercent(0);
+        ampmech.MoveToHeight(Elevator::ElevatorSetting::LOW);
+      }
+
+
+      // Complete Auto Amping Code (takes control of amp mech from tyler)
+
+      /*if(isAtAmp || xboxController2.GetRightBumper()){ 
         scored = notecontroller.ScoreNoteInPosition(Elevator::ElevatorSetting::AMP);
       }
       else{
         notecontroller.LiftNoteToPosition(Elevator::ElevatorSetting::AMP);
-      }
+      }*/
 
       if(scored){
         xboxController.ShotNoteRumble();
@@ -597,7 +753,7 @@ void Robot::TeleopPeriodic()
 
       swerveDrive.DriveSwervePercent(fwdDriveSpeed, strafeDriveSpeed, turnSpeed);
 
-      flywheel.PIDAngler(M_PI/2);
+      flywheel.PIDAngler(1.399);
 
       if(xboxController2.GetPOV() == 180){
         hang.ZeroClimb();
@@ -613,16 +769,29 @@ void Robot::TeleopPeriodic()
         if(xboxController.GetPOV() == 270){hang.rightClimbMotor.Set(ClimbConstants::BasePctDown);}
       }
       else if(xboxController2.GetPOV() == 90){
-        autoTrapController.PrepareClimb();
+        //autoTrapController.PrepareClimb();
+        hang.BalanceWhileClimbing();
       }
       else if (xboxController2.GetPOV() == 270){
          if(autoTrapController.ClimbToTrap()){
             notecontroller.ScoreNoteInPosition(Elevator::ElevatorSetting::TRAP);
          }
       }
+      else if (controller2LeftJoystickY != 0)
+      {
+        ampmech.MoveElevatorPercent(controller2LeftJoystickY);
+        hang.HoldClimb();
+      }
       else{
         hang.HoldClimb();
       }
+
+      if (xboxController2.GetRightBumper())
+        ampmech.DepositNote();
+      else
+        ampmech.SetAmpMotorPercent(0);
+
+      overbumper.SetIntakeMotorSpeed(0);
 
       if (xboxController.GetPOV() == -1 && xboxController2.GetPOV() == -1)
         currentDriverMode = DRIVER_MODE::BASIC;
@@ -702,7 +871,6 @@ void Robot::TeleopPeriodic()
     flywheel.SetFlywheelVelocity(SmartDashboard::GetNumber("Flywheel Setpoint", 0));
   }
 
-
   /*if (xboxController3.GetPOV() == 0){
     flywheel.PIDAngler(SmartDashboard::GetNumber("Angler Setpoint", M_PI / 2));
   }
@@ -758,6 +926,12 @@ void Robot::TeleopPeriodic()
   SmartDashboard::PutNumber("angler a", flywheel.FlywheelAnglingMotor.GetOutputCurrent());
   SmartDashboard::PutNumber("angler temp", flywheel.FlywheelAnglingMotor.GetMotorTemperature());
 
+  SmartDashboard::PutNumber("Top Flywheel Amperage", flywheel.TopFlywheel.m_flywheelMotor->GetOutputCurrent());
+  SmartDashboard::PutNumber("Bottom Flywheel Amperage", flywheel.BottomFlywheel.m_flywheelMotor->GetOutputCurrent());
+  SmartDashboard::PutNumber("Angler Amperage", flywheel.FlywheelAnglingMotor.GetOutputCurrent());
+  SmartDashboard::PutNumber("Wirst Amperage", overbumper.wristMotor.GetOutputCurrent());
+  SmartDashboard::PutNumber("Elevator Amperage", ampmech.winchMotor.GetSupplyCurrent().GetValue().value());
+  SmartDashboard::PutNumber("FL Drive Amperage", swerveDrive.FLModule.driveMotor.GetSupplyCurrent().GetValue().value());
   //SmartDashboard::PutBoolean("climb l stop", hang.leftStop.Get());
   //SmartDashboard::PutNumber("climb l pos", hang.leftEncoder.GetPosition());
 }
@@ -765,7 +939,10 @@ void Robot::TeleopPeriodic()
 void Robot::DisabledInit() {}
 
 void Robot::DisabledPeriodic() {
-  if(DriverStation::IsEStopped()){
+  swerveDrive.Update();
+
+  //if(DriverStation::IsEStopped()){ 
+  if(swerveDrive.TagInView()){
     lights.SetEstopped();
   }
   else if(DriverStation::IsDSAttached()){
@@ -913,6 +1090,8 @@ void Robot::TestPeriodic() {
   {
     swerveDrive.DriveSwervePercent(fwdDriveSpeed, strafeDriveSpeed, turnSpeed);
   }
+
+  overbumper.SetIntakeMotorSpeed(0);
 
   /*if (xboxController.GetAButtonPressed())
     swerveAutoController.BeginDriveToPose(PoseEstimationType::PureOdometry);

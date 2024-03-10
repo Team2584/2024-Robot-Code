@@ -32,8 +32,17 @@ bool Climb::GetRStop(){
 }
 
 void Climb::SetClimbZero(){
+    
     leftEncoder.SetPosition(0);
     rightEncoder.SetPosition(0);
+    rightClimbMotor.SetSoftLimit(rev::CANSparkBase::SoftLimitDirection::kForward, ClimbConstants::MinHeight.value());
+    leftClimbMotor.SetSoftLimit(rev::CANSparkBase::SoftLimitDirection::kReverse, ClimbConstants::MinHeight.value());
+
+    leftClimbMotor.EnableSoftLimit(rev::CANSparkBase::SoftLimitDirection::kForward, false);
+    leftClimbMotor.EnableSoftLimit(rev::CANSparkBase::SoftLimitDirection::kReverse, true);          
+    rightClimbMotor.EnableSoftLimit(rev::CANSparkBase::SoftLimitDirection::kReverse, false);
+    rightClimbMotor.EnableSoftLimit(rev::CANSparkBase::SoftLimitDirection::kForward, true);
+    
     //add soft limits
 }
 
@@ -43,10 +52,7 @@ void Climb::SetClimbZero(){
 */
 bool Climb::ZeroClimb(){
     if(!climbZeroed){
-        leftClimbMotor.EnableSoftLimit(rev::CANSparkBase::SoftLimitDirection::kForward, false);
-        leftClimbMotor.EnableSoftLimit(rev::CANSparkBase::SoftLimitDirection::kReverse, false);          
-        leftClimbMotor.EnableSoftLimit(rev::CANSparkBase::SoftLimitDirection::kReverse, false);
-        leftClimbMotor.EnableSoftLimit(rev::CANSparkBase::SoftLimitDirection::kForward, false);
+        
         if(!GetLStop()){
             leftClimbMotor.Set(ClimbConstants::BasePctDown*-0.6);
         }

@@ -12,7 +12,6 @@ class SwerveModule
 {
     private:
         // Instance Variables for each swerve module
-        ctre::phoenix6::hardware::TalonFX driveMotor; /* The motor responsible for actually driving the wheel*/
         rev::CANSparkMax spinMotor; /* The motor responsible for "spinning" the wheel left to right to change direction*/
         rev::SparkRelativeEncoder spinRelativeEncoder; /* The relative encoder built into the spinMotor */
         frc::DutyCycleEncoder magEncoder; /* The magnetic absolute encoder tracking swerve heading. */
@@ -23,6 +22,8 @@ class SwerveModule
         double spinEncoderInitialValue; /* Initial Value of Relative Spin Encoder used for zeroing*/
 
     public:
+        ctre::phoenix6::hardware::TalonFX driveMotor; /* The motor responsible for actually driving the wheel*/
+
         SwerveModule(int driveMotorPort, int spinMotorPort, int magneticEncoderPort,
                     double encoderOffset_);
 

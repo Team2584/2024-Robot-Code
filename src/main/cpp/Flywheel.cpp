@@ -52,14 +52,15 @@ bool FlywheelSystem::SetFlywheelVelocity(double bottomVelocity, double topVeloci
 double FlywheelSystem::GetAnglerEncoderReading()
 {
   double reading = magEncoder.GetAbsolutePosition();
-  reading -= FLYWHEEL_MAG_ENCODER_OFFSET;
   reading *= -1;
+  reading += FLYWHEEL_MAG_ENCODER_OFFSET;
 
   if (reading > 0.5)
     reading -= 1;
   if (reading < -0.5)
     reading += 1;
 
+  SmartDashboard::PutNumber("Zeroed Angler", reading);
   return reading * M_PI * 2;
 }
 
@@ -70,7 +71,7 @@ void FlywheelSystem::MoveAnglerPercent(double percent)
 
 bool FlywheelSystem::PIDAngler(double point)
 {
-  if (point > 1.4 || point < 0)
+  if (point > 1.4 || point < 0.35)
   {
     FlywheelAnglingMotor.Set(0);
     return false;
