@@ -35,7 +35,7 @@ LightsSubsystem lights{&m_pdh};
 SwerveDriveAutonomousController swerveAutoController{&swerveDrive};
 AutonomousShootingController flywheelController{&swerveAutoController, &flywheel, &overbumper, &ampmech};
 AutonomousAmpingController autoAmpController{&swerveAutoController, &notecontroller};
-AutonomousTrapController autoTrapController{&notecontroller, &ampmech, &hang, &intake};
+AutonomousTrapController autoTrapController{&swerveAutoController, &notecontroller, &ampmech, &hang, &overbumper};
 
 AutonomousController autoController{&swerveDrive, &overbumper, &flywheel, &ampmech, &swerveAutoController, &notecontroller, &flywheelController, &autoAmpController};
 
