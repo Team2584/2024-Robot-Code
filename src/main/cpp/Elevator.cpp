@@ -12,8 +12,36 @@ Elevator::Elevator()
     winchMotor.SetNeutralMode(ctre::phoenix6::signals::NeutralModeValue::Brake);
     winchMotor.SetPosition(0_tr);
     m_controller.SetTolerance(ElevatorConstants::ALLOWABLE_ERROR_POS);
+  //  m_timeofflight.SetRangingMode(frc::TimeOfFlight::RangingMode::kShort, 24);
+   // m_timeofflight.SetRangeOfInterest(4,4,12,12);
+}
+/*
+double Elevator::GetTof(){
+    double tofreading = m_timeofflight.GetRange();
+    double toferror = m_timeofflight.GetRangeSigma();
+
+    if(toferror <= ElevatorConstants::TimeOfFlight::AllowedSigma)
+        return tofreading;
+    else {
+        return 0;
+    }
 }
 
+bool Elevator::ZeroElevatorTOF(){
+    if(elevatorZeroed){
+        return true;
+    }
+    if(GetTof() != 0 && !elevatorZeroed){
+        winchEncoder->SetPosition((GetTof() + ElevatorConstants::TimeOfFlight::Offset)*1000);
+        elevatorZeroed = true;
+        return true;
+    }
+    else{
+        return false;
+    }
+}
+
+*/
 /**
  * @brief Sets the winch motor's built-in encoer reading to zero
 */
