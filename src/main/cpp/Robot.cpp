@@ -791,6 +791,7 @@ void Robot::TeleopPeriodic()
 
       if (controller2LeftJoystickY != 0)
       {
+        overbumper.SetIntakeMotorSpeed(0);
         ampmech.MoveElevatorPercent(controller2LeftJoystickY);
         if (xboxController2.GetRightBumper())
           ampmech.DepositNote();
@@ -806,16 +807,16 @@ void Robot::TeleopPeriodic()
       else
       {        
         ampmech.SetAmpMotorPercent(0);
+        overbumper.SetIntakeMotorSpeed(0);
         ampmech.MoveToHeight(Elevator::ElevatorSetting::LOW);
       }
 
 
       if (hang.leftEncoder.GetPosition() < 0.2)
-          overbumper.PIDWrist(Intake::WristSetting::SHOOT);
+          overbumper.PIDWristToPoint(Intake::WristSetting::SHOOT);
       else
           overbumper.PIDWristToPoint(Intake::WristSetting::LOW);
 
-      overbumper.SetIntakeMotorSpeed(0);
 
       /*
       if(xboxController2.GetPOV() == 180){
