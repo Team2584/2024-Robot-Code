@@ -21,7 +21,7 @@ inline auto ELEV_AMP = 0.53;
 inline auto ELEV_LOW = 0;
 inline auto ELEV_INTAKE = 0;
 inline auto ELEV_OUTTAKE = 0.15;
-inline auto ELEV_TRAP = 0.65;
+inline auto ELEV_TRAP = 0.70;
 
 inline constexpr double gearRatioValue1 = 1.0/4.0;
 inline constexpr double diameterValue1 = 0.0762; //meters

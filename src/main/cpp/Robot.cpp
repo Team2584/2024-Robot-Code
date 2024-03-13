@@ -770,10 +770,11 @@ void Robot::TeleopPeriodic()
         hang.ClimbPID(ClimbConstants::AttatchingHeight);
       }
       else if (xboxController2.GetPOV() == 270){
+        hang.climbZeroed = false;
         hang.ZeroClimb();
       }
       else if (xboxController2.GetPOV() == 180){
-        hang.ClimbPID(ClimbConstants::MinHeight);
+        hang.ClimbPID(ClimbConstants::ClimbedHeight);
       }
       else if (xboxController.GetPOV() == 180){
         hang.RetractClimb();
@@ -986,6 +987,9 @@ void Robot::TeleopPeriodic()
 
   SmartDashboard::PutNumber("Climb r pos", hang.rightEncoder.GetPosition());
   SmartDashboard::PutNumber("Climb l pos", hang.leftEncoder.GetPosition());
+  SmartDashboard::PutBoolean("Climb R Stop", hang.GetRStop());
+  SmartDashboard::PutBoolean("Climb L Stop", hang.GetLStop());
+
 
   SmartDashboard::PutNumber("angler v", flywheel.FlywheelAnglingMotor.Get());
 
