@@ -50,6 +50,9 @@
 #define WHEEL_SPIN_MIN_SPEED 0 // In percent power
 #define WHEEL_SPIN_MAX_SPEED 1.0 // In percent power
 
+//TalonFX Kraken Current Limits
+#define SWERVE_TALON_STATOR_CURRENTLIMIT 60.0
+
 /*
  __     ___     _                ____                _              _       
  \ \   / (_)___(_) ___  _ __    / ___|___  _ __  ___| |_ __ _ _ __ | |_ ___ 
@@ -111,7 +114,7 @@ enum PoseEstimationType
 #define DTP_ROTATION_KI 0
 #define DTP_ROTATION_KI_MAX 0 // In percent power
 #define DTP_ROTATION_KD 0
-#define DTP_ROTATION_TOLERANCE 0.07 // In radians
+#define DTP_ROTATION_TOLERANCE 0.06 // In radians
 #define DTP_ROTATION_VELOCITY_TOLERANCE 0.5 // In percent power
 #define DTP_ROTATION_MIN_SPEED 0.02 // In percent powerw
 #define DTP_ROTATION_MAX_SPEED 0.6 // In percent power

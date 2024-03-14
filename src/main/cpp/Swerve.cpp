@@ -28,8 +28,19 @@ SwerveModule::SwerveModule(int driveMotorPort, int spinMotorPort, int magneticEn
 {
     // Instantiates all variables needed for class
     encoderOffset = encoderOffset_;
+    
+    //TalonFX Current Limiting
+    ctre::phoenix6::configs::TalonFXConfiguration toConfigure{};
+    toConfigure.CurrentLimits.StatorCurrentLimit = SWERVE_TALON_STATOR_CURRENTLIMIT;
+    toConfigure.CurrentLimits.StatorCurrentLimitEnable = true; // And enable it
+    driveMotor.GetConfigurator().Apply(toConfigure);
+    driveMotor.SetNeutralMode(ctre::phoenix6::signals::NeutralModeValue::Coast);
 
     ResetEncoders();
+}
+
+void SwerveModule::SetModuleNeutralMode(ctre::phoenix6::signals::NeutralModeValue neutralMode){
+    driveMotor.SetNeutralMode(neutralMode);
 }
 
 /*
@@ -240,6 +251,13 @@ SwerveDrive::SwerveDrive()
       kinematics{wheelTranslationArray},
       odometry{kinematics, Rotation2d(0_deg), GetSwerveModulePositions()}
 {
+}
+
+void SwerveDrive::SetDriveNeutralMode(ctre::phoenix6::signals::NeutralModeValue neutralMode){
+    FLModule.SetModuleNeutralMode(neutralMode);
+    FRModule.SetModuleNeutralMode(neutralMode);
+    BLModule.SetModuleNeutralMode(neutralMode);
+    BRModule.SetModuleNeutralMode(neutralMode);
 }
 
 /**
