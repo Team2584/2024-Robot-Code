@@ -43,11 +43,11 @@ inline constexpr auto MIN_SPEED = 0.3;
 inline constexpr auto MAX_SPEED = 10; 
 
 inline auto BLOCKED_LOW = 0.4;
-inline auto BLOCKED_HIGH = 0.87;
+inline auto BLOCKED_HIGH = 0.82;
 }
 
 /* Autonomous Constants */
-inline constexpr auto shotTime = 0.75_s;
+inline constexpr auto shotTime = 1_s;
 }
 
 
