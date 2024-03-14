@@ -105,7 +105,7 @@ enum PoseEstimationType
 #define DTP_TRANSLATION_KI 0
 #define DTP_TRANSLATION_KI_MAX 0 // In percent power
 #define DTP_TRANSLATION_KD 0
-#define DTP_TRANSLATION_TOLERANCE 0.06 // In meters
+#define DTP_TRANSLATION_TOLERANCE 0.04 // In meters
 #define DTP_TRANSLATION_VELOCITY_TOLERANCE 0.5 // In percent power
 #define DTP_TRANSLATION_MIN_SPEED 0.02 // In percent power
 #define DTP_TRANSLATION_MAX_SPEED 0.6 // In percent power
