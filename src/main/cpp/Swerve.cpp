@@ -32,6 +32,17 @@ SwerveModule::SwerveModule(int driveMotorPort, int spinMotorPort, int magneticEn
     ResetEncoders();
 }
 
+units::meters_per_second_t SwerveModule::GetDriveMotorVelocity(){
+    return units::meters_per_second_t{(driveMotor.GetVelocity().GetValueAsDouble() / DRIVE_MOTOR_GEAR_RATIO * DRIVE_MOTOR_CIRCUMFERENCE)};
+}
+
+SwerveModuleState SwerveModule::GetSwerveModuleState(){
+    SwerveModuleState state = SwerveModuleState();
+    state.angle = Rotation2d(units::degree_t{GetModuleHeading()});
+    state.speed = GetDriveMotorVelocity();
+    return state;
+}
+
 /*
 * Return the mag encoder's current value (NOT CORRECTED TO MAKE 0 DEGREES FORWARD)
 */

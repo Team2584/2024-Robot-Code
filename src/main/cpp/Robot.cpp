@@ -19,6 +19,7 @@
 #include "Climb.h"
 #include "NoteController.h"
 #include "CANdleLED.h"
+#include "UIController.h"
 
 PowerDistribution m_pdh{34, frc::PowerDistribution::ModuleType::kRev};
 VisionSwerve swerveDrive{};
@@ -31,6 +32,7 @@ Elevator ampmech{};
 Climb hang{&swerveDrive};
 NoteController notecontroller{&overbumper, &flywheel, &ampmech};
 LightsSubsystem lights{&m_pdh};
+SmartDashboardController UI_Controller{&swerveDrive, &overbumper, &flywheel, &ampmech, &m_pdh, &hang};
 
 SwerveDriveAutonomousController swerveAutoController{&swerveDrive};
 AutonomousShootingController flywheelController{&swerveAutoController, &flywheel, &overbumper, &ampmech};
@@ -102,6 +104,7 @@ void Robot::RobotInit()
 void Robot::RobotPeriodic() {
   lights.UpdateSubsystemLEDS();
   swerveDrive.UpdateRaspiConnection();
+  UI_Controller.Update();
   
 
   if (DriverStation::GetAlliance() == DriverStation::kRed)
