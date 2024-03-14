@@ -84,7 +84,10 @@ bool Elevator::PIDElevator(double setpoint){
             FF = 0_V;
     }
 
-    winchMotor.SetVoltage((PID + FF) * -1);
+    if ((PID + FF) > ElevatorConstants::maxVoltsDown)
+        winchMotor.SetVoltage(ElevatorConstants::maxVoltsDown);
+    else
+        winchMotor.SetVoltage((PID + FF) * -1);
 
     auto elevv = m_controller.Calculate(units::meter_t{GetWinchEncoderReading()}, goal);
     SmartDashboard::PutNumber("Elev pid out", elevv);
