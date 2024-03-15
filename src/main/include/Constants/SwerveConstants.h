@@ -81,7 +81,7 @@
 #define CAMERA_THREE_NAME "Left Camera"
 #define CAMERA_THREE_X 11.5_in // Distance in meters from camera to center of robot forward/backward, forward positive
 #define CAMERA_THREE_Y 12.5_in // Distance in meters from camera to center of robot left/right, left positive
-#define CAMERA_THREE_Z 27_in // Camera's distance from ground in meters
+#define CAMERA_THREE_Z 17_in // Camera's distance from ground in meters
 #define CAMERA_THREE_X_ROTATION 0_deg // Camera's Rotation around robot's X axis (tilted up/down)
 #define CAMERA_THREE_Y_ROTATION 0_deg // Camera's Rotation around robot's Y axis (rotated clockwise/counterclocwise)
 #define CAMERA_THREE_Z_ROTATION 90_deg // Camera's Rotation around robot's Z axis (tilted left/right)
