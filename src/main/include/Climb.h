@@ -13,10 +13,12 @@ class Climb {
         VisionSwerve* robotSwerveDrive;
         frc::TrapezoidProfile<units::meters>::Constraints m_linearconstraints;
         frc::TrapezoidProfile<units::radians>::Constraints m_rotationconstraints;
-        frc::ProfiledPIDController<units::meters> leftPID, rightPID;
-        frc::ProfiledPIDController<units::radians> rollPID;
+        
 
     public:
+
+        frc::ProfiledPIDController<units::meters> leftPID, rightPID;
+        frc::ProfiledPIDController<units::radians> rollPID;
 
         bool climbZeroed = false;
         rev::CANSparkFlex leftClimbMotor, rightClimbMotor;

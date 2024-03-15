@@ -31,9 +31,11 @@ class SwerveModule
         double GetMagEncoderValue();
         double GetModuleHeading();
         double GetDriveEncoder();
+        units::meters_per_second_t GetDriveMotorVelocity();
         double GetDriveEncoderMeters();
         double GetSpinEncoderRadians(); // TODO make this function work
         SwerveModulePosition GetSwerveModulePosition();
+        SwerveModuleState GetSwerveModuleState();
         void ResetEncoders(); 
         void StopSwerveModule();
         void DriveSwerveModulePercent(double driveSpeed, double targetAngle);
