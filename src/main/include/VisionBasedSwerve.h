@@ -46,6 +46,8 @@ public:
     void ResetNoteOdometry(Pose2d position);
     Translation2d GetNotePosition();
     Pose2d GetNoteOdometryPose();
+    double GetNoteTx();
+    double GetNoteTy();
     void UpdateNoteOdometry();
 
     void Update();

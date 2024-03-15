@@ -20,7 +20,6 @@ private:
     units::second_t lastFPGATime;
 
     bool hasTurnedToNote = false;
-    Rotation2d noteTargetAngle = Rotation2d(0_rad);
 
 public:
     VisionSwerve *swerveDrive; /* A reference to our swerve drive. */

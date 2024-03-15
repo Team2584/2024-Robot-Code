@@ -426,11 +426,11 @@ void SwerveDriveAutonomousController::BeginDriveToNote()
 bool SwerveDriveAutonomousController::TurnToNote()
 {
     Pose2d currentPose = swerveDrive->GetNoteOdometryPose();
-    Rotation2d noteAngleDifference = Rotation2d(-1 * currentPose.X().value(), -1 * currentPose.Y().value());
-    noteTargetAngle = currentPose.Rotation() + noteAngleDifference;
+    Rotation2d noteAngleDifference = Rotation2d(units::degree_t{swerveDrive->GetNoteTx()});
+    Rotation2d noteTargetAngle = currentPose.Rotation() - noteAngleDifference;
 
-    SmartDashboard::PutNumber("Targe Note Angle Diff", noteAngleDifference.Radians().value());
-    SmartDashboard::PutNumber("Targe Note Angle", noteTargetAngle.Radians().value());
+    SmartDashboard::PutNumber("Target Note Angle Diff", noteAngleDifference.Radians().value());
+    SmartDashboard::PutNumber("Target Note Angle", noteTargetAngle.Radians().value());
 
     return DriveToPose(Pose2d(currentPose.Translation(), noteTargetAngle), PoseEstimationType::NoteBased); // Drive to current pose but at the target angle
 }
@@ -446,26 +446,25 @@ bool SwerveDriveAutonomousController::DriveToNote()
     double speeds[3] = {0, 0, 0};
     bool PIDFinished[3] = {false, false, false};
  
-    CalculatePIDToPose(PoseEstimationType::NoteBased, Pose2d(-0.6_m, 0_m, noteTargetAngle), speeds, PIDFinished);
+    Pose2d currentPose = swerveDrive->GetNoteOdometryPose();
+    Rotation2d noteAngleDifference = Rotation2d(units::degree_t{swerveDrive->GetNoteTx()});
+    Rotation2d noteTargetAngle = currentPose.Rotation() - noteAngleDifference;
+
+    CalculatePIDToPose(PoseEstimationType::NoteBased, Pose2d(0_m, 0_m, noteTargetAngle), speeds, PIDFinished);
 
     // Debugging info
-    SmartDashboard::PutNumber("Pose X Speed", speeds[0]);
-    SmartDashboard::PutNumber("Pose Y Speed", speeds[1]);
     SmartDashboard::PutNumber("Pose Rotation Speed", speeds[2]);
-
-    SmartDashboard::PutBoolean("Pose X Done", PIDFinished[0]);
-    SmartDashboard::PutBoolean("Pose Y Done", PIDFinished[1]);
     SmartDashboard::PutBoolean("Pose Rotation Done", PIDFinished[2]);
 
 
     // If all PID loops are finished, stop driving the swerve.
-    if (PIDFinished[0] && PIDFinished[1] && PIDFinished[2])
+    if (swerveDrive->GetNoteTy() < -18)
     {
         swerveDrive->DriveSwervePercent(0, 0, 0);
         return true;
     }
 
     // Drive swerve at desired speeds
-    swerveDrive->DriveSwervePercentNonFieldOriented(-1 * speeds[0], -1 * speeds[1], speeds[2]);
+    swerveDrive->DriveSwervePercentNonFieldOriented(-0.3, 0, speeds[2]);
     return false;
 }

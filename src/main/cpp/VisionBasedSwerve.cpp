@@ -117,6 +117,8 @@ void VisionSwerve::UpdateTagOdometry()
         AddVisionMeasurement(result.estimatedPose.ToPose2d(), result.timestamp);
         prevEstimatedPose = result.estimatedPose;
     } 
+
+    if (limelight.GetLimelightPipeline() == LimelightPipeline::)
 }
 
 /**
@@ -170,6 +172,16 @@ Translation2d VisionSwerve::GetNotePosition()
 Pose2d VisionSwerve::GetNoteOdometryPose()
 {
     return noteOdometry.GetPose();
+}
+
+double VisionSwerve::GetNoteTx()
+{
+    return limelight.GetNoteTx();
+}
+
+double VisionSwerve::GetNoteTy()
+{
+    return limelight.GetNoteTy();
 }
 
 void VisionSwerve::UpdateNoteOdometry()
