@@ -22,6 +22,8 @@
 #include <frc/XboxController.h>
 #include <frc/DriverStation.h>
 #include <frc/PowerDistribution.h>
+#include <frc/DataLogManager.h>
+#include <wpi/DataLog.h>
 
 //Units & Math
 #include <numbers>

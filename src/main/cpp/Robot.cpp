@@ -42,8 +42,9 @@ AutonomousController autoController{&swerveDrive, &overbumper, &flywheel, &ampme
 Elevator::ElevatorSetting elevSetHeight = Elevator::LOW;
 Intake::WristSetting wristSetPoint = Intake::HIGH;
 
-
 AllianceColor allianceColor = AllianceColor::BLUE;
+
+wpi::log::StringLogEntry shotPositionLog;
 
 enum DRIVER_MODE {BASIC, AUTO_AIM_STATIONARY, SHOOT_ON_THE_MOVE, AUTO_AMP, AUTO_INTAKE, CLIMBING_TRAP};
 DRIVER_MODE currentDriverMode = DRIVER_MODE::BASIC;
@@ -59,6 +60,10 @@ double lastRot = 0;
 
 void Robot::RobotInit()
 {
+  DataLogManager::Start();
+  wpi::log::DataLog& log = frc::DataLogManager::GetLog();
+  shotPositionLog = wpi::log::StringLogEntry(log, "/logging/shotPositions");
+
   m_chooser.SetDefaultOption(kAutoBCSI2S, kAutoBCSI2S);
   m_chooser.AddOption(kAutoBLSI3S, kAutoBLSI3S);
   m_chooser.AddOption(kAutoBRSI1S, kAutoBRSI1S);
@@ -89,7 +94,6 @@ void Robot::RobotInit()
   SmartDashboard::PutNumber("Angler Setpoint", M_PI / 2);
 
   lights.FullClear();
-
 }
 
 
@@ -602,6 +606,8 @@ void Robot::TeleopPeriodic()
       overbumper.PIDWristToPoint(Intake::SHOOT);
 
       if(doneShooting){
+        Translation2d diff = flywheelController.GetDiffDebug();
+        shotPositionLog.Append("X Diff: " + to_string(diff.X().value()) + ", Y Diff: " + to_string(diff.Y().value()));
         lights.SetStrobeGreen();
         xboxController.ShotNoteRumble();
       }
@@ -664,6 +670,8 @@ void Robot::TeleopPeriodic()
 
       if (!begunShooting && xboxController2.GetRightTriggerAxis() > TRIGGER_ACTIVATION_POINT)
       {
+        Translation2d diff = flywheelController.GetDiffDebug();
+        shotPositionLog.Append("X Diff: " + to_string(diff.X().value()) + ", Y Diff: " + to_string(diff.Y().value()));
         begunShooting = true;
         overbumper.BeginShootNote();
         shotTimer.Restart();

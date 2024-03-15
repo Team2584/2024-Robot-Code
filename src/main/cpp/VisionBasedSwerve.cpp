@@ -12,6 +12,9 @@ VisionSwerve::VisionSwerve()
       robotToCam2{frc::Translation3d{CAMERA_TWO_X, CAMERA_TWO_Y, CAMERA_TWO_Z}, frc::Rotation3d{CAMERA_TWO_X_ROTATION, CAMERA_TWO_Y_ROTATION, CAMERA_TWO_Z_ROTATION}},
       camera2{CAMERA_TWO_NAME},
       poseEstimator2{APRIL_TAGS, photon::LOWEST_AMBIGUITY, photon::PhotonCamera(CAMERA_TWO_NAME), robotToCam2},
+      robotToCam3{frc::Translation3d{CAMERA_THREE_X, CAMERA_THREE_Y, CAMERA_THREE_Z}, frc::Rotation3d{CAMERA_THREE_X_ROTATION, CAMERA_THREE_Y_ROTATION, CAMERA_THREE_Z_ROTATION}},
+      camera3{CAMERA_THREE_NAME},
+      poseEstimator3{APRIL_TAGS, photon::LOWEST_AMBIGUITY, photon::PhotonCamera(CAMERA_THREE_NAME), robotToCam3},
       noteOdometry{kinematics, Rotation2d(units::degree_t{GetIMUHeading()}), GetSwerveModulePositions(), Pose2d()},
       networkTableInstance{nt::NetworkTableInstance::GetDefault()},
       visionTable{networkTableInstance.GetTable("vision")},
@@ -124,6 +127,15 @@ void VisionSwerve::UpdateTagOdometry()
         photon::EstimatedRobotPose result = possibleResult.value();
         AddVisionMeasurement(result.estimatedPose.ToPose2d(), result.timestamp);
         prevEstimatedPose = result.estimatedPose;
+    } 
+
+    // Add april tag data
+    poseEstimator3.SetReferencePose(prevEstimatedPose);
+    possibleResult = poseEstimator3.Update();
+    if (possibleResult.has_value()) 
+    {
+        photon::EstimatedRobotPose result = possibleResult.value();
+        AddVisionMeasurement(result.estimatedPose.ToPose2d(), result.timestamp);
     } 
 }
 
