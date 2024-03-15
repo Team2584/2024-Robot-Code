@@ -144,6 +144,7 @@ public:
     SwerveSendable ntswervedrive_{swerveDrive};
     ClimbElevatorSendable ntclimbelevator_{elevator, climb};
     FlywheelSendable ntflywheel_{flywheel};
+    IntakeSendable ntintake_{intake, elevator};
 
     SmartDashboardController(VisionSwerve *swerveDrive_, Intake *intake_, FlywheelSystem *flywheel_, Elevator *ampMech_, frc::PowerDistribution *pdp, Climb *climb_)
     :
