@@ -19,6 +19,7 @@ bool AutonomousShootingController::TurnToSpeaker(AllianceColor allianceColor)
     if (allianceColor == AllianceColor::BLUE)
     {
         diff = BLUE_SPEAKER_AIM_POSITION.ToTranslation2d() - currentPose.Translation(); 
+        diffDebug = diff;
         SmartDashboard::PutNumber("DIFF X", diff.X().value());
         SmartDashboard::PutNumber("DIFF Y", diff.Y().value());
 
@@ -39,6 +40,7 @@ bool AutonomousShootingController::TurnToSpeaker(AllianceColor allianceColor)
     else
     {
         diff = RED_SPEAKER_AIM_POSITION.ToTranslation2d() - currentPose.Translation(); 
+        diffDebug = diff;
         SmartDashboard::PutNumber("DIFF X", diff.X().value());
         SmartDashboard::PutNumber("DIFF Y", diff.Y().value());
         
@@ -82,6 +84,7 @@ bool AutonomousShootingController::TurnToSpeakerWhileDriving(double xSpeed, doub
     if (allianceColor == AllianceColor::BLUE)
     {
         diff = BLUE_SPEAKER_AIM_POSITION.ToTranslation2d() - currentPose.Translation(); 
+        diffDebug = diff;
         SmartDashboard::PutNumber("DIFF X", diff.X().value());
         SmartDashboard::PutNumber("DIFF Y", diff.Y().value());
 
@@ -102,6 +105,7 @@ bool AutonomousShootingController::TurnToSpeakerWhileDriving(double xSpeed, doub
     else
     {
         diff = RED_SPEAKER_AIM_POSITION.ToTranslation2d() - currentPose.Translation(); 
+        diffDebug = diff;
         SmartDashboard::PutNumber("DIFF X", diff.X().value());
         SmartDashboard::PutNumber("DIFF Y", diff.Y().value());
 
@@ -241,3 +245,8 @@ bool AutonomousShootingController::AimAndFire(AllianceColor allianceColor)
     intake->SetIntakeMotorSpeed(0);
     return true;
 } 
+
+Translation2d AutonomousShootingController::GetDiffDebug()
+{
+    return diffDebug;
+}
