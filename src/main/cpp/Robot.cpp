@@ -555,7 +555,7 @@ void Robot::TeleopPeriodic()
         flywheelSetpoint = 4500;
 
       if (xboxController2.GetXButton())
-        anglerSetpoint = 0.8;
+        anglerSetpoint = 0.88;
       else if (xboxController2.GetYButton())
         anglerSetpoint = 0.65;
       else
@@ -766,6 +766,12 @@ void Robot::TeleopPeriodic()
       double fwdDriveSpeed = leftJoystickY * MAX_DRIVE_SPEED_CLIMB;
       double strafeDriveSpeed = leftJoystickX * MAX_DRIVE_SPEED_CLIMB;
       double turnSpeed = rightJoystickX * MAX_SPIN_SPEED_CLIMB;
+
+      if (allianceColor == AllianceColor::BLUE)
+      {
+        fwdDriveSpeed *= -1;
+        strafeDriveSpeed *= -1;
+      }
 
       if (xboxController.GetAButton())
         autoTrapController.LockRotationToNearestClimbPose(allianceColor, fwdDriveSpeed, strafeDriveSpeed);
