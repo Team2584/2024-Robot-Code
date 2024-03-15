@@ -84,8 +84,8 @@ bool Elevator::PIDElevator(double setpoint){
             FF = 0_V;
     }
 
-    if ((PID + FF) > ElevatorConstants::maxVoltsDown)
-        winchMotor.SetVoltage(-1 * ElevatorConstants::maxVoltsDown);
+    if ((PID + FF) < -ElevatorConstants::maxVoltsDown)
+        winchMotor.SetVoltage(ElevatorConstants::maxVoltsDown);
     else
         winchMotor.SetVoltage((PID + FF) * -1);
 
