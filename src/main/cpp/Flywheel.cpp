@@ -17,6 +17,12 @@ FlywheelSystem::FlywheelSystem()
     FlywheelAnglerPID.EnableContinuousInput(-M_PI, M_PI);
 }
 
+void FlywheelSystem::StopFlywheel()
+{
+  FlywheelMotor1.SetVoltage(0_V);
+  FlywheelMotor2.SetVoltage(0_V);
+}
+
 /**
  * @brief Sets both flywheel motors to a percent
  * @param percent Percent to set both motors to

@@ -561,7 +561,7 @@ void Robot::TeleopPeriodic()
       flywheel.PIDAngler(anglerSetpoint); 
 
       if (flywheel.TopFlywheel.GetMeasurement() * 60.0 > flywheelSetpoint || flywheel.BottomFlywheel.GetMeasurement() * 60.0 > flywheelSetpoint)
-        flywheel.SpinFlywheelPercent(0);
+        flywheel.StopFlywheel();
       else
         flywheel.SetFlywheelVelocity(flywheelSetpoint);
 

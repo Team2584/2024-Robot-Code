@@ -48,6 +48,8 @@ class FlywheelSystem
         
         FlywheelSystem();
 
+        void StopFlywheel();
+
         void SpinFlywheelPercent(double percent);
 
         bool SetFlywheelVelocity(double velocity);
