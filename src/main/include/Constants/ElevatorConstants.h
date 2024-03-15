@@ -9,6 +9,7 @@
 namespace ElevatorConstants {
 inline units::meters_per_second_t kMaxVelocity = 1_mps;
 inline units::meters_per_second_squared_t kMaxAcceleration = 0.7_mps_sq;
+inline units::volt_t maxVoltsDown = 4_V;
 inline double m_kP = 36.0;
 inline double m_kI = 0.05;
 inline double m_kD = 0.0;
@@ -19,9 +20,9 @@ inline auto ALLOWABLE_ERROR_POS = 0.04_m;
 
 inline auto ELEV_AMP = 0.53;
 inline auto ELEV_LOW = 0;
-inline auto ELEV_INTAKE = 0.07;
+inline auto ELEV_INTAKE = 0;
 inline auto ELEV_OUTTAKE = 0.15;
-inline auto ELEV_TRAP = 0.65;
+inline auto ELEV_TRAP = 0.70;
 
 inline constexpr double gearRatioValue1 = 1.0/4.0;
 inline constexpr double diameterValue1 = 0.0762; //meters
@@ -33,10 +34,16 @@ namespace AmpMech{
     inline constexpr double AMP_SPEED_DEPOSIT = -0.75;
 }
 
+namespace TimeOfFlight{
+    inline constexpr double tofAllowedSigma = 1.75;
+    inline constexpr auto tofOffset = 0.05_m;
+    inline constexpr int tofCANID = 27;
+}
+
 // Autonomously Score Amp Constants
-inline const Pose2d BLUE_AMP_SCORING_POSITION = {1.8415_m, 7.7_m, Rotation2d(90_deg)};
-inline const Pose2d RED_AMP_SCORING_POSITION = {14.7_m, 7.7_m, Rotation2d(90_deg)};
-inline constexpr auto ampDriveTime = 0.15_s;
+inline const Pose2d BLUE_AMP_SCORING_POSITION = {1.8415_m, 7.85_m, Rotation2d(90_deg)};
+inline const Pose2d RED_AMP_SCORING_POSITION = {14.7_m, 7.85_m, Rotation2d(90_deg)};
+inline constexpr auto ampDriveTime = 0.05_s;
 }
 
 

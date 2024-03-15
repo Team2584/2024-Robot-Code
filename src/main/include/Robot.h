@@ -22,6 +22,8 @@
 #include <frc/XboxController.h>
 #include <frc/DriverStation.h>
 #include <frc/PowerDistribution.h>
+#include <frc/DataLogManager.h>
+#include <wpi/DataLog.h>
 
 //Units & Math
 #include <numbers>
@@ -50,6 +52,7 @@
 #include <frc/DigitalInput.h>
 #include <frc/DutyCycleEncoder.h>
 #include <rev/AbsoluteEncoder.h>
+#include <TimeOfFlight.h>
 
 //Motors & LEDs
 #include <rev/CANSparkBase.h>

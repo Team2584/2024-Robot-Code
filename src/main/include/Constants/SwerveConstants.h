@@ -50,6 +50,9 @@
 #define WHEEL_SPIN_MIN_SPEED 0 // In percent power
 #define WHEEL_SPIN_MAX_SPEED 1.0 // In percent power
 
+//TalonFX Kraken Current Limits
+#define SWERVE_TALON_STATOR_CURRENTLIMIT 60.0
+
 /*
  __     ___     _                ____                _              _       
  \ \   / (_)___(_) ___  _ __    / ___|___  _ __  ___| |_ __ _ _ __ | |_ ___ 
@@ -74,6 +77,14 @@
 #define CAMERA_TWO_X_ROTATION 0_deg // Camera's Rotation around robot's X axis (tilted up/down)
 #define CAMERA_TWO_Y_ROTATION -27_deg // Camera's Rotation around robot's Y axis (rotated clockwise/counterclocwise)
 #define CAMERA_TWO_Z_ROTATION 0_deg // Camera's Rotation around robot's Z axis (tilted left/right)
+
+#define CAMERA_THREE_NAME "Left Camera"
+#define CAMERA_THREE_X 11.5_in // Distance in meters from camera to center of robot forward/backward, forward positive
+#define CAMERA_THREE_Y 12.5_in // Distance in meters from camera to center of robot left/right, left positive
+#define CAMERA_THREE_Z 27_in // Camera's distance from ground in meters
+#define CAMERA_THREE_X_ROTATION 0_deg // Camera's Rotation around robot's X axis (tilted up/down)
+#define CAMERA_THREE_Y_ROTATION 0_deg // Camera's Rotation around robot's Y axis (rotated clockwise/counterclocwise)
+#define CAMERA_THREE_Z_ROTATION 90_deg // Camera's Rotation around robot's Z axis (tilted left/right)
 
 #define APRILTAG_CONFIDENCE_X 0.1
 #define APRILTAG_CONFIDENCE_Y 0.1
@@ -102,7 +113,7 @@ enum PoseEstimationType
 #define DTP_TRANSLATION_KI 0
 #define DTP_TRANSLATION_KI_MAX 0 // In percent power
 #define DTP_TRANSLATION_KD 0
-#define DTP_TRANSLATION_TOLERANCE 0.06 // In meters
+#define DTP_TRANSLATION_TOLERANCE 0.04 // In meters
 #define DTP_TRANSLATION_VELOCITY_TOLERANCE 0.5 // In percent power
 #define DTP_TRANSLATION_MIN_SPEED 0.02 // In percent power
 #define DTP_TRANSLATION_MAX_SPEED 0.6 // In percent power
@@ -111,7 +122,7 @@ enum PoseEstimationType
 #define DTP_ROTATION_KI 0
 #define DTP_ROTATION_KI_MAX 0 // In percent power
 #define DTP_ROTATION_KD 0
-#define DTP_ROTATION_TOLERANCE 0.07 // In radians
+#define DTP_ROTATION_TOLERANCE 0.06 // In radians
 #define DTP_ROTATION_VELOCITY_TOLERANCE 0.5 // In percent power
 #define DTP_ROTATION_MIN_SPEED 0.02 // In percent powerw
 #define DTP_ROTATION_MAX_SPEED 0.6 // In percent power

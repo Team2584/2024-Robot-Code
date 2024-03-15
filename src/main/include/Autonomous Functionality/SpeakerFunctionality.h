@@ -26,6 +26,8 @@ private:
     double targetAnglerAngle;
     bool shootingNote;
 
+    Translation2d diffDebug;
+
 public:
     AutonomousShootingController(SwerveDriveAutonomousController *swerveDrive, FlywheelSystem *flyWheel_, Intake *intake_, Elevator *elevator_);
 
@@ -37,6 +39,7 @@ public:
     bool ClearElevatorForShot();
     void BeginAimAndFire(AllianceColor allianceColor);
     bool AimAndFire(AllianceColor allianceColor);
+    Translation2d GetDiffDebug();
 };
 
 #endif

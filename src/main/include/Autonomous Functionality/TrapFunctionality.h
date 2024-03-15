@@ -17,19 +17,23 @@ class AutonomousTrapController
 {
 private:
     
+    SwerveDriveAutonomousController *swerveController;
     NoteController *noteController;
     Elevator *elevator;
     Climb *climb;
+    Intake *intake;
     Timer climbTimer;
 
 public:
 
-    AutonomousTrapController(NoteController *noteController_, Elevator *elevator_, Climb *climb_);
+    AutonomousTrapController(SwerveDriveAutonomousController *swerveController_, NoteController *noteController_, Elevator *elevator_, Climb *climb_, Intake *intake_);
 
     bool PrepareClimb();
+    bool AttachHooks();
     bool ClimbToTrap();
     bool ScoreInTrap();
-
+    bool LockRotationToNearestClimbPose(AllianceColor allianceColor, double xSpeed, double ySpeed);
+    bool DriveToNearestClimbPose(AllianceColor allianceColor);
 };
 
 #endif

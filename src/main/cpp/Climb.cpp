@@ -21,6 +21,10 @@ Climb::Climb(VisionSwerve* _swerveDrive)
     rightEncoder.SetPositionConversionFactor(ClimbConstants::CLIMB_CONVERSION_FACTOR);
     leftPID.SetTolerance(ClimbConstants::Linear::m_POS_ERROR);
     rightPID.SetTolerance(ClimbConstants::Linear::m_POS_ERROR);
+    leftClimbMotor.EnableSoftLimit(rev::CANSparkBase::SoftLimitDirection::kForward, false);
+    leftClimbMotor.EnableSoftLimit(rev::CANSparkBase::SoftLimitDirection::kReverse, false);          
+    rightClimbMotor.EnableSoftLimit(rev::CANSparkBase::SoftLimitDirection::kReverse, false);
+    rightClimbMotor.EnableSoftLimit(rev::CANSparkBase::SoftLimitDirection::kForward, false);
 }
 
 bool Climb::GetLStop(){
@@ -51,16 +55,17 @@ void Climb::SetClimbZero(){
  * @note This MUST be called AND fully finished before non-roll Climb PID functions can be used 
 */
 bool Climb::ZeroClimb(){
+    SmartDashboard::PutBoolean("Climb Zeroed", climbZeroed);
     if(!climbZeroed){
         
         if(!GetLStop()){
-            leftClimbMotor.Set(ClimbConstants::BasePctDown*-0.6);
+            leftClimbMotor.Set(ClimbConstants::BasePctDown*-0.9);
         }
         else{
             leftClimbMotor.Disable();
         }
         if(!GetRStop()){
-            rightClimbMotor.Set(ClimbConstants::BasePctDown*0.6);
+            rightClimbMotor.Set(ClimbConstants::BasePctDown*0.9);
         }
         else{
             rightClimbMotor.Disable();

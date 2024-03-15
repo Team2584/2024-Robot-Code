@@ -17,6 +17,9 @@ private:
     Transform3d robotToCam2; /* The Position and rotation of the camera on the robot */
     photon::PhotonCamera camera2; /* The Camera reading the data */
     photon::PhotonPoseEstimator poseEstimator2;
+    Transform3d robotToCam3; /* The Position and rotation of the camera on the robot */
+    photon::PhotonCamera camera3; /* The Camera reading the data */
+    photon::PhotonPoseEstimator poseEstimator3;
     Pose3d prevEstimatedPose; /* The previous pose of the robot */
 
     SwerveDriveOdometry<4> noteOdometry; /* An odometry class which returns the position of the robot using wheel encoder ticks */ 

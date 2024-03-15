@@ -7,11 +7,23 @@ Elevator::Elevator()
     ampMechSensor{ampMotor.GetForwardLimitSwitch(rev::SparkLimitSwitch::Type::kNormallyOpen)},
     m_constraints{ElevatorConstants::kMaxVelocity, ElevatorConstants::kMaxAcceleration},
     m_controller{ElevatorConstants::m_kP, ElevatorConstants::m_kI, ElevatorConstants::m_kD, m_constraints},
-    m_feedforward{ElevatorConstants::m_kS, ElevatorConstants::m_kG, ElevatorConstants::m_kV}
+    m_feedforward{ElevatorConstants::m_kS, ElevatorConstants::m_kG, ElevatorConstants::m_kV},
+    m_timeOfFlight{ElevatorConstants::TimeOfFlight::tofCANID,ElevatorConstants::TimeOfFlight::tofOffset, ElevatorConstants::TimeOfFlight::tofAllowedSigma}
 {
     winchMotor.SetNeutralMode(ctre::phoenix6::signals::NeutralModeValue::Brake);
     winchMotor.SetPosition(0_tr);
     m_controller.SetTolerance(ElevatorConstants::ALLOWABLE_ERROR_POS);
+
+}
+
+bool Elevator::ZeroElevatorTOF(){
+    if(m_timeOfFlight.GetTof() != 0_m){
+        winchMotor.SetPosition(m_timeOfFlight.GetTof().value() / ElevatorConstants::ELEV_CONVERSION_FACTOR * -1_tr);
+        return true;
+    }
+    else{
+        return false;
+    }
 }
 
 /**
@@ -72,7 +84,10 @@ bool Elevator::PIDElevator(double setpoint){
             FF = 0_V;
     }
 
-    winchMotor.SetVoltage((PID + FF) * -1);
+    if ((PID + FF) > ElevatorConstants::maxVoltsDown)
+        winchMotor.SetVoltage(-1 * ElevatorConstants::maxVoltsDown);
+    else
+        winchMotor.SetVoltage((PID + FF) * -1);
 
     auto elevv = m_controller.Calculate(units::meter_t{GetWinchEncoderReading()}, goal);
     SmartDashboard::PutNumber("Elev pid out", elevv);
