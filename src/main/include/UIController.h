@@ -135,11 +135,11 @@ public:
     frc::ShuffleboardTab& teleoptab = Shuffleboard::GetTab("TeleOp");
 
     int currenttab = 0;
-
+    
     frc::Field2d m_field;
 
     frc::ShuffleboardLayout& elevatorlist = teleoptab.GetLayout("Elevator", frc::BuiltInLayouts::kList).WithSize(2, 3).WithPosition(8,0);
-    frc::ShuffleboardLayout& flywheellist = teleoptab.GetLayout("Flywheel", frc::BuiltInLayouts::kList).WithSize(2, 3).WithPosition(6,0);
+    //frc::ShuffleboardLayout& flywheellist = teleoptab.GetLayout("Flywheel", frc::BuiltInLayouts::kList).WithSize(2, 4).WithPosition(6,0);
 
     SwerveSendable ntswervedrive_{swerveDrive};
     ClimbElevatorSendable ntclimbelevator_{elevator, climb};
@@ -160,12 +160,14 @@ public:
         teleoptab.Add("Field", m_field).WithSize(3, 2).WithPosition(3, 0).WithWidget(frc::BuiltInWidgets::kField);
         teleoptab.Add("PDP", *pdps).WithSize(3, 4).WithPosition(0, 0).WithWidget(frc::BuiltInWidgets::kPowerDistribution);  
         teleoptab.Add("Swerve Drive", ntswervedrive_).WithSize(2,2).WithPosition(3,2);
-        elevatorlist.Add("Elevator", ntclimbelevator_).WithSize(1,4).WithPosition(3,2);
+
 
         elevatorlist.Add("Alt Intake", false).WithSize(1, 1).WithPosition(6, 0).WithWidget(frc::BuiltInWidgets::kToggleButton);
         elevatorlist.Add("Zero Elevator", false).WithSize(1, 1).WithPosition(6, 0).WithWidget(frc::BuiltInWidgets::kCommand);
 
-        flywheellist.Add("Flywheel", ntflywheel_).WithSize(1,3).WithPosition(6,2);
+        teleoptab.Add("Flywheel System", ntflywheel_).WithSize(2, 4).WithPosition(6,0);
+        elevatorlist.Add("Elevator", ntclimbelevator_).WithSize(2,4).WithPosition(3,2);
+
 
     }
 
