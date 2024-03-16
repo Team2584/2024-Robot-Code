@@ -484,6 +484,36 @@ void Robot::TeleopPeriodic()
         lights.SetDriving();
       }
 
+      // Control Flywheel and Angler
+      
+      double anglerSetpoint = 0.8;
+      // Spin up flywheel to various presets
+      if (xboxController2.GetStartButtonPressed())
+        flywheelSetpoint = 4000;
+      else if(xboxController2.GetXButtonPressed())
+        flywheelSetpoint = 4000;
+      else if (xboxController2.GetYButtonPressed())
+        flywheelSetpoint = 4500;
+
+      if (xboxController2.GetXButton())
+        anglerSetpoint = 0.92;
+      else if (xboxController2.GetYButton())
+        anglerSetpoint = 0.63;
+      else
+        anglerSetpoint = 0.8;
+
+      flywheel.PIDAngler(anglerSetpoint); 
+
+      if (flywheel.TopFlywheel.GetMeasurement() * 60.0 < -flywheelSetpoint || flywheel.BottomFlywheel.GetMeasurement() * 60.0 < -flywheelSetpoint)
+        flywheel.StopFlywheel();
+      else
+        flywheel.SetFlywheelVelocity(flywheelSetpoint);
+
+      if(xboxController2.GetStartButtonPressed()){
+        hang.climbZeroed = false;
+      }
+
+
       // Note Controller Stuff
       wristSetPoint = Intake::SHOOT;
       
@@ -539,38 +569,13 @@ void Robot::TeleopPeriodic()
       else {
         overbumper.SetIntakeMotorSpeed(0);
         ampmech.SetAmpMotorPercent(0);
-        ampmech.MoveToHeight(Elevator::ElevatorSetting::LOW);
+        if (xboxController2.GetXButton() || xboxController2.GetYButton())
+          flywheelController.ClearElevatorForShot(anglerSetpoint);
+        else
+          ampmech.MoveToHeight(Elevator::ElevatorSetting::LOW);
       }
 
       overbumper.PIDWristToPoint(wristSetPoint);
-
-
-      double anglerSetpoint = 0.8;
-      // Spin up flywheel to various presets
-      if (xboxController2.GetStartButtonPressed())
-        flywheelSetpoint = 4000;
-      else if(xboxController2.GetXButtonPressed())
-        flywheelSetpoint = 4000;
-      else if (xboxController2.GetYButtonPressed())
-        flywheelSetpoint = 4500;
-
-      if (xboxController2.GetXButton())
-        anglerSetpoint = 0.88;
-      else if (xboxController2.GetYButton())
-        anglerSetpoint = 0.65;
-      else
-        anglerSetpoint = 0.8;
-
-      flywheel.PIDAngler(anglerSetpoint); 
-
-      if (flywheel.TopFlywheel.GetMeasurement() * 60.0 < -flywheelSetpoint || flywheel.BottomFlywheel.GetMeasurement() * 60.0 < -flywheelSetpoint)
-        flywheel.StopFlywheel();
-      else
-        flywheel.SetFlywheelVelocity(flywheelSetpoint);
-
-      if(xboxController2.GetStartButtonPressed()){
-        hang.climbZeroed = false;
-      }
 
       //hang.SetClimbMotors(controller2LeftJoystickY, controller2RightJoystickY);
 

@@ -37,6 +37,7 @@ public:
     bool AngleFlywheelToSpeaker(AllianceColor allianceColor);
     bool SpinFlywheelForSpeaker(AllianceColor allianceColor);
     bool ClearElevatorForShot();
+    bool ClearElevatorForShot(double anglerAngle);
     void BeginAimAndFire(AllianceColor allianceColor);
     bool AimAndFire(AllianceColor allianceColor);
     Translation2d GetDiffDebug();

@@ -194,9 +194,12 @@ bool AutonomousShootingController::SpinFlywheelForSpeaker(AllianceColor alliance
 
 bool AutonomousShootingController::ClearElevatorForShot()
 {
-    double angle = targetAnglerAngle;
+    return ClearElevatorForShot(targetAnglerAngle);
+}
 
-    if(angle > FlywheelConstants::Angler::BLOCKED_LOW && angle < FlywheelConstants::Angler::BLOCKED_HIGH){
+bool AutonomousShootingController::ClearElevatorForShot(double anglerAngle)
+{
+    if(anglerAngle > FlywheelConstants::Angler::BLOCKED_LOW && anglerAngle < FlywheelConstants::Angler::BLOCKED_HIGH){
         elevator->PIDElevator(0.25);
         elevator->SetAmpMotorPercent(0);
         return elevator->GetElevatorSetpoint();
