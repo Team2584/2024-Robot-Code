@@ -527,7 +527,7 @@ void AutonomousController::FollowTrajectoryAndShoot(AllianceColor allianceColor)
     SmartDashboard::PutBoolean("noteInIntake", noteInIntake);
     SmartDashboard::PutBoolean("Spinning", spinning);
 
-    if (!currentlyShooting && (!noteInIntake || (swerveDrive->GetTagOdometryPose().X() > maxXShot && swerveDrive->GetTagOdometryPose().X() < 16.57_m - maxXShot)))
+    if (!currentlyShooting && (!noteInIntake || (swerveDrive->GetTagOdometryPose().X() > maxXShot && swerveDrive->GetTagOdometryPose().X() < 16.45_m - maxXShot)))
     {
         noteController->IntakeNoteToSelector();
         ampMech->MoveToHeight(Elevator::ElevatorSetting::LOW);
