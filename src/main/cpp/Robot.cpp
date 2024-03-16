@@ -780,7 +780,13 @@ void Robot::TeleopPeriodic()
 
       flywheel.PIDAngler(1.399);
 
-      if (xboxController2.GetPOV() == 0){
+      if (xboxController.GetPOV() == 180 || xboxController.GetPOV() == 135 || xboxController.GetPOV() == 225){
+        hang.RetractClimb();
+      }
+      else if (xboxController.GetPOV() == 0 || xboxController.GetPOV() == 45 || xboxController.GetPOV() == 315){
+        hang.ExtendClimb();
+      }
+      else if (xboxController2.GetPOV() == 0){
         hang.ClimbPID(ClimbConstants::MaxHeight);
       }
       else if (xboxController2.GetPOV() == 90){
@@ -792,12 +798,6 @@ void Robot::TeleopPeriodic()
       }
       else if (xboxController2.GetPOV() == 180){
         hang.ClimbPID(ClimbConstants::ClimbedHeight);
-      }
-      else if (xboxController.GetPOV() == 180){
-        hang.RetractClimb();
-      }
-      else if (xboxController.GetPOV() == 0){
-        hang.ExtendClimb();
       }
       else {
         hang.HoldClimb();
