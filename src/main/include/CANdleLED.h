@@ -82,7 +82,7 @@ public:
         candleConfiguration.disableWhenLOS = false;
         candleConfiguration.stripType = LEDStripType::RGB;
         candleConfiguration.brightnessScalar = 1.0;
-        candleConfiguration.vBatOutputMode = VBatOutputMode::Modulated;
+        candleConfiguration.vBatOutputMode = VBatOutputMode::Off;
         candle.ConfigAllSettings(candleConfiguration);
     }
 

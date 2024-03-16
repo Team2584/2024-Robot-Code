@@ -19,8 +19,8 @@ inline const double FIXED_INTAKE_SPEED_IN = -0.5;
 inline const double FIXED_INTAKE_SPEED_OUT = 0.7;
 inline const double INTAKE_SPEED_BACK_TO_SELECTOR = 0.5;
 inline const double SELECTOR_SPEED_ELEVATOR = 0.7;
-inline const double SELECTOR_SPEED_SHOOTER = -0.4;
-inline const double INTAKE_SPEED_SHOOTER = -0.4;
+inline const double SELECTOR_SPEED_SHOOTER = -0.95;
+inline const double INTAKE_SPEED_SHOOTER = -0.6;
 inline const units::second_t SHOT_INTAKE_TIME = 0.2_s;
 
 namespace Wrist{
