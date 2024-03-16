@@ -173,7 +173,7 @@ public:
     }
 
     void Update(){
-        m_field.SetRobotPose(swerveDrive->GetOdometryPose());
+        m_field.SetRobotPose(swerveDrive->GetTagOdometryPose());
         SmartDashboard::PutNumber("SwitchMode", currenttab);
         Shuffleboard::Update();
     }
