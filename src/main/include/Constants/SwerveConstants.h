@@ -84,7 +84,7 @@
 #define CAMERA_THREE_Z 16.75_in // Camera's distance from ground in meters
 #define CAMERA_THREE_X_ROTATION 0_deg // Camera's Rotation around robot's X axis (tilted up/down)
 #define CAMERA_THREE_Y_ROTATION 0_deg // Camera's Rotation around robot's Y axis (rotated clockwise/counterclocwise)
-#define CAMERA_THREE_Z_ROTATION 90_deg // Camera's Rotation around robot's Z axis (tilted left/right)
+#define CAMERA_THREE_Z_ROTATION -90_deg // Camera's Rotation around robot's Z axis (tilted left/right)
 
 #define APRILTAG_CONFIDENCE_X 0.1
 #define APRILTAG_CONFIDENCE_Y 0.1
