@@ -30,7 +30,7 @@ class Elevator
         void BeginPIDElevator();
         bool PIDElevator(double setpoint);
 
-        enum ElevatorSetting{LOW, INTAKE, OUTTAKE, AMP, TRAP};
+         enum ElevatorSetting{LOW, INTAKE, OUTTAKE, AMP, TRAP, SOURCEINTAKE};
 
         Elevator();
 

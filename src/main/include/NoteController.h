@@ -22,6 +22,7 @@ class NoteController
         NoteController(Intake* _intake, FlywheelSystem* _flywheel, Elevator* _elevator);
 
         bool IntakeNoteToSelector();
+        bool IntakeNoteThroughElevator();
 
         bool ToElevator();
         void BeginFromElevatorToSelector();

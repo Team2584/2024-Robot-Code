@@ -476,7 +476,8 @@ void Robot::TeleopPeriodic()
       }
 
       // Lights
-      if(overbumper.GetObjectInIntake()){
+      if(overbumper.GetObjectInIntake() || (ampmech.GetObjectInMech() && UI_Controller.GetAltIntake()))
+      {
         lights.SetHaveNote();
       }
       else{
@@ -504,12 +505,20 @@ void Robot::TeleopPeriodic()
 
       if (xboxController.GetRightTriggerAxis() > TRIGGER_ACTIVATION_POINT)
       {
-        bool done = notecontroller.IntakeNoteToSelector();
-        if (!done){
-          wristSetPoint = Intake::LOW;
+        if(!UI_Controller.GetAltIntake()){
+          bool done = notecontroller.IntakeNoteToSelector();
+          if (!done){
+            wristSetPoint = Intake::LOW;
+          }
+          else {
+            xboxController.HaveNoteRumble();
+          }
         }
-        else {
-          xboxController.HaveNoteRumble();
+        else{
+          bool done = notecontroller.IntakeNoteThroughElevator();
+          if(done){
+            xboxController.HaveNoteRumble();
+          }
         }
       }
       else if (xboxController.GetLeftTriggerAxis() > TRIGGER_ACTIVATION_POINT)

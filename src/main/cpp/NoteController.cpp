@@ -7,6 +7,40 @@ NoteController::NoteController(Intake* _intake, FlywheelSystem* _flywheel, Eleva
 {
 }
 
+bool NoteController::IntakeNoteThroughElevator(){
+
+
+
+
+    bool atHeight = elevator->MoveToHeight(Elevator::ElevatorSetting::SOURCEINTAKE);
+
+
+
+
+    if(atHeight){
+
+        if(!elevator->GetObjectInMech()){
+
+            elevator->SetAmpMotorPercent(ElevatorConstants::AmpMech::AMP_SPEED_INTAKE);
+
+            return false;
+
+        }
+
+        intake->SetIntakeMotorSpeed(0);
+
+        return true;
+
+    }
+
+    else{
+
+        return false;
+
+    }
+
+}
+
 bool NoteController::IntakeNoteToSelector(){
     if(!intake->GetObjectInIntake()){
         intake->IntakeNote();

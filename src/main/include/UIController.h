@@ -146,6 +146,8 @@ public:
     FlywheelSendable ntflywheel_{flywheel};
     IntakeSendable ntintake_{intake, elevator};
 
+    nt::GenericEntry* m_toggleelevator;
+
     SmartDashboardController(VisionSwerve *swerveDrive_, Intake *intake_, FlywheelSystem *flywheel_, Elevator *ampMech_, frc::PowerDistribution *pdp, Climb *climb_)
     :
         swerveDrive{swerveDrive_},
@@ -163,12 +165,12 @@ public:
         teleoptab.Add("Swerve Drive", ntswervedrive_).WithSize(2,2).WithPosition(3,2);
 
 
-        elevatorlist.Add("Alt Intake", false).WithSize(1, 1).WithPosition(6, 0).WithWidget(frc::BuiltInWidgets::kToggleButton);
         elevatorlist.Add("Zero Elevator", false).WithSize(1, 1).WithPosition(6, 0).WithWidget(frc::BuiltInWidgets::kCommand);
 
         teleoptab.Add("Flywheel System", ntflywheel_).WithSize(2, 4).WithPosition(6,0);
         elevatorlist.Add("Elevator", ntclimbelevator_).WithSize(2,4).WithPosition(3,2);
 
+        m_toggleelevator = elevatorlist.Add("Alt Intake", false).WithSize(1, 1).WithPosition(6, 0).WithWidget(frc::BuiltInWidgets::kToggleButton).GetEntry();
 
     }
 
@@ -180,6 +182,13 @@ public:
 
     void SwitchTab(int tab){
         currenttab = tab;
+    }
+
+    bool GetAltIntake(){
+        if(m_toggleelevator->Exists())
+            return m_toggleelevator->GetBoolean(false);
+        else
+            return false;
     }
 
 };
