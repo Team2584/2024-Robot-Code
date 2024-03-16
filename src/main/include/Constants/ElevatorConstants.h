@@ -41,9 +41,9 @@ namespace TimeOfFlight{
 }
 
 // Autonomously Score Amp Constants
-inline const Pose2d BLUE_AMP_SCORING_POSITION = {1.8415_m, 7.85_m, Rotation2d(90_deg)};
-inline const Pose2d RED_AMP_SCORING_POSITION = {14.7_m, 7.85_m, Rotation2d(90_deg)};
-inline constexpr auto ampDriveTime = 0.05_s;
+inline const Pose2d BLUE_AMP_SCORING_POSITION = {1.8415_m, 7.92_m, Rotation2d(90_deg)};
+inline const Pose2d RED_AMP_SCORING_POSITION = {14.7_m, 7.92_m, Rotation2d(90_deg)};
+inline constexpr auto ampDriveTime = 0.1_s;
 }
 
 
