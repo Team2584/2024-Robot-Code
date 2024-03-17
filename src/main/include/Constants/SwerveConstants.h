@@ -90,6 +90,10 @@
 #define APRILTAG_CONFIDENCE_Y 0.1
 #define APRILTAG_CONFIDENCE_ROTATION 5.0
 
+#define LEFT_CAM_CONFIDENCE_X 0.15
+#define LEFT_CAM_CONFIDENCE_Y 0.15
+#define LEFT_CAM_CONFIDENCE_ROTATION 10.0
+
 /*
      _         _                                                 ____                _              _       
     / \  _   _| |_ ___  _ __   ___  _ __ ___   ___  _   _ ___   / ___|___  _ __  ___| |_ __ _ _ __ | |_ ___ 

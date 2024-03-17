@@ -528,7 +528,7 @@ void AutonomousController::FollowTrajectoryAndShoot(AllianceColor allianceColor)
 
     if (!currentlyShooting && (!noteInIntake || (swerveDrive->GetTagOdometryPose().X() > maxXShot && swerveDrive->GetTagOdometryPose().X() < 16.45_m - maxXShot)))
     {
-        if ((swerveDrive->GetTagOdometryPose().X() > 2.85_m && swerveDrive->GetTagOdometryPose().X() < 6_m) || (swerveDrive->GetTagOdometryPose().X() > 10.7_m && swerveDrive->GetTagOdometryPose().X() < 13.75_m))
+        if ((swerveDrive->GetTagOdometryPose().X() > 2.85_m && swerveDrive->GetTagOdometryPose().X() < 5.9_m) || (swerveDrive->GetTagOdometryPose().X() > 10.8_m && swerveDrive->GetTagOdometryPose().X() < 13.75_m))
             intake->PIDWristToPoint(Intake::WristSetting::SHOOT);
         else
             intake->PIDWristToPoint(Intake::WristSetting::LOW);

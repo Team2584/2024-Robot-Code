@@ -109,6 +109,8 @@ void VisionSwerve::UpdateTagOdometry()
     // Update encoder counts of odometry
     tagOdometry.Update(units::degree_t{GetIMUHeading()}, GetSwerveModulePositions());
 
+    tagOdometry.SetVisionMeasurementStdDevs(wpi::array(APRILTAG_CONFIDENCE_X, APRILTAG_CONFIDENCE_Y, APRILTAG_CONFIDENCE_ROTATION));
+
     // Add april tag data
     poseEstimator.SetReferencePose(prevEstimatedPose);
     optional<photon::EstimatedRobotPose> possibleResult = poseEstimator.Update();
@@ -128,6 +130,8 @@ void VisionSwerve::UpdateTagOdometry()
         AddVisionMeasurement(result.estimatedPose.ToPose2d(), result.timestamp);
         prevEstimatedPose = result.estimatedPose;
     } 
+
+    tagOdometry.SetVisionMeasurementStdDevs(wpi::array(LEFT_CAM_CONFIDENCE_X, LEFT_CAM_CONFIDENCE_Y, LEFT_CAM_CONFIDENCE_ROTATION));
 
     // Add april tag data
     poseEstimator3.SetReferencePose(prevEstimatedPose);
