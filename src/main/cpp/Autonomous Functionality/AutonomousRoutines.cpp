@@ -516,7 +516,6 @@ void AutonomousController::FollowTrajectoryAndShoot(AllianceColor allianceColor)
     SmartDashboard::PutNumber("safety timer", safetyTimer.Get().value());
     
     bool noteInIntake = intake->GetObjectInIntake();
-    intake->PIDWristToPoint(Intake::WristSetting::LOW);
     double finalSpeeds[3] = {0.0, 0.0, 0.0};
 
     bool angled = shootingController->AngleFlywheelToSpeaker(allianceColor);
@@ -529,6 +528,11 @@ void AutonomousController::FollowTrajectoryAndShoot(AllianceColor allianceColor)
 
     if (!currentlyShooting && (!noteInIntake || (swerveDrive->GetTagOdometryPose().X() > maxXShot && swerveDrive->GetTagOdometryPose().X() < 16.45_m - maxXShot)))
     {
+        if ((swerveDrive->GetTagOdometryPose().X() > 2.85_m && swerveDrive->GetTagOdometryPose().X() < 6_m) || (swerveDrive->GetTagOdometryPose().X() > 10.7_m && swerveDrive->GetTagOdometryPose().X() < 13.75_m))
+            intake->PIDWristToPoint(Intake::WristSetting::SHOOT);
+        else
+            intake->PIDWristToPoint(Intake::WristSetting::LOW);
+
         noteController->IntakeNoteToSelector();
         ampMech->MoveToHeight(Elevator::ElevatorSetting::LOW);
         swerveDriveController->CalcTrajectoryDriveValues(PoseEstimationType::TagBased, 1, finalSpeeds);
@@ -536,6 +540,7 @@ void AutonomousController::FollowTrajectoryAndShoot(AllianceColor allianceColor)
     }
     else
     {
+        intake->PIDWristToPoint(Intake::WristSetting::LOW);
         swerveDriveController->CalcTrajectoryDriveValues(PoseEstimationType::TagBased, 0.25, finalSpeeds);
         bool readyToFire = shootingController->TurnToSpeakerWhileDrivingMetersAndRadians(finalSpeeds[0], finalSpeeds[1], allianceColor); 
         cleared = shootingController->ClearElevatorForShot();   
