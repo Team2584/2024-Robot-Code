@@ -143,5 +143,8 @@ bool Elevator::MoveToHeight(ElevatorSetting Height) {
     else if (Height == INTAKE){
         return PIDElevator(ElevatorConstants::ELEV_INTAKE);   
     }
+    else if (Height == SOURCEINTAKE){
+        return PIDElevator(ElevatorConstants::ELEV_SOURCE);   
+    }
     return false;
 }
