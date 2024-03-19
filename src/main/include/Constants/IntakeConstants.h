@@ -15,7 +15,7 @@
 namespace IntakeConstants{
 inline const double INTAKE_SPEED_IN = -0.9;
 inline const double INTAKE_SPEED_OUT = 0.5;
-inline const double FIXED_INTAKE_SPEED_IN = -0.5;
+inline const double FIXED_INTAKE_SPEED_IN = -0.75;
 inline const double FIXED_INTAKE_SPEED_OUT = 0.7;
 inline const double INTAKE_SPEED_BACK_TO_SELECTOR = 0.5;
 inline const double SELECTOR_SPEED_ELEVATOR = 0.7;
