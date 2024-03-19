@@ -552,13 +552,17 @@ void Robot::TeleopPeriodic()
       else if(xboxController2.GetRightTriggerAxis() > TRIGGER_ACTIVATION_POINT){
         overbumper.ShootNote();
       }
-      else if (xboxController2.GetRightBumper())
-      {
-        notecontroller.ScoreNoteInPosition(Elevator::ElevatorSetting::AMP);
-      }
       else if (xboxController2.GetAButton())
       {
-        notecontroller.LiftNoteToPosition(Elevator::ElevatorSetting::AMP);
+        if (xboxController2.GetRightBumper())
+          notecontroller.ScoreNoteInPosition(Elevator::ElevatorSetting::AMP);
+        else
+          notecontroller.LiftNoteToPosition(Elevator::ElevatorSetting::AMP);
+      }
+      else if (xboxController2.GetRightBumper())
+      {
+        ampmech.DepositNote();
+        overbumper.NoteToElevator();
       }
       else if (controller2LeftJoystickY != 0)
       {
@@ -720,13 +724,17 @@ void Robot::TeleopPeriodic()
       if ((xboxController2.GetRightBumperPressed() && !xboxController2.GetAButton()) || (xboxController2.GetAButtonPressed() && !xboxController2.GetRightBumper()))
         notecontroller.BeginScoreNoteInPosition(Elevator::ElevatorSetting::AMP);
 
-      if (xboxController2.GetRightBumper())
+      if (xboxController2.GetAButton())
       {
-        scored = notecontroller.ScoreNoteInPosition(Elevator::ElevatorSetting::AMP);
+        if (xboxController2.GetRightBumper())
+          notecontroller.ScoreNoteInPosition(Elevator::ElevatorSetting::AMP);
+        else
+          notecontroller.LiftNoteToPosition(Elevator::ElevatorSetting::AMP);
       }
-      else if (xboxController2.GetAButton())
+      else if (xboxController2.GetRightBumper())
       {
-        notecontroller.LiftNoteToPosition(Elevator::ElevatorSetting::AMP);
+        ampmech.DepositNote();
+        overbumper.NoteToElevator();
       }
       else {
         overbumper.SetIntakeMotorSpeed(0);
@@ -819,13 +827,16 @@ void Robot::TeleopPeriodic()
         if (xboxController2.GetRightBumper())
           ampmech.DepositNote();
       }
-      else if (xboxController2.GetRightBumper())
-      {
-        notecontroller.ScoreNoteInPosition(Elevator::ElevatorSetting::TRAP);
-      }
       else if (xboxController2.GetAButton())
       {
-        notecontroller.LiftNoteToPosition(Elevator::ElevatorSetting::TRAP);
+        if (xboxController2.GetRightBumper())
+          notecontroller.ScoreNoteInPosition(Elevator::ElevatorSetting::TRAP);
+        else
+          notecontroller.LiftNoteToPosition(Elevator::ElevatorSetting::TRAP);
+      }
+      else if (xboxController2.GetRightBumper())
+      {
+        ampmech.DepositNote();
       }
       else
       {        
