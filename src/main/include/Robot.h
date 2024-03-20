@@ -110,6 +110,8 @@ class Robot : public frc::TimedRobot {
   const std::string kAutoBR4CloseNotes = "BLUE Right: Shoot -> Intake and Shoot 3 Close Notes";
   const std::string kAutoBR4CloseNotesAnd8 = "BLUE Right Shoot -> Intake and Shoot 3 Close Notes -> Intake and Shoot 8";
   const std::string kAutoRL4CloseNotesAnd8 = "RED Left Shoot -> Intake and Shoot 3 Close Notes -> Intake and Shoot 8";
+  const std::string kAutoBC4CloseNotesAnd8 = "BLUE Center Shoot -> Intake and Shoot 3 Close Notes -> Intake and Shoot 8";
+  const std::string kAutoRC4CloseNotesAnd8 = "RED Center Shoot -> Intake and Shoot 3 Close Notes -> Intake and Shoot 8";
   const std::string kAutoBC267 = "BLUE Center Shoot -> Shoot 2 -> Shoot 6 -> Shoot 7";
   const std::string kAutoRC1067 = "RED Center Shoot -> Shoot 10 -> Shoot 6 -> Shoot 7";
   const std::string kAutoBR145 = "BLUE Right Shoot -> Shoot 1 -> Shoot 4 -> Shoot 5";

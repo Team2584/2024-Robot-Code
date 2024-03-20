@@ -78,6 +78,8 @@ void Robot::RobotInit()
   m_chooser.AddOption(kAutoBR4CloseNotes, kAutoBR4CloseNotes);
   m_chooser.AddOption(kAutoBR4CloseNotesAnd8, kAutoBR4CloseNotesAnd8);
   m_chooser.AddOption(kAutoRL4CloseNotesAnd8, kAutoRL4CloseNotesAnd8);
+  m_chooser.AddOption(kAutoBC4CloseNotesAnd8, kAutoBC4CloseNotesAnd8);
+  m_chooser.AddOption(kAutoRC4CloseNotesAnd8, kAutoRC4CloseNotesAnd8);
   m_chooser.AddOption(kAutoBC267, kAutoBC267);
   m_chooser.AddOption(kAutoRC1067, kAutoRC1067);
   m_chooser.AddOption(kAutoBR145, kAutoBR145);
@@ -204,6 +206,16 @@ void Robot::AutonomousInit()
     autoController.SetupFollowTrajectoryAndShoot(Pose2d(15.48_m, 4.4_m, Rotation2d(34.93_deg)), "RLTo9To10To11To8", 3.5_m);
     allianceColor = AllianceColor::RED;
   }
+  else if (m_autoSelected == kAutoBC4CloseNotesAnd8)
+  {
+    autoController.SetupFollowTrajectoryAndShoot(Pose2d(1.46_m, 5.49_m, Rotation2d(180_deg)), "BCTo1To2To3To8", 3.5_m);
+    allianceColor = AllianceColor::BLUE;
+  }
+  else if (m_autoSelected == kAutoRC4CloseNotesAnd8)
+  {
+    autoController.SetupFollowTrajectoryAndShoot(Pose2d(15.14_m, 5.53_m, Rotation2d(0_deg)), "RCTo9To10To11To8", 3.5_m);
+    allianceColor = AllianceColor::RED;
+  }
   else if (m_autoSelected == kAutoBC267)
   {
     autoController.SetupFollowTrajectoryAndShoot(Pose2d(1.38_m, 5.51_m, Rotation2d(180_deg)), "BCTo2To6To7", 3.5_m);
@@ -295,6 +307,10 @@ void Robot::AutonomousPeriodic()
   else if (m_autoSelected == kAutoBR4CloseNotesAnd8)
     autoController.FollowTrajectoryAndShoot(AllianceColor::BLUE);
   else if (m_autoSelected == kAutoRL4CloseNotesAnd8)
+    autoController.FollowTrajectoryAndShoot(AllianceColor::RED);
+  else if (m_autoSelected == kAutoBC4CloseNotesAnd8)
+    autoController.FollowTrajectoryAndShoot(AllianceColor::BLUE);
+  else if (m_autoSelected == kAutoRC4CloseNotesAnd8)
     autoController.FollowTrajectoryAndShoot(AllianceColor::RED);
   else if (m_autoSelected == kAutoBC267)
       autoController.FollowTrajectoryAndShoot(AllianceColor::BLUE);
