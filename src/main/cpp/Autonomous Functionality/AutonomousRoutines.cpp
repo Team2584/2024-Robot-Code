@@ -502,12 +502,12 @@ void AutonomousController::SlowBlueRightShootIntake1ShootIntake2ShootIntake3()
     }
 }
 
-void AutonomousController::SetupFollowTrajectoryAndShoot(Pose2d startingPose, string trajectoryString, units::meter_t maxXShot_)
+void AutonomousController::SetupFollowTrajectoryAndShoot(Pose2d startingPose, string trajectoryString, units::meter_t maxDistanceShot_)
 {
     SetupAuto(startingPose);
     swerveDriveController->LoadTrajectory(trajectoryString);
     swerveDriveController->BeginNextTrajectory();
-    maxXShot = maxXShot_;
+    maxDistanceShot = maxDistanceShot_;
 }
 
 void AutonomousController::FollowTrajectoryAndShoot(AllianceColor allianceColor)
@@ -526,7 +526,14 @@ void AutonomousController::FollowTrajectoryAndShoot(AllianceColor allianceColor)
     SmartDashboard::PutBoolean("noteInIntake", noteInIntake);
     SmartDashboard::PutBoolean("Spinning", spinning);
 
-    if (!currentlyShooting && (!noteInIntake || (swerveDrive->GetTagOdometryPose().X() > maxXShot && swerveDrive->GetTagOdometryPose().X() < 16.45_m - maxXShot)))
+    // Determine what our target angle is
+    units::meter_t distance;
+    if (allianceColor == AllianceColor::BLUE)
+        distance = swerveDrive->GetTagOdometryPose().Translation().Distance(BLUE_SPEAKER_POSITION.ToTranslation2d());
+    else
+        distance = swerveDrive->GetTagOdometryPose().Translation().Distance(RED_SPEAKER_POSITION.ToTranslation2d());
+
+    if (!currentlyShooting && (!noteInIntake || (distance > maxDistanceShot)))
     {
         if ((swerveDrive->GetTagOdometryPose().X() > 2.85_m && swerveDrive->GetTagOdometryPose().X() < 5.9_m) || (swerveDrive->GetTagOdometryPose().X() > 10.8_m && swerveDrive->GetTagOdometryPose().X() < 13.75_m))
             intake->PIDWristToPoint(Intake::WristSetting::SHOOT);

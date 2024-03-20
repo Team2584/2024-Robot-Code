@@ -196,72 +196,72 @@ void Robot::AutonomousInit()
   }
   else if (m_autoSelected == kAutoBR4CloseNotesAnd8)
   {
-    autoController.SetupFollowTrajectoryAndShoot(Pose2d(1.06_m, 4.35_m, Rotation2d(138.81_deg)), "BRTo1To2To3To8", 2.5_m);
+    autoController.SetupFollowTrajectoryAndShoot(Pose2d(1.06_m, 4.35_m, Rotation2d(138.81_deg)), "BRTo1To2To3To8", 3.5_m);
     allianceColor = AllianceColor::BLUE;
   }
   else if (m_autoSelected == kAutoRL4CloseNotesAnd8)
   {
-    autoController.SetupFollowTrajectoryAndShoot(Pose2d(15.48_m, 4.4_m, Rotation2d(34.93_deg)), "RLTo9To10To11To8", 2.5_m);
+    autoController.SetupFollowTrajectoryAndShoot(Pose2d(15.48_m, 4.4_m, Rotation2d(34.93_deg)), "RLTo9To10To11To8", 3.5_m);
     allianceColor = AllianceColor::RED;
   }
   else if (m_autoSelected == kAutoBC267)
   {
-    autoController.SetupFollowTrajectoryAndShoot(Pose2d(1.38_m, 5.51_m, Rotation2d(180_deg)), "BCTo2To6To7", 2.5_m);
+    autoController.SetupFollowTrajectoryAndShoot(Pose2d(1.38_m, 5.51_m, Rotation2d(180_deg)), "BCTo2To6To7", 3.5_m);
     allianceColor = AllianceColor::BLUE;
   }
   else if (m_autoSelected == kAutoRC1067)
   {
-    autoController.SetupFollowTrajectoryAndShoot(Pose2d(15.19_m, 5.59_m, Rotation2d(0.81_deg)), "RCTo10To6To7", 2.5_m);
+    autoController.SetupFollowTrajectoryAndShoot(Pose2d(15.19_m, 5.59_m, Rotation2d(0.81_deg)), "RCTo10To6To7", 3.5_m);
     allianceColor = AllianceColor::RED;
   }
   else if (m_autoSelected == kAutoBR145)
   {
-    autoController.SetupFollowTrajectoryAndShoot(Pose2d(1.22_m, 4.47_m, Rotation2d(-98.13_deg)), "BRTo1To4To5", 2.5_m);
+    autoController.SetupFollowTrajectoryAndShoot(Pose2d(1.22_m, 4.47_m, Rotation2d(-98.13_deg)), "BRTo1To4To5", 3.5_m);
     allianceColor = AllianceColor::BLUE;
   }
   else if (m_autoSelected == kAutoRL945)
   {
-    autoController.SetupFollowTrajectoryAndShoot(Pose2d(1.06_m, 4.35_m, Rotation2d(138.81_deg)), "RLTo9To4To5", 2.5_m);
+    autoController.SetupFollowTrajectoryAndShoot(Pose2d(15.34_m, 4.38_m, Rotation2d(47.73_deg)), "RLTo9To4To5", 3.5_m);
     allianceColor = AllianceColor::RED;
   }
   else if (m_autoSelected == kAutoBL3267)
   {
-    autoController.SetupFollowTrajectoryAndShoot(Pose2d(1.20_m, 6.54_m, Rotation2d(-145.78_deg)), "BLTo3To2To6To7", 2.5_m);
+    autoController.SetupFollowTrajectoryAndShoot(Pose2d(1.20_m, 6.54_m, Rotation2d(-145.78_deg)), "BLTo3To2To6To7", 3.5_m);
     allianceColor = AllianceColor::BLUE;
   }
   else if (m_autoSelected == kAutoRR111067)
   {
-    autoController.SetupFollowTrajectoryAndShoot(Pose2d(15.34_m, 6.58_m, Rotation2d(83.66_deg)), "RRTo11To10To6To7", 2.5_m);
+    autoController.SetupFollowTrajectoryAndShoot(Pose2d(15.34_m, 6.58_m, Rotation2d(83.66_deg)), "RRTo11To10To6To7", 3.5_m);
     allianceColor = AllianceColor::RED;
   }
   else if (m_autoSelected == kAutoBR146)
   {
-    autoController.SetupFollowTrajectoryAndShoot(Pose2d(1.29_m, 4.47_m, Rotation2d(150.75_deg)), "BRTo1To4To6", 2.5_m);
+    autoController.SetupFollowTrajectoryAndShoot(Pose2d(1.29_m, 4.47_m, Rotation2d(150.75_deg)), "BRTo1To4To6", 3.5_m);
     allianceColor = AllianceColor::BLUE;
   }
   else if (m_autoSelected == kAutoRL946)
   {
-    autoController.SetupFollowTrajectoryAndShoot(Pose2d(15.37_m, 4.59_m, Rotation2d(27.9_deg)), "RLTo9To4To6", 2.5_m);
+    autoController.SetupFollowTrajectoryAndShoot(Pose2d(15.37_m, 4.59_m, Rotation2d(27.9_deg)), "RLTo9To4To6", 3.5_m);
     allianceColor = AllianceColor::RED;
   }
   else if (m_autoSelected == kAutoBR45)
   {
-    autoController.SetupFollowTrajectoryAndShoot(Pose2d(1.1_m, 4.37_m, Rotation2d(137.29_deg)), "BRTo4To5", 2.5_m);
+    autoController.SetupFollowTrajectoryAndShoot(Pose2d(1.1_m, 4.37_m, Rotation2d(137.29_deg)), "BRTo4To5", 3.5_m);
     allianceColor = AllianceColor::BLUE;
   }
   else if (m_autoSelected == kAutoRL45)
   {
-    autoController.SetupFollowTrajectoryAndShoot(Pose2d(15.35_m, 4.46_m, Rotation2d(37.57_deg)), "RLTo4To5", 2.5_m);
+    autoController.SetupFollowTrajectoryAndShoot(Pose2d(15.35_m, 4.46_m, Rotation2d(37.57_deg)), "RLTo4To5", 3.5_m);
     allianceColor = AllianceColor::RED;
   }
   else if (m_autoSelected == kAutoBL387)
   {
-    autoController.SetupFollowTrajectoryAndShoot(Pose2d(1.25_m, 6.49_m, Rotation2d(-144.64_deg)), "BLTo3To8To7", 2.5_m);
+    autoController.SetupFollowTrajectoryAndShoot(Pose2d(1.25_m, 6.49_m, Rotation2d(-144.64_deg)), "BLTo3To8To7", 3.5_m);
     allianceColor = AllianceColor::BLUE;
   }
   else if (m_autoSelected == kAutoRR1187)
   {
-    autoController.SetupFollowTrajectoryAndShoot(Pose2d(15.35_m, 6.64_m, Rotation2d(-34.59_deg)), "RRTo11To8To7", 2.5_m);
+    autoController.SetupFollowTrajectoryAndShoot(Pose2d(15.35_m, 6.64_m, Rotation2d(-34.59_deg)), "RRTo11To8To7", 3.5_m);
     allianceColor = AllianceColor::RED;
   }
 }

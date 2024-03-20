@@ -25,7 +25,7 @@ private:
     Timer safetyTimer;
     double splineSection = 0;
     bool currentlyShooting = false;
-    units::meter_t maxXShot = 100_m;
+    units::meter_t maxDistanceShot = 100_m;
 
 public:
     AutonomousController(VisionSwerve *swerveDrive_, Intake *intake_, FlywheelSystem *flywheel_, Elevator *ampMech_, SwerveDriveAutonomousController *swerveDriveController_, NoteController *noteController_, AutonomousShootingController *shootingController_, AutonomousAmpingController *ampingController_);
@@ -39,6 +39,6 @@ public:
     void BlueLeftShootIntake3ShootIntake8ShootTESTING();
     void SetupSlowBlueRightShootIntake1ShootIntake2ShootIntake3();
     void SlowBlueRightShootIntake1ShootIntake2ShootIntake3();
-    void SetupFollowTrajectoryAndShoot(Pose2d startingPose, string trajectoryName, units::meter_t maxXShot_);
+    void SetupFollowTrajectoryAndShoot(Pose2d startingPose, string trajectoryName, units::meter_t maxDistanceShot_);
     void FollowTrajectoryAndShoot(AllianceColor allianceColor);
 };
