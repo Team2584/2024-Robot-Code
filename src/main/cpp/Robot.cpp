@@ -60,6 +60,8 @@ double lastX = 0;
 double lastY = 0;
 double lastRot = 0;
 
+bool fixingShooter = false;
+
 void Robot::RobotInit()
 {
   DataLogManager::Start();
@@ -343,6 +345,8 @@ void Robot::AutonomousPeriodic()
 
 void Robot::TeleopInit()
 {
+  fixingShooter = false;
+  SmartDashboard::PutBoolean("Fix Shooter", false);
   swerveDrive.SetDriveNeutralMode(ctre::phoenix6::signals::NeutralModeValue::Coast);
   currentDriverMode = DRIVER_MODE::BASIC;
   begunShooting = false;
@@ -504,7 +508,8 @@ void Robot::TeleopPeriodic()
       }
 
       // Control Flywheel and Angler
-      
+      fixingShooter = SmartDashboard::GetBoolean("Fix Shooter", false);
+
       double anglerSetpoint = 0.8;
       // Spin up flywheel to various presets
       if (xboxController2.GetStartButtonPressed())
@@ -513,6 +518,8 @@ void Robot::TeleopPeriodic()
         flywheelSetpoint = 4000;
       else if (xboxController2.GetYButtonPressed())
         flywheelSetpoint = 4500;
+      else if (fixingShooter)
+        flywheelSetpoint = -1500;
 
       if (xboxController2.GetXButton())
         anglerSetpoint = 0.92;
