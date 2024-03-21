@@ -519,7 +519,7 @@ void Robot::TeleopPeriodic()
       else if (xboxController2.GetYButtonPressed())
         flywheelSetpoint = 4500;
       else if (fixingShooter)
-        flywheelSetpoint = -1500;
+        flywheelSetpoint = -100;
 
       if (xboxController2.GetXButton())
         anglerSetpoint = 0.92;
@@ -530,7 +530,7 @@ void Robot::TeleopPeriodic()
 
       flywheel.PIDAngler(anglerSetpoint); 
 
-      if (flywheel.TopFlywheel.GetMeasurement() * 60.0 < -flywheelSetpoint || flywheel.BottomFlywheel.GetMeasurement() * 60.0 < -flywheelSetpoint)
+      if (flywheel.TopFlywheel.GetMeasurement() * 60.0 < -flywheelSetpoint || flywheel.BottomFlywheel.GetMeasurement() * 60.0 < -flywheelSetpoint || (flywheelSetpoint < 0 && (flywheel.BottomFlywheel.GetMeasurement() * 60.0 < -200 || flywheel.TopFlywheel.GetMeasurement() * 60.0 < -200)) )
         flywheel.StopFlywheel();
       else
         flywheel.SetFlywheelVelocity(flywheelSetpoint);
