@@ -180,5 +180,4 @@ enum PoseEstimationType
 #define NOTE_ROTATION_MIN_SPEED 0.02 // In percent power
 #define NOTE_ROTATION_MAX_SPEED 0.6 // In percent power
 
-
 #endif // SWERVE_CONSTANTS_H

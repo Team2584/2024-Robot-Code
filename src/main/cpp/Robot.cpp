@@ -111,7 +111,6 @@ void Robot::RobotInit()
  */
 void Robot::RobotPeriodic() {
   lights.UpdateSubsystemLEDS();
-  swerveDrive.UpdateRaspiConnection();
   UI_Controller.Update();
   
 
@@ -1018,9 +1017,8 @@ void Robot::TeleopPeriodic()
   SmartDashboard::PutNumber("Tag Odometry Heading", swerveDrive.GetTagOdometryPose().Rotation().Degrees().value());
 
   SmartDashboard::PutBoolean("Note in View", swerveDrive.NoteInView());
-  SmartDashboard::PutNumber("Note Odometry X", swerveDrive.GetNoteOdometryPose().X().value());
-  SmartDashboard::PutNumber("Note Odometry Y", swerveDrive.GetNoteOdometryPose().Y().value());
-  SmartDashboard::PutNumber("Note Odometry Heading", swerveDrive.GetNoteOdometryPose().Rotation().Degrees().value());
+  SmartDashboard::PutNumber("Note Tx", swerveDrive.GetNoteTx());
+  SmartDashboard::PutNumber("Note Ty", swerveDrive.GetNoteTy());
 
   SmartDashboard::PutNumber("Elevator Encoder", ampmech.GetWinchEncoderReading());
   SmartDashboard::PutNumber("Wrist Encoder", overbumper.GetWristEncoderReading());
@@ -1272,9 +1270,6 @@ void Robot::TestPeriodic() {
   SmartDashboard::PutNumber("Tag Odometry Heading", swerveDrive.GetTagOdometryPose().Rotation().Degrees().value());
 
   SmartDashboard::PutBoolean("Note in View", swerveDrive.NoteInView());
-  SmartDashboard::PutNumber("Note Odometry X", swerveDrive.GetNoteOdometryPose().X().value());
-  SmartDashboard::PutNumber("Note Odometry Y", swerveDrive.GetNoteOdometryPose().Y().value());
-  SmartDashboard::PutNumber("Note Odometry Heading", swerveDrive.GetNoteOdometryPose().Rotation().Degrees().value());
 
   SmartDashboard::PutNumber("Elevator Encoder", ampmech.GetWinchEncoderReading());
   SmartDashboard::PutNumber("Wrist Encoder", overbumper.GetWristEncoderReading());

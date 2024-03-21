@@ -15,22 +15,13 @@ VisionSwerve::VisionSwerve()
       robotToCam3{frc::Translation3d{CAMERA_THREE_X, CAMERA_THREE_Y, CAMERA_THREE_Z}, frc::Rotation3d{CAMERA_THREE_X_ROTATION, CAMERA_THREE_Y_ROTATION, CAMERA_THREE_Z_ROTATION}},
       camera3{CAMERA_THREE_NAME},
       poseEstimator3{APRIL_TAGS, photon::LOWEST_AMBIGUITY, photon::PhotonCamera(CAMERA_THREE_NAME), robotToCam3},
-      noteOdometry{kinematics, Rotation2d(units::degree_t{GetIMUHeading()}), GetSwerveModulePositions(), Pose2d()},
       networkTableInstance{nt::NetworkTableInstance::GetDefault()},
       visionTable{networkTableInstance.GetTable("vision")},
-      sanityTopic{visionTable->GetDoubleTopic("sanitycheck")},
-      sanityEntry{sanityTopic.GetEntry(-1)},
-      connectedTopic{visionTable->GetDoubleTopic("connected")},
-      connectedEntry{connectedTopic.GetEntry(false)},
-      noteInViewTopic{visionTable->GetBooleanTopic("noteInView")},
-      noteInViewSubscriber{noteInViewTopic.Subscribe({})},
-      notePosTopic{visionTable->GetDoubleTopic("ringPos")},
-      notePoseSubscriber{notePosTopic.Subscribe({})}
+      limelight{visionTable}
 {
     tagOdometry.SetVisionMeasurementStdDevs(wpi::array(APRILTAG_CONFIDENCE_X, APRILTAG_CONFIDENCE_Y, APRILTAG_CONFIDENCE_ROTATION));
 
     networkTableInstance.StartServer();
-    connectedEntry.Set(true);
 }
 
 /**
@@ -42,9 +33,6 @@ void VisionSwerve::ResetHeading()
 
     Pose2d currentPose = GetTagOdometryPose();
     ResetTagOdometry(Pose2d(currentPose.Translation(), Rotation2d(0_deg)));
-
-    currentPose = GetNoteOdometryPose();
-    ResetNoteOdometry(Pose2d(currentPose.Translation(), Rotation2d(0_deg)));
 }
 
 /**
@@ -166,57 +154,19 @@ void VisionSwerve::DriveSwerveTagOrientedMetersAndRadians(double FwdDriveSpeed, 
 }
 
 
-void VisionSwerve::UpdateRaspiConnection()
-{
-    if (sanityEntry.Get() == -1)
-        connectedEntry.Set(false);
-    else
-        connectedEntry.Set(true);
-}
-
-void VisionSwerve::PrintRaspiSanityCheck()
-{
-    SmartDashboard::PutNumber("Raspi Sanity Check", sanityEntry.Get());
-}
-
 bool VisionSwerve::NoteInView()
 {
-    return noteInViewSubscriber.Get();
+    return limelight.noteInViewSubscriber.Get();
 }
 
-void VisionSwerve::ResetNoteOdometry()
+double VisionSwerve::GetNoteTx()
 {
-    ResetNoteOdometry(Pose2d(0_m, 0_m, Rotation2d(0_rad)));
-}
-void VisionSwerve::ResetNoteOdometry(Pose2d position)
-{
-    noteOdometry.ResetPosition(Rotation2d(units::degree_t{GetIMUHeading()}),
-                               GetSwerveModulePositions(), position);
+    return limelight.GetNoteTx();
 }
 
-Translation2d VisionSwerve::GetNotePosition()
+double VisionSwerve::GetNoteTy()
 {
-    auto array = notePoseSubscriber.Get();
-    units::meter_t xPos = units::meter_t{array[1] * -1};
-    units::meter_t yPos = units::meter_t{array[0]};
-    return Translation2d(xPos, yPos);
-}
-
-Pose2d VisionSwerve::GetNoteOdometryPose()
-{
-    return noteOdometry.GetPose();
-}
-
-void VisionSwerve::UpdateNoteOdometry()
-{
-    // Update encoder counts of odometry
-    noteOdometry.Update(units::degree_t{GetIMUHeading()}, GetSwerveModulePositions());
-
-    // Incorporate Note Data If Note is more that 0.7_m from robot
-    if (NoteInView() && GetNotePosition().X() < -0.7_m)
-    {
-        ResetNoteOdometry(Pose2d(GetNotePosition(), GetOdometryPose().Rotation()));
-    }
+    return limelight.GetNoteTy();
 }
 
 /*
@@ -226,5 +176,4 @@ void VisionSwerve::Update()
 {
     SwerveDrive::Update();
     UpdateTagOdometry();
-    UpdateNoteOdometry();
 }
