@@ -430,6 +430,11 @@ bool SwerveDriveAutonomousController::TurnToNote()
 
     SmartDashboard::PutNumber("Target Note Angle", noteTargetAngle.Radians().value());
 
+    if (!swerveDrive->NoteInView())
+    {
+        swerveDrive->DriveSwervePercent(0,0,0);
+        return false;
+    }
     return DriveToPose(Pose2d(currentPose.Translation(), noteTargetAngle), PoseEstimationType::NoteBased); // Drive to current pose but at the target angle
 }
 
@@ -461,6 +466,12 @@ bool SwerveDriveAutonomousController::DriveToNote()
     {
         swerveDrive->DriveSwervePercent(0, 0, 0);
         return true;
+    }
+
+    if (!swerveDrive->NoteInView())
+    {
+        swerveDrive->DriveSwervePercent(0,0,0);
+        return false;
     }
 
     // Drive swerve at desired speeds
