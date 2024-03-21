@@ -97,6 +97,8 @@ void Robot::RobotInit()
   SmartDashboard::PutNumber("Flywheel Setpoint", 0);
   SmartDashboard::PutNumber("Angler Setpoint", M_PI / 2);
 
+  SmartDashboard::PutNumber("Angler Trim", 0.0);
+
   lights.FullClear();
 }
 
@@ -121,6 +123,8 @@ void Robot::RobotPeriodic() {
 
   SmartDashboard::PutBoolean("In Match", DriverStation::GetMatchType() != DriverStation::MatchType::kNone);
   SmartDashboard::PutBoolean("Is Blue Alliance", allianceColor == AllianceColor::BLUE);
+
+  flywheelController.anglerTrim = SmartDashboard::GetNumber("Angler Trim", 0.0);
 }
 
 /**
@@ -808,23 +812,23 @@ void Robot::TeleopPeriodic()
 
       flywheel.PIDAngler(1.399);
 
-      if (xboxController.GetPOV() == 180 || xboxController.GetPOV() == 135 || xboxController.GetPOV() == 225){
+      if (xboxController2.GetPOV() == 180 || xboxController2.GetPOV() == 135 || xboxController2.GetPOV() == 225){
         hang.RetractClimb();
       }
-      else if (xboxController.GetPOV() == 0 || xboxController.GetPOV() == 45 || xboxController.GetPOV() == 315){
+      else if (xboxController2.GetPOV() == 0 || xboxController2.GetPOV() == 45 || xboxController2.GetPOV() == 315){
         hang.ExtendClimb();
       }
-      else if (xboxController2.GetPOV() == 0){
+      else if (xboxController.GetPOV() == 0){
         hang.ClimbPID(ClimbConstants::MaxHeight);
       }
-      else if (xboxController2.GetPOV() == 90){
+      else if (xboxController.GetPOV() == 90){
         hang.ClimbPID(ClimbConstants::AttatchingHeight);
       }
-      else if (xboxController2.GetPOV() == 270){
+      else if (xboxController.GetPOV() == 270){
         hang.climbZeroed = false;
         hang.ZeroClimb();
       }
-      else if (xboxController2.GetPOV() == 180){
+      else if (xboxController.GetPOV() == 180){
         hang.ClimbPID(ClimbConstants::ClimbedHeight);
       }
       else {

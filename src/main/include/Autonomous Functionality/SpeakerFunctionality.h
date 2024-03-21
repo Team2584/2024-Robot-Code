@@ -29,6 +29,8 @@ private:
     Translation2d diffDebug;
 
 public:
+    double anglerTrim;
+
     AutonomousShootingController(SwerveDriveAutonomousController *swerveDrive, FlywheelSystem *flyWheel_, Intake *intake_, Elevator *elevator_);
 
     bool TurnToSpeaker(AllianceColor allianceColor);

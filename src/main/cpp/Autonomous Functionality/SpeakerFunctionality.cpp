@@ -160,8 +160,10 @@ bool AutonomousShootingController::AngleFlywheelToSpeaker(AllianceColor alliance
     else
         targetAnglerAngle = lerpVal(1, 1.5, 0.95, 0.83, distance.value());
 
+
+    targetAnglerAngle += anglerTrim;
     SmartDashboard::PutNumber("Target Angler Angle", targetAnglerAngle);
-    
+
     return flyWheel->PIDAngler(targetAnglerAngle);
 }
 
