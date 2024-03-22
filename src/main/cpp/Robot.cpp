@@ -831,19 +831,6 @@ void Robot::TeleopPeriodic()
       else if (xboxController2.GetPOV() == 0 || xboxController2.GetPOV() == 45 || xboxController2.GetPOV() == 315){
         hang.ExtendClimb();
       }
-      else if (xboxController.GetPOV() == 0){
-        hang.ClimbPID(ClimbConstants::MaxHeight);
-      }
-      else if (xboxController.GetPOV() == 90){
-        hang.ClimbPID(ClimbConstants::AttatchingHeight);
-      }
-      else if (xboxController.GetPOV() == 270){
-        hang.climbZeroed = false;
-        hang.ZeroClimb();
-      }
-      else if (xboxController.GetPOV() == 180){
-        hang.ClimbPID(ClimbConstants::ClimbedHeight);
-      }
       else {
         hang.HoldClimb();
       }
