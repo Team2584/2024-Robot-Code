@@ -100,6 +100,7 @@ void Robot::RobotInit()
   SmartDashboard::PutNumber("Angler Setpoint", M_PI / 2);
 
   SmartDashboard::PutNumber("Angler Trim", 0.0);
+  SmartDashboard::PutNumber("Angler Mag Encoder Borked", false);
 
   lights.FullClear();
 }

@@ -83,6 +83,13 @@ bool FlywheelSystem::PIDAngler(double point)
     return false;
   }
 
+  if (GetAnglerEncoderReading() < -1 || GetAnglerEncoderReading() > 2)
+  {
+    FlywheelAnglingMotor.Set(0);
+    SmartDashboard::PutNumber("Angler Mag Encoder Borked", true);
+    return false;  
+  }
+
   units::volt_t PID = units::volt_t{FlywheelAnglerPID.Calculate(GetAnglerEncoderReading(), point)};
   units::volt_t FF = FlywheelAnglerFF.Calculate(units::radian_t{GetAnglerEncoderReading()}, 0_rad / 1_s);
   SmartDashboard::PutNumber("Angler PID", PID.value());
