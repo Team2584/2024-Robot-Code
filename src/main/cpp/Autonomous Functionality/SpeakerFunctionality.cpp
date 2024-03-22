@@ -147,10 +147,14 @@ bool AutonomousShootingController::AngleFlywheelToSpeaker(AllianceColor alliance
 
     if (distance > 6_m)
         targetAnglerAngle = 0.55;
+    else if (distance > 4_m)
+        targetAnglerAngle = lerpVal(4, 6, 0.6167, 0.55, distance.value());
+    else if (distance >= 3.5_m)
+        targetAnglerAngle = lerpVal(3.5, 4, 0.645, 0.6167, distance.value());
     else if (distance >= 3_m)
-        targetAnglerAngle = lerpVal(3, 6, 0.65, 0.55, distance.value());
+        targetAnglerAngle = lerpVal(3, 3.5, 0.67, 0.645, distance.value());
     else if (distance >= 2.5_m)
-        targetAnglerAngle = lerpVal(2.5, 3, 0.7, 0.65, distance.value());
+        targetAnglerAngle = lerpVal(2.5, 3, 0.7, 0.67, distance.value());
     else if (distance >= 2_m)
         targetAnglerAngle = lerpVal(2, 2.5, 0.75, 0.7, distance.value());
     else if (distance >= 1.75_m)
@@ -202,7 +206,7 @@ bool AutonomousShootingController::ClearElevatorForShot()
 bool AutonomousShootingController::ClearElevatorForShot(double anglerAngle)
 {
     if(anglerAngle > FlywheelConstants::Angler::BLOCKED_LOW && anglerAngle < FlywheelConstants::Angler::BLOCKED_HIGH){
-        elevator->PIDElevator(0.25);
+        elevator->PIDElevator(0.23);
         elevator->SetAmpMotorPercent(0);
         return elevator->GetElevatorSetpoint();
     }

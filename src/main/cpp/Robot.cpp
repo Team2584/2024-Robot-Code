@@ -355,13 +355,15 @@ void Robot::TeleopInit()
   lastX = 0;
   lastY = 0;
   lastRot = 0;
+  hang.lClimbZeroed = false;
+  hang.rClimbZeroed = false;
 }
 
 void Robot::TeleopPeriodic()
 {
   /* UPDATES */
-
   swerveDrive.Update();
+  hang.UpdateClimbEncoders();
 
   /* Controller Data */
 
@@ -518,8 +520,6 @@ void Robot::TeleopPeriodic()
         flywheelSetpoint = 4000;
       else if (xboxController2.GetYButtonPressed())
         flywheelSetpoint = 4500;
-      else if (fixingShooter)
-        flywheelSetpoint = -100;
 
       if (xboxController2.GetXButton())
         anglerSetpoint = 0.92;
@@ -530,7 +530,9 @@ void Robot::TeleopPeriodic()
 
       flywheel.PIDAngler(anglerSetpoint); 
 
-      if (flywheel.TopFlywheel.GetMeasurement() * 60.0 < -flywheelSetpoint || flywheel.BottomFlywheel.GetMeasurement() * 60.0 < -flywheelSetpoint || (flywheelSetpoint < 0 && (flywheel.BottomFlywheel.GetMeasurement() * 60.0 < -200 || flywheel.TopFlywheel.GetMeasurement() * 60.0 < -200)) )
+      if (fixingShooter)
+        flywheel.SpinFlywheelPercent(-0.2);
+      else if (flywheel.TopFlywheel.GetMeasurement() * 60.0 < -flywheelSetpoint || flywheel.BottomFlywheel.GetMeasurement() * 60.0 < -flywheelSetpoint)
         flywheel.StopFlywheel();
       else
         flywheel.SetFlywheelVelocity(flywheelSetpoint);
@@ -761,6 +763,10 @@ void Robot::TeleopPeriodic()
       {
         ampmech.DepositNote();
         overbumper.NoteToElevator();
+      }
+      else if (xboxController2.GetBButton())
+      {
+        notecontroller.ToElevator();
       }
       else {
         overbumper.SetIntakeMotorSpeed(0);
@@ -1047,7 +1053,8 @@ void Robot::TeleopPeriodic()
   SmartDashboard::PutNumber("Climb l pos", hang.leftEncoder.GetPosition());
   SmartDashboard::PutBoolean("Climb R Stop", hang.GetRStop());
   SmartDashboard::PutBoolean("Climb L Stop", hang.GetLStop());
-
+  SmartDashboard::PutBoolean("Climb R Zeroed", hang.rClimbZeroed);
+  SmartDashboard::PutBoolean("Climb L Zeroed", hang.lClimbZeroed);
 
   SmartDashboard::PutNumber("angler v", flywheel.FlywheelAnglingMotor.Get());
 
