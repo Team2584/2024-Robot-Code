@@ -150,9 +150,9 @@ bool AutonomousShootingController::AngleFlywheelToSpeaker(AllianceColor alliance
     else if (distance > 4_m)
         targetAnglerAngle = lerpVal(4, 6, 0.6167, 0.55, distance.value());
     else if (distance >= 3.5_m)
-        targetAnglerAngle = lerpVal(3.5, 4, 0.645, 0.6167, distance.value());
+        targetAnglerAngle = lerpVal(3.5, 4, 0.625, 0.6167, distance.value());
     else if (distance >= 3_m)
-        targetAnglerAngle = lerpVal(3, 3.5, 0.67, 0.645, distance.value());
+        targetAnglerAngle = lerpVal(3, 3.5, 0.67, 0.625, distance.value());
     else if (distance >= 2.5_m)
         targetAnglerAngle = lerpVal(2.5, 3, 0.7, 0.67, distance.value());
     else if (distance >= 2_m)
@@ -160,9 +160,9 @@ bool AutonomousShootingController::AngleFlywheelToSpeaker(AllianceColor alliance
     else if (distance >= 1.75_m)
         targetAnglerAngle = lerpVal(1.75, 2, 0.77, 0.75, distance.value());
     else if (distance >= 1.5_m)
-        targetAnglerAngle = lerpVal(1.5, 1.75, 0.83, 0.77, distance.value());
+        targetAnglerAngle = lerpVal(1.5, 1.75, 0.86, 0.77, distance.value());
     else
-        targetAnglerAngle = lerpVal(1, 1.5, 0.95, 0.83, distance.value());
+        targetAnglerAngle = lerpVal(1, 1.5, 0.95, 0.86, distance.value());
 
 
     targetAnglerAngle += anglerTrim;
@@ -205,11 +205,16 @@ bool AutonomousShootingController::ClearElevatorForShot()
 
 bool AutonomousShootingController::ClearElevatorForShot(double anglerAngle)
 {
-    if(anglerAngle > FlywheelConstants::Angler::BLOCKED_LOW && anglerAngle < FlywheelConstants::Angler::BLOCKED_HIGH){
-        elevator->PIDElevator(0.23);
+    if(anglerAngle > FlywheelConstants::Angler::BLOCKED_LOW && anglerAngle < FlywheelConstants::Angler::BLOCKED_MID_SWITCH){
+        elevator->PIDElevator(0.22);
         elevator->SetAmpMotorPercent(0);
         return elevator->GetElevatorSetpoint();
     }
+    else if (anglerAngle >= FlywheelConstants::Angler::BLOCKED_MID_SWITCH && anglerAngle < FlywheelConstants::Angler::BLOCKED_HIGH){
+        elevator->PIDElevator(0.25);
+        elevator->SetAmpMotorPercent(0);
+        return elevator->GetElevatorSetpoint();
+    }   
     else{
         elevator->SetAmpMotorPercent(0);
         return elevator->MoveToHeight(Elevator::ElevatorSetting::LOW);
