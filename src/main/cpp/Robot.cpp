@@ -855,7 +855,7 @@ void Robot::TeleopPeriodic()
         overbumper.SetIntakeMotorSpeed(0);
         ampmech.MoveElevatorPercent(controller2LeftJoystickY);
         if (xboxController2.GetRightBumper())
-          ampmech.DepositNote();
+          ampmech.DepositNoteTrap();
       }
       else if (xboxController2.GetAButton())
       {
@@ -866,7 +866,7 @@ void Robot::TeleopPeriodic()
       }
       else if (xboxController2.GetRightBumper())
       {
-        ampmech.DepositNote();
+        ampmech.DepositNoteTrap();
       }
       else
       {        

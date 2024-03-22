@@ -120,6 +120,10 @@ void Elevator::DepositNote(){
     SetAmpMotorPercent(ElevatorConstants::AmpMech::AMP_SPEED_DEPOSIT);
 }
 
+void Elevator::DepositNoteTrap(){
+    SetAmpMotorPercent(ElevatorConstants::AmpMech::TRAP_SPEED_DEPOSIT);
+}
+
 bool  Elevator::GetElevatorAtSetpoint(){
     return m_controller.AtGoal();
 }

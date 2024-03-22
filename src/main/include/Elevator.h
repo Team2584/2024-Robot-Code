@@ -50,6 +50,7 @@ class Elevator
         void NoteFromSelector();
         void NoteToSelector();
         void DepositNote();
+        void DepositNoteTrap();
 
         double GetElevatorSetpoint();
 

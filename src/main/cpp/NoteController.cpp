@@ -138,7 +138,12 @@ bool NoteController::ScoreNoteInPosition(Elevator::ElevatorSetting position){
     elevator->MoveToHeight(position);
 
     if (!noteDeposited)
-        elevator->DepositNote();
+    {
+        if (position == Elevator::ElevatorSetting::TRAP)
+            elevator->DepositNoteTrap();
+        else
+            elevator->DepositNote();
+    }
     else
         elevator->SetAmpMotorPercent(0);
 
