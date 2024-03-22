@@ -154,13 +154,13 @@ bool AutonomousShootingController::AngleFlywheelToSpeaker(AllianceColor alliance
     else if (distance >= 3_m)
         targetAnglerAngle = lerpVal(3, 3.5, 0.67, 0.625, distance.value());
     else if (distance >= 2.5_m)
-        targetAnglerAngle = lerpVal(2.5, 3, 0.7, 0.67, distance.value());
+        targetAnglerAngle = lerpVal(2.5, 3, 0.73, 0.67, distance.value());
     else if (distance >= 2_m)
-        targetAnglerAngle = lerpVal(2, 2.5, 0.75, 0.7, distance.value());
+        targetAnglerAngle = lerpVal(2, 2.5, 0.8, 0.73, distance.value());
     else if (distance >= 1.75_m)
-        targetAnglerAngle = lerpVal(1.75, 2, 0.77, 0.75, distance.value());
+        targetAnglerAngle = lerpVal(1.75, 2, 0.83, 0.8, distance.value());
     else if (distance >= 1.5_m)
-        targetAnglerAngle = lerpVal(1.5, 1.75, 0.86, 0.77, distance.value());
+        targetAnglerAngle = lerpVal(1.5, 1.75, 0.86, 0.83, distance.value());
     else
         targetAnglerAngle = lerpVal(1, 1.5, 0.95, 0.86, distance.value());
 
@@ -186,12 +186,12 @@ bool AutonomousShootingController::SpinFlywheelForSpeaker(AllianceColor alliance
     double velocity;
     if (distance > 2_m)
     {
-        velocity = lerpVal(2, 3, 3500, 5500, distance.value());
+        velocity = lerpVal(2, 3, 4000, 5500, distance.value());
         if (velocity > 6000)
             velocity = 6000;
     }
     else
-        velocity = 3500;
+        velocity = 4000;
 
     SmartDashboard::PutNumber("Target Distance", distance.value());
     SmartDashboard::PutNumber("Target Flywheel Velocity", velocity);
@@ -206,7 +206,7 @@ bool AutonomousShootingController::ClearElevatorForShot()
 bool AutonomousShootingController::ClearElevatorForShot(double anglerAngle)
 {
     if(anglerAngle > FlywheelConstants::Angler::BLOCKED_LOW && anglerAngle < FlywheelConstants::Angler::BLOCKED_MID_SWITCH){
-        elevator->PIDElevator(0.22);
+        elevator->PIDElevator(0.16);
         elevator->SetAmpMotorPercent(0);
         return elevator->GetElevatorSetpoint();
     }

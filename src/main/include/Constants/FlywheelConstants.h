@@ -43,8 +43,8 @@ inline constexpr auto MIN_SPEED = 0.3;
 inline constexpr auto MAX_SPEED = 10; 
 
 inline auto BLOCKED_LOW = 0.4;
-inline auto BLOCKED_MID_SWITCH = 0.7;
-inline auto BLOCKED_HIGH = 0.82;
+inline auto BLOCKED_MID_SWITCH = 0.75;
+inline auto BLOCKED_HIGH = 0.83;
 }
 
 /* Autonomous Constants */
