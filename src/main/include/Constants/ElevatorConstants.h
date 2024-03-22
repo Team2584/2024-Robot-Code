@@ -35,6 +35,7 @@ namespace AmpMech{
     inline constexpr double AMP_SPEED_FROM_SELECTOR = -0.5;
     inline constexpr double AMP_SPEED_TO_SELECTOR = 0.5;
     inline constexpr double AMP_SPEED_DEPOSIT = -0.75;
+    inline constexpr auto AMP_TIME = 0.2_s;
 }
 
 namespace TimeOfFlight{
