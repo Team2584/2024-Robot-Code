@@ -289,12 +289,22 @@ void Robot::AutonomousInit()
   }
   else if (m_autoSelected == kAutoRFL45)
   {
-    autoController.SetupFollowTrajectoryAndShoot(Pose2d(15.14_m, 1.7_m, Rotation2d(-63.12_deg)), "RFLDropTo4To5", 4.25_m);
+    autoController.SetupFollowTrajectoryAndShoot(Pose2d(15.14_m, 1.7_m, Rotation2d(-63.12_deg)), "RFLDropTo4To5", 3.5_m);
     allianceColor = AllianceColor::RED;
   }
   else if (m_autoSelected == kAutoBFR45)
   {
-    autoController.SetupFollowTrajectoryAndShoot(Pose2d(1.4_m, 1.7_m, Rotation2d(-118.19_deg)), "BFRDropTo4To5", 4.25_m);
+    autoController.SetupFollowTrajectoryAndShoot(Pose2d(1.4_m, 1.7_m, Rotation2d(-118.19_deg)), "BFRDropTo4To5", 3.5_m);
+    allianceColor = AllianceColor::BLUE;
+  }
+  else if (m_autoSelected == kAutoRFL54)
+  {
+    autoController.SetupFollowTrajectoryAndShoot(Pose2d(15.14_m, 1.7_m, Rotation2d(-63.12_deg)), "RFLDropTo5To4", 3.5_m);
+    allianceColor = AllianceColor::RED;
+  }
+  else if (m_autoSelected == kAutoBFR54)
+  {
+    autoController.SetupFollowTrajectoryAndShoot(Pose2d(1.4_m, 1.7_m, Rotation2d(-118.19_deg)), "BFRDropTo5To4", 3.5_m);
     allianceColor = AllianceColor::BLUE;
   }
   else if (m_autoSelected == kAutoRFR87)
@@ -371,6 +381,10 @@ void Robot::AutonomousPeriodic()
       autoController.DropLongShotFollowTrajectoryAndShoot(AllianceColor::RED);
   else if (m_autoSelected == kAutoBFR45)
       autoController.DropLongShotFollowTrajectoryAndShoot(AllianceColor::BLUE);
+  else if (m_autoSelected == kAutoRFL54)
+      autoController.DropLongShotFollowTrajectoryAndShoot(AllianceColor::RED);
+  else if (m_autoSelected == kAutoBFR54)
+      autoController.DropLongShotFollowTrajectoryAndShoot(AllianceColor::BLUE);
   else if (m_autoSelected == kAutoRFR87)
       autoController.DropLongShotFollowTrajectoryAndShoot(AllianceColor::RED);
   else if (m_autoSelected == kAutoBFL87)
@@ -397,7 +411,6 @@ void Robot::TeleopPeriodic()
 {
   /* UPDATES */
   swerveDrive.Update();
-  hang.UpdateClimbEncoders();
 
   /* Controller Data */
 
@@ -849,7 +862,7 @@ void Robot::TeleopPeriodic()
 
     case DRIVER_MODE::CLIMBING_TRAP:
     {
-
+      hang.UpdateClimbEncoders();
       lights.SetClimbing();
 
       double fwdDriveSpeed = leftJoystickY * MAX_DRIVE_SPEED_CLIMB;
@@ -867,11 +880,6 @@ void Robot::TeleopPeriodic()
       else
         swerveDrive.DriveSwervePercent(fwdDriveSpeed, strafeDriveSpeed, turnSpeed);
 
-      if (hang.leftEncoder.GetPosition() < 0.2 && hang.rightEncoder.GetPosition() > -0.2)
-        flywheel.PIDAngler(0.6);
-      else
-        flywheel.PIDAngler(1.399);
-
       if (xboxController2.GetPOV() == 180 || xboxController2.GetPOV() == 135 || xboxController2.GetPOV() == 225){
         hang.RetractClimb();
       }
@@ -879,12 +887,12 @@ void Robot::TeleopPeriodic()
         hang.ExtendClimb();
       }
       else if (xboxController.GetPOV() != -1){
-        if (xboxController.GetPOV() == 90 || xboxController.GetPOV() == 135 || xboxController.GetPOV() == 45)
+        if (xboxController.GetPOV() == 90 || xboxController.GetPOV() == 135)
           hang.rightClimbMotor.Set(0.4);
         else
           hang.rightClimbMotor.Set(0);
 
-        if (xboxController.GetPOV() == 270 || xboxController.GetPOV() == 225 || xboxController.GetPOV() == 315)
+        if (xboxController.GetPOV() == 270 || xboxController.GetPOV() == 225)
           hang.leftClimbMotor.Set(-0.4);
         else
           hang.leftClimbMotor.Set(0);
@@ -931,8 +939,12 @@ void Robot::TeleopPeriodic()
         ampmech.MoveToHeight(Elevator::ElevatorSetting::LOW);
       }
 
+      if (hang.rightEncoder.GetPosition() > -0.2 || xboxController.GetPOV() == 0)
+        flywheel.PIDAngler(0.6);
+      else
+        flywheel.PIDAngler(1.399);
 
-      if (hang.leftEncoder.GetPosition() < 0.2)
+      if (hang.rightEncoder.GetPosition() > -0.2 || xboxController.GetPOV() == 0)
           overbumper.PIDWristToPoint(Intake::WristSetting::HIGH);
       else
           overbumper.PIDWristToPoint(Intake::WristSetting::LOW);
