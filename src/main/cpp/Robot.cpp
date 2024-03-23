@@ -94,6 +94,11 @@ void Robot::RobotInit()
   m_chooser.AddOption(kAutoRL45, kAutoRL45);
   m_chooser.AddOption(kAutoBL387, kAutoBL387);
   m_chooser.AddOption(kAutoRR1187, kAutoRR1187);
+  m_chooser.AddOption(kAutoRFL45, kAutoRFL45);
+  m_chooser.AddOption(kAutoBFR45, kAutoBFR45);
+  m_chooser.AddOption(kAutoRFR87, kAutoRFR87);
+  m_chooser.AddOption(kAutoBFL87, kAutoBFL87);
+
   frc::SmartDashboard::PutData("Auto Modes", &m_chooser);
   
   SmartDashboard::PutNumber("Flywheel Setpoint", 0);
@@ -282,6 +287,26 @@ void Robot::AutonomousInit()
     autoController.SetupFollowTrajectoryAndShoot(Pose2d(15.35_m, 6.64_m, Rotation2d(-34.59_deg)), "RRTo11To8To7", 4.25_m);
     allianceColor = AllianceColor::RED;
   }
+  else if (m_autoSelected == kAutoRFL45)
+  {
+    autoController.SetupFollowTrajectoryAndShoot(Pose2d(15.14_m, 1.7_m, Rotation2d(-63.12_deg)), "RFLDropTo4To5", 4.25_m);
+    allianceColor = AllianceColor::RED;
+  }
+  else if (m_autoSelected == kAutoBFR45)
+  {
+    autoController.SetupFollowTrajectoryAndShoot(Pose2d(1.4_m, 1.7_m, Rotation2d(-118.19_deg)), "BFRDropTo4To5", 4.25_m);
+    allianceColor = AllianceColor::BLUE;
+  }
+  else if (m_autoSelected == kAutoRFR87)
+  {
+    autoController.SetupFollowTrajectoryAndShoot(Pose2d(15.45_m, 7.21_m, Rotation2d(-34.59_deg)), "RFRDropTo8To7", 4.25_m);
+    allianceColor = AllianceColor::RED;
+  }
+  else if (m_autoSelected == kAutoBFL87)
+  {
+    autoController.SetupFollowTrajectoryAndShoot(Pose2d(1.29_m, 7.2_m, Rotation2d(-140.3_deg)), "BFLDropTo8To7", 4.25_m);
+    allianceColor = AllianceColor::BLUE;
+  }
 }
 
 void Robot::AutonomousPeriodic()
@@ -342,6 +367,14 @@ void Robot::AutonomousPeriodic()
       autoController.FollowTrajectoryAndShoot(AllianceColor::BLUE);
   else if (m_autoSelected == kAutoRR1187)
       autoController.FollowTrajectoryAndShoot(AllianceColor::RED);
+  else if (m_autoSelected == kAutoRFL45)
+      autoController.DropLongShotFollowTrajectoryAndShoot(AllianceColor::RED);
+  else if (m_autoSelected == kAutoBFR45)
+      autoController.DropLongShotFollowTrajectoryAndShoot(AllianceColor::BLUE);
+  else if (m_autoSelected == kAutoRFR87)
+      autoController.DropLongShotFollowTrajectoryAndShoot(AllianceColor::RED);
+  else if (m_autoSelected == kAutoBFL87)
+      autoController.DropLongShotFollowTrajectoryAndShoot(AllianceColor::BLUE);
 }
 
 void Robot::TeleopInit()
@@ -846,14 +879,15 @@ void Robot::TeleopPeriodic()
         hang.ExtendClimb();
       }
       else if (xboxController.GetPOV() != -1){
-        if (xboxController.GetPOV() == 90)
-        {
+        if (xboxController.GetPOV() == 90 || xboxController.GetPOV() == 135 || xboxController.GetPOV() == 45)
           hang.rightClimbMotor.Set(0.4);
-        }
-        if (xboxController.GetPOV() == 270)
-        {
+        else
+          hang.rightClimbMotor.Set(0);
+
+        if (xboxController.GetPOV() == 270 || xboxController.GetPOV() == 225 || xboxController.GetPOV() == 315)
           hang.leftClimbMotor.Set(-0.4);
-        }
+        else
+          hang.leftClimbMotor.Set(0);
       }
       else {
         hang.HoldClimb();

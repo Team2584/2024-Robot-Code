@@ -41,4 +41,5 @@ public:
     void SlowBlueRightShootIntake1ShootIntake2ShootIntake3();
     void SetupFollowTrajectoryAndShoot(Pose2d startingPose, string trajectoryName, units::meter_t maxDistanceShot_);
     void FollowTrajectoryAndShoot(AllianceColor allianceColor);
+    void DropLongShotFollowTrajectoryAndShoot(AllianceColor allianceColor);
 };

@@ -106,12 +106,12 @@ void Climb::SetClimbMotorsBorked(double LeftMotor, double RightMotor){
  * @note A negative percentage brings the climb arms down, positive up
 */
 void Climb::SetClimbMotors(double LeftMotor, double RightMotor){
-    if (leftEncoder.GetPosition() < -0.02 && LeftMotor < 0 && lClimbZeroed)
+    if (leftEncoder.GetPosition() < -0.005 && LeftMotor < 0 && lClimbZeroed)
         leftClimbMotor.Set(0);
     else
         leftClimbMotor.Set(LeftMotor);
 
-    if (rightEncoder.GetPosition() > 0.02 && RightMotor < 0 && rClimbZeroed)   
+    if (rightEncoder.GetPosition() > 0.005 && RightMotor < 0 && rClimbZeroed)   
         rightClimbMotor.Set(0);
     else
         rightClimbMotor.Set(RightMotor*-1);

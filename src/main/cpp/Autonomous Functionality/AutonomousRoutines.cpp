@@ -572,3 +572,65 @@ void AutonomousController::FollowTrajectoryAndShoot(AllianceColor allianceColor)
         }
     }
 }
+
+void AutonomousController::DropLongShotFollowTrajectoryAndShoot(AllianceColor allianceColor)
+{
+    SmartDashboard::PutNumber("spline section", splineSection);
+    SmartDashboard::PutNumber("safety timer", safetyTimer.Get().value());
+    
+    bool noteInIntake = intake->GetObjectInIntake();
+    double finalSpeeds[3] = {0.0, 0.0, 0.0};
+
+    bool angled = shootingController->AngleFlywheelToSpeaker(allianceColor);
+    bool spinning = shootingController->SpinFlywheelForSpeaker(allianceColor);
+    bool cleared = false;
+
+    SmartDashboard::PutBoolean("currentlyShooting", currentlyShooting);
+    SmartDashboard::PutBoolean("noteInIntake", noteInIntake);
+    SmartDashboard::PutBoolean("Spinning", spinning);
+
+    // Determine what our target angle is
+    units::meter_t distance;
+    if (allianceColor == AllianceColor::BLUE)
+        distance = swerveDrive->GetTagOdometryPose().Translation().Distance(BLUE_SPEAKER_POSITION.ToTranslation2d());
+    else
+        distance = swerveDrive->GetTagOdometryPose().Translation().Distance(RED_SPEAKER_POSITION.ToTranslation2d());
+
+    if (!currentlyShooting && (!noteInIntake || (splineSection != 0 && distance > maxDistanceShot) || (splineSection == 0 && swerveDrive->GetTagOdometryPose().X() > 5.3_m && swerveDrive->GetTagOdometryPose().X() < 11_m) || (swerveDrive->GetTagOdometryPose().X() < 1.5_m) || (swerveDrive->GetTagOdometryPose().X() > 15.15_m)))
+    {
+        if ((swerveDrive->GetTagOdometryPose().X() > 2.85_m && swerveDrive->GetTagOdometryPose().X() < 5.9_m) || (swerveDrive->GetTagOdometryPose().X() > 10.8_m && swerveDrive->GetTagOdometryPose().X() < 13.75_m))
+            intake->PIDWristToPoint(Intake::WristSetting::SHOOT);
+        else
+            intake->PIDWristToPoint(Intake::WristSetting::LOW);
+
+        noteController->IntakeNoteToSelector();
+        ampMech->MoveToHeight(Elevator::ElevatorSetting::LOW);
+        swerveDriveController->CalcTrajectoryDriveValues(PoseEstimationType::TagBased, 1, finalSpeeds);
+        swerveDrive->DriveSwerveTagOrientedMetersAndRadians(finalSpeeds[0], finalSpeeds[1], finalSpeeds[2]);
+    }
+    else
+    {
+        intake->PIDWristToPoint(Intake::WristSetting::LOW);
+        swerveDriveController->CalcTrajectoryDriveValues(PoseEstimationType::TagBased, 0.25, finalSpeeds);
+        bool readyToFire = shootingController->TurnToSpeakerWhileDrivingMetersAndRadians(finalSpeeds[0], finalSpeeds[1], allianceColor); 
+        cleared = shootingController->ClearElevatorForShot();   
+        SmartDashboard::PutBoolean("Ready to fire", readyToFire);
+        if (!currentlyShooting && readyToFire && cleared)
+        {
+            safetyTimer.Restart();
+            intake->BeginShootNote();
+            currentlyShooting = true;
+        }
+
+        if (currentlyShooting && safetyTimer.Get() > 0.75_s)
+        {
+            intake->SetIntakeMotorSpeed(0);
+            splineSection = 1;
+            currentlyShooting = false;
+        }
+        else if (currentlyShooting)
+        {
+            intake->ShootNote();
+        }
+    }
+}
