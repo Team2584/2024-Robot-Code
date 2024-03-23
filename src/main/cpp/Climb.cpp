@@ -26,7 +26,7 @@ Climb::Climb(VisionSwerve* _swerveDrive)
     rightClimbMotor.EnableSoftLimit(rev::CANSparkBase::SoftLimitDirection::kReverse, false);
     rightClimbMotor.EnableSoftLimit(rev::CANSparkBase::SoftLimitDirection::kForward, false);
     leftEncoder.SetPosition(100);
-    rightEncoder.SetPosition(100);
+    rightEncoder.SetPosition(-100);
 }
 
 bool Climb::GetLStop(){
@@ -96,13 +96,22 @@ void Climb::SetClimbMotors(double Percentage){
  * @brief Set climb motor percentage. 
  * @note A negative percentage brings the climb arms down, positive up
 */
+void Climb::SetClimbMotorsBorked(double LeftMotor, double RightMotor){
+    leftClimbMotor.Set(LeftMotor);
+    rightClimbMotor.Set(RightMotor*-1);
+}
+
+/**
+ * @brief Set climb motor percentage. 
+ * @note A negative percentage brings the climb arms down, positive up
+*/
 void Climb::SetClimbMotors(double LeftMotor, double RightMotor){
-    if (leftEncoder.GetPosition() < 0 && LeftMotor < 0 && lClimbZeroed)
+    if (leftEncoder.GetPosition() < -0.02 && LeftMotor < 0 && lClimbZeroed)
         leftClimbMotor.Set(0);
     else
         leftClimbMotor.Set(LeftMotor);
 
-    if (rightEncoder.GetPosition() > 0 && RightMotor < 0 && rClimbZeroed)   
+    if (rightEncoder.GetPosition() > 0.02 && RightMotor < 0 && rClimbZeroed)   
         rightClimbMotor.Set(0);
     else
         rightClimbMotor.Set(RightMotor*-1);

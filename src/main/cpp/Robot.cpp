@@ -631,10 +631,10 @@ void Robot::TeleopPeriodic()
         notecontroller.BeginScoreNoteInPosition(Elevator::ElevatorSetting::AMP);
         currentDriverMode = DRIVER_MODE::AUTO_AMP;
       }
-      if (xboxController.GetBButtonPressed()){
+      /*if (xboxController.GetBButtonPressed()){
         swerveAutoController.BeginDriveToNote();
         currentDriverMode = DRIVER_MODE::AUTO_INTAKE;
-      }
+      }*/
       if (xboxController2.GetLeftTriggerAxis() > TRIGGER_ACTIVATION_POINT)
       {
         notecontroller.BeginScoreNoteInPosition(Elevator::ElevatorSetting::AMP);
@@ -834,13 +834,26 @@ void Robot::TeleopPeriodic()
       else
         swerveDrive.DriveSwervePercent(fwdDriveSpeed, strafeDriveSpeed, turnSpeed);
 
-      flywheel.PIDAngler(1.399);
+      if (hang.leftEncoder.GetPosition() < 0.2 && hang.rightEncoder.GetPosition() > -0.2)
+        flywheel.PIDAngler(0.6);
+      else
+        flywheel.PIDAngler(1.399);
 
       if (xboxController2.GetPOV() == 180 || xboxController2.GetPOV() == 135 || xboxController2.GetPOV() == 225){
         hang.RetractClimb();
       }
       else if (xboxController2.GetPOV() == 0 || xboxController2.GetPOV() == 45 || xboxController2.GetPOV() == 315){
         hang.ExtendClimb();
+      }
+      else if (xboxController.GetPOV() != -1){
+        if (xboxController.GetPOV() == 90)
+        {
+          hang.rightClimbMotor.Set(0.4);
+        }
+        if (xboxController.GetPOV() == 270)
+        {
+          hang.leftClimbMotor.Set(-0.4);
+        }
       }
       else {
         hang.HoldClimb();
@@ -849,6 +862,8 @@ void Robot::TeleopPeriodic()
       if ((xboxController2.GetRightBumperPressed() && !xboxController2.GetAButton()) || (xboxController2.GetAButtonPressed() && !xboxController2.GetRightBumper())){
         notecontroller.BeginScoreNoteInPosition(Elevator::ElevatorSetting::TRAP);
       }
+      if (xboxController2.GetBButtonPressed())
+        notecontroller.BeginToElevator();
 
       if (controller2LeftJoystickY != 0)
       {
@@ -868,6 +883,13 @@ void Robot::TeleopPeriodic()
       {
         ampmech.DepositNoteTrap();
       }
+      else if(xboxController2.GetBButton()){
+        notecontroller.ToElevator();
+      }
+      else if (xboxController2.GetBackButton())
+      {
+        ampmech.NoteToSelector();
+      }
       else
       {        
         ampmech.SetAmpMotorPercent(0);
@@ -877,7 +899,7 @@ void Robot::TeleopPeriodic()
 
 
       if (hang.leftEncoder.GetPosition() < 0.2)
-          overbumper.PIDWristToPoint(Intake::WristSetting::SHOOT);
+          overbumper.PIDWristToPoint(Intake::WristSetting::HIGH);
       else
           overbumper.PIDWristToPoint(Intake::WristSetting::LOW);
 

@@ -37,6 +37,8 @@ class Climb {
 
         bool ZeroClimb();
 
+        void SetClimbMotorsBorked(double LeftMotor, double RightMotor);
+
         void SetClimbMotors(double Percentage);
 
         void SetClimbMotors(double LeftMotor, double RightMotor);
