@@ -572,6 +572,8 @@ void Robot::TeleopPeriodic()
         anglerSetpoint = 0.92;
       else if (xboxController2.GetYButton())
         anglerSetpoint = 0.63;
+      else if (fixingShooter)
+        anglerSetpoint = 1.3;
       else
         anglerSetpoint = 0.8;
 
