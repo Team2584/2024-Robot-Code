@@ -131,6 +131,11 @@ bool AutonomousShootingController::TurnToSpeakerWhileDriving(double xSpeed, doub
     return swerveDrive->TurnToAngleWhileDriving(xSpeed, ySpeed, targetAngle, PoseEstimationType::TagBased); 
 } 
 
+double AutonomousShootingController::SetAnglerTrim(double trim)
+{
+    anglerTrim = trim;
+}
+
 bool AutonomousShootingController::AngleFlywheelToSpeaker(AllianceColor allianceColor)
 {   
     Translation2d currentPos = swerveDrive->swerveDrive->GetTagOdometryPose().Translation();

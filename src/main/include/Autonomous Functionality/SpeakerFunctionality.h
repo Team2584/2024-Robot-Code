@@ -25,17 +25,18 @@ private:
     Timer shotTimer;
     double targetAnglerAngle;
     bool shootingNote;
+    double anglerTrim = 0;
 
     Translation2d diffDebug;
 
 public:
-    double anglerTrim;
 
     AutonomousShootingController(SwerveDriveAutonomousController *swerveDrive, FlywheelSystem *flyWheel_, Intake *intake_, Elevator *elevator_);
 
     bool TurnToSpeaker(AllianceColor allianceColor);
     bool TurnToSpeakerWhileDrivingMetersAndRadians(double xSpeed, double ySpeed, AllianceColor allianceColor);
     bool TurnToSpeakerWhileDriving(double xSpeed, double ySpeed, AllianceColor allianceColor);
+    double SetAnglerTrim(double trim);
     bool AngleFlywheelToSpeaker(AllianceColor allianceColor);
     bool SpinFlywheelForSpeaker(AllianceColor allianceColor);
     bool ClearElevatorForShot();

@@ -132,7 +132,7 @@ void Robot::RobotPeriodic() {
   SmartDashboard::PutBoolean("In Match", DriverStation::GetMatchType() != DriverStation::MatchType::kNone);
   SmartDashboard::PutBoolean("Is Blue Alliance", allianceColor == AllianceColor::BLUE);
 
-  flywheelController.anglerTrim = SmartDashboard::GetNumber("Angler Trim", 0.0);
+  flywheelController.SetAnglerTrim(SmartDashboard::GetNumber("Angler Trim", 0.0));
 }
 
 /**
