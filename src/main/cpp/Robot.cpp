@@ -566,12 +566,16 @@ void Robot::TeleopPeriodic()
       else if(xboxController2.GetXButtonPressed())
         flywheelSetpoint = 4000;
       else if (xboxController2.GetYButtonPressed())
-        flywheelSetpoint = 4500;
+        flywheelSetpoint = 6000;
+      else if (xboxController2.GetLeftBumperPressed())
+        flywheelSetpoint = 6000;
 
       if (xboxController2.GetXButton())
         anglerSetpoint = 0.92;
       else if (xboxController2.GetYButton())
         anglerSetpoint = 0.63;
+      else if (xboxController2.GetLeftBumperPressed())
+        anglerSetpoint = 0.9;
       else if (fixingShooter)
         anglerSetpoint = 1.3;
       else
@@ -669,11 +673,11 @@ void Robot::TeleopPeriodic()
       //hang.SetClimbMotors(controller2LeftJoystickY, controller2RightJoystickY);
 
       // Switching Driver Mode
-      if (xboxController2.GetLeftBumperPressed())
+      /*if (xboxController2.GetLeftBumperPressed())
       {
         flywheelController.BeginAimAndFire(allianceColor);
         currentDriverMode = DRIVER_MODE::AUTO_AIM_STATIONARY;
-      }
+      }*/
       if (xboxController.GetLeftBumperPressed()){
         autoAmpController.BeginDriveToAmp(allianceColor);
         notecontroller.BeginScoreNoteInPosition(Elevator::ElevatorSetting::AMP);
