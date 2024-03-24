@@ -110,6 +110,8 @@ class Robot : public frc::TimedRobot {
   const std::string kAutoBR4CloseNotes = "BLUE Right: Shoot -> Intake and Shoot 3 Close Notes";
   const std::string kAutoBR4CloseNotesAnd8 = "BLUE Right Shoot -> Intake and Shoot 3 Close Notes -> Intake and Shoot 8";
   const std::string kAutoRL4CloseNotesAnd8 = "RED Left Shoot -> Intake and Shoot 3 Close Notes -> Intake and Shoot 8";
+  const std::string kAutoBC4CloseNotesAnd8 = "BLUE Center Shoot -> Intake and Shoot 3 Close Notes -> Intake and Shoot 8";
+  const std::string kAutoRC4CloseNotesAnd8 = "RED Center Shoot -> Intake and Shoot 3 Close Notes -> Intake and Shoot 8";
   const std::string kAutoBC267 = "BLUE Center Shoot -> Shoot 2 -> Shoot 6 -> Shoot 7";
   const std::string kAutoRC1067 = "RED Center Shoot -> Shoot 10 -> Shoot 6 -> Shoot 7";
   const std::string kAutoBR145 = "BLUE Right Shoot -> Shoot 1 -> Shoot 4 -> Shoot 5";
@@ -122,5 +124,11 @@ class Robot : public frc::TimedRobot {
   const std::string kAutoRL45 = "RED Left Shoot -> Shoot 4 -> Shoot 5";
   const std::string kAutoBL387 = "BLUE Left Shoot -> Shoot 3 -> Shoot 8 -> Shoot 7";
   const std::string kAutoRR1187 = "RED Right Shoot -> Shoot 11 -> Shoot 8 -> Shoot 7";
+  const std::string kAutoRFL45 = "Red Far Left Drop -> Shoot 4 -> Shoot 5";
+  const std::string kAutoBFR45 = "Blue Far Right Drop -> Shoot 4 -> Shoot 5";
+  const std::string kAutoRFR87 = "Red Far Right Drop -> Shoot 8 -> Shoot 7";
+  const std::string kAutoBFL87 = "Blue Far Left Drop -> Shoot 8 -> Shoot 7";
+  const std::string kAutoRFL54 = "Red Far Left Drop -> Shoot 5 -> Shoot 4";
+  const std::string kAutoBFR54 = "Blue Far Right Drop -> Shoot 5 -> Shoot 4";
   std::string m_autoSelected;
 };

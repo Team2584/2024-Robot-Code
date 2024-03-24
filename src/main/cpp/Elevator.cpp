@@ -13,7 +13,8 @@ Elevator::Elevator()
     winchMotor.SetNeutralMode(ctre::phoenix6::signals::NeutralModeValue::Brake);
     winchMotor.SetPosition(0_tr);
     m_controller.SetTolerance(ElevatorConstants::ALLOWABLE_ERROR_POS);
-
+    ampMotor.SetSoftLimit(rev::CANSparkBase::SoftLimitDirection::kForward, false);
+    ampMotor.SetSoftLimit(rev::CANSparkBase::SoftLimitDirection::kReverse, false);
 }
 
 bool Elevator::ZeroElevatorTOF(){
@@ -117,6 +118,10 @@ void Elevator::NoteToSelector(){
 
 void Elevator::DepositNote(){
     SetAmpMotorPercent(ElevatorConstants::AmpMech::AMP_SPEED_DEPOSIT);
+}
+
+void Elevator::DepositNoteTrap(){
+    SetAmpMotorPercent(ElevatorConstants::AmpMech::TRAP_SPEED_DEPOSIT);
 }
 
 bool  Elevator::GetElevatorAtSetpoint(){

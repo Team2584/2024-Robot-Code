@@ -7,8 +7,8 @@
 #define AMP_MECH_PORT 26
 
 namespace ElevatorConstants {
-inline units::meters_per_second_t kMaxVelocity = 1_mps;
-inline units::meters_per_second_squared_t kMaxAcceleration = 0.7_mps_sq;
+inline units::meters_per_second_t kMaxVelocity = 1.05_mps;
+inline units::meters_per_second_squared_t kMaxAcceleration = 0.75_mps_sq;
 inline units::volt_t maxVoltsDown = 2_V;
 inline double m_kP = 50.0; //36
 inline double m_kI = 0.05;
@@ -35,6 +35,8 @@ namespace AmpMech{
     inline constexpr double AMP_SPEED_FROM_SELECTOR = -0.5;
     inline constexpr double AMP_SPEED_TO_SELECTOR = 0.5;
     inline constexpr double AMP_SPEED_DEPOSIT = -0.75;
+    inline constexpr double TRAP_SPEED_DEPOSIT = -0.25;
+    inline constexpr auto AMP_TIME = 0.1_s;
 }
 
 namespace TimeOfFlight{

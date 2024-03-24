@@ -29,6 +29,8 @@ private:
     Translation2d diffDebug;
 
 public:
+    double anglerTrim;
+
     AutonomousShootingController(SwerveDriveAutonomousController *swerveDrive, FlywheelSystem *flyWheel_, Intake *intake_, Elevator *elevator_);
 
     bool TurnToSpeaker(AllianceColor allianceColor);
@@ -37,6 +39,7 @@ public:
     bool AngleFlywheelToSpeaker(AllianceColor allianceColor);
     bool SpinFlywheelForSpeaker(AllianceColor allianceColor);
     bool ClearElevatorForShot();
+    bool ClearElevatorForShot(double anglerAngle);
     void BeginAimAndFire(AllianceColor allianceColor);
     bool AimAndFire(AllianceColor allianceColor);
     Translation2d GetDiffDebug();

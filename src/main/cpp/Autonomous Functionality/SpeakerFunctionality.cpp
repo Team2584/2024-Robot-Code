@@ -145,23 +145,33 @@ bool AutonomousShootingController::AngleFlywheelToSpeaker(AllianceColor alliance
 
     SmartDashboard::PutNumber("DISTANCE", distance.value());
 
-    if (distance > 6_m)
-        targetAnglerAngle = 0.55;
+    if (distance > 15_m)
+        targetAnglerAngle = 0.5;
+    else if (distance > 6_m)
+        targetAnglerAngle = lerpVal(6, 15, 0.55, 0.5, distance.value());
+    else if (distance > 5_m)
+        targetAnglerAngle = lerpVal(5, 6, 0.57, 0.55, distance.value());
+    else if (distance > 4_m)
+        targetAnglerAngle = lerpVal(4, 5, 0.6167, 0.57, distance.value());
+    else if (distance >= 3.5_m)
+        targetAnglerAngle = lerpVal(3.5, 4, 0.625, 0.6167, distance.value());
     else if (distance >= 3_m)
-        targetAnglerAngle = lerpVal(3, 6, 0.65, 0.55, distance.value());
+        targetAnglerAngle = lerpVal(3, 3.5, 0.67, 0.625, distance.value());
     else if (distance >= 2.5_m)
-        targetAnglerAngle = lerpVal(2.5, 3, 0.7, 0.65, distance.value());
+        targetAnglerAngle = lerpVal(2.5, 3, 0.71, 0.67, distance.value());
     else if (distance >= 2_m)
-        targetAnglerAngle = lerpVal(2, 2.5, 0.75, 0.7, distance.value());
+        targetAnglerAngle = lerpVal(2, 2.5, 0.8, 0.71, distance.value());
     else if (distance >= 1.75_m)
-        targetAnglerAngle = lerpVal(1.75, 2, 0.77, 0.75, distance.value());
+        targetAnglerAngle = lerpVal(1.75, 2, 0.83, 0.8, distance.value());
     else if (distance >= 1.5_m)
-        targetAnglerAngle = lerpVal(1.5, 1.75, 0.83, 0.77, distance.value());
+        targetAnglerAngle = lerpVal(1.5, 1.75, 0.86, 0.83, distance.value());
     else
-        targetAnglerAngle = lerpVal(1, 1.5, 0.95, 0.83, distance.value());
+        targetAnglerAngle = lerpVal(1, 1.5, 0.95, 0.86, distance.value());
 
+
+    targetAnglerAngle += anglerTrim;
     SmartDashboard::PutNumber("Target Angler Angle", targetAnglerAngle);
-    
+
     return flyWheel->PIDAngler(targetAnglerAngle);
 }
 
@@ -180,12 +190,12 @@ bool AutonomousShootingController::SpinFlywheelForSpeaker(AllianceColor alliance
     double velocity;
     if (distance > 2_m)
     {
-        velocity = lerpVal(2, 3, 3500, 5500, distance.value());
+        velocity = lerpVal(2, 3, 4000, 5500, distance.value());
         if (velocity > 6000)
             velocity = 6000;
     }
     else
-        velocity = 3500;
+        velocity = 4000;
 
     SmartDashboard::PutNumber("Target Distance", distance.value());
     SmartDashboard::PutNumber("Target Flywheel Velocity", velocity);
@@ -194,13 +204,21 @@ bool AutonomousShootingController::SpinFlywheelForSpeaker(AllianceColor alliance
 
 bool AutonomousShootingController::ClearElevatorForShot()
 {
-    double angle = targetAnglerAngle;
+    return ClearElevatorForShot(targetAnglerAngle);
+}
 
-    if(angle > FlywheelConstants::Angler::BLOCKED_LOW && angle < FlywheelConstants::Angler::BLOCKED_HIGH){
-        elevator->PIDElevator(0.25);
+bool AutonomousShootingController::ClearElevatorForShot(double anglerAngle)
+{
+    if(anglerAngle > FlywheelConstants::Angler::BLOCKED_LOW && anglerAngle < FlywheelConstants::Angler::BLOCKED_MID_SWITCH){
+        elevator->PIDElevator(0.16);
         elevator->SetAmpMotorPercent(0);
         return elevator->GetElevatorSetpoint();
     }
+    else if (anglerAngle >= FlywheelConstants::Angler::BLOCKED_MID_SWITCH && anglerAngle < FlywheelConstants::Angler::BLOCKED_HIGH){
+        elevator->PIDElevator(0.25);
+        elevator->SetAmpMotorPercent(0);
+        return elevator->GetElevatorSetpoint();
+    }   
     else{
         elevator->SetAmpMotorPercent(0);
         return elevator->MoveToHeight(Elevator::ElevatorSetting::LOW);

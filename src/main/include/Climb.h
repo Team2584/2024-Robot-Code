@@ -21,6 +21,8 @@ class Climb {
         frc::ProfiledPIDController<units::radians> rollPID;
 
         bool climbZeroed = false;
+        bool lClimbZeroed = false;
+        bool rClimbZeroed = false;
         rev::CANSparkFlex leftClimbMotor, rightClimbMotor;
         rev::SparkRelativeEncoder leftEncoder, rightEncoder;
         rev::SparkLimitSwitch leftHallSensor, rightHallSensor;
@@ -34,6 +36,8 @@ class Climb {
         bool GetRStop();
 
         bool ZeroClimb();
+
+        void SetClimbMotorsBorked(double LeftMotor, double RightMotor);
 
         void SetClimbMotors(double Percentage);
 
@@ -59,6 +63,7 @@ class Climb {
 
         bool GetClimbDone();
 
+        void UpdateClimbEncoders();
 };
 
 #endif
