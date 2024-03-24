@@ -403,6 +403,7 @@ void Robot::TeleopInit()
   lastX = 0;
   lastY = 0;
   lastRot = 0;
+  ampmech.BeginPIDElevator();
   hang.lClimbZeroed = false;
   hang.rClimbZeroed = false;
 }
