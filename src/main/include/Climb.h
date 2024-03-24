@@ -29,41 +29,24 @@ class Climb {
 
         Climb(VisionSwerve* _swerveDrive);
 
-        void SetClimbZero();
-
-        bool GetLStop();
-
-        bool GetRStop();
-
-        bool ZeroClimb();
-
-        void SetClimbMotorsBorked(double LeftMotor, double RightMotor);
-
         void SetClimbMotors(double Percentage);
-
         void SetClimbMotors(double LeftMotor, double RightMotor);
 
+        void SetLeftMotorNoLimit(double percentage);
+        void SetRightMotorNoLimit(double percentage);
+        void SetClimbMotorsNoLimit(double LeftMotor, double RightMotor);
+        
         void ExtendClimb();
-
         void RetractClimb();
-
         void HoldClimb();
 
         bool ClimbPID(units::meter_t setpoint);
-
         bool BalanceAtPos();
-
         bool BalanceWhileClimbing();
-
         bool BalanceWhileClimbing(units::meter_t setpoint);
-
         bool GetClimbAtPos();
-        
         bool GetClimbBalanced();
-
         bool GetClimbDone();
-
-        void UpdateClimbEncoders();
 };
 
 #endif
