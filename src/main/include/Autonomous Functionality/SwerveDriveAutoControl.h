@@ -1,6 +1,7 @@
 #include "Robot.h"
 #include "VisionBasedSwerve.h"
 #include "Constants/SwerveConstants.h"
+#include "Constants/LimelightConstants.h"
 #include "Constants/FieldConstants.h"
 
 #ifndef SWERVE_CONTROLLER_H
