@@ -613,7 +613,12 @@ void Robot::TeleopPeriodic()
 
       if (xboxController.GetRightTriggerAxis() > TRIGGER_ACTIVATION_POINT)
       {
-        bool done = notecontroller.IntakeNoteToSelector();
+        bool done = false;
+        if (overbumper.GetWristEncoderReading() < WRIST_LOW_INTAKE_CUTOFF || overbumper.GetObjectInIntake())
+          done = notecontroller.IntakeNoteToSelector();
+        else
+          overbumper.SetIntakeMotorSpeed(0);
+      
         if (!done){
           wristSetPoint = Intake::LOW;
         }
