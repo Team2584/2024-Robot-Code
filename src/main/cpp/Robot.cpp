@@ -21,7 +21,7 @@
 #include "CANdleLED.h"
 #include "UIController.h"
 
-PowerDistribution m_pdh{34, frc::PowerDistribution::ModuleType::kRev};
+PowerDistribution m_pdh{31, frc::PowerDistribution::ModuleType::kRev};
 VisionSwerve swerveDrive{};
 RumbleXboxController xboxController{0};
 RumbleXboxController xboxController2{1};
