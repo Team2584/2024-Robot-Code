@@ -17,6 +17,7 @@
 class AutonomousShootingController
 {
 private:
+
     SwerveDriveAutonomousController *swerveDrive;
     FlywheelSystem *flyWheel;
     Intake *intake;
@@ -25,7 +26,7 @@ private:
     Timer shotTimer;
     double targetAnglerAngle;
     bool shootingNote;
-    double anglerTrim = 0;
+    double anglerTrim = 3.0;
 
     Translation2d diffDebug;
 
@@ -36,7 +37,7 @@ public:
     bool TurnToSpeaker(AllianceColor allianceColor);
     bool TurnToSpeakerWhileDrivingMetersAndRadians(double xSpeed, double ySpeed, AllianceColor allianceColor);
     bool TurnToSpeakerWhileDriving(double xSpeed, double ySpeed, AllianceColor allianceColor);
-    double SetAnglerTrim(double trim);
+    void SetAnglerTrim(double trim);
     bool AngleFlywheelToSpeaker(AllianceColor allianceColor);
     bool SpinFlywheelForSpeaker(AllianceColor allianceColor);
     bool ClearElevatorForShot();

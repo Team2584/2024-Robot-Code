@@ -120,6 +120,9 @@ void Robot::RobotInit()
  * LiveWindow and SmartDashboard integrated updating.
  */
 void Robot::RobotPeriodic() {
+
+  flywheelController.SetAnglerTrim(SmartDashboard::GetNumber("Angler Trim", 0.0));
+
   lights.UpdateSubsystemLEDS();
   UI_Controller.Update();
   
@@ -127,12 +130,12 @@ void Robot::RobotPeriodic() {
   if (DriverStation::GetAlliance() == DriverStation::kRed)
     allianceColor = AllianceColor::RED;
   else
+  
     allianceColor = AllianceColor::BLUE;
 
   SmartDashboard::PutBoolean("In Match", DriverStation::GetMatchType() != DriverStation::MatchType::kNone);
   SmartDashboard::PutBoolean("Is Blue Alliance", allianceColor == AllianceColor::BLUE);
 
-  flywheelController.SetAnglerTrim(SmartDashboard::GetNumber("Angler Trim", 0.0));
 }
 
 /**
@@ -409,6 +412,7 @@ void Robot::TeleopInit()
 
 void Robot::TeleopPeriodic()
 {
+
   /* UPDATES */
   swerveDrive.Update();
 

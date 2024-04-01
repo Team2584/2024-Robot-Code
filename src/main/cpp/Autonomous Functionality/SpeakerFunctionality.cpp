@@ -131,7 +131,7 @@ bool AutonomousShootingController::TurnToSpeakerWhileDriving(double xSpeed, doub
     return swerveDrive->TurnToAngleWhileDriving(xSpeed, ySpeed, targetAngle, PoseEstimationType::TagBased); 
 } 
 
-double AutonomousShootingController::SetAnglerTrim(double trim)
+void AutonomousShootingController::SetAnglerTrim(double trim)
 {
     anglerTrim = trim;
 }
@@ -175,6 +175,10 @@ bool AutonomousShootingController::AngleFlywheelToSpeaker(AllianceColor alliance
 
 
     targetAnglerAngle += anglerTrim;
+    
+    SmartDashboard::PutNumber("Anglerrim", anglerTrim);
+
+
     SmartDashboard::PutNumber("Target Angler Angle", targetAnglerAngle);
 
     return flyWheel->PIDAngler(targetAnglerAngle);
