@@ -21,7 +21,7 @@
 #include "CANdleLED.h"
 #include "UIController.h"
 
-PowerDistribution m_pdh{31, frc::PowerDistribution::ModuleType::kRev};
+//PowerDistribution m_pdh{31, frc::PowerDistribution::ModuleType::kRev};
 VisionSwerve swerveDrive{};
 RumbleXboxController xboxController{0};
 RumbleXboxController xboxController2{1};
@@ -31,8 +31,8 @@ FlywheelSystem flywheel{};
 Elevator ampmech{};
 Climb hang{&swerveDrive};
 NoteController notecontroller{&overbumper, &flywheel, &ampmech};
-LightsSubsystem lights{&m_pdh};
-SmartDashboardController UI_Controller{&swerveDrive, &overbumper, &flywheel, &ampmech, &m_pdh, &hang};
+LightsSubsystem lights{};
+SmartDashboardController UI_Controller{&swerveDrive, &overbumper, &flywheel, &ampmech, &hang};
 
 SwerveDriveAutonomousController swerveAutoController{&swerveDrive};
 AutonomousShootingController flywheelController{&swerveAutoController, &flywheel, &overbumper, &ampmech};

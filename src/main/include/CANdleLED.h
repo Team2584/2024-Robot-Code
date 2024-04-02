@@ -188,20 +188,17 @@ class LightsSubsystem : public CandleController {
 
     public:
 
-    frc::PowerDistribution *m_PDH;
 
     Timer notePickUpTimer;
     bool didStrobeGreen = false;
 
-    LightsSubsystem(frc::PowerDistribution *_m_PDH)
-    :   CandleController(),
-        m_PDH{_m_PDH}
-    {
+    LightsSubsystem()
+    :   CandleController()
+        {
         FullClear();
     }
 
     void UpdateSubsystemLEDS(){
-       BatteryIndicator.setColor((m_PDH->GetVoltage() > 11.5 ? green : red));
        DriverStationIndicator.setColor((DriverStation::IsDSAttached() ? green : red));
     }
 
