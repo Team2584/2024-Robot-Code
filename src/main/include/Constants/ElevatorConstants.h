@@ -7,10 +7,10 @@
 #define AMP_MECH_PORT 26
 
 namespace ElevatorConstants {
-inline units::meters_per_second_t kMaxVelocity = 1.05_mps;
-inline units::meters_per_second_squared_t kMaxAcceleration = 0.75_mps_sq;
+inline units::meters_per_second_t kMaxVelocity = 1.15_mps;
+inline units::meters_per_second_squared_t kMaxAcceleration = 0.9_mps_sq;
 inline units::volt_t maxVoltsDown = 2_V;
-inline double m_kP = 55.0; //36
+inline double m_kP = 60.0; //36
 inline double m_kI = 0.05;
 inline double m_kD = 0.0;
 inline units::volt_t m_kS = 0_V;
@@ -18,7 +18,7 @@ inline units::volt_t m_kG = 0.3_V; //BEFORE PULLEY CHANGE
 inline auto m_kV = 1.3_V / 1_mps;
 inline auto ALLOWABLE_ERROR_POS = 0.04_m;
 
-inline auto ELEV_AMP = 0.53;
+inline auto ELEV_AMP = 0.56;
 inline auto ELEV_LOW = 0;
 inline auto ELEV_INTAKE = 0;
 inline auto ELEV_OUTTAKE = 0.15;
@@ -28,7 +28,7 @@ inline auto ELEV_SOURCE = 0.60; //fake value
 
 
 inline constexpr double gearRatioValue1 = 1.0/5.0;
-inline constexpr double diameterValue1 = 0.0762 / 2.0; //meters
+inline constexpr double diameterValue1 = 0.0762 / 2.0 * 5.0 / 6.0; //meters
 inline constexpr double ELEV_CONVERSION_FACTOR = gearRatioValue1 * (3.14159365 * diameterValue1);
 
 namespace AmpMech{
