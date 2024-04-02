@@ -104,7 +104,7 @@ void Robot::RobotInit()
   SmartDashboard::PutNumber("Flywheel Setpoint", 0);
   SmartDashboard::PutNumber("Angler Setpoint", M_PI / 2);
 
-  SmartDashboard::PutNumber("Angler Trim", 0.0);
+  SmartDashboard::PutNumber("Angler Trim", 01.0);
   SmartDashboard::PutNumber("Angler Mag Encoder Borked", false);
 
   lights.FullClear();
@@ -679,10 +679,10 @@ void Robot::TeleopPeriodic()
         notecontroller.BeginScoreNoteInPosition(Elevator::ElevatorSetting::AMP);
         currentDriverMode = DRIVER_MODE::AUTO_AMP;
       }
-      /*if (xboxController.GetBButtonPressed()){
+      if (xboxController.GetBButtonPressed()){
         swerveAutoController.BeginDriveToNote();
         currentDriverMode = DRIVER_MODE::AUTO_INTAKE;
-      }*/
+      }
       if (xboxController2.GetLeftTriggerAxis() > TRIGGER_ACTIVATION_POINT)
       {
         notecontroller.BeginScoreNoteInPosition(Elevator::ElevatorSetting::AMP);
@@ -723,7 +723,8 @@ void Robot::TeleopPeriodic()
 
     case DRIVER_MODE::AUTO_INTAKE:
     {
-      swerveAutoController.DriveToNote();
+      bool done1 = swerveAutoController.DriveToNote();
+      SmartDashboard::PutBoolean("Driventonote", done1);
       bool done = notecontroller.IntakeNoteToSelector();
       if (!done)
       {

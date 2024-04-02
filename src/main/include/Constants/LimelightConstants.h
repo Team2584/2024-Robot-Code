@@ -10,8 +10,8 @@ inline constexpr auto xRotOffset = 0_deg;
 inline constexpr auto yRotOffset = 0_deg;
 inline constexpr auto zRotOffset = 0_deg;
 
-inline constexpr auto NoteTurnDegCutoff = 15_deg;
-inline constexpr auto NoteAreaCutoff = 5.0;
+inline constexpr auto NoteTurnDegCutoff = 0_deg;
+inline constexpr auto NoteAreaCutoff = 1.0;
 
 }
 

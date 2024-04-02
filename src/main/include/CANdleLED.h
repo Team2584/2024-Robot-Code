@@ -82,7 +82,7 @@ public:
         candleConfiguration.disableWhenLOS = false;
         candleConfiguration.stripType = LEDStripType::RGB;
         candleConfiguration.brightnessScalar = 1.0;
-        candleConfiguration.vBatOutputMode = VBatOutputMode::Off;
+        //candleConfiguration.vBatOutputMode = VBatOutputMode::Off;
         candle.ConfigAllSettings(candleConfiguration);
     }
 
@@ -201,7 +201,7 @@ class LightsSubsystem : public CandleController {
     }
 
     void UpdateSubsystemLEDS(){
-       BatteryIndicator.setColor((m_PDH->GetVoltage() > 11.5 ? green : red));
+       //BatteryIndicator.setColor((m_PDH->GetVoltage() > 11.5 ? green : red));
        DriverStationIndicator.setColor((DriverStation::IsDSAttached() ? green : red));
     }
 

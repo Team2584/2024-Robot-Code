@@ -426,14 +426,14 @@ void SwerveDriveAutonomousController::BeginDriveToNote()
 bool SwerveDriveAutonomousController::TurnToNote()
 {
 
-    if (!swerveDrive->NoteInView() || swerveDrive->limelight.GetTargetArea() < LimelightConstants::NoteAreaCutoff)
+  if (!swerveDrive->NoteInView() || swerveDrive->limelight.GetTargetArea() < LimelightConstants::NoteAreaCutoff)
     {
         swerveDrive->DriveSwervePercent(0,0,0);
         return false;
     }
 
     Pose2d currentPose = swerveDrive->GetTagOdometryPose();
-    Rotation2d noteTargetAngle = currentPose.Rotation() + Rotation2d(units::degree_t{swerveDrive->GetNoteTx()});
+    Rotation2d noteTargetAngle = currentPose.Rotation() - Rotation2d(units::degree_t{swerveDrive->GetNoteTx()});
 
     SmartDashboard::PutNumber("Target Note Angle", noteTargetAngle.Radians().value());
 
@@ -442,7 +442,8 @@ bool SwerveDriveAutonomousController::TurnToNote()
 
 bool SwerveDriveAutonomousController::DriveToNote()
 {
-
+    SmartDashboard::PutNumber("NoteArea", swerveDrive->limelight.GetTargetArea());
+    SmartDashboard::PutBoolean("NoteInView", swerveDrive->NoteInView());
     if (!swerveDrive->NoteInView() || swerveDrive->limelight.GetTargetArea() < LimelightConstants::NoteAreaCutoff)
     {
         swerveDrive->DriveSwervePercent(0,0,0);
@@ -476,16 +477,16 @@ bool SwerveDriveAutonomousController::DriveToNote()
     // If all PID loops are finished, stop driving the swerve.
     if (swerveDrive->GetNoteTy() < 0)
     {
-        swerveDrive->DriveSwervePercent(0, 0, 0);
+        swerveDrive->DriveSwervePercent(0, 0, 0.001);
         return true;
     }
 
-    speeds[0] = noteXPIDController.Calculate(0, swerveDrive->limelight.GetNoteTx());
+    speeds[0] = noteXPIDController.Calculate(0, -1 * swerveDrive->limelight.GetNoteTy());
     PIDFinished[0] = noteXPIDController.PIDFinished();
-    speeds[1] = noteYPIDController.Calculate(0, swerveDrive->limelight.GetNoteTy());
+    speeds[1] = noteYPIDController.Calculate(0, swerveDrive->limelight.GetNoteTx());
     PIDFinished[1] = noteYPIDController.PIDFinished();
 
     // Drive swerve at desired speeds
-    swerveDrive->DriveSwervePercentNonFieldOriented(speeds[0], speeds[1], speeds[2]);
+    swerveDrive->DriveSwervePercentNonFieldOriented(speeds[0], 0.0/*speeds[1]*/, speeds[2]);
     return false;
 }
