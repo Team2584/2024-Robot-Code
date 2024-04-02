@@ -857,6 +857,7 @@ void Robot::TeleopPeriodic()
 
     case DRIVER_MODE::CLIMBING_TRAP:
     {
+      hang.UpdateClimbEncoders();
       lights.SetClimbing();
 
       double fwdDriveSpeed = leftJoystickY * MAX_DRIVE_SPEED_CLIMB;

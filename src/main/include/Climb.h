@@ -29,6 +29,10 @@ class Climb {
 
         Climb(VisionSwerve* _swerveDrive);
 
+        bool GetLStop();
+        bool GetRStop();
+        void UpdateClimbEncoders();
+        
         void SetClimbMotors(double Percentage);
         void SetClimbMotors(double LeftMotor, double RightMotor);
 

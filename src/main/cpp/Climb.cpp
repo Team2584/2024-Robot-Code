@@ -28,6 +28,29 @@ Climb::Climb(VisionSwerve* _swerveDrive)
     rightClimbMotor.SetInverted(true);
     leftEncoder.SetPosition(ClimbConstants::StartingHeight.value());
     rightEncoder.SetPosition(ClimbConstants::StartingHeight.value());
+    lClimbZeroed = false;
+    rClimbZeroed = false;
+}
+
+bool Climb::GetLStop(){
+    return leftHallSensor.Get();
+}
+
+bool Climb::GetRStop(){
+    return rightHallSensor.Get();
+}
+
+void Climb::UpdateClimbEncoders(){
+    if (GetLStop() && leftEncoder.GetPosition() < 0.3)
+    {
+        leftEncoder.SetPosition(0);
+        lClimbZeroed = true; 
+    }
+    if (GetRStop() && rightEncoder.GetPosition() < 0.3)
+    {
+        rightEncoder.SetPosition(0);
+        rClimbZeroed = true; 
+    }
 }
 
 /**
