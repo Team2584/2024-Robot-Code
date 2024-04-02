@@ -758,6 +758,11 @@ void Robot::TeleopPeriodic()
       bool angled = flywheelController.AngleFlywheelToSpeaker(allianceColor);
       bool cleared = flywheelController.ClearElevatorForShot();
 
+      SmartDashboard::PutBoolean("SOM Finished Turning", turnt);
+      SmartDashboard::PutBoolean("SOM Finished Spinning", spinning);
+      SmartDashboard::PutBoolean("SOM Finished Angling", angled);
+      SmartDashboard::PutBoolean("SOM Finished Clearing", cleared);
+
       if (!begunShooting && xboxController2.GetRightTriggerAxis() > TRIGGER_ACTIVATION_POINT)
       {
         Translation2d diff = flywheelController.GetDiffDebug();
