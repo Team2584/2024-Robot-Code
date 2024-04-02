@@ -403,6 +403,7 @@ void Robot::TeleopInit()
   lastX = 0;
   lastY = 0;
   lastRot = 0;
+  ampmech.BeginPIDElevator();
 }
 
 void Robot::TeleopPeriodic()
@@ -606,6 +607,7 @@ void Robot::TeleopPeriodic()
 
       if (xboxController.GetRightTriggerAxis() > TRIGGER_ACTIVATION_POINT)
       {
+        ampmech.MoveToHeight(Elevator::ElevatorSetting::LOW);
         bool done = notecontroller.IntakeNoteToSelector();
         if (!done){
           wristSetPoint = Intake::LOW;
@@ -616,11 +618,13 @@ void Robot::TeleopPeriodic()
       }
       else if (xboxController.GetLeftTriggerAxis() > TRIGGER_ACTIVATION_POINT)
       {
+        ampmech.StopElevator();
         ampmech.NoteToSelector();
         overbumper.OuttakeNote();
       }
       else if (xboxController2.GetBackButton())
       {
+        ampmech.StopElevator();
         ampmech.NoteToSelector();
         overbumper.OuttakeNote();
       }
@@ -628,6 +632,10 @@ void Robot::TeleopPeriodic()
         notecontroller.ToElevator();
       }
       else if(xboxController2.GetRightTriggerAxis() > TRIGGER_ACTIVATION_POINT){
+        if (xboxController2.GetXButton() || xboxController2.GetYButton())
+          flywheelController.ClearElevatorForShot(anglerSetpoint);
+        else
+          ampmech.MoveToHeight(Elevator::ElevatorSetting::LOW);
         overbumper.ShootNote();
       }
       else if (xboxController2.GetAButton())
@@ -641,6 +649,7 @@ void Robot::TeleopPeriodic()
       {
         ampmech.DepositNote();
         overbumper.NoteToElevator();
+        ampmech.StopElevator();
       }
       else if (controller2LeftJoystickY != 0)
       {
@@ -781,6 +790,7 @@ void Robot::TeleopPeriodic()
       else
         overbumper.SetIntakeMotorSpeed(0);
 
+      overbumper.PIDWristToPoint(Intake::WristSetting::SHOOT);
       
       if (turnt && spinning && cleared){
         xboxController2.ReadyActionRumble();
@@ -803,6 +813,8 @@ void Robot::TeleopPeriodic()
     {
       bool isAtAmp = autoAmpController.DriveToAmp(allianceColor);
       bool scored = false;
+
+      overbumper.PIDWristToPoint(Intake::WristSetting::SHOOT);
 
       if ((xboxController2.GetRightBumperPressed() && !xboxController2.GetAButton()) || (xboxController2.GetAButtonPressed() && !xboxController2.GetRightBumper()))
         notecontroller.BeginScoreNoteInPosition(Elevator::ElevatorSetting::AMP);
