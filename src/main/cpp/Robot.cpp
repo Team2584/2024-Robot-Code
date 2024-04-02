@@ -1236,6 +1236,13 @@ void Robot::TestPeriodic() {
 
   SmartDashboard::PutBoolean("in intake", overbumper.GetObjectInIntake());
   SmartDashboard::PutBoolean("in mech", ampmech.GetObjectInMech());
+
+  SmartDashboard::PutNumber("Climb r pos", hang.rightEncoder.GetPosition());
+  SmartDashboard::PutNumber("Climb l pos", hang.leftEncoder.GetPosition());
+  SmartDashboard::PutBoolean("Climb R Stop", hang.GetRStop());
+  SmartDashboard::PutBoolean("Climb L Stop", hang.GetLStop());
+  SmartDashboard::PutBoolean("Climb R Zeroed", hang.rClimbZeroed);
+  SmartDashboard::PutBoolean("Climb L Zeroed", hang.lClimbZeroed);
 }
 
 void Robot::SimulationInit() {}
