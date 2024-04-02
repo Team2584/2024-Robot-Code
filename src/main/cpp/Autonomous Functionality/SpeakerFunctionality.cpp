@@ -188,11 +188,11 @@ bool AutonomousShootingController::SpinFlywheelForSpeaker(AllianceColor alliance
         distance = currentPos.Distance(RED_SPEAKER_POSITION.ToTranslation2d());
     
     double velocity;
-    if (distance > 2_m)
+    if (distance > 1.75_m)
     {
-        velocity = lerpVal(2, 3, 4000, 5500, distance.value());
-        if (velocity > 6000)
-            velocity = 6000;
+        velocity = lerpVal(1.75, 2.25, 4000, 6500, distance.value());
+        if (velocity > 6500)
+            velocity = 6500;
     }
     else
         velocity = 4000;

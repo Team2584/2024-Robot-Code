@@ -10,6 +10,10 @@ Elevator::Elevator()
     m_feedforward{ElevatorConstants::m_kS, ElevatorConstants::m_kG, ElevatorConstants::m_kV},
     m_timeOfFlight{ElevatorConstants::TimeOfFlight::tofCANID,ElevatorConstants::TimeOfFlight::tofOffset, ElevatorConstants::TimeOfFlight::tofAllowedSigma}
 {
+    ctre::phoenix6::configs::TalonFXConfiguration toConfigure{};
+    toConfigure.CurrentLimits.StatorCurrentLimit = 70.0;
+    toConfigure.CurrentLimits.StatorCurrentLimitEnable = true; // And enable it
+    winchMotor.GetConfigurator().Apply(toConfigure);
     winchMotor.SetNeutralMode(ctre::phoenix6::signals::NeutralModeValue::Brake);
     winchMotor.SetPosition(0_tr);
     m_controller.SetTolerance(ElevatorConstants::ALLOWABLE_ERROR_POS);
