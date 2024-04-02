@@ -27,7 +27,7 @@ inline auto ELEV_TRAP = 0.70;
 inline auto ELEV_SOURCE = 0.60; //fake value
 
 
-inline constexpr double gearRatioValue1 = 1.0/4.0;
+inline constexpr double gearRatioValue1 = 1.0/5.0;
 inline constexpr double diameterValue1 = 0.0762 / 2.0; //meters
 inline constexpr double ELEV_CONVERSION_FACTOR = gearRatioValue1 * (3.14159365 * diameterValue1);
 
@@ -36,7 +36,7 @@ namespace AmpMech{
     inline constexpr double AMP_SPEED_TO_SELECTOR = 0.5;
     inline constexpr double AMP_SPEED_DEPOSIT = -0.75;
     inline constexpr double TRAP_SPEED_DEPOSIT = -0.25;
-    inline constexpr auto AMP_TIME = 0.1_s;
+    inline constexpr auto AMP_TIME = -0.01_s;
 }
 
 namespace TimeOfFlight{
