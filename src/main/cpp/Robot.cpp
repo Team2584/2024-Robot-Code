@@ -859,6 +859,7 @@ void Robot::TeleopPeriodic()
     {
       hang.UpdateClimbEncoders();
       lights.SetClimbing();
+      flywheel.StopFlywheel();
 
       double fwdDriveSpeed = leftJoystickY * MAX_DRIVE_SPEED_CLIMB;
       double strafeDriveSpeed = leftJoystickX * MAX_DRIVE_SPEED_CLIMB;
