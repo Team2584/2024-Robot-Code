@@ -67,7 +67,7 @@
 #define CAMERA_ONE_Y 11.625_in // Distance in meters from camera to center of robot left/right, left positive
 #define CAMERA_ONE_Z 26.875_in // Camera's distance from ground in meters
 #define CAMERA_ONE_X_ROTATION 0_deg // Camera's Rotation around robot's X axis (tilted up/down)
-#define CAMERA_ONE_Y_ROTATION -57_deg // Camera's Rotation around robot's Y axis (rotated clockwise/counterclocwise)
+#define CAMERA_ONE_Y_ROTATION -52_deg // Camera's Rotation around robot's Y axis (rotated clockwise/counterclocwise)
 #define CAMERA_ONE_Z_ROTATION 0_deg // Camera's Rotation around robot's Z axis (tilted left/right)
 
 #define CAMERA_TWO_NAME "Bottom Camera"
@@ -75,7 +75,7 @@
 #define CAMERA_TWO_Y 11.625_in // Distance in meters from camera to center of robot left/right, left positive
 #define CAMERA_TWO_Z 25.25_in // Camera's distance from ground in meters
 #define CAMERA_TWO_X_ROTATION 0_deg // Camera's Rotation around robot's X axis (tilted up/down)
-#define CAMERA_TWO_Y_ROTATION -27_deg // Camera's Rotation around robot's Y axis (rotated clockwise/counterclocwise)
+#define CAMERA_TWO_Y_ROTATION -22_deg // Camera's Rotation around robot's Y axis (rotated clockwise/counterclocwise)
 #define CAMERA_TWO_Z_ROTATION 0_deg // Camera's Rotation around robot's Z axis (tilted left/right)
 
 #define CAMERA_THREE_NAME "Left Camera"
@@ -122,13 +122,13 @@ enum PoseEstimationType
 #define DTP_TRANSLATION_MIN_SPEED 0.02 // In percent power
 #define DTP_TRANSLATION_MAX_SPEED 0.6 // In percent power
 // Rotational PID to correct robot heading
-#define DTP_ROTATION_KP 0.38
+#define DTP_ROTATION_KP 0.385
 #define DTP_ROTATION_KI 0
 #define DTP_ROTATION_KI_MAX 0 // In percent power
 #define DTP_ROTATION_KD 0
 #define DTP_ROTATION_TOLERANCE 0.05 // In radians
 #define DTP_ROTATION_VELOCITY_TOLERANCE 0.5 // In percent power
-#define DTP_ROTATION_MIN_SPEED 0.02 // In percent powerw
+#define DTP_ROTATION_MIN_SPEED 0.025 // In percent powerw
 #define DTP_ROTATION_MAX_SPEED 0.6 // In percent power
 
 /* Trajectory following PID Values */
