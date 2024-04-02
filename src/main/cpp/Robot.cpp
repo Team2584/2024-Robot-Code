@@ -889,7 +889,7 @@ void Robot::TeleopPeriodic()
         if (xboxController.GetPOV() == 270 || xboxController.GetPOV() == 225)
           hang.SetLeftMotorNoLimit(-0.4);
         else
-          hang.SetRightMotorNoLimit(0);
+          hang.SetLeftMotorNoLimit(0);
       }
       else {
         hang.HoldClimb();
@@ -950,85 +950,6 @@ void Robot::TeleopPeriodic()
 
     }
   }
-
-
-  /* TESTINGGGGG */
-
-  // Drive to a position for testing
-  if (xboxController3.GetYButtonPressed())
-    autoAmpController.BeginDriveToAmp(allianceColor);
-  if (xboxController3.GetYButton())
-    autoAmpController.DriveToAmp(allianceColor);
-      
-  if (xboxController3.GetXButton()){
-    flywheelController.TurnToSpeaker(allianceColor);
-  }
-  
-  // Follow spline for testing
-  if (xboxController3.GetBButtonPressed())
-  {
-    swerveAutoController.ResetTrajectoryQueue();
-    swerveAutoController.LoadTrajectory("BRTo1To2To3");
-    swerveAutoController.BeginNextTrajectory();
-  }
-  if (xboxController3.GetAButton())
-  {
-    double finalSpeeds[2];
-    swerveAutoController.CalcTrajectoryDriveValues(PoseEstimationType::TagBased, 0.25, finalSpeeds);
-    swerveDrive.DriveSwerveTagOrientedMetersAndRadians(finalSpeeds[0], finalSpeeds[1], finalSpeeds[2]);
-  }
-  else if (xboxController3.GetBButton())
-  {
-    double finalSpeeds[2];
-    swerveAutoController.CalcTrajectoryDriveValues(PoseEstimationType::TagBased, 1, finalSpeeds);
-    swerveDrive.DriveSwerveTagOrientedMetersAndRadians(finalSpeeds[0], finalSpeeds[1], finalSpeeds[2]);
-  }
-
-  // Follow spline for testing
-  /*if (xboxController3.GetAButtonPressed())
-  {
-    swerveAutoController.ResetTrajectoryQueue();
-    swerveAutoController.LoadTrajectory("Test");
-    swerveAutoController.BeginNextTrajectory();
-  }
-  if (xboxController3.GetAButton())
-  {
-    swerveAutoController.FollowTrajectory(PoseEstimationType::TagBased);
-  }*/
-
-  /*if (xboxController3.GetAButtonPressed())
-    swerveAutoController.BeginDriveToNote();
-  if (xboxController3.GetAButton())
-  { 
-    swerveAutoController.TurnToNote();
-  }*/
-
-  /*
-  if (xboxController3.GetBButtonPressed())
-      swerveAutoController.BeginDriveToNote();
-  if (xboxController3.GetBButton())
-  {    
-    bool done = notecontroller.IntakeNoteToSelector();
-    if (!done)
-    {
-      wristSetPoint = Intake::LOW;
-      swerveAutoController.DriveToNote();
-    }
-  }*/
-
-  if(xboxController3.GetBackButtonPressed()){
-    flywheel.SpinFlywheelPercent(0);
-  }
-  else if (xboxController3.GetStartButtonPressed()){
-    flywheel.SetFlywheelVelocity(SmartDashboard::GetNumber("Flywheel Setpoint", 0));
-  }
-
-  /*if (xboxController3.GetPOV() == 0){
-    flywheel.PIDAngler(SmartDashboard::GetNumber("Angler Setpoint", M_PI / 2));
-  }
-  else{
-    flywheel.MoveAnglerPercent(0);
-  }*/
 
   /*                                                                
   ,------.         ,--.                         ,--.                
