@@ -16,7 +16,7 @@ VisionSwerve::VisionSwerve()
       camera3{CAMERA_THREE_NAME},
       poseEstimator3{APRIL_TAGS, photon::LOWEST_AMBIGUITY, photon::PhotonCamera(CAMERA_THREE_NAME), robotToCam3},
       networkTableInstance{nt::NetworkTableInstance::GetDefault()},
-      visionTable{networkTableInstance.GetTable("vision")},
+      visionTable{networkTableInstance.GetTable("limelight")},
       limelight{visionTable}
 {
     tagOdometry.SetVisionMeasurementStdDevs(wpi::array(APRILTAG_CONFIDENCE_X, APRILTAG_CONFIDENCE_Y, APRILTAG_CONFIDENCE_ROTATION));
@@ -156,7 +156,10 @@ void VisionSwerve::DriveSwerveTagOrientedMetersAndRadians(double FwdDriveSpeed, 
 
 bool VisionSwerve::NoteInView()
 {
-    return limelight.noteInViewSubscriber.Get();
+    if(limelight.GetNoteTx() != 0){
+        return true;
+    }
+    return false;
 }
 
 double VisionSwerve::GetNoteTx()

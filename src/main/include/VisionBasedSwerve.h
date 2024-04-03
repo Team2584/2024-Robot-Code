@@ -25,9 +25,12 @@ private:
 
     nt::NetworkTableInstance networkTableInstance;
     std::shared_ptr<nt::NetworkTable> visionTable;
-    Limelight limelight;
 
 public:
+
+    Limelight limelight;
+
+
     VisionSwerve();
     void ResetHeading();
 

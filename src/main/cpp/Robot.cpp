@@ -685,10 +685,10 @@ void Robot::TeleopPeriodic()
         notecontroller.BeginScoreNoteInPosition(Elevator::ElevatorSetting::AMP);
         currentDriverMode = DRIVER_MODE::AUTO_AMP;
       }
-      /*if (xboxController.GetBButtonPressed()){
+      if (xboxController.GetBButtonPressed()){
         swerveAutoController.BeginDriveToNote();
         currentDriverMode = DRIVER_MODE::AUTO_INTAKE;
-      }*/
+      }
       if (xboxController2.GetLeftTriggerAxis() > TRIGGER_ACTIVATION_POINT)
       {
         notecontroller.BeginScoreNoteInPosition(Elevator::ElevatorSetting::AMP);
@@ -729,7 +729,8 @@ void Robot::TeleopPeriodic()
 
     case DRIVER_MODE::AUTO_INTAKE:
     {
-      swerveAutoController.DriveToNote();
+      bool done1 = swerveAutoController.DriveToNote();
+      SmartDashboard::PutBoolean("Driventonote", done1);
       bool done = notecontroller.IntakeNoteToSelector();
       if (!done)
       {
