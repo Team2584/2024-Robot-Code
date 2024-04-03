@@ -9,7 +9,7 @@
 namespace ElevatorConstants {
 inline units::meters_per_second_t kMaxVelocity = 1.15_mps;
 inline units::meters_per_second_squared_t kMaxAcceleration = 0.9_mps_sq;
-inline units::volt_t maxVoltsDown = 2_V;
+inline units::volt_t maxVoltsDown = 2.3_V;
 inline double m_kP = 60.0; //36
 inline double m_kI = 0.05;
 inline double m_kD = 0.0;

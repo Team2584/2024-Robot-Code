@@ -67,7 +67,7 @@
 #define CAMERA_ONE_Y 11.625_in // Distance in meters from camera to center of robot left/right, left positive
 #define CAMERA_ONE_Z 26.875_in // Camera's distance from ground in meters
 #define CAMERA_ONE_X_ROTATION 0_deg // Camera's Rotation around robot's X axis (tilted up/down)
-#define CAMERA_ONE_Y_ROTATION -52_deg // Camera's Rotation around robot's Y axis (rotated clockwise/counterclocwise)
+#define CAMERA_ONE_Y_ROTATION -47_deg // Camera's Rotation around robot's Y axis (rotated clockwise/counterclocwise)
 #define CAMERA_ONE_Z_ROTATION 0_deg // Camera's Rotation around robot's Z axis (tilted left/right)
 
 #define CAMERA_TWO_NAME "Bottom Camera"
@@ -75,7 +75,7 @@
 #define CAMERA_TWO_Y 11.625_in // Distance in meters from camera to center of robot left/right, left positive
 #define CAMERA_TWO_Z 25.25_in // Camera's distance from ground in meters
 #define CAMERA_TWO_X_ROTATION 0_deg // Camera's Rotation around robot's X axis (tilted up/down)
-#define CAMERA_TWO_Y_ROTATION -22_deg // Camera's Rotation around robot's Y axis (rotated clockwise/counterclocwise)
+#define CAMERA_TWO_Y_ROTATION -17_deg // Camera's Rotation around robot's Y axis (rotated clockwise/counterclocwise)
 #define CAMERA_TWO_Z_ROTATION 0_deg // Camera's Rotation around robot's Z axis (tilted left/right)
 
 #define CAMERA_THREE_NAME "Left Camera"
