@@ -78,11 +78,11 @@ public:
     
     CandleController() {
         CANdleConfiguration candleConfiguration;
-        candleConfiguration.statusLedOffWhenActive = true;
+        candleConfiguration.statusLedOffWhenActive = true; //Disables the small status LED on the CANDLE while in operation
         candleConfiguration.disableWhenLOS = false;
         candleConfiguration.stripType = LEDStripType::RGB;
-        candleConfiguration.brightnessScalar = 1.0;
-        candleConfiguration.vBatOutputMode = VBatOutputMode::Off;
+        candleConfiguration.brightnessScalar = 1.0; //No brightness dim
+        candleConfiguration.vBatOutputMode = VBatOutputMode::Off; //Read the docs on this setting if using it to power external processors
         candle.ConfigAllSettings(candleConfiguration);
     }
 
@@ -187,7 +187,6 @@ public:
 class LightsSubsystem : public CandleController {
 
     public:
-
 
     Timer notePickUpTimer;
     bool didStrobeGreen = false;

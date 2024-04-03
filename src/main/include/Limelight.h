@@ -6,12 +6,16 @@
 #ifndef LIMELIGHT_H 
 #define LIMELIGHT_H
 
+//Custom - Written class to handle limelight communication. 
+//Allows for toggling between AI Detector and Apriltag Pipelines
 class Limelight
 {
 
-public:
+private:
 
     enum LimelightPipeline{NOTES, APRILTAGS};
+
+    //NetworkTable Handler Objects
     std::shared_ptr<nt::NetworkTable> visionTable;
     nt::NetworkTableInstance networkTableInstance;
     nt::BooleanTopic noteInViewTopic; //Whether the limelight has any valid targets (0 or 1)
@@ -22,8 +26,6 @@ public:
     nt::DoubleSubscriber notePosSubscriber_y;
     nt::DoubleArrayTopic tagPosTopic; // Position of robot based on april tags
     nt::DoubleArraySubscriber tagPosSubscriber;
-
-private:
 
     Transform3d limelightPose; /* The Position and rotation of the camera on the robot */
 

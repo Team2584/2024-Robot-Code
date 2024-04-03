@@ -9,10 +9,8 @@ class Climb {
 
     private:
 
-       
         VisionSwerve* robotSwerveDrive;
        
-
     public:
 
          frc::TrapezoidProfile<units::meters>::Constraints m_linearconstraints;
