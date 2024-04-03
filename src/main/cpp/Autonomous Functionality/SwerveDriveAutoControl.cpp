@@ -477,7 +477,7 @@ bool SwerveDriveAutonomousController::DriveToNote()
     // If all PID loops are finished, stop driving the swerve.
     if (swerveDrive->GetNoteTy() < 0)
     {
-        swerveDrive->DriveSwervePercent(0, 0, 0.001);
+        swerveDrive->DriveSwervePercent(0, 0, 0);
         return true;
     }
 

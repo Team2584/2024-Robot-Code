@@ -104,7 +104,7 @@ void Robot::RobotInit()
   SmartDashboard::PutNumber("Flywheel Setpoint", 0);
   SmartDashboard::PutNumber("Angler Setpoint", M_PI / 2);
 
-  SmartDashboard::PutNumber("Angler Trim", 01.0);
+  SmartDashboard::PutNumber("Angler Trim", 0.0);
   SmartDashboard::PutNumber("Angler Mag Encoder Borked", false);
 
   lights.FullClear();

@@ -171,7 +171,7 @@ enum PoseEstimationType
 #define NOTE_Y_MIN_SPEED 0 // In percent power
 #define NOTE_Y_MAX_SPEED 0.4 // In percent power
 // Rotational PID to correct robot heading
-#define NOTE_ROTATION_KP 0.10
+#define NOTE_ROTATION_KP 0.25
 #define NOTE_ROTATION_KI 0
 #define NOTE_ROTATION_KI_MAX 0 // In percent power
 #define NOTE_ROTATION_KD 0
