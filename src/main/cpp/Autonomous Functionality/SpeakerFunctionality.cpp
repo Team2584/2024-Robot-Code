@@ -78,7 +78,6 @@ bool AutonomousShootingController::TurnToSpeakerWhileDriving(double xSpeed, doub
     Pose2d currentPose = swerveDrive->swerveDrive->GetTagOdometryPose();
 
     // Determine what our target angle is
-   // Determine what our target angle is
     Translation2d diff;
     Translation2d newSpeakerPos;
     if (allianceColor == AllianceColor::BLUE)

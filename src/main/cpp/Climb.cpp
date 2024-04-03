@@ -102,7 +102,6 @@ void Climb::SetClimbMotorsNoLimit(double LeftMotor, double RightMotor){
     rightClimbMotor.Set(RightMotor);
 }
 
-
 /**
  * @brief Move Both Climb Arms Up
 */
