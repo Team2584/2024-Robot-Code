@@ -1,6 +1,6 @@
 //Customization Variabes (all in percent so the driver's weak brain don't get confused)
 #define CONTROLLER_DEADBAND 0.125
-#define TRIGGER_ACTIVATION_POINT 0.3
+#define TRIGGER_ACTIVATION_POINT 0.25
 #define TRIGGER_DEACTIVATION_POINT 0.1
 
 #define MAX_DRIVE_SPEED 0.6
@@ -15,5 +15,7 @@ inline constexpr auto SPIN_SLEW_RATE  = 2.0;
 
 const inline auto SHOT_TIME = 1.25_s;
 #define FLYWHEEL_IDLE_RPM 1500.0;
+
+inline const double WRIST_LOW_INTAKE_CUTOFF = 0.07; // we only intake notes when the wrist is below this value
 
 #define STARTING_DRIVE_HEADING  0.0

@@ -129,8 +129,6 @@ public:
     FlywheelSystem *flywheel;
     Climb *climb;
 
-    frc::PowerDistribution *pdps;
-
     frc::ShuffleboardTab& autontab = Shuffleboard::GetTab("Auton");
     frc::ShuffleboardTab& teleoptab = Shuffleboard::GetTab("TeleOp");
 
@@ -146,20 +144,17 @@ public:
     FlywheelSendable ntflywheel_{flywheel};
     IntakeSendable ntintake_{intake, elevator};
 
-    SmartDashboardController(VisionSwerve *swerveDrive_, Intake *intake_, FlywheelSystem *flywheel_, Elevator *ampMech_, frc::PowerDistribution *pdp, Climb *climb_)
+    SmartDashboardController(VisionSwerve *swerveDrive_, Intake *intake_, FlywheelSystem *flywheel_, Elevator *ampMech_, Climb *climb_)
     :
         swerveDrive{swerveDrive_},
         intake{intake_},
         elevator{ampMech_},
         flywheel{flywheel_},
-        climb{climb_},
-        pdps{pdp}
-
+        climb{climb_}
     {
 
         m_field.SetRobotPose(swerveDrive->GetOdometryPose());
         teleoptab.Add("Field", m_field).WithSize(3, 2).WithPosition(3, 0).WithWidget(frc::BuiltInWidgets::kField);
-        teleoptab.Add("PDP", *pdps).WithSize(3, 4).WithPosition(0, 0).WithWidget(frc::BuiltInWidgets::kPowerDistribution);  
         teleoptab.Add("Swerve Drive", ntswervedrive_).WithSize(2,2).WithPosition(3,2);
 
 
