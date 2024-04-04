@@ -31,6 +31,8 @@ void AutonomousController::SetupAuto(Pose2d startingPose)
     masterTimer.Restart();
     safetyTimer.Restart();
     currentlyShooting = false;
+    currentlyAutoNoting = false;
+    currentlyDriveBackToTrajectory = false;
 }
 
 void AutonomousController::SetupBasicShootIntakeShoot(Pose2d startingPose, string trajectoryName)
@@ -634,3 +636,86 @@ void AutonomousController::DropLongShotFollowTrajectoryAndShoot(AllianceColor al
         }
     }
 }
+
+void AutonomousController::FollowTrajectoryAutoNoteAndShoot(AllianceColor allianceColor)
+{
+    SmartDashboard::PutNumber("spline section", splineSection);
+    SmartDashboard::PutNumber("safety timer", safetyTimer.Get().value());
+    
+    bool noteInIntake = intake->GetObjectInIntake();
+    double finalSpeeds[3] = {0.0, 0.0, 0.0};
+
+    bool angled = shootingController->AngleFlywheelToSpeaker(allianceColor);
+    bool spinning = shootingController->SpinFlywheelForSpeaker(allianceColor);
+    bool cleared = false;
+
+    SmartDashboard::PutBoolean("currentlyShooting", currentlyShooting);
+    SmartDashboard::PutBoolean("noteInIntake", noteInIntake);
+    SmartDashboard::PutBoolean("Spinning", spinning);
+
+    // Determine what our target angle is
+    units::meter_t distance;
+    if (allianceColor == AllianceColor::BLUE)
+        distance = swerveDrive->GetTagOdometryPose().Translation().Distance(BLUE_SPEAKER_POSITION.ToTranslation2d());
+    else
+        distance = swerveDrive->GetTagOdometryPose().Translation().Distance(RED_SPEAKER_POSITION.ToTranslation2d());
+
+    if (!currentlyShooting && (!noteInIntake || (distance > maxDistanceShot)))
+    {
+        if ((swerveDrive->GetTagOdometryPose().X() > 2.85_m && swerveDrive->GetTagOdometryPose().X() < 5.9_m) || (swerveDrive->GetTagOdometryPose().X() > 10.8_m && swerveDrive->GetTagOdometryPose().X() < 13.75_m))
+            intake->PIDWristToPoint(Intake::WristSetting::SHOOT);
+        else
+            intake->PIDWristToPoint(Intake::WristSetting::LOW);
+
+        bool noteInRobot = noteController->IntakeNoteToSelector();
+        ampMech->MoveToHeight(Elevator::ElevatorSetting::LOW);
+        if (swerveDrive->GetTagOdometryPose().X() > 6.25_m && swerveDrive->GetTagOdometryPose().X() < 10.4_m 
+            && swerveDrive->NoteInView() && fabs(swerveDrive->GetNoteTx()) < 15 && swerveDrive->GetNoteTy() < 20
+            && !noteInRobot)
+        {
+            swerveDriveController->DriveToNote();
+            currentlyAutoNoting = true;
+            currentlyDriveBackToTrajectory = false;
+        }
+        else if (currentlyAutoNoting && !currentlyDriveBackToTrajectory)
+        {
+            if (!noteInRobot && swerveDrive->GetTagOdometryPose().X() > 6.25_m && swerveDrive->GetTagOdometryPose().X() < 10.4_m)
+                swerveDriveController->DriveToNote();
+            else
+                currentlyDriveBackToTrajectory = swerveDriveController->DriveToPose(swerveDriveController->GetCurrentTrajectoryPose(), PoseEstimationType::TagBased);
+            
+        }
+        else
+        {
+            swerveDriveController->CalcTrajectoryDriveValues(PoseEstimationType::TagBased, 1, finalSpeeds);
+            swerveDrive->DriveSwerveTagOrientedMetersAndRadians(finalSpeeds[0], finalSpeeds[1], finalSpeeds[2]);
+        }
+    }
+    else
+    {
+        intake->PIDWristToPoint(Intake::WristSetting::LOW);
+        swerveDriveController->CalcTrajectoryDriveValues(PoseEstimationType::TagBased, 0.25, finalSpeeds);
+        bool readyToFire = shootingController->TurnToSpeakerWhileDrivingMetersAndRadians(finalSpeeds[0], finalSpeeds[1], allianceColor); 
+        cleared = shootingController->ClearElevatorForShot();   
+        SmartDashboard::PutBoolean("Ready to fire", readyToFire);
+        if (!currentlyShooting && 
+            ((splineSection != 0 && readyToFire && cleared) || (splineSection == 0 && readyToFire && spinning && cleared)))
+        {
+            splineSection = 1;
+            safetyTimer.Restart();
+            intake->BeginShootNote();
+            currentlyShooting = true;
+        }
+
+        if (currentlyShooting && safetyTimer.Get() > 0.75_s)
+        {
+            intake->SetIntakeMotorSpeed(0);
+            currentlyShooting = false;
+        }
+        else if (currentlyShooting)
+        {
+            intake->ShootNote();
+        }
+    }
+}
+

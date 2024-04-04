@@ -42,6 +42,7 @@ public:
     void ResetTrajectoryQueue();
     void LoadTrajectory(string trajectoryString);
     void BeginNextTrajectory();
+    Pose2d GetCurrentTrajectoryPose();
     bool FollowTrajectory(PoseEstimationType poseEstimationType);
     bool CalcTrajectoryDriveValues(PoseEstimationType poseEstimationType, double scaleFactor, double finalSpeeds[3]);
     void BeginDriveToNote();

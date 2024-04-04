@@ -200,6 +200,28 @@ void SwerveDriveAutonomousController::BeginNextTrajectory()
     ResetPIDLoop();
 }
 
+Pose2d SwerveDriveAutonomousController::GetCurrentTrajectoryPose()
+{
+    units::second_t currentTime = trajectoryTimer.Get(); /* current time in the trajectory */
+    pathplanner::PathPlannerTrajectory::State currentState  = currentTrajectory.sample(currentTime); /* current position estimated for the robot in an ideal world*/
+    Rotation2d currentHeading = Rotation2d(currentState.getTargetHolonomicPose().Rotation().Radians());
+
+    if (currentHeading.Radians() > 3.14_rad)
+        currentHeading = Rotation2d(currentHeading.Radians() - 6.28_rad);
+    else if (currentHeading.Radians() < -3.14_rad)
+        currentHeading = Rotation2d(currentHeading.Radians() + 6.28_rad);
+    
+    bool trajectoryFinished = currentTrajectory.getTotalTime() < currentTime; /* If the trajectory would be finished in the ideal world */
+
+    Pose2d targetPose;
+    if (trajectoryFinished)
+        targetPose = currentTrajectory.getEndState().getTargetHolonomicPose();
+    else
+        targetPose = Pose2d(currentState.position, currentHeading);
+
+    return targetPose;
+}
+
 /**
  * Drives the swerve to a pose on the field
  * 

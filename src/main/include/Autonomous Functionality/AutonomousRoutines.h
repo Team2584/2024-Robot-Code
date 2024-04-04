@@ -25,6 +25,8 @@ private:
     Timer safetyTimer;
     double splineSection = 0;
     bool currentlyShooting = false;
+    bool currentlyAutoNoting = false;
+    bool currentlyDriveBackToTrajectory = false;
     units::meter_t maxDistanceShot = 100_m;
 
 public:
@@ -42,4 +44,5 @@ public:
     void SetupFollowTrajectoryAndShoot(Pose2d startingPose, string trajectoryName, units::meter_t maxDistanceShot_);
     void FollowTrajectoryAndShoot(AllianceColor allianceColor);
     void DropLongShotFollowTrajectoryAndShoot(AllianceColor allianceColor);
+    void FollowTrajectoryAutoNoteAndShoot(AllianceColor allianceColor);
 };
