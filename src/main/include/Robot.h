@@ -11,6 +11,7 @@
 #include "Tools/PID.h"
 #include "Tools/Math.h"
 #include "RumbleController.h"
+#include "ButtonBoard.h"
 
 //General
 #include <wpi/array.h>
@@ -20,6 +21,7 @@
 #include <frc/smartdashboard/SmartDashboard.h>
 #include <frc/Timer.h>
 #include <frc/XboxController.h>
+#include <frc/GenericHID.h>
 #include <frc/DriverStation.h>
 #include <frc/PowerDistribution.h>
 #include <frc/DataLogManager.h>

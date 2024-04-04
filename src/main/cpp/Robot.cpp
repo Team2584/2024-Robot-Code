@@ -20,12 +20,13 @@
 #include "NoteController.h"
 #include "CANdleLED.h"
 #include "UIController.h"
+#include "ButtonBoard.h"
 
 //PowerDistribution m_pdh{31, frc::PowerDistribution::ModuleType::kRev};
 VisionSwerve swerveDrive{};
 RumbleXboxController xboxController{0};
 RumbleXboxController xboxController2{1};
-XboxController xboxController3{2};
+RumbleXboxController xboxController3{4};
 Intake overbumper{};
 FlywheelSystem flywheel{};
 Elevator ampmech{};
@@ -33,6 +34,7 @@ Climb hang{&swerveDrive};
 NoteController notecontroller{&overbumper, &flywheel, &ampmech};
 LightsSubsystem lights{};
 SmartDashboardController UI_Controller{&swerveDrive, &overbumper, &flywheel, &ampmech, &hang};
+ButtonBoard buttonboard{2};
 
 SwerveDriveAutonomousController swerveAutoController{&swerveDrive};
 AutonomousShootingController flywheelController{&swerveAutoController, &flywheel, &overbumper, &ampmech};
