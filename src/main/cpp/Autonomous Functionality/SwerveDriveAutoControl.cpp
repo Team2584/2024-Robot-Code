@@ -425,25 +425,38 @@ void SwerveDriveAutonomousController::BeginDriveToNote()
 
 bool SwerveDriveAutonomousController::TurnToNote()
 {
-    Pose2d currentPose = swerveDrive->GetTagOdometryPose();
-    Rotation2d noteTargetAngle = currentPose.Rotation() + Rotation2d(units::degree_t{swerveDrive->GetNoteTx()});
 
-    SmartDashboard::PutNumber("Target Note Angle", noteTargetAngle.Radians().value());
-
-    if (!swerveDrive->NoteInView())
+  if (!swerveDrive->NoteInView() || swerveDrive->limelight.GetTargetArea() < LimelightConstants::NoteAreaCutoff)
     {
         swerveDrive->DriveSwervePercent(0,0,0);
         return false;
     }
+
+    Pose2d currentPose = swerveDrive->GetTagOdometryPose();
+    Rotation2d noteTargetAngle = currentPose.Rotation() - Rotation2d(units::degree_t{swerveDrive->GetNoteTx()});
+
+    SmartDashboard::PutNumber("Target Note Angle", noteTargetAngle.Radians().value());
+
     return DriveToPose(Pose2d(currentPose.Translation(), noteTargetAngle), PoseEstimationType::NoteBased); // Drive to current pose but at the target angle
 }
 
 bool SwerveDriveAutonomousController::DriveToNote()
 {
-    if (!hasTurnedToNote)
+    SmartDashboard::PutNumber("NoteArea", swerveDrive->limelight.GetTargetArea());
+    SmartDashboard::PutBoolean("NoteInView", swerveDrive->NoteInView());
+    if (!swerveDrive->NoteInView() || swerveDrive->limelight.GetTargetArea() < LimelightConstants::NoteAreaCutoff)
+    {
+        swerveDrive->DriveSwervePercent(0,0,0);
+        return false;
+    }
+
+    if (!hasTurnedToNote || fabs(swerveDrive->GetNoteTx()) > LimelightConstants::NoteTurnDegCutoff.value())
     {
         hasTurnedToNote = TurnToNote(); 
         return false;
+    }
+    else{
+        hasTurnedToNote = true;
     }
 
     Pose2d currentPose = swerveDrive->GetTagOdometryPose();
@@ -468,13 +481,12 @@ bool SwerveDriveAutonomousController::DriveToNote()
         return true;
     }
 
-    if (!swerveDrive->NoteInView())
-    {
-        swerveDrive->DriveSwervePercent(0,0,0);
-        return false;
-    }
+    speeds[0] = noteXPIDController.Calculate(0, -1 * swerveDrive->limelight.GetNoteTy());
+    PIDFinished[0] = noteXPIDController.PIDFinished();
+    speeds[1] = noteYPIDController.Calculate(0, swerveDrive->limelight.GetNoteTx());
+    PIDFinished[1] = noteYPIDController.PIDFinished();
 
     // Drive swerve at desired speeds
-    swerveDrive->DriveSwervePercentNonFieldOriented(-1 * speeds[0], -1 * speeds[1], speeds[2]);
+    swerveDrive->DriveSwervePercentNonFieldOriented(speeds[0], 0.0/*speeds[1]*/, speeds[2]);
     return false;
 }

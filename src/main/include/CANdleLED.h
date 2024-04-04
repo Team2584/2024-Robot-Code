@@ -83,6 +83,8 @@ public:
         candleConfiguration.stripType = LEDStripType::RGB;
         candleConfiguration.brightnessScalar = 1.0; //No brightness dim
         candleConfiguration.vBatOutputMode = VBatOutputMode::Off; //Read the docs on this setting if using it to power external processors
+        candleConfiguration.brightnessScalar = 1.0;
+        //candleConfiguration.vBatOutputMode = VBatOutputMode::Off;
         candle.ConfigAllSettings(candleConfiguration);
     }
 
@@ -198,6 +200,7 @@ class LightsSubsystem : public CandleController {
     }
 
     void UpdateSubsystemLEDS(){
+       //BatteryIndicator.setColor((m_PDH->GetVoltage() > 11.5 ? green : red));
        DriverStationIndicator.setColor((DriverStation::IsDSAttached() ? green : red));
     }
 

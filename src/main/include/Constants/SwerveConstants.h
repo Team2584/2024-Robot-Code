@@ -67,7 +67,7 @@
 #define CAMERA_ONE_Y 11.625_in // Distance in meters from camera to center of robot left/right, left positive
 #define CAMERA_ONE_Z 26.875_in // Camera's distance from ground in meters
 #define CAMERA_ONE_X_ROTATION 0_deg // Camera's Rotation around robot's X axis (tilted up/down)
-#define CAMERA_ONE_Y_ROTATION -52_deg // Camera's Rotation around robot's Y axis (rotated clockwise/counterclocwise)
+#define CAMERA_ONE_Y_ROTATION -47_deg // Camera's Rotation around robot's Y axis (rotated clockwise/counterclocwise)
 #define CAMERA_ONE_Z_ROTATION 0_deg // Camera's Rotation around robot's Z axis (tilted left/right)
 
 #define CAMERA_TWO_NAME "Bottom Camera"
@@ -75,7 +75,7 @@
 #define CAMERA_TWO_Y 11.625_in // Distance in meters from camera to center of robot left/right, left positive
 #define CAMERA_TWO_Z 25.25_in // Camera's distance from ground in meters
 #define CAMERA_TWO_X_ROTATION 0_deg // Camera's Rotation around robot's X axis (tilted up/down)
-#define CAMERA_TWO_Y_ROTATION -22_deg // Camera's Rotation around robot's Y axis (rotated clockwise/counterclocwise)
+#define CAMERA_TWO_Y_ROTATION -17_deg // Camera's Rotation around robot's Y axis (rotated clockwise/counterclocwise)
 #define CAMERA_TWO_Z_ROTATION 0_deg // Camera's Rotation around robot's Z axis (tilted left/right)
 
 #define CAMERA_THREE_NAME "Left Camera"
@@ -153,14 +153,14 @@ enum PoseEstimationType
 
 /* Automatically Picking Up Note PID Values */
 // Translational PID in the x direction
-#define NOTE_X_KP 0.5
+#define NOTE_X_KP 0.1
 #define NOTE_X_KI 0
 #define NOTE_X_KI_MAX 0 // In percent power
 #define NOTE_X_KD 0
 #define NOTE_X_TOLERANCE 0.02 // In meters
 #define NOTE_X_VELOCITY_TOLERANCE 0.5 // In percent power
 #define NOTE_X_MIN_SPEED 0 // In percent power
-#define NOTE_X_MAX_SPEED 0.6 // In percent power
+#define NOTE_X_MAX_SPEED 0.4 // In percent power
 // Translational PID in the y direction
 #define NOTE_Y_KP 0.5
 #define NOTE_Y_KI 0
@@ -171,12 +171,12 @@ enum PoseEstimationType
 #define NOTE_Y_MIN_SPEED 0 // In percent power
 #define NOTE_Y_MAX_SPEED 0.4 // In percent power
 // Rotational PID to correct robot heading
-#define NOTE_ROTATION_KP 0.31
+#define NOTE_ROTATION_KP 0.28
 #define NOTE_ROTATION_KI 0
 #define NOTE_ROTATION_KI_MAX 0 // In percent power
 #define NOTE_ROTATION_KD 0
-#define NOTE_ROTATION_TOLERANCE 0.09 // In radians
-#define NOTE_ROTATION_VELOCITY_TOLERANCE 10 // In percent power
+#define NOTE_ROTATION_TOLERANCE 0.15 // In radians
+#define NOTE_ROTATION_VELOCITY_TOLERANCE 100 // In percent power
 #define NOTE_ROTATION_MIN_SPEED 0.02 // In percent power
 #define NOTE_ROTATION_MAX_SPEED 0.6 // In percent power
 
