@@ -89,7 +89,7 @@ bool AutonomousShootingController::TurnToSpeakerWhileDriving(double xSpeed, doub
 
         newSpeakerPos = BLUE_SPEAKER_AIM_POSITION.ToTranslation2d();
         if (diff.X() > -1.25_m)
-            newSpeakerPos = Translation2d{units::meter_t{lerpVal(-0.5, -1.25, 0.2, 0.05, diff.X().value())}, BLUE_SPEAKER_AIM_POSITION.Y()};
+            newSpeakerPos = Translation2d{units::meter_t{lerpVal(-0.5, -1.25, 0.18, 0.05, diff.X().value())}, BLUE_SPEAKER_AIM_POSITION.Y()};
 
         if (diff.Y() > 3_m)
             newSpeakerPos = Translation2d(newSpeakerPos.X(), 5.65_m);
@@ -110,7 +110,7 @@ bool AutonomousShootingController::TurnToSpeakerWhileDriving(double xSpeed, doub
         newSpeakerPos = RED_SPEAKER_AIM_POSITION.ToTranslation2d();
 
         if (diff.X() < 1.25_m)
-            newSpeakerPos = Translation2d{units::meter_t{lerpVal(0.5, 1.25, 16.32, 16.52, diff.X().value())}, RED_SPEAKER_AIM_POSITION.Y()};
+            newSpeakerPos = Translation2d{units::meter_t{lerpVal(0.5, 1.25, 16.35, 16.52, diff.X().value())}, RED_SPEAKER_AIM_POSITION.Y()};
 
         if (diff.Y() > 3_m)
             newSpeakerPos = Translation2d(newSpeakerPos.X(), 5.65_m);
