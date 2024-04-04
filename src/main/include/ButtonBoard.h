@@ -1,5 +1,8 @@
 #include "Robot.h"
 
+#ifndef BUTTONS_H
+#define BUTTONS_H
+
 class ButtonBoard : private GenericHID {
 
     public:
@@ -30,3 +33,5 @@ class ButtonBoard : private GenericHID {
         }
 
 };
+
+#endif

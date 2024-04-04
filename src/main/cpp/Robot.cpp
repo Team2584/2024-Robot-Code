@@ -101,6 +101,7 @@ void Robot::RobotInit()
   m_chooser.AddOption(kAutoRFR87, kAutoRFR87);
   m_chooser.AddOption(kAutoBFL87, kAutoBFL87);
 
+
   frc::SmartDashboard::PutData("Auto Modes", &m_chooser);
   
   SmartDashboard::PutNumber("Flywheel Setpoint", 0);
@@ -134,7 +135,11 @@ void Robot::RobotPeriodic() {
   SmartDashboard::PutBoolean("In Match", DriverStation::GetMatchType() != DriverStation::MatchType::kNone);
   SmartDashboard::PutBoolean("Is Blue Alliance", allianceColor == AllianceColor::BLUE);
 
-  flywheelController.anglerTrim = SmartDashboard::GetNumber("Angler Trim", 0.0);
+  double anglertriminc = 0.03;
+  if(buttonboard.GetAnglerTrimInc()){flywheelController.anglerTrim+=anglertriminc;}
+  if(buttonboard.GetAnglerTrimDec()){flywheelController.anglerTrim-=anglertriminc;}
+  SmartDashboard::PutNumber("Angler Trim", flywheelController.anglerTrim);
+
 }
 
 /**

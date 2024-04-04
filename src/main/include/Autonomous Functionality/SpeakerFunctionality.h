@@ -29,7 +29,7 @@ private:
     Translation2d diffDebug;
 
 public:
-    double anglerTrim;
+    double anglerTrim = 0;
 
     AutonomousShootingController(SwerveDriveAutonomousController *swerveDrive, FlywheelSystem *flyWheel_, Intake *intake_, Elevator *elevator_);
 
