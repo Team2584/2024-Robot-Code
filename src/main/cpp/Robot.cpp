@@ -561,11 +561,11 @@ void Robot::TeleopPeriodic()
       double anglerSetpoint = 0.8;
       // Spin up flywheel to various presets
       if (xboxController2.GetStartButtonPressed())
-        flywheelSetpoint = 4000;
+        flywheelSetpoint = 5000;
       else if(xboxController2.GetXButtonPressed())
         flywheelSetpoint = 4000;
       else if (xboxController2.GetYButtonPressed())
-        flywheelSetpoint = 4500;
+        flywheelSetpoint = 6000;
 
       if (xboxController2.GetXButton())
         anglerSetpoint = 0.92;
