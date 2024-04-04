@@ -24,49 +24,49 @@
 #ifndef CANDLE_LED_H
 #define CANDLE_LED_H
 
-class Color {
+class RGBColor {
 
     public:
 
-         int red;
-         int green;
-         int blue;
+        int red;
+        int green;
+        int blue;
 
-         Color(int _red, int _green, int _blue) {
+        RGBColor(int _red, int _green, int _blue) {
             red = _red;
             green = _green;
             blue = _blue;
         }
 
         /**
-         * Highly imperfect way of dimming the LEDs. It does not maintain color or
+         * Highly imperfect way of dimming the LEDs. It does not maintain RGBColor or
          * accurately adjust perceived brightness.
          *
          * @param dimFactor
          * @return The dimmed color
          */
-         Color dim(double dimFactor) {
+         RGBColor dim(double dimFactor) {
             int newRed = (int) (std::clamp(red * dimFactor, 0.0, 200.0));
             int newGreen = (int) (std::clamp(green * dimFactor, 0.0, 200.0));
             int newBlue = (int) (std::clamp(blue * dimFactor, 0.0, 200.0));
 
-            return Color(newRed, newGreen, newBlue);
+            return RGBColor(newRed, newGreen, newBlue);
     }
 };
 
 // Team colors
-const Color orange = Color(255, 25, 0);
-const Color black = Color(0, 0, 0);
+const RGBColor orange = RGBColor(255, 25, 0);
+const RGBColor black = RGBColor(0, 0, 0);
 
 // Game piece colors
-const Color yellow = Color(242, 60, 0);
-const Color purple = Color(184, 0, 185);
+const RGBColor yellow = RGBColor(242, 60, 0);
+const RGBColor purple = RGBColor(184, 0, 185);
 
 // Indicator colors
-const Color white = Color(255, 230, 220);
-const Color green = Color(56, 209, 0);
-const Color blue = Color(8, 32, 255);
-const Color red = Color(255, 0, 0);
+const RGBColor white = RGBColor(255, 230, 220);
+const RGBColor green = RGBColor(56, 209, 0);
+const RGBColor blue = RGBColor(8, 32, 255);
+const RGBColor red = RGBColor(255, 0, 0);
 
 using namespace ctre::phoenix::led;
 
@@ -78,11 +78,13 @@ public:
     
     CandleController() {
         CANdleConfiguration candleConfiguration;
-        candleConfiguration.statusLedOffWhenActive = true;
+        candleConfiguration.statusLedOffWhenActive = true; //Disables the small status LED on the CANDLE while in operation
         candleConfiguration.disableWhenLOS = false;
         candleConfiguration.stripType = LEDStripType::RGB;
+        candleConfiguration.brightnessScalar = 1.0; //No brightness dim
+        candleConfiguration.vBatOutputMode = VBatOutputMode::Off; //Read the docs on this setting if using it to power external processors
         candleConfiguration.brightnessScalar = 1.0;
-        candleConfiguration.vBatOutputMode = VBatOutputMode::Off;
+        //candleConfiguration.vBatOutputMode = VBatOutputMode::Off;
         candle.ConfigAllSettings(candleConfiguration);
     }
 
@@ -96,7 +98,7 @@ public:
 
         LEDSegment(int startIndex, int segmentSize, int animationSlot, CANdle* _candle) : startIndex(startIndex), segmentSize(segmentSize), animationSlot(animationSlot), candle{_candle} {}
 
-        void setColor(Color color) {
+        void setColor(RGBColor color) {
             clearAnimation();
             candle->SetLEDs(color.red, color.green, color.blue, 0, startIndex, segmentSize);
         }
@@ -121,19 +123,19 @@ public:
             setColor(black);
         }
 
-        void setFlowAnimation(Color color, double speed) {
+        void setFlowAnimation(RGBColor color, double speed) {
             setAnimation(ColorFlowAnimation(color.red, color.green, color.blue, 0, speed, segmentSize, ColorFlowAnimation::Direction::Forward, startIndex));
         }
 
-        void setFadeAnimation(Color color, double speed) {
+        void setFadeAnimation(RGBColor color, double speed) {
             setAnimation(SingleFadeAnimation(color.red, color.green, color.blue, 0, speed, segmentSize, startIndex));
         }
 
-        void setBandAnimation(Color color, double speed) {
+        void setBandAnimation(RGBColor color, double speed) {
             setAnimation(LarsonAnimation(color.red, color.green, color.blue, 0, speed, segmentSize, LarsonAnimation::BounceMode::Front, 3, startIndex));
         }
 
-        void setStrobeAnimation(Color color, double speed) {
+        void setStrobeAnimation(RGBColor color, double speed) {
             setAnimation(StrobeAnimation(color.red, color.green, color.blue, 0, speed, segmentSize, startIndex));
         }
 
@@ -145,7 +147,7 @@ public:
             setAnimation(FireAnimation(1, speed, segmentSize, burnspeed, coolspeed, isreversed, startIndex));
         }
 
-        void setTwinkleAnimation(Color color, double speed){
+        void setTwinkleAnimation(RGBColor color, double speed){
             setAnimation(TwinkleAnimation(color.red, color.green, color.blue,0,speed,segmentSize,ctre::phoenix::led::TwinkleAnimation::Percent100,startIndex));
         }
 
@@ -153,7 +155,7 @@ public:
             setAnimation(RgbFadeAnimation(1,speed,segmentSize,startIndex));
         }
 
-        void setSingleFadeAnimation(Color color, double speed){
+        void setSingleFadeAnimation(RGBColor color, double speed){
             setAnimation(SingleFadeAnimation(color.red, color.green, color.blue,0,speed,segmentSize,startIndex));
         }
 
@@ -188,7 +190,6 @@ class LightsSubsystem : public CandleController {
 
     public:
 
-
     Timer notePickUpTimer;
     bool didStrobeGreen = false;
 
@@ -199,6 +200,7 @@ class LightsSubsystem : public CandleController {
     }
 
     void UpdateSubsystemLEDS(){
+       //BatteryIndicator.setColor((m_PDH->GetVoltage() > 11.5 ? green : red));
        DriverStationIndicator.setColor((DriverStation::IsDSAttached() ? green : red));
     }
 
@@ -251,13 +253,9 @@ class LightsSubsystem : public CandleController {
         }
     }
 
-
-
     void NoLongerHaveNote(){
         didStrobeGreen = false;
     }
-
-    
 
 };
 

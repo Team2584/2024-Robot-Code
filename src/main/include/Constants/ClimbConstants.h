@@ -3,6 +3,8 @@
 
 namespace ClimbConstants {
 
+inline const auto StartingHeight = 0.55_m;
+
 inline const auto MaxHeight = 0.77_m;
 inline const auto AttatchingHeight = 0.69_m;
 inline const auto ClimbedHeight = 0.3_m;

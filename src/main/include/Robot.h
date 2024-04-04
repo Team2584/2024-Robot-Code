@@ -17,15 +17,17 @@
 #include <wpi/array.h>
 #include <fmt/core.h>
 #include <frc/TimedRobot.h>
-#include <frc/smartdashboard/SendableChooser.h>
-#include <frc/smartdashboard/SmartDashboard.h>
 #include <frc/Timer.h>
 #include <frc/XboxController.h>
 #include <frc/GenericHID.h>
 #include <frc/DriverStation.h>
 #include <frc/PowerDistribution.h>
+
+//Telemetry 
 #include <frc/DataLogManager.h>
 #include <wpi/DataLog.h>
+#include <frc/smartdashboard/SendableChooser.h>
+#include <frc/smartdashboard/SmartDashboard.h>
 
 //Units & Math
 #include <numbers>

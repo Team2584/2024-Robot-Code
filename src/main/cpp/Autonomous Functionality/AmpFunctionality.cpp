@@ -7,12 +7,21 @@ AutonomousAmpingController::AutonomousAmpingController(SwerveDriveAutonomousCont
     noteController = noteController_;
 }
 
+/**
+ * @brief Reset Values/Prepare for the Drive to Amp Sequence
+*/
 void AutonomousAmpingController::BeginDriveToAmp(AllianceColor allianceColor){
     centeredOnAmp = false;
     drivingIntoAmp = false;
 }
 
+/**
+ * @brief Drive to the Pre-Defined Amp Pose based off Tag Odometry for a specific alliance color
+ * @param AllianceColor The Correct AllianceColor Enumerator for the amp you need to drive to
+ * @note Call the BeginDriveToAmp Function each start of this loop
+*/
 bool AutonomousAmpingController::DriveToAmp(AllianceColor allianceColor){
+
     if (!centeredOnAmp) 
     {
         if (allianceColor == AllianceColor::BLUE)

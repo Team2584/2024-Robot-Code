@@ -6,12 +6,16 @@
 #ifndef LIMELIGHT_H 
 #define LIMELIGHT_H
 
+//Custom - Written class to handle limelight communication. 
+//Allows for toggling between AI Detector and Apriltag Pipelines
 class Limelight
 {
 
-public:
+private:
 
     enum LimelightPipeline{NOTES, APRILTAGS};
+
+    //NetworkTable Handler Objects
     std::shared_ptr<nt::NetworkTable> visionTable;
     nt::NetworkTableInstance networkTableInstance;
     nt::BooleanTopic noteInViewTopic; //Whether the limelight has any valid targets (0 or 1)
@@ -20,10 +24,10 @@ public:
     nt::DoubleSubscriber notePosSubscriber_x; 
     nt::DoubleTopic notePosTopic_y; //LL2: -24.85 to 24.85 degrees)
     nt::DoubleSubscriber notePosSubscriber_y;
+    nt::DoubleTopic noteAreaTopic; 
+    nt::DoubleSubscriber noteAreaSubscriber;
     nt::DoubleArrayTopic tagPosTopic; // Position of robot based on april tags
     nt::DoubleArraySubscriber tagPosSubscriber;
-
-private:
 
     Transform3d limelightPose; /* The Position and rotation of the camera on the robot */
 
@@ -38,6 +42,8 @@ public:
         notePosSubscriber_x{notePosTopic_x.Subscribe({})},
         notePosTopic_y{visionTable->GetDoubleTopic("ty")},
         notePosSubscriber_y{notePosTopic_y.Subscribe({})},
+        noteAreaTopic{visionTable->GetDoubleTopic("ta")},
+        noteAreaSubscriber{noteAreaTopic.Subscribe({})},
         tagPosTopic{visionTable->GetDoubleArrayTopic("botpose_wpiblue")},
         tagPosSubscriber{tagPosTopic.Subscribe({})},
         limelightPose{frc::Translation3d{LimelightConstants::xPosOffset, LimelightConstants::yPosOffset, LimelightConstants::zPosOffset}, 
@@ -72,6 +78,8 @@ public:
      * @brief Get the pixel location of the center of the note in the up-down direction
     */
     double GetNoteTy(){ return notePosSubscriber_y.Get(); }
+
+    double GetTargetArea(){ return noteAreaSubscriber.Get(); }
 
     /**
      * @brief Get the translation from the robot to the note

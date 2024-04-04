@@ -47,25 +47,25 @@ public:
 class ClimbElevatorSendable : public wpi::Sendable {
 public:
 
-    Elevator * swe;
-    Climb * rve;
-    ClimbElevatorSendable(Elevator *elev, Climb *clim): swe{elev},rve{clim}{}
+    Elevator * elevator;
+    Climb * climb;
+    ClimbElevatorSendable(Elevator *_elevator, Climb *_climb): elevator{_elevator},climb{_climb}{}
 
     void InitSendable(wpi::SendableBuilder& builder) override {
 
         builder.SetSmartDashboardType("Elevator Climb");
 
-        builder.AddDoubleProperty("Elevator Position", [this] { return abs(swe->GetWinchEncoderReading()) ; }, nullptr);
-        builder.AddDoubleProperty("Elevator Setpoint", [this] { return abs(swe->GetElevatorSetpoint()) ; }, nullptr);
-        builder.AddBooleanProperty("Elevator At Setpoint", [this] { return swe->GetElevatorAtSetpoint() ; }, nullptr);
+        builder.AddDoubleProperty("Elevator Position", [this] { return abs(elevator->GetWinchEncoderReading()) ; }, nullptr);
+        builder.AddDoubleProperty("Elevator Setpoint", [this] { return abs(elevator->GetElevatorSetpoint()) ; }, nullptr);
+        builder.AddBooleanProperty("Elevator At Setpoint", [this] { return elevator->GetElevatorAtSetpoint() ; }, nullptr);
 
-        builder.AddDoubleProperty("Climb Left Position", [this] { return rve->leftEncoder.GetPosition() ; }, nullptr);
-        builder.AddDoubleProperty("Climb Left Setpoint", [this] { return rve->leftPID.GetSetpoint().position.value() ; }, nullptr);
+        builder.AddDoubleProperty("Climb Left Position", [this] { return climb->leftEncoder.GetPosition() ; }, nullptr);
+        builder.AddDoubleProperty("Climb Left Setpoint", [this] { return climb->leftPID.GetSetpoint().position.value() ; }, nullptr);
 
-        builder.AddDoubleProperty("Climb Right Position", [this] { return rve->rightEncoder.GetPosition() ; }, nullptr);
-        builder.AddDoubleProperty("Climb Right Setpoint", [this] { return rve->rightPID.GetSetpoint().position.value() ; }, nullptr);
+        builder.AddDoubleProperty("Climb Right Position", [this] { return climb->rightEncoder.GetPosition() ; }, nullptr);
+        builder.AddDoubleProperty("Climb Right Setpoint", [this] { return climb->rightPID.GetSetpoint().position.value() ; }, nullptr);
 
-        builder.AddBooleanProperty("Climb At Setpoint", [this] { return rve->GetClimbAtPos() ; }, nullptr);
+        builder.AddBooleanProperty("Climb At Setpoint", [this] { return climb->GetClimbAtPos() ; }, nullptr);
 
     }
 
@@ -100,20 +100,20 @@ public:
 class IntakeSendable : public wpi::Sendable {
 public:
 
-    Intake *swe;
-    Elevator *elev;
-    IntakeSendable(Intake* rve, Elevator *elev_): swe{rve}, elev{elev_}{}
+    Intake *intake;
+    Elevator *elevator;
+    IntakeSendable(Intake* _intake, Elevator *_elevator): intake{_intake}, elevator{_elevator}{}
 
     void InitSendable(wpi::SendableBuilder& builder) override {
 
         builder.SetSmartDashboardType("Intake");
 
-        builder.AddDoubleProperty("Wrist Position", [this] { return swe->GetWristEncoderReading(); }, nullptr);
-        builder.AddDoubleProperty("Wrist Setpoint", [this] { return swe->m_WristPID.GetPIDSetpoint() ; }, nullptr);
+        builder.AddDoubleProperty("Wrist Position", [this] { return intake->GetWristEncoderReading(); }, nullptr);
+        builder.AddDoubleProperty("Wrist Setpoint", [this] { return intake->m_WristPID.GetPIDSetpoint() ; }, nullptr);
 
-        builder.AddBooleanProperty("Note In Intake", [this] { return swe->GetObjectInIntake() ; }, nullptr);
+        builder.AddBooleanProperty("Note In Intake", [this] { return intake->GetObjectInIntake() ; }, nullptr);
 
-        builder.AddBooleanProperty("Note In Elevator", [this] { return elev->GetObjectInMech() ; }, nullptr);
+        builder.AddBooleanProperty("Note In Elevator", [this] { return elevator->GetObjectInMech() ; }, nullptr);
 
     }
 
@@ -157,13 +157,11 @@ public:
         teleoptab.Add("Field", m_field).WithSize(3, 2).WithPosition(3, 0).WithWidget(frc::BuiltInWidgets::kField);
         teleoptab.Add("Swerve Drive", ntswervedrive_).WithSize(2,2).WithPosition(3,2);
 
-
         elevatorlist.Add("Alt Intake", false).WithSize(1, 1).WithPosition(6, 0).WithWidget(frc::BuiltInWidgets::kToggleButton);
         elevatorlist.Add("Zero Elevator", false).WithSize(1, 1).WithPosition(6, 0).WithWidget(frc::BuiltInWidgets::kCommand);
 
         teleoptab.Add("Flywheel System", ntflywheel_).WithSize(2, 4).WithPosition(6,0);
         elevatorlist.Add("Elevator", ntclimbelevator_).WithSize(2,4).WithPosition(3,2);
-
 
     }
 
