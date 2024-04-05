@@ -170,9 +170,9 @@ bool AutonomousShootingController::AngleFlywheelToSpeaker(AllianceColor alliance
     else if (distance >= 1.75_m)
         targetAnglerAngle = lerpVal(1.75, 2, 0.83, 0.8, distance.value());
     else if (distance >= 1.5_m)
-        targetAnglerAngle = lerpVal(1.5, 1.75, 0.86, 0.83, distance.value());
+        targetAnglerAngle = lerpVal(1.5, 1.75, 0.845, 0.83, distance.value());
     else
-        targetAnglerAngle = lerpVal(1, 1.5, 0.95, 0.86, distance.value());
+        targetAnglerAngle = lerpVal(1, 1.5, 0.95, 0.845, distance.value());
 
     // Attempted Fix for side subwoofer shots
     /*if (distance <= 1.5_m && fabs(diff.Y().value()) > 0.75 && fabs(diff.X().value()) < 0.7)
