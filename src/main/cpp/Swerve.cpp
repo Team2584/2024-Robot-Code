@@ -36,6 +36,10 @@ SwerveModule::SwerveModule(int driveMotorPort, int spinMotorPort, int magneticEn
     driveMotor.GetConfigurator().Apply(toConfigure);
     driveMotor.SetNeutralMode(ctre::phoenix6::signals::NeutralModeValue::Coast);
 
+    driveMotor.GetRotorPosition().SetUpdateFrequency(100_Hz);
+    driveMotor.GetVelocity().SetUpdateFrequency(100_Hz);
+    driveMotor.OptimizeBusUtilization();
+
     ResetEncoders();
 }
 
