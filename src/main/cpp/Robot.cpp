@@ -574,7 +574,7 @@ void Robot::TeleopPeriodic()
       else if (fixingShooter)
         anglerSetpoint = 1.3;
       else
-        anglerSetpoint = 0.8;
+        anglerSetpoint = 0.65;
 
       flywheel.PIDAngler(anglerSetpoint); 
 
