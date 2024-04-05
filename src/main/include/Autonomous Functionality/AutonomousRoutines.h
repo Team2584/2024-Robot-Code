@@ -42,4 +42,6 @@ public:
     void SetupFollowTrajectoryAndShoot(Pose2d startingPose, string trajectoryName, units::meter_t maxDistanceShot_);
     void FollowTrajectoryAndShoot(AllianceColor allianceColor);
     void DropLongShotFollowTrajectoryAndShoot(AllianceColor allianceColor);
+    void SetupBlueNoVision4Note();
+    void BlueNoVision4Note();
 };

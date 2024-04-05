@@ -634,3 +634,138 @@ void AutonomousController::DropLongShotFollowTrajectoryAndShoot(AllianceColor al
         }
     }
 }
+
+void AutonomousController::SetupBlueNoVision4Note()
+{
+    SetupAuto(Pose2d(1.38_m, 5.51_m, 180_deg));
+    swerveDriveController->LoadTrajectory("BCTo2ToBC");
+}
+
+void AutonomousController::BlueNoVision4Note()
+{
+    flywheel->PIDAngler(0.92);
+
+    if (splineSection == 0)
+    {    
+        intake->PIDWristToPoint(Intake::WristSetting::LOW);
+        bool spinning = flywheel->SetFlywheelVelocity(4000);
+        if (spinning)
+        {
+            splineSection = 0.5;
+            safetyTimer.Restart();
+        }
+    }
+
+    if (splineSection == 0.5)
+    {
+        intake->PIDWristToPoint(Intake::WristSetting::LOW);
+        intake->ShootNote();
+        flywheel->SetFlywheelVelocity(4000);
+
+        if (safetyTimer.Get() > 1_s)
+        {
+            swerveDriveController->BeginNextTrajectory();
+            safetyTimer.Restart();
+            splineSection = 1;
+        }
+    }
+
+    if (splineSection == 1)
+    {
+        intake->PIDWristToPoint(Intake::WristSetting::LOW);
+        bool noteInIntake = noteController->IntakeNoteToSelector();
+        swerveDriveController->FollowTrajectory(PoseEstimationType::TagBased);
+        flywheel->SetFlywheelVelocity(4000);
+
+        if (noteInIntake || safetyTimer.Get() > 4_s)
+        {
+            intake->SetIntakeMotorSpeed(0);
+            swerveDrive->DriveSwervePercent(0,0,0);
+            safetyTimer.Restart();
+            splineSection = 1.5;
+        }
+    }
+
+    if (splineSection == 1.5)
+    {
+        intake->PIDWristToPoint(Intake::WristSetting::LOW);
+        intake->ShootNote();
+        flywheel->SetFlywheelVelocity(4000);
+
+        if (safetyTimer.Get() > 1_s)
+        {
+            swerveDriveController->LoadTrajectory("BCTo1ToBC");
+            swerveDriveController->BeginNextTrajectory();
+            safetyTimer.Restart();
+            splineSection = 2;
+        }
+    }
+
+    if (splineSection == 2)
+    {
+        intake->PIDWristToPoint(Intake::WristSetting::LOW);
+        bool noteInIntake = noteController->IntakeNoteToSelector();
+        swerveDriveController->FollowTrajectory(PoseEstimationType::TagBased);
+        flywheel->SetFlywheelVelocity(4000);
+
+        if (noteInIntake || safetyTimer.Get() > 4_s)
+        {
+            intake->SetIntakeMotorSpeed(0);
+            swerveDrive->DriveSwervePercent(0,0,0);
+            safetyTimer.Restart();
+            splineSection = 2.5;
+        }
+    }
+
+    if (splineSection == 2.5)
+    {
+        intake->PIDWristToPoint(Intake::WristSetting::LOW);
+        intake->ShootNote();
+        flywheel->SetFlywheelVelocity(4000);
+
+        if (safetyTimer.Get() > 1_s)
+        {
+            swerveDriveController->LoadTrajectory("BCTo3ToBC");
+            swerveDriveController->BeginNextTrajectory();
+            safetyTimer.Restart();
+            splineSection = 3;
+        }
+    }
+
+    if (splineSection == 3)
+    {
+        intake->PIDWristToPoint(Intake::WristSetting::LOW);
+        bool noteInIntake = noteController->IntakeNoteToSelector();
+        swerveDriveController->FollowTrajectory(PoseEstimationType::TagBased);
+        flywheel->SetFlywheelVelocity(4000);
+
+        if (noteInIntake || safetyTimer.Get() > 4_s)
+        {
+            intake->SetIntakeMotorSpeed(0);
+            swerveDrive->DriveSwervePercent(0,0,0);
+            safetyTimer.Restart();
+            splineSection = 3.5;
+        }
+    }
+
+    if (splineSection == 3.5)
+    {
+        intake->PIDWristToPoint(Intake::WristSetting::LOW);
+        intake->ShootNote();
+        flywheel->SetFlywheelVelocity(4000);
+
+        if (safetyTimer.Get() > 1_s)
+        {
+            safetyTimer.Restart();
+            splineSection = 3.75;
+        }
+    }
+
+    if (splineSection == 3.75)
+    {
+        flywheel->StopFlywheel();
+        intake->PIDWristToPoint(Intake::WristSetting::SHOOT);
+        intake->SetIntakeMotorSpeed(0);
+        swerveDrive->DriveSwervePercent(0,0,0);
+    }
+}

@@ -98,6 +98,7 @@ void Robot::RobotInit()
   m_chooser.AddOption(kAutoBFR45, kAutoBFR45);
   m_chooser.AddOption(kAutoRFR87, kAutoRFR87);
   m_chooser.AddOption(kAutoBFL87, kAutoBFL87);
+  m_chooser.AddOption(kAutoNoVisionBC4CloseNotes, kAutoNoVisionBC4CloseNotes);
 
   frc::SmartDashboard::PutData("Auto Modes", &m_chooser);
   
@@ -317,6 +318,11 @@ void Robot::AutonomousInit()
     autoController.SetupFollowTrajectoryAndShoot(Pose2d(1.29_m, 7.2_m, Rotation2d(-140.3_deg)), "BFLDropTo8To7", 4.25_m);
     allianceColor = AllianceColor::BLUE;
   }
+  else if (m_autoSelected == kAutoNoVisionBC4CloseNotes)
+  {
+    autoController.SetupBlueNoVision4Note();
+    allianceColor = AllianceColor::BLUE;
+  }
 }
 
 void Robot::AutonomousPeriodic()
@@ -389,6 +395,8 @@ void Robot::AutonomousPeriodic()
       autoController.DropLongShotFollowTrajectoryAndShoot(AllianceColor::RED);
   else if (m_autoSelected == kAutoBFL87)
       autoController.DropLongShotFollowTrajectoryAndShoot(AllianceColor::BLUE);
+  else if (m_autoSelected == kAutoNoVisionBC4CloseNotes)
+      autoController.BlueNoVision4Note();
 }
 
 void Robot::TeleopInit()
