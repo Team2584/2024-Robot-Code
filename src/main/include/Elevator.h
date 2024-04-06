@@ -18,8 +18,6 @@ class Elevator
         
     public:
 
-        DistanceOffsetTOF m_timeOfFlight;
-
         ctre::phoenix6::hardware::TalonFX winchMotor;
 
         frc::TrapezoidProfile<units::meters>::Constraints m_constraints;

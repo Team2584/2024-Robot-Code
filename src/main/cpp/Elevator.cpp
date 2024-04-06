@@ -7,9 +7,8 @@ Elevator::Elevator()
     ampMechSensor{ampMotor.GetForwardLimitSwitch(rev::SparkLimitSwitch::Type::kNormallyOpen)},
     m_constraints{ElevatorConstants::kMaxVelocity, ElevatorConstants::kMaxAcceleration},
     m_controller{ElevatorConstants::m_kP, ElevatorConstants::m_kI, ElevatorConstants::m_kD, m_constraints},
-    m_feedforward{ElevatorConstants::m_kS, ElevatorConstants::m_kG, ElevatorConstants::m_kV},
-    m_timeOfFlight{ElevatorConstants::TimeOfFlight::tofCANID,ElevatorConstants::TimeOfFlight::tofOffset, ElevatorConstants::TimeOfFlight::tofAllowedSigma}
-{
+    m_feedforward{ElevatorConstants::m_kS, ElevatorConstants::m_kG, ElevatorConstants::m_kV}
+    {
     ctre::phoenix6::configs::TalonFXConfiguration toConfigure{};
     toConfigure.CurrentLimits.StatorCurrentLimit = 70.0;
     toConfigure.CurrentLimits.StatorCurrentLimitEnable = true; // And enable it
@@ -21,15 +20,7 @@ Elevator::Elevator()
     ampMotor.SetSoftLimit(rev::CANSparkBase::SoftLimitDirection::kReverse, false);
 }
 
-bool Elevator::ZeroElevatorTOF(){
-    if(m_timeOfFlight.GetTof() != 0_m){
-        winchMotor.SetPosition(m_timeOfFlight.GetTof().value() / ElevatorConstants::ELEV_CONVERSION_FACTOR * -1_tr);
-        return true;
-    }
-    else{
-        return false;
-    }
-}
+
 
 /**
  * @brief Sets the winch motor's built-in encoer reading to zero
