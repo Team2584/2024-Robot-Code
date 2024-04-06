@@ -16,7 +16,7 @@ Elevator::Elevator()
     winchMotor.GetConfigurator().Apply(toConfigure);
     winchMotor.SetNeutralMode(ctre::phoenix6::signals::NeutralModeValue::Brake);
     winchMotor.GetRotorPosition().SetUpdateFrequency(100_Hz);
-
+    winchMotor.OptimizeBusUtilization();
     winchMotor.SetPosition(0_tr);
     m_controller.SetTolerance(ElevatorConstants::ALLOWABLE_ERROR_POS);
     ampMotor.SetSoftLimit(rev::CANSparkBase::SoftLimitDirection::kForward, false);

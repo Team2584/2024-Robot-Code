@@ -31,7 +31,7 @@ FlywheelSystem flywheel{};
 Elevator ampmech{};
 Climb hang{&swerveDrive};
 NoteController notecontroller{&overbumper, &flywheel, &ampmech};
-//LightsSubsystem lights{};
+LightsSubsystem lights{};
 SmartDashboardController UI_Controller{&swerveDrive, &overbumper, &flywheel, &ampmech, &hang};
 
 SwerveDriveAutonomousController swerveAutoController{&swerveDrive};
@@ -109,7 +109,7 @@ void Robot::RobotInit()
 
   
 
- // lights.FullClear();
+  lights.FullClear();
 }
 
 
@@ -122,7 +122,7 @@ void Robot::RobotInit()
  * LiveWindow and SmartDashboard integrated updating.
  */
 void Robot::RobotPeriodic() {
- // lights.UpdateSubsystemLEDS();
+  lights.UpdateSubsystemLEDS();
   UI_Controller.Update();
   
 
@@ -549,13 +549,13 @@ void Robot::TeleopPeriodic()
       }
 
       // Lights
-     /* if(overbumper.GetObjectInIntake()){
+      if(overbumper.GetObjectInIntake()){
         lights.SetHaveNote();
       }
       else{
         lights.NoLongerHaveNote();
         lights.SetDriving();
-      }*/
+      }
 
       // Control Flywheel and Angler
       fixingShooter = SmartDashboard::GetBoolean("Fix Shooter", false);
@@ -713,11 +713,11 @@ void Robot::TeleopPeriodic()
       if(doneShooting){
         Translation2d diff = flywheelController.GetDiffDebug();
         shotPositionLog.Append("X Diff: " + to_string(diff.X().value()) + ", Y Diff: " + to_string(diff.Y().value()));
-      //  lights.SetStrobeGreen();
+        lights.SetStrobeGreen();
         xboxController.ShotNoteRumble();
       }
       else{
-       // lights.SetFadeOrange();
+        lights.SetFadeOrange();
       }
 
       if (!xboxController2.GetLeftBumper() || doneShooting)
@@ -746,10 +746,10 @@ void Robot::TeleopPeriodic()
 
       if(done){
         xboxController.HaveNoteRumble();
-       // lights.SetStrobeGreen();
+        lights.SetStrobeGreen();
       }
       else{
-       // lights.SetFadeOrange();
+        lights.SetFadeOrange();
       }
 
       if (!xboxController.GetBButton() || done)
@@ -801,10 +801,10 @@ void Robot::TeleopPeriodic()
       
       if (turnt && spinning && cleared){
         xboxController2.ReadyActionRumble();
-       //lights.SetStrobeBlue();
+       lights.SetStrobeBlue();
       }
       else{
-       // lights.SetFadeOrange();
+       lights.SetFadeOrange();
       }
         
       if (xboxController2.GetLeftTriggerAxis() < TRIGGER_DEACTIVATION_POINT || (shotTimer.Get() > SHOT_TIME && begunShooting))
@@ -862,14 +862,14 @@ void Robot::TeleopPeriodic()
 
       if(scored){
         xboxController.ShotNoteRumble();
-       // lights.SetStrobeGreen();
+        lights.SetStrobeGreen();
       }
       else if(isAtAmp){
-        //lights.SetStrobeBlue();
+        lights.SetStrobeBlue();
         xboxController2.ReadyActionRumble();
       }
       else{
-        //lights.SetFadeOrange();
+        lights.SetFadeOrange();
       }
       
       if(!xboxController.GetLeftBumper() || scored){
@@ -882,7 +882,7 @@ void Robot::TeleopPeriodic()
     case DRIVER_MODE::CLIMBING_TRAP:
     {
       hang.UpdateClimbEncoders();
-      //lights.SetClimbing();
+      lights.SetClimbing();
       flywheel.StopFlywheel();
 
       double fwdDriveSpeed = leftJoystickY * MAX_DRIVE_SPEED_CLIMB;
@@ -1041,13 +1041,13 @@ void Robot::DisabledPeriodic() {
 
   //if(DriverStation::IsEStopped()){ 
   if(swerveDrive.TagInView()){
-   // lights.SetEstopped();
+    lights.SetEstopped();
   }
   else if(DriverStation::IsDSAttached()){
-   // lights.SetIdle();
+     lights.SetIdle();
   }
   else{
-   // lights.SetStopped();
+     lights.SetStopped();
   }
 }
 
