@@ -16,8 +16,6 @@ class NoteController
 
         bool noteBackInSelector = false;
         bool readyToScoreNote = false;
-        bool noteFinalPush = false;
-        Timer ampTimer;
 
     public:
 
@@ -25,12 +23,10 @@ class NoteController
 
         bool IntakeNoteToSelector();
 
-        void BeginToElevator();
         bool ToElevator();
         void BeginFromElevatorToSelector();
         bool FromElevatorToSelector();
 
-        void BeginLiftNoteToPosition(Elevator::ElevatorSetting position);
         bool LiftNoteToPosition(Elevator::ElevatorSetting position);
         void BeginScoreNoteInPosition(Elevator::ElevatorSetting position);
         bool ScoreNoteInPosition(Elevator::ElevatorSetting position);

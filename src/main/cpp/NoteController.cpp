@@ -3,8 +3,7 @@
 NoteController::NoteController(Intake* _intake, FlywheelSystem* _flywheel, Elevator* _elevator)
 :   intake(_intake),
     flywheel(_flywheel),
-    elevator(_elevator),
-    ampTimer{}
+    elevator(_elevator)
 {
 }
 
@@ -18,36 +17,11 @@ bool NoteController::IntakeNoteToSelector(){
     return true;
 }
 
-void NoteController::BeginToElevator(){
-    noteFinalPush = false;
-}
-
 bool NoteController::ToElevator(){
     bool noteInPosition = elevator->GetObjectInMech();
-    if (noteInPosition && noteFinalPush && ampTimer.Get() > ElevatorConstants::AmpMech::AMP_TIME)
-    {
-        intake->SetIntakeMotorSpeed(0);
-        elevator->SetAmpMotorPercent(0);
-        return true;
-    }
-    else if (noteInPosition && noteFinalPush)
-    {  
-        intake->NoteToElevator();
-        elevator->NoteFromSelector();
-        return false;
-    }
-    else if (noteInPosition && !noteFinalPush)
-    {
-        ampTimer.Restart();
-        noteFinalPush = true;
-        intake->NoteToElevator();
-        elevator->NoteFromSelector();
-        return false;   
-    }
-
     bool elevatorPrepared = elevator->MoveToHeight(Elevator::ElevatorSetting::INTAKE);
 
-    if (!elevatorPrepared)
+    if (!elevatorPrepared && !noteInPosition)
     {
         intake->SetIntakeMotorSpeed(0);
         elevator->NoteFromSelector();
@@ -102,10 +76,6 @@ bool NoteController::FromElevatorToSelector(){
     return noteInPosition;
 }
 
-void NoteController::BeginLiftNoteToPosition(Elevator::ElevatorSetting position){
-    BeginToElevator();
-}
-
 bool NoteController::LiftNoteToPosition(Elevator::ElevatorSetting position){
     bool noteInPosition = elevator->GetObjectInMech();
     if (!noteInPosition)
@@ -123,7 +93,6 @@ bool NoteController::LiftNoteToPosition(Elevator::ElevatorSetting position){
 * Called once before Score note in position (i.e. if score note in position is mapped to a button this function would be called on button press)
 */
 void NoteController::BeginScoreNoteInPosition(Elevator::ElevatorSetting position){
-    BeginLiftNoteToPosition(position);
     readyToScoreNote = false; 
 }
 

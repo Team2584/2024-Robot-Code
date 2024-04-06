@@ -592,8 +592,7 @@ void Robot::TeleopPeriodic()
       if ((xboxController2.GetRightBumperPressed() && !xboxController2.GetAButton()) || (xboxController2.GetAButtonPressed() && !xboxController2.GetRightBumper())){
         notecontroller.BeginScoreNoteInPosition(Elevator::ElevatorSetting::AMP);
       }
-      if (xboxController2.GetBButtonPressed())
-        notecontroller.BeginToElevator();
+
       if (!begunShooting && xboxController2.GetRightTriggerAxis() > TRIGGER_ACTIVATION_POINT)
       {
         begunShooting = true;
@@ -823,8 +822,6 @@ void Robot::TeleopPeriodic()
 
       if ((xboxController2.GetRightBumperPressed() && !xboxController2.GetAButton()) || (xboxController2.GetAButtonPressed() && !xboxController2.GetRightBumper()))
         notecontroller.BeginScoreNoteInPosition(Elevator::ElevatorSetting::AMP);
-      if (xboxController2.GetBButtonPressed())
-        notecontroller.BeginToElevator();
 
       if (xboxController2.GetAButton())
       {
@@ -922,8 +919,6 @@ void Robot::TeleopPeriodic()
       if ((xboxController2.GetRightBumperPressed() && !xboxController2.GetAButton()) || (xboxController2.GetAButtonPressed() && !xboxController2.GetRightBumper())){
         notecontroller.BeginScoreNoteInPosition(Elevator::ElevatorSetting::TRAP);
       }
-      if (xboxController2.GetBButtonPressed())
-        notecontroller.BeginToElevator();
 
       if (controller2LeftJoystickY != 0)
       {
